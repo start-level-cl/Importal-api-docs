@@ -1,0 +1,1440 @@
+[
+  {
+    "service": "auth",
+    "source": "Importal-auth/src/modules/app/controllers/app.controller.ts",
+    "method": "get",
+    "path": "/auth/api/v1",
+    "operationId": "auth_get_auth_api_v1",
+    "tag": "auth",
+    "tags": [],
+    "roles": [],
+    "security": false,
+    "methodName": "getHello",
+    "roleGroup": "publico"
+  },
+  {
+    "service": "auth",
+    "source": "Importal-auth/src/modules/app/controllers/health.controller.ts",
+    "method": "get",
+    "path": "/auth/api/health",
+    "operationId": "auth_get_auth_api_health",
+    "tag": "auth",
+    "tags": [],
+    "roles": [],
+    "security": false,
+    "methodName": "getHealth",
+    "roleGroup": "publico"
+  },
+  {
+    "service": "auth",
+    "source": "Importal-auth/src/modules/auth/controllers/auth.controller.ts",
+    "method": "post",
+    "path": "/auth/api/v1/auth/login",
+    "operationId": "auth_post_auth_api_v1_auth_login",
+    "tag": "Auth",
+    "tags": [
+      "Auth"
+    ],
+    "roles": [],
+    "security": true,
+    "methodName": "login",
+    "roleGroup": "interno"
+  },
+  {
+    "service": "auth",
+    "source": "Importal-auth/src/modules/auth/controllers/auth.controller.ts",
+    "method": "get",
+    "path": "/auth/api/v1/auth/validate",
+    "operationId": "auth_get_auth_api_v1_auth_validate",
+    "tag": "Auth",
+    "tags": [
+      "Auth"
+    ],
+    "roles": [],
+    "security": true,
+    "methodName": "validate",
+    "roleGroup": "interno"
+  },
+  {
+    "service": "auth",
+    "source": "Importal-auth/src/modules/auth/controllers/auth.controller.ts",
+    "method": "post",
+    "path": "/auth/api/v1/auth/register-user",
+    "operationId": "auth_post_auth_api_v1_auth_register_user",
+    "tag": "Auth",
+    "tags": [
+      "Auth"
+    ],
+    "roles": [],
+    "security": true,
+    "methodName": "registerUser",
+    "roleGroup": "interno"
+  },
+  {
+    "service": "auth",
+    "source": "Importal-auth/src/modules/auth/controllers/auth.controller.ts",
+    "method": "post",
+    "path": "/auth/api/v1/auth/send-code",
+    "operationId": "auth_post_auth_api_v1_auth_send_code",
+    "tag": "Auth",
+    "tags": [
+      "Auth"
+    ],
+    "roles": [],
+    "security": true,
+    "methodName": "sendCode",
+    "roleGroup": "interno"
+  },
+  {
+    "service": "auth",
+    "source": "Importal-auth/src/modules/auth/controllers/auth.controller.ts",
+    "method": "post",
+    "path": "/auth/api/v1/auth/verify-code",
+    "operationId": "auth_post_auth_api_v1_auth_verify_code",
+    "tag": "Auth",
+    "tags": [
+      "Auth"
+    ],
+    "roles": [],
+    "security": true,
+    "methodName": "verifyCode",
+    "roleGroup": "interno"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/app/controllers/admin-metrics.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/metrics/orders",
+    "operationId": "backend_get_api_v1_admin_metrics_orders",
+    "tag": "Admin Metrics",
+    "tags": [
+      "Admin Metrics"
+    ],
+    "roles": [
+      "root"
+    ],
+    "security": true,
+    "methodName": "getOrdersMetrics",
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/app/controllers/admin-metrics.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/metrics/revenue",
+    "operationId": "backend_get_api_v1_admin_metrics_revenue",
+    "tag": "Admin Metrics",
+    "tags": [
+      "Admin Metrics"
+    ],
+    "roles": [
+      "root"
+    ],
+    "security": true,
+    "methodName": "getRevenueMetrics",
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/app/controllers/admin-metrics.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/metrics/users",
+    "operationId": "backend_get_api_v1_admin_metrics_users",
+    "tag": "Admin Metrics",
+    "tags": [
+      "Admin Metrics"
+    ],
+    "roles": [
+      "root"
+    ],
+    "security": true,
+    "methodName": "getUsersMetrics",
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/app/controllers/admin-metrics.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/metrics/performance",
+    "operationId": "backend_get_api_v1_admin_metrics_performance",
+    "tag": "Admin Metrics",
+    "tags": [
+      "Admin Metrics"
+    ],
+    "roles": [
+      "root"
+    ],
+    "security": true,
+    "methodName": "getPerformanceMetrics",
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/app/controllers/admin-metrics.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/metrics/transactions",
+    "operationId": "backend_get_api_v1_admin_metrics_transactions",
+    "tag": "Admin Metrics",
+    "tags": [
+      "Admin Metrics"
+    ],
+    "roles": [
+      "root"
+    ],
+    "security": true,
+    "methodName": "getTransactionMetrics",
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/app/controllers/admin-metrics.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/metrics/compliance",
+    "operationId": "backend_get_api_v1_admin_metrics_compliance",
+    "tag": "Admin Metrics",
+    "tags": [
+      "Admin Metrics"
+    ],
+    "roles": [
+      "root"
+    ],
+    "security": true,
+    "methodName": "getComplianceMetrics",
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/app/controllers/admin.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/dashboard",
+    "operationId": "backend_get_api_v1_admin_dashboard",
+    "tag": "Admin",
+    "tags": [
+      "Admin"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": true,
+    "methodName": "getDashboard",
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/app/controllers/admin.controller.ts",
+    "method": "get",
+    "path": "/api/v1/cliente/dashboard",
+    "operationId": "backend_get_api_v1_cliente_dashboard",
+    "tag": "Admin",
+    "tags": [
+      "Admin"
+    ],
+    "roles": [
+      "client"
+    ],
+    "security": true,
+    "methodName": "getClientDashboard",
+    "roleGroup": "cliente"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/app/controllers/admin.controller.ts",
+    "method": "get",
+    "path": "/api/v1/vendedor/dashboard",
+    "operationId": "backend_get_api_v1_vendedor_dashboard",
+    "tag": "Admin",
+    "tags": [
+      "Admin"
+    ],
+    "roles": [
+      "vendor"
+    ],
+    "security": true,
+    "methodName": "getVendorDashboard",
+    "roleGroup": "vendedor"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/app/controllers/admin.controller.ts",
+    "method": "post",
+    "path": "/api/v1/admin/users/create-admin",
+    "operationId": "backend_post_api_v1_admin_users_create_admin",
+    "tag": "Admin",
+    "tags": [
+      "Admin"
+    ],
+    "roles": [
+      "root"
+    ],
+    "security": true,
+    "methodName": "createAdmin",
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/app/controllers/app.controller.ts",
+    "method": "get",
+    "path": "/api/v1",
+    "operationId": "backend_get_api_v1",
+    "tag": "backend",
+    "tags": [],
+    "roles": [],
+    "security": false,
+    "methodName": "getHello",
+    "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/app/controllers/audit.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/logs",
+    "operationId": "backend_get_api_v1_admin_logs",
+    "tag": "Audit",
+    "tags": [
+      "Audit"
+    ],
+    "roles": [
+      "root"
+    ],
+    "security": true,
+    "methodName": "getLogs",
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/app/controllers/audit.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/logs/search",
+    "operationId": "backend_get_api_v1_admin_logs_search",
+    "tag": "Audit",
+    "tags": [
+      "Audit"
+    ],
+    "roles": [
+      "root"
+    ],
+    "security": true,
+    "methodName": "searchLogs",
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/app/controllers/audit.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/audit/trail",
+    "operationId": "backend_get_api_v1_admin_audit_trail",
+    "tag": "Audit",
+    "tags": [
+      "Audit"
+    ],
+    "roles": [
+      "root"
+    ],
+    "security": true,
+    "methodName": "getAuditTrail",
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/app/controllers/audit.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/audit/trail/{id}",
+    "operationId": "backend_get_api_v1_admin_audit_trail_id",
+    "tag": "Audit",
+    "tags": [
+      "Audit"
+    ],
+    "roles": [
+      "root"
+    ],
+    "security": true,
+    "methodName": "getAuditTrailDetail",
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/app/controllers/audit.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/users/activity",
+    "operationId": "backend_get_api_v1_admin_users_activity",
+    "tag": "Audit",
+    "tags": [
+      "Audit"
+    ],
+    "roles": [
+      "root"
+    ],
+    "security": true,
+    "methodName": "getUsersActivity",
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/app/controllers/audit.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/users/{userId}/session-log",
+    "operationId": "backend_get_api_v1_admin_users_userId_session_log",
+    "tag": "Audit",
+    "tags": [
+      "Audit"
+    ],
+    "roles": [
+      "root"
+    ],
+    "security": true,
+    "methodName": "getUserSessionLog",
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/app/controllers/audit.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/users/{userId}/actions-log",
+    "operationId": "backend_get_api_v1_admin_users_userId_actions_log",
+    "tag": "Audit",
+    "tags": [
+      "Audit"
+    ],
+    "roles": [
+      "root"
+    ],
+    "security": true,
+    "methodName": "getUserActionsLog",
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/app/controllers/audit.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/users/login-attempts",
+    "operationId": "backend_get_api_v1_admin_users_login_attempts",
+    "tag": "Audit",
+    "tags": [
+      "Audit"
+    ],
+    "roles": [
+      "root"
+    ],
+    "security": true,
+    "methodName": "getLoginAttempts",
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/app/controllers/audit.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/users/suspicious-activity",
+    "operationId": "backend_get_api_v1_admin_users_suspicious_activity",
+    "tag": "Audit",
+    "tags": [
+      "Audit"
+    ],
+    "roles": [
+      "root"
+    ],
+    "security": true,
+    "methodName": "getSuspiciousActivity",
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/app/controllers/audit.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/exceptions",
+    "operationId": "backend_get_api_v1_admin_exceptions",
+    "tag": "Audit",
+    "tags": [
+      "Audit"
+    ],
+    "roles": [
+      "root"
+    ],
+    "security": true,
+    "methodName": "getExceptions",
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/app/controllers/audit.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/exceptions/{id}",
+    "operationId": "backend_get_api_v1_admin_exceptions_id",
+    "tag": "Audit",
+    "tags": [
+      "Audit"
+    ],
+    "roles": [
+      "root"
+    ],
+    "security": true,
+    "methodName": "getExceptionDetail",
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/app/controllers/audit.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/exceptions/statistics",
+    "operationId": "backend_get_api_v1_admin_exceptions_statistics",
+    "tag": "Audit",
+    "tags": [
+      "Audit"
+    ],
+    "roles": [
+      "root"
+    ],
+    "security": true,
+    "methodName": "getExceptionStatistics",
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/app/controllers/audit.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/traces",
+    "operationId": "backend_get_api_v1_admin_traces",
+    "tag": "Audit",
+    "tags": [
+      "Audit"
+    ],
+    "roles": [
+      "root"
+    ],
+    "security": true,
+    "methodName": "getTraces",
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/app/controllers/audit.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/traces/{traceId}",
+    "operationId": "backend_get_api_v1_admin_traces_traceId",
+    "tag": "Audit",
+    "tags": [
+      "Audit"
+    ],
+    "roles": [
+      "root"
+    ],
+    "security": true,
+    "methodName": "getTraceDetail",
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/app/controllers/audit.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/traces/slow-queries",
+    "operationId": "backend_get_api_v1_admin_traces_slow_queries",
+    "tag": "Audit",
+    "tags": [
+      "Audit"
+    ],
+    "roles": [
+      "root"
+    ],
+    "security": true,
+    "methodName": "getSlowQueries",
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/app/controllers/health.controller.ts",
+    "method": "get",
+    "path": "/api/health",
+    "operationId": "backend_get_api_health",
+    "tag": "backend",
+    "tags": [],
+    "roles": [],
+    "security": false,
+    "methodName": "getHealth",
+    "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/app/controllers/system.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/system/health",
+    "operationId": "backend_get_api_v1_admin_system_health",
+    "tag": "System",
+    "tags": [
+      "System"
+    ],
+    "roles": [
+      "root"
+    ],
+    "security": true,
+    "methodName": "getSystemHealth",
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/app/controllers/system.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/system/status/database",
+    "operationId": "backend_get_api_v1_admin_system_status_database",
+    "tag": "System",
+    "tags": [
+      "System"
+    ],
+    "roles": [
+      "root"
+    ],
+    "security": true,
+    "methodName": "getDatabaseStatus",
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/app/controllers/system.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/system/status/cache",
+    "operationId": "backend_get_api_v1_admin_system_status_cache",
+    "tag": "System",
+    "tags": [
+      "System"
+    ],
+    "roles": [
+      "root"
+    ],
+    "security": true,
+    "methodName": "getCacheStatus",
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/app/controllers/system.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/system/status/queue",
+    "operationId": "backend_get_api_v1_admin_system_status_queue",
+    "tag": "System",
+    "tags": [
+      "System"
+    ],
+    "roles": [
+      "root"
+    ],
+    "security": true,
+    "methodName": "getQueueStatus",
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/app/controllers/system.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/system/status/storage",
+    "operationId": "backend_get_api_v1_admin_system_status_storage",
+    "tag": "System",
+    "tags": [
+      "System"
+    ],
+    "roles": [
+      "root"
+    ],
+    "security": true,
+    "methodName": "getStorageStatus",
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/app/controllers/system.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/system/uptime",
+    "operationId": "backend_get_api_v1_admin_system_uptime",
+    "tag": "System",
+    "tags": [
+      "System"
+    ],
+    "roles": [
+      "root"
+    ],
+    "security": true,
+    "methodName": "getUptime",
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/app/controllers/system.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/system/alerts",
+    "operationId": "backend_get_api_v1_admin_system_alerts",
+    "tag": "System",
+    "tags": [
+      "System"
+    ],
+    "roles": [
+      "root"
+    ],
+    "security": true,
+    "methodName": "getAlerts",
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/cobros",
+    "operationId": "backend_get_api_v1_admin_cobros",
+    "tag": "Billing",
+    "tags": [
+      "Billing"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": true,
+    "methodName": "getAllCobros",
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts",
+    "method": "post",
+    "path": "/api/v1/admin/cobros/{id}/confirmar",
+    "operationId": "backend_post_api_v1_admin_cobros_id_confirmar",
+    "tag": "Billing",
+    "tags": [
+      "Billing"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": true,
+    "methodName": "confirmCobro",
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/tarifas/comisiones",
+    "operationId": "backend_get_api_v1_admin_tarifas_comisiones",
+    "tag": "Billing",
+    "tags": [
+      "Billing"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": true,
+    "methodName": "getCommissions",
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts",
+    "method": "put",
+    "path": "/api/v1/admin/tarifas/comisiones",
+    "operationId": "backend_put_api_v1_admin_tarifas_comisiones",
+    "tag": "Billing",
+    "tags": [
+      "Billing"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": true,
+    "methodName": "updateCommission",
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/tarifas/logisticas",
+    "operationId": "backend_get_api_v1_admin_tarifas_logisticas",
+    "tag": "Billing",
+    "tags": [
+      "Billing"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": true,
+    "methodName": "getLogisticsRates",
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts",
+    "method": "put",
+    "path": "/api/v1/admin/tarifas/logisticas",
+    "operationId": "backend_put_api_v1_admin_tarifas_logisticas",
+    "tag": "Billing",
+    "tags": [
+      "Billing"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": true,
+    "methodName": "updateLogisticsRate",
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts",
+    "method": "get",
+    "path": "/api/v1/cliente/cobros",
+    "operationId": "backend_get_api_v1_cliente_cobros",
+    "tag": "Billing",
+    "tags": [
+      "Billing"
+    ],
+    "roles": [
+      "client"
+    ],
+    "security": true,
+    "methodName": "getClientCobros",
+    "roleGroup": "cliente"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts",
+    "method": "get",
+    "path": "/api/v1/cliente/cobros/{id}/pdf",
+    "operationId": "backend_get_api_v1_cliente_cobros_id_pdf",
+    "tag": "Billing",
+    "tags": [
+      "Billing"
+    ],
+    "roles": [
+      "client",
+      "admin",
+      "root"
+    ],
+    "security": true,
+    "methodName": "getCobroPdf",
+    "roleGroup": "cliente"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts",
+    "method": "get",
+    "path": "/api/v1/cliente/estado-mora",
+    "operationId": "backend_get_api_v1_cliente_estado_mora",
+    "tag": "Billing",
+    "tags": [
+      "Billing"
+    ],
+    "roles": [
+      "client"
+    ],
+    "security": true,
+    "methodName": "getMoraStatus",
+    "roleGroup": "cliente"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts",
+    "method": "post",
+    "path": "/api/v1/cliente/pagos/transbank/iniciar",
+    "operationId": "backend_post_api_v1_cliente_pagos_transbank_iniciar",
+    "tag": "Billing",
+    "tags": [
+      "Billing"
+    ],
+    "roles": [
+      "client"
+    ],
+    "security": true,
+    "methodName": "initiateTransbank",
+    "roleGroup": "cliente"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts",
+    "method": "post",
+    "path": "/api/v1/cliente/pagos/transbank/confirmar",
+    "operationId": "backend_post_api_v1_cliente_pagos_transbank_confirmar",
+    "tag": "Billing",
+    "tags": [
+      "Billing"
+    ],
+    "roles": [
+      "client"
+    ],
+    "security": true,
+    "methodName": "confirmTransbank",
+    "roleGroup": "cliente"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts",
+    "method": "get",
+    "path": "/api/v1/cliente/pagos/transbank/{id}/estado",
+    "operationId": "backend_get_api_v1_cliente_pagos_transbank_id_estado",
+    "tag": "Billing",
+    "tags": [
+      "Billing"
+    ],
+    "roles": [
+      "client",
+      "admin",
+      "root"
+    ],
+    "security": true,
+    "methodName": "getTransbankStatus",
+    "roleGroup": "cliente"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts",
+    "method": "get",
+    "path": "/api/v1/cliente/pagos/historial",
+    "operationId": "backend_get_api_v1_cliente_pagos_historial",
+    "tag": "Billing",
+    "tags": [
+      "Billing"
+    ],
+    "roles": [
+      "client"
+    ],
+    "security": true,
+    "methodName": "getPaymentHistory",
+    "roleGroup": "cliente"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts",
+    "method": "post",
+    "path": "/api/v1/vendedor/pagos/solicitar",
+    "operationId": "backend_post_api_v1_vendedor_pagos_solicitar",
+    "tag": "Billing",
+    "tags": [
+      "Billing"
+    ],
+    "roles": [
+      "vendor"
+    ],
+    "security": true,
+    "methodName": "requestPayment",
+    "roleGroup": "vendedor"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/messaging/controllers/messaging.controller.ts",
+    "method": "get",
+    "path": "/api/v1/chats",
+    "operationId": "backend_get_api_v1_chats",
+    "tag": "Messaging",
+    "tags": [
+      "Messaging"
+    ],
+    "roles": [
+      "admin",
+      "client",
+      "vendor",
+      "bodeguero",
+      "root"
+    ],
+    "security": true,
+    "methodName": "getChats",
+    "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/messaging/controllers/messaging.controller.ts",
+    "method": "get",
+    "path": "/api/v1/chats/{id}/mensajes",
+    "operationId": "backend_get_api_v1_chats_id_mensajes",
+    "tag": "Messaging",
+    "tags": [
+      "Messaging"
+    ],
+    "roles": [
+      "admin",
+      "client",
+      "vendor",
+      "bodeguero",
+      "root"
+    ],
+    "security": true,
+    "methodName": "getChatMessages",
+    "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/notifications/controllers/notifications.controller.ts",
+    "method": "get",
+    "path": "/api/v1/notificaciones",
+    "operationId": "backend_get_api_v1_notificaciones",
+    "tag": "Notifications",
+    "tags": [
+      "Notifications"
+    ],
+    "roles": [
+      "admin",
+      "client",
+      "vendor",
+      "bodeguero",
+      "root"
+    ],
+    "security": true,
+    "methodName": "getNotifications",
+    "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/notifications/controllers/notifications.controller.ts",
+    "method": "put",
+    "path": "/api/v1/notificaciones/{id}/leer",
+    "operationId": "backend_put_api_v1_notificaciones_id_leer",
+    "tag": "Notifications",
+    "tags": [
+      "Notifications"
+    ],
+    "roles": [
+      "admin",
+      "client",
+      "vendor",
+      "bodeguero",
+      "root"
+    ],
+    "security": true,
+    "methodName": "markAsRead",
+    "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/cargas",
+    "operationId": "backend_get_api_v1_admin_cargas",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": true,
+    "methodName": "getCargas",
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "post",
+    "path": "/api/v1/admin/cargas",
+    "operationId": "backend_post_api_v1_admin_cargas",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": true,
+    "methodName": "createCarga",
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "get",
+    "path": "/api/v1/bodeguero/cargas",
+    "operationId": "backend_get_api_v1_bodeguero_cargas",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "bodeguero",
+      "admin",
+      "root"
+    ],
+    "security": true,
+    "methodName": "getBodegaCargas",
+    "roleGroup": "bodeguero"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "put",
+    "path": "/api/v1/bodeguero/cargas/{id}/status",
+    "operationId": "backend_put_api_v1_bodeguero_cargas_id_status",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "bodeguero",
+      "admin",
+      "root"
+    ],
+    "security": true,
+    "methodName": "updateCargaStatus",
+    "roleGroup": "bodeguero"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "get",
+    "path": "/api/v1/cliente/pedidos",
+    "operationId": "backend_get_api_v1_cliente_pedidos",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "client"
+    ],
+    "security": true,
+    "methodName": "getClientOrders",
+    "roleGroup": "cliente"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "post",
+    "path": "/api/v1/cliente/pedidos",
+    "operationId": "backend_post_api_v1_cliente_pedidos",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "client"
+    ],
+    "security": true,
+    "methodName": "createOrder",
+    "roleGroup": "cliente"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "get",
+    "path": "/api/v1/vendedor/pedidos",
+    "operationId": "backend_get_api_v1_vendedor_pedidos",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "vendor"
+    ],
+    "security": true,
+    "methodName": "getVendorOrders",
+    "roleGroup": "vendedor"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "put",
+    "path": "/api/v1/vendedor/pedidos/{id}/estado",
+    "operationId": "backend_put_api_v1_vendedor_pedidos_id_estado",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "vendor"
+    ],
+    "security": true,
+    "methodName": "updateOrderStatus",
+    "roleGroup": "vendedor"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "get",
+    "path": "/api/v1/bodeguero/pedidos",
+    "operationId": "backend_get_api_v1_bodeguero_pedidos",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "bodeguero",
+      "admin",
+      "root"
+    ],
+    "security": true,
+    "methodName": "getBodegaOrders",
+    "roleGroup": "bodeguero"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "get",
+    "path": "/api/v1/bodeguero/pedidos/{id}/auditoria",
+    "operationId": "backend_get_api_v1_bodeguero_pedidos_id_auditoria",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "bodeguero",
+      "admin",
+      "root"
+    ],
+    "security": true,
+    "methodName": "getOrderAudit",
+    "roleGroup": "bodeguero"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "put",
+    "path": "/api/v1/bodeguero/tracking/actualizar",
+    "operationId": "backend_put_api_v1_bodeguero_tracking_actualizar",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "bodeguero",
+      "admin",
+      "root"
+    ],
+    "security": true,
+    "methodName": "updateTracking",
+    "roleGroup": "bodeguero"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "delete",
+    "path": "/api/v1/vendedor/productos/{id}",
+    "operationId": "backend_delete_api_v1_vendedor_productos_id",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "vendor",
+      "admin",
+      "root"
+    ],
+    "security": true,
+    "methodName": "deleteProduct",
+    "roleGroup": "vendedor"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/products/controllers/products.controller.ts",
+    "method": "get",
+    "path": "/api/v1/cliente/productos",
+    "operationId": "backend_get_api_v1_cliente_productos",
+    "tag": "Products",
+    "tags": [
+      "Products"
+    ],
+    "roles": [
+      "client",
+      "admin",
+      "root"
+    ],
+    "security": true,
+    "methodName": "getClientProducts",
+    "roleGroup": "cliente"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/products/controllers/products.controller.ts",
+    "method": "get",
+    "path": "/api/v1/vendedor/productos",
+    "operationId": "backend_get_api_v1_vendedor_productos",
+    "tag": "Products",
+    "tags": [
+      "Products"
+    ],
+    "roles": [
+      "vendor",
+      "admin",
+      "root"
+    ],
+    "security": true,
+    "methodName": "getVendorProducts",
+    "roleGroup": "vendedor"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/products/controllers/products.controller.ts",
+    "method": "post",
+    "path": "/api/v1/vendedor/productos",
+    "operationId": "backend_post_api_v1_vendedor_productos",
+    "tag": "Products",
+    "tags": [
+      "Products"
+    ],
+    "roles": [
+      "vendor"
+    ],
+    "security": true,
+    "methodName": "createProduct",
+    "roleGroup": "vendedor"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/products/controllers/products.controller.ts",
+    "method": "put",
+    "path": "/api/v1/vendedor/productos/{id}",
+    "operationId": "backend_put_api_v1_vendedor_productos_id",
+    "tag": "Products",
+    "tags": [
+      "Products"
+    ],
+    "roles": [
+      "vendor",
+      "admin",
+      "root"
+    ],
+    "security": true,
+    "methodName": "updateProduct",
+    "roleGroup": "vendedor"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/products/controllers/products.controller.ts",
+    "method": "delete",
+    "path": "/api/v1/vendedor/productos/{id}",
+    "operationId": "backend_delete_api_v1_vendedor_productos_id",
+    "tag": "Products",
+    "tags": [
+      "Products"
+    ],
+    "roles": [
+      "vendor",
+      "admin",
+      "root"
+    ],
+    "security": true,
+    "methodName": "deleteProduct",
+    "roleGroup": "vendedor"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/registration/controllers/registration.controller.ts",
+    "method": "get",
+    "path": "/api/v1/registration-requests",
+    "operationId": "backend_get_api_v1_registration_requests",
+    "tag": "Registration",
+    "tags": [
+      "Registration"
+    ],
+    "summary": "List pending registration requests",
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": true,
+    "responseStatus": 200,
+    "responseDescription": "Returns list of pending requests",
+    "methodName": "listPendingRequests",
+    "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/registration/controllers/registration.controller.ts",
+    "method": "post",
+    "path": "/api/v1/registration-requests/{email}/approve",
+    "operationId": "backend_post_api_v1_registration_requests_email_approve",
+    "tag": "Registration",
+    "tags": [
+      "Registration"
+    ],
+    "summary": "Approve a registration request",
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": true,
+    "responseStatus": 200,
+    "responseDescription": "Registration request approved and user created",
+    "methodName": "approveRequest",
+    "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/registration/controllers/registration.controller.ts",
+    "method": "post",
+    "path": "/api/v1/registration-requests/{email}/reject",
+    "operationId": "backend_post_api_v1_registration_requests_email_reject",
+    "tag": "Registration",
+    "tags": [
+      "Registration"
+    ],
+    "summary": "Reject a registration request",
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": true,
+    "responseStatus": 200,
+    "responseDescription": "Registration request rejected",
+    "methodName": "rejectRequest",
+    "roleGroup": "comun"
+  },
+  {
+    "service": "registration-lambda",
+    "source": "Importal-registration-lambda/src/index.ts",
+    "method": "post",
+    "path": "/registration-requests",
+    "operationId": "registration_lambda_post_registration_requests",
+    "tag": "Registration",
+    "tags": [
+      "Registration"
+    ],
+    "summary": "Crear solicitud de registro publica",
+    "roles": [],
+    "security": false,
+    "roleGroup": "publico"
+  },
+  {
+    "service": "registration-lambda",
+    "source": "Importal-registration-lambda/src/index.ts",
+    "method": "get",
+    "path": "/registration-requests",
+    "operationId": "registration_lambda_get_registration_requests",
+    "tag": "Registration",
+    "tags": [
+      "Registration"
+    ],
+    "summary": "Listar solicitudes pendientes para revision",
+    "roles": [],
+    "security": false,
+    "roleGroup": "publico"
+  },
+  {
+    "service": "registration-lambda",
+    "source": "Importal-registration-lambda/src/index.ts",
+    "method": "post",
+    "path": "/registration-requests/{email}/send-code",
+    "operationId": "registration_lambda_post_registration_requests_email_send_code",
+    "tag": "Registration",
+    "tags": [
+      "Registration"
+    ],
+    "summary": "Generar y enviar OTP",
+    "roles": [],
+    "security": false,
+    "roleGroup": "publico"
+  },
+  {
+    "service": "registration-lambda",
+    "source": "Importal-registration-lambda/src/index.ts",
+    "method": "post",
+    "path": "/registration-requests/{email}/verify",
+    "operationId": "registration_lambda_post_registration_requests_email_verify",
+    "tag": "Registration",
+    "tags": [
+      "Registration"
+    ],
+    "summary": "Verificar OTP y marcar solicitud",
+    "roles": [],
+    "security": false,
+    "roleGroup": "publico"
+  }
+]

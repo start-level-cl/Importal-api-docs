@@ -1,0 +1,21 @@
+[
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/products/controllers/products.controller.ts",
+    "method": "delete",
+    "path": "/api/v1/vendedor/productos/{id}",
+    "operationId": "backend_delete_api_v1_vendedor_productos_id",
+    "tag": "Products",
+    "tags": [
+      "Products"
+    ],
+    "roles": [
+      "vendor",
+      "admin",
+      "root"
+    ],
+    "security": true,
+    "methodName": "deleteProduct",
+    "roleGroup": "vendedor"
+  }
+]

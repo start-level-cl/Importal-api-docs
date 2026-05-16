@@ -1,0 +1,12 @@
+{
+  "name": "importal-api-docs",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build-openapi.mjs",
+    "generate:types": "node scripts/generate-types.mjs",
+    "validate": "node scripts/validate-openapi.mjs",
+    "serve": "node scripts/serve-docs.mjs"
+  }
+}
