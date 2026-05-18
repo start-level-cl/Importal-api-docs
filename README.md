@@ -47,13 +47,21 @@ Configuracion esperada del proyecto en Vercel:
 - Output directory: `docs`.
 - Production branch: `main`.
 
-El deploy lo ejecuta Vercel directamente mediante su integracion con GitHub:
+El deploy lo ejecuta GitHub Actions con Vercel CLI, apuntando directamente a `docs/`:
 
 - cada pull request hacia `main` genera un preview deployment;
 - cada merge o push a `main` genera un deployment productivo;
-- no hay workflow de GitHub Actions para desplegar;
 - no se ejecuta `npm install`, `npm run build`, `npm run validate` ni generacion OpenAPI durante el deploy;
-- Vercel solo publica el HTML y artefactos estaticos versionados dentro de `docs/`.
+- el workflow crea un vinculo temporal `docs/.vercel/project.json` con los secrets de Vercel;
+- Vercel CLI publica solo el HTML y artefactos estaticos versionados dentro de `docs/`.
+
+Secrets requeridos en GitHub:
+
+- `VERCEL_TOKEN`
+- `VERCEL_ORG_ID`
+- `VERCEL_PROJECT_ID`
+
+El workflow usa `npx vercel@latest` solo para subir `docs/` a Vercel; no usa Node para construir la documentacion.
 
 Este deploy no ejecuta generacion ni validacion profunda en CI. Cuando se trabaje con los repos fuente disponibles, seguir usando:
 
