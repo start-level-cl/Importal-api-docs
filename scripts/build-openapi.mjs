@@ -18,6 +18,44 @@ const repoRoot = path.resolve(currentDir, '..', '..', '..')
 const docsRoot = path.resolve(currentDir, '..')
 const generatedDir = path.join(docsRoot, 'generated')
 const docsDir = path.join(docsRoot, 'docs')
+const sourceRoutesPath = path.join(generatedDir, 'source-routes.json')
+
+function hasSourceRepos() {
+  return ['Importal-auth', 'Importal-backend', 'Importal-registration-lambda'].every(serviceRoot =>
+    fs.existsSync(path.join(repoRoot, serviceRoot, 'src')),
+  )
+}
+
+function loadSourceRoutes() {
+  if (hasSourceRepos()) {
+    return enrichRoutes([
+      ...extractNestRoutes({
+        repoRoot,
+        serviceRoot: 'Importal-auth',
+        serviceName: 'auth',
+        prefix: '/auth/api',
+      }),
+      ...extractNestRoutes({
+        repoRoot,
+        serviceRoot: 'Importal-backend',
+        serviceName: 'backend',
+        prefix: '/api',
+      }),
+      ...extractLambdaRoutes({
+        repoRoot,
+        serviceRoot: 'Importal-registration-lambda',
+      }),
+    ])
+  }
+
+  if (!fs.existsSync(sourceRoutesPath)) {
+    throw new Error(
+      'No se encontraron repos fuente y falta generated/source-routes.json. Ejecuta el build en un entorno con los monorepos o commitea el inventario generado.',
+    )
+  }
+
+  return JSON.parse(fs.readFileSync(sourceRoutesPath, 'utf8'))
+}
 
 function ensureDir(dir) {
   fs.mkdirSync(dir, { recursive: true })
@@ -373,26 +411,7 @@ function createHtml(spec) {
 </html>`
 }
 
-const authRoutes = extractNestRoutes({
-  repoRoot,
-  serviceRoot: 'Importal-auth',
-  serviceName: 'auth',
-  prefix: '/auth/api',
-})
-
-const backendRoutes = extractNestRoutes({
-  repoRoot,
-  serviceRoot: 'Importal-backend',
-  serviceName: 'backend',
-  prefix: '/api',
-})
-
-const lambdaRoutes = extractLambdaRoutes({
-  repoRoot,
-  serviceRoot: 'Importal-registration-lambda',
-})
-
-const routes = enrichRoutes([...authRoutes, ...backendRoutes, ...lambdaRoutes])
+const routes = loadSourceRoutes()
 
 const { paths, duplicates } = buildPaths(routes)
 
@@ -411,7 +430,7 @@ const spec = sortObjectKeys({
 ensureDir(generatedDir)
 ensureDir(docsDir)
 
-fs.writeFileSync(path.join(generatedDir, 'source-routes.json'), JSON.stringify(routes, null, 2))
+fs.writeFileSync(sourceRoutesPath, JSON.stringify(routes, null, 2))
 fs.writeFileSync(path.join(generatedDir, 'duplicate-routes.json'), JSON.stringify(duplicates, null, 2))
 fs.writeFileSync(path.join(generatedDir, 'openapi.json'), `${JSON.stringify(spec, null, 2)}\n`)
 fs.writeFileSync(path.join(generatedDir, 'openapi.yaml'), `${toYaml(spec)}\n`)
