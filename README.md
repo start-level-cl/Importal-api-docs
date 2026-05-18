@@ -52,6 +52,7 @@ El deploy lo ejecuta GitHub Actions con Vercel CLI sobre la carpeta `docs/`:
 - cada pull request hacia `main` genera un preview deployment;
 - cada merge o push a `main` genera un deployment productivo;
 - no se ejecuta `npm install`, `npm run build` ni generacion OpenAPI durante el deploy.
+- el workflow ejecuta `vercel pull` antes del deploy para cargar la configuracion del proyecto asociada a los secrets.
 
 Secrets requeridos en GitHub:
 
@@ -60,6 +61,8 @@ Secrets requeridos en GitHub:
 - `VERCEL_PROJECT_ID`
 
 El workflow usa `setup-node` solo para ejecutar Vercel CLI con `npx vercel@latest`; no usa Node para construir la documentacion.
+
+Si Vercel no puede recuperar el proyecto, revisar que `VERCEL_ORG_ID` y `VERCEL_PROJECT_ID` sean los IDs reales de Vercel, normalmente con formato interno como `team_...`/`org_...` y `prj_...`, y que `VERCEL_TOKEN` tenga acceso a ese proyecto.
 
 Este deploy no ejecuta generacion ni validacion profunda en CI. Cuando se trabaje con los repos fuente disponibles, seguir usando:
 

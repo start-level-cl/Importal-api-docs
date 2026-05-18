@@ -23,6 +23,7 @@ jobs:
     env:
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      VERCEL_TELEMETRY_DISABLED: 1
 
     steps:
       - name: Checkout repository
@@ -41,6 +42,20 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+
+      - name: Validate Vercel secrets are present
+        run: |
+          test -n "$VERCEL_ORG_ID"
+          test -n "$VERCEL_PROJECT_ID"
+          test -n "${{ secrets.VERCEL_TOKEN }}"
+
+      - name: Pull Vercel preview settings
+        if: github.event_name == 'pull_request'
+        run: npx vercel@latest pull --yes --environment=preview --token="${{ secrets.VERCEL_TOKEN }}"
+
+      - name: Pull Vercel production settings
+        if: github.event_name == 'push'
+        run: npx vercel@latest pull --yes --environment=production --token="${{ secrets.VERCEL_TOKEN }}"
 
       - name: Deploy preview to Vercel
         if: github.event_name == 'pull_request'
