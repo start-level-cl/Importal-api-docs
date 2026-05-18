@@ -38,7 +38,7 @@ npm run serve
 
 Vercel publica la documentacion desde `docs/`.
 
-Configuracion esperada del proyecto:
+Configuracion esperada del proyecto en Vercel:
 
 - Framework preset: `Other`.
 - Root directory: raiz de `importal-api-docs`.
@@ -47,22 +47,21 @@ Configuracion esperada del proyecto:
 - Output directory: `docs`.
 - Production branch: `main`.
 
-Con la integracion GitHub de Vercel:
+El deploy lo ejecuta GitHub Actions con Vercel CLI sobre la carpeta `docs/`:
 
 - cada pull request hacia `main` genera un preview deployment;
 - cada merge o push a `main` genera un deployment productivo;
-- no se requieren secrets de GitHub para el deploy estatico.
+- no se ejecuta `npm install`, `npm run build` ni generacion OpenAPI durante el deploy.
 
-El workflow `Static docs check` valida los artefactos versionados antes de publicar cambios:
+Secrets requeridos en GitHub:
 
-- existencia de `docs/index.html`;
-- existencia de `generated/openapi.json`;
-- existencia de `generated/openapi.yaml`;
-- existencia de `generated/api-types.d.ts`;
-- JSON OpenAPI parseable con `openapi`, `info` y `paths`;
-- estructura HTML basica en `docs/index.html`.
+- `VERCEL_TOKEN`
+- `VERCEL_ORG_ID`
+- `VERCEL_PROJECT_ID`
 
-Esta validacion es liviana y no reemplaza la validacion profunda de rutas. Cuando se trabaje con los repos fuente disponibles, seguir usando:
+El workflow usa `setup-node` solo para ejecutar Vercel CLI con `npx vercel@latest`; no usa Node para construir la documentacion.
+
+Este deploy no ejecuta generacion ni validacion profunda en CI. Cuando se trabaje con los repos fuente disponibles, seguir usando:
 
 ```bash
 npm run build
