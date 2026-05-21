@@ -441,22 +441,59 @@ export const operationOverrides = {
     responses: Object.fromEntries([jsonResponse('200', 'Listado de solicitudes', 'RegistrationListResponse')]),
   },
   'post /registration-requests/{email}/send-code': {
-    summary: 'Generar OTP para una solicitud',
+    summary: 'Generar OTP para una solicitud (email, phone o ambos)',
+    requestBody: {
+      required: true,
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              channel: { type: 'string', enum: ['email', 'phone', 'both'] },
+            },
+            required: ['channel'],
+          },
+        },
+      },
+    },
     responses: Object.fromEntries([
-      jsonResponse('200', 'OTP generado', 'GenericMessage'),
+      jsonResponse('200', 'OTP generado y notificacion encolada', 'GenericMessage'),
       jsonResponse('404', 'Solicitud no encontrada', 'ErrorResponse'),
       jsonResponse('409', 'Solicitud ya procesada', 'ErrorResponse'),
       jsonResponse('429', 'Rate limit de OTP excedido', 'ErrorResponse'),
     ]),
   },
   'post /registration-requests/{email}/verify': {
-    summary: 'Verificar OTP de una solicitud',
+    summary: 'Verificar OTP y marcar canal como verificado',
     requestBody: jsonRequest('RegistrationVerifyRequest'),
     responses: Object.fromEntries([
       jsonResponse('200', 'Solicitud marcada como verificada', 'GenericMessage'),
       jsonResponse('400', 'Codigo invalido', 'ErrorResponse'),
       jsonResponse('404', 'Solicitud no encontrada', 'ErrorResponse'),
       jsonResponse('409', 'Solicitud ya procesada', 'ErrorResponse'),
+    ]),
+  },
+  'put /registration-requests/{email}/update-contact': {
+    summary: 'Actualizar email o telefono de una solicitud pendiente',
+    requestBody: {
+      required: true,
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              email: { type: 'string', format: 'email' },
+              phone: { type: 'string' },
+            },
+          },
+        },
+      },
+    },
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Contacto actualizado', 'GenericMessage'),
+      jsonResponse('400', 'Payload invalido', 'ErrorResponse'),
+      jsonResponse('404', 'Solicitud no encontrada', 'ErrorResponse'),
+      jsonResponse('409', 'Solicitud no esta en estado PENDING', 'ErrorResponse'),
     ]),
   },
   'get /api/v1/registration-requests': {

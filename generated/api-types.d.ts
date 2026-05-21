@@ -923,7 +923,9 @@ export interface Operations {
   "registration_lambda_post_registration_requests_email_send_code": {
     method: "POST"
     path: "/registration-requests/{email}/send-code"
-    requestBody: undefined
+    requestBody: {
+      channel: "email" | "phone" | "both"
+    }
     responses: {
       "200": GenericMessage
       "404": ErrorResponse

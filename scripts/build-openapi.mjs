@@ -174,6 +174,171 @@ function enrichRoutes(routes) {
 }
 
 function createHtml(spec) {
+  const flows = [
+    {
+      id: 'flujo-registro',
+      title: 'Flujo de Registro de Usuario',
+      description: 'Proceso completo para registrar un nuevo usuario en Importal: desde la solicitud inicial hasta la aprobación y primer acceso.',
+      steps: [
+        {
+          step: 1,
+          actor: 'Usuario',
+          label: 'Crear Solicitud de Registro',
+          method: 'POST',
+          path: '/registration-requests',
+          service: 'registration-lambda',
+          detail: 'El usuario envía sus datos básicos (email, nombre, RUT, teléfono, contraseña, profileType). Para inversores también se requiere comprobante PDF en base64, dirección de despacho y datos de sala/agencia.',
+          body: JSON.stringify({ email: 'usuario@ejemplo.com', name: 'Juan Pérez', rut: '12.345.678-9', phone: '+56912345678', password: 'Password123!', profileType: 'inversor', consentimiento: true, housingType: 'casa', streetAndNumber: 'Av. Ejemplo 123', region: 'Región Metropolitana', comuna: 'Providencia', agency: 'FlowEx', selectedSala: 'aerea', comprobante: '<base64>', comprobanteFileName: 'comprobante.pdf', comprobanteContentType: 'application/pdf' }, null, 2),
+          response: '201 Created — Solicitud guardada en DynamoDB con status: PENDING',
+        },
+        {
+          step: 2,
+          actor: 'Usuario',
+          label: 'Solicitar Código OTP (Email y Teléfono)',
+          method: 'POST',
+          path: '/registration-requests/{email}/send-code',
+          service: 'registration-lambda',
+          detail: 'Se solicita el envío de códigos OTP a ambos canales simultáneamente usando channel: "both". El sistema genera los códigos, los almacena en DynamoDB con TTL y los envía vía SQS al sistema de notificaciones.',
+          body: JSON.stringify({ channel: 'both' }, null, 2),
+          response: '200 OK — { "issuedCodes": [ {"channel": "email", "code": "123456"}, {"channel": "phone", "code": "654321"} ] }',
+        },
+        {
+          step: 3,
+          actor: 'Usuario',
+          label: 'Verificar Código OTP — Email',
+          method: 'POST',
+          path: '/registration-requests/{email}/verify',
+          service: 'registration-lambda',
+          detail: 'El usuario ingresa el código recibido por email. La lambda valida el OTP, lo marca como utilizado y actualiza is_email_verified = true en DynamoDB.',
+          body: JSON.stringify({ code: '123456', channel: 'email' }, null, 2),
+          response: '200 OK — { is_email_verified: true, is_phone_verified: false, is_verified: false }',
+        },
+        {
+          step: 4,
+          actor: 'Usuario',
+          label: 'Verificar Código OTP — Teléfono',
+          method: 'POST',
+          path: '/registration-requests/{email}/verify',
+          service: 'registration-lambda',
+          detail: 'El usuario ingresa el código recibido por SMS/llamada. Una vez verificados ambos canales, is_verified se vuelve true y la solicitud queda lista para aprobación administrativa.',
+          body: JSON.stringify({ code: '654321', channel: 'phone' }, null, 2),
+          response: '200 OK — { is_email_verified: true, is_phone_verified: true, is_verified: true }',
+        },
+        {
+          step: 5,
+          actor: 'Administrador',
+          label: 'Aprobar Solicitud (Admin)',
+          method: 'POST',
+          path: '/api/v1/registration-requests/{email}/approve',
+          service: 'backend',
+          detail: 'Un administrador con JWT válido aprueba la solicitud. El backend valida el estado PENDING y is_verified, crea el usuario en Auth (Importal-auth), persiste el perfil en PostgreSQL, actualiza el estado a APPROVED en DynamoDB y envía email de bienvenida.',
+          body: JSON.stringify({ reviewedBy: 'Administrador', role: 'client' }, null, 2),
+          response: '201 Created — { request: { status: "APPROVED" }, user: { userId: "uuid", role: "client" } }',
+          requiresAuth: true,
+          roles: ['admin', 'root'],
+        },
+        {
+          step: 6,
+          actor: 'Usuario',
+          label: 'Login con credenciales',
+          method: 'POST',
+          path: '/auth/api/v1/auth/login',
+          service: 'auth',
+          detail: 'El usuario puede ahora autenticarse con su email y contraseña. Recibirá un accessToken JWT y un refreshToken para acceder a los endpoints protegidos.',
+          body: JSON.stringify({ email: 'usuario@ejemplo.com', password: 'Password123!' }, null, 2),
+          response: '200 OK — { accessToken: "eyJ...", refreshToken: "eyJ..." }',
+        },
+      ],
+    },
+    {
+      id: 'flujo-ingreso-bodeguero',
+      title: 'Flujo de Registro — Perfil Bodeguero',
+      description: 'Proceso simplificado para registrar un bodeguero. Solo requiere los campos base (sin dirección ni comprobante).',
+      steps: [
+        {
+          step: 1, actor: 'Usuario', label: 'Crear Solicitud (bodeguero)', method: 'POST',
+          path: '/registration-requests', service: 'registration-lambda',
+          detail: 'El bodeguero solo requiere los campos base. La bodega asignada es fija y la asigna automáticamente el sistema al aprobar.',
+          body: JSON.stringify({ email: 'bodeguero@ejemplo.com', name: 'Pedro Bodega', rut: '12.345.678-9', phone: '+56912345678', password: 'Password123!', profileType: 'bodeguero', consentimiento: true }, null, 2),
+          response: '201 Created',
+        },
+        { step: 2, actor: 'Usuario', label: 'Enviar OTP a ambos canales', method: 'POST', path: '/registration-requests/{email}/send-code', service: 'registration-lambda', detail: 'Idéntico al flujo general.', body: JSON.stringify({ channel: 'both' }, null, 2), response: '200 OK' },
+        { step: 3, actor: 'Usuario', label: 'Verificar email y teléfono', method: 'POST', path: '/registration-requests/{email}/verify', service: 'registration-lambda', detail: 'Repetir para channel: email y channel: phone.', body: JSON.stringify({ code: 'XXXXXX', channel: 'email' }, null, 2), response: '200 OK — is_verified: true' },
+        { step: 4, actor: 'Administrador', label: 'Aprobar Solicitud', method: 'POST', path: '/api/v1/registration-requests/{email}/approve', service: 'backend', detail: 'Al aprobar, el bodeguero recibe bodega_asignada = "Av. Porvenir 1285, Casa 98, Lampa" automáticamente.', body: JSON.stringify({ reviewedBy: 'Admin', role: 'client' }, null, 2), response: '201 Created', requiresAuth: true, roles: ['admin', 'root'] },
+      ],
+    },
+    {
+      id: 'flujo-login',
+      title: 'Flujo de Autenticación y Refresh de Token',
+      description: 'Cómo autenticarse, validar el token y renovarlo cuando expira.',
+      steps: [
+        { step: 1, actor: 'Cliente', label: 'Login', method: 'POST', path: '/auth/api/v1/auth/login', service: 'auth', detail: 'Enviar credenciales. El accessToken expira en 1h; el refreshToken en 7d.', body: JSON.stringify({ email: 'usuario@ejemplo.com', password: 'Password123!' }, null, 2), response: '200 OK — { accessToken, refreshToken }' },
+        { step: 2, actor: 'Cliente', label: 'Validar Token (opcional)', method: 'GET', path: '/auth/api/v1/auth/validate', service: 'auth', detail: 'Endpoint usado por el API Gateway para verificar JWT entrantes. Incluir header: Authorization: Bearer <token>.', response: '200 OK — { valid: true }', requiresAuth: true },
+        { step: 3, actor: 'Cliente', label: 'Refresh de Token', method: 'POST', path: '/auth/api/v1/auth/refresh', service: 'auth', detail: 'Cuando el accessToken expira, usar el refreshToken para obtener un nuevo par de tokens sin re-autenticarse.', body: JSON.stringify({ refreshToken: 'eyJ...' }, null, 2), response: '200 OK — { accessToken, refreshToken }' },
+        { step: 4, actor: 'Cliente', label: 'Logout', method: 'POST', path: '/auth/api/v1/auth/logout', service: 'auth', detail: 'Invalida el refreshToken en servidor. El accessToken queda activo hasta que expira por TTL.', requiresAuth: true, response: '200 OK' },
+      ],
+    },
+    {
+      id: 'flujo-pedido-cliente',
+      title: 'Flujo de Pedido — Vista Cliente',
+      description: 'Cómo un cliente navega el catálogo, realiza un pedido y gestiona el pago.',
+      steps: [
+        { step: 1, actor: 'Cliente', label: 'Ver catálogo de productos', method: 'GET', path: '/api/v1/cliente/productos', service: 'backend', detail: 'Lista de productos disponibles para el cliente autenticado.', requiresAuth: true, roles: ['client'], response: '200 OK — ProductArray' },
+        { step: 2, actor: 'Cliente', label: 'Crear pedido', method: 'POST', path: '/api/v1/cliente/pedidos', service: 'backend', detail: 'El cliente crea un pedido seleccionando un producto, cantidad y la carga a la que se asocia.', body: JSON.stringify({ productId: 1, quantity: 2, cargaId: 10 }, null, 2), requiresAuth: true, roles: ['client'], response: '201 Created' },
+        { step: 3, actor: 'Cliente', label: 'Iniciar pago Transbank', method: 'POST', path: '/api/v1/cliente/pagos/transbank/iniciar', service: 'backend', detail: 'Inicia el flujo de pago Transbank. Retorna la URL de redirección y el token de transacción.', body: JSON.stringify({ cobro_id: 5, amount_clp: 150000 }, null, 2), requiresAuth: true, roles: ['client'], response: '201 Created — { url, token }' },
+        { step: 4, actor: 'Cliente', label: 'Confirmar pago Transbank', method: 'POST', path: '/api/v1/cliente/pagos/transbank/confirmar', service: 'backend', detail: 'Una vez redirigido de vuelta, el cliente confirma el pago con el token de Transbank.', body: JSON.stringify({ transaction_id: 'TX123', token: 'abc...' }, null, 2), requiresAuth: true, roles: ['client'], response: '200 OK — Cobro confirmado' },
+      ],
+    },
+  ]
+
+  const serviceColors = {
+    auth: '#7c3aed',
+    backend: '#0369a1',
+    'registration-lambda': '#b45309',
+  }
+  const actorColors = {
+    'Usuario': '#059669',
+    'Cliente': '#0891b2',
+    'Administrador': '#dc2626',
+  }
+  const methodColors = {
+    get: '#16a34a', post: '#0284c7', put: '#d97706', patch: '#7c3aed', delete: '#dc2626',
+  }
+
+  function renderFlowSteps(steps) {
+    return steps.map((s, idx) => `
+      <div class="flow-step">
+        <div class="flow-step-number">${s.step}</div>
+        <div class="flow-step-body">
+          <div class="flow-step-header">
+            <span class="actor-badge" style="background:${actorColors[s.actor] || '#6b7280'}20;color:${actorColors[s.actor] || '#6b7280'}">${s.actor}</span>
+            <span class="method-badge" style="background:${methodColors[s.method.toLowerCase()] || '#6b7280'}15;color:${methodColors[s.method.toLowerCase()] || '#6b7280'}">${s.method.toUpperCase()}</span>
+            <code class="flow-path">${s.path}</code>
+            <span class="service-tag" style="background:${serviceColors[s.service] || '#6b7280'}15;color:${serviceColors[s.service] || '#6b7280'}">${s.service}</span>
+            ${s.requiresAuth ? '<span class="auth-badge">🔐 JWT</span>' : '<span class="public-badge">🌐 Público</span>'}
+          </div>
+          <p class="flow-detail">${s.detail}</p>
+          ${s.body ? `<details class="flow-details"><summary>Ver body de ejemplo</summary><pre>${s.body.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre></details>` : ''}
+          <div class="flow-response">← ${s.response}</div>
+        </div>
+      </div>
+    `).join('')
+  }
+
+  function renderFlows(flows) {
+    return flows.map(flow => `
+      <div class="flow-card" id="${flow.id}">
+        <div class="flow-card-header">
+          <h3>${flow.title}</h3>
+          <p>${flow.description}</p>
+        </div>
+        <div class="flow-steps">
+          ${renderFlowSteps(flow.steps)}
+        </div>
+      </div>
+    `).join('')
+  }
+
   return `<!doctype html>
 <html lang="es">
 <head>
@@ -204,69 +369,97 @@ function createHtml(spec) {
     .hero { margin-bottom: 28px; }
     h1 { font-size: 40px; margin: 0 0 10px; }
     p { margin: 0; color: var(--muted); line-height: 1.6; }
-    .topbar {
-      display: flex; gap: 12px; flex-wrap: wrap; margin-top: 22px;
-    }
+    .topbar { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 22px; align-items: center; }
     input {
       flex: 1 1 280px; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line);
       background: var(--card); font: inherit;
     }
+    .tabs { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+    .tab {
+      padding: 10px 22px; border-radius: 999px; border: 1.5px solid var(--line);
+      background: var(--card); color: var(--ink); cursor: pointer; font: inherit;
+      font-size: 15px; transition: all .15s;
+    }
+    .tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .tab:hover:not(.active) { background: var(--accent-soft); }
     .badge {
       display: inline-flex; align-items: center; padding: 6px 10px; border-radius: 999px;
       background: var(--accent-soft); color: var(--accent); font-size: 12px; letter-spacing: .04em; text-transform: uppercase;
     }
     .section { margin-top: 28px; }
     .service-block {
-      margin-top: 32px;
-      padding: 18px;
-      border: 1px solid var(--line);
-      border-radius: 22px;
-      background: rgba(255, 253, 248, .68);
-      backdrop-filter: blur(6px);
+      margin-top: 32px; padding: 18px; border: 1px solid var(--line); border-radius: 22px;
+      background: rgba(255, 253, 248, .68); backdrop-filter: blur(6px);
     }
-    .service-title {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 16px;
-    }
-    .service-title h2,
-    .role-title h3 {
-      margin: 0;
-    }
+    .service-title { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+    .service-title h2, .role-title h3 { margin: 0; }
     .service-title h2 { font-size: 26px; }
-    .role-block {
-      margin-top: 16px;
-      padding-top: 16px;
-      border-top: 1px dashed var(--line);
-    }
-    .role-block:first-of-type {
-      margin-top: 0;
-      padding-top: 0;
-      border-top: 0;
-    }
-    .role-title {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
+    .role-block { margin-top: 16px; padding-top: 16px; border-top: 1px dashed var(--line); }
+    .role-block:first-of-type { margin-top: 0; padding-top: 0; border-top: 0; }
+    .role-title { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
     .endpoint {
       background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px; margin-bottom: 14px;
       box-shadow: 0 10px 30px rgba(74, 54, 36, .06);
     }
-    .endpoint header {
-      display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px;
-    }
+    .endpoint header { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
     .method { font-weight: 700; min-width: 68px; }
     .path { font-family: Consolas, monospace; background: var(--code); padding: 4px 8px; border-radius: 8px; }
     .meta { color: var(--muted); font-size: 14px; }
     details { margin-top: 10px; }
     summary { cursor: pointer; color: var(--accent); }
     pre {
-      margin: 12px 0 0; padding: 14px; border-radius: 12px; overflow: auto; background: #201814; color: #f9efe3; font-size: 13px;
+      margin: 12px 0 0; padding: 14px; border-radius: 12px; overflow: auto;
+      background: #201814; color: #f9efe3; font-size: 13px;
     }
+    /* Flows */
+    #flows-panel { display: none; }
+    #routes-panel { display: block; }
+    .flow-card {
+      margin-top: 32px; border: 1px solid var(--line); border-radius: 22px;
+      background: rgba(255,253,248,.8); overflow: hidden;
+    }
+    .flow-card-header { padding: 22px 24px 16px; border-bottom: 1px solid var(--line); }
+    .flow-card-header h3 { margin: 0 0 6px; font-size: 22px; }
+    .flow-card-header p { font-size: 15px; }
+    .flow-steps { padding: 16px 24px 24px; display: flex; flex-direction: column; gap: 0; }
+    .flow-step {
+      display: flex; gap: 16px; align-items: flex-start;
+      padding: 16px 0; border-bottom: 1px dashed var(--line);
+    }
+    .flow-step:last-child { border-bottom: 0; }
+    .flow-step-number {
+      flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%;
+      background: var(--accent); color: #fff; display: flex; align-items: center;
+      justify-content: center; font-weight: 700; font-size: 16px; font-family: Georgia, serif;
+      margin-top: 2px;
+    }
+    .flow-step-body { flex: 1; min-width: 0; }
+    .flow-step-header { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .actor-badge, .method-badge, .service-tag, .auth-badge, .public-badge {
+      display: inline-flex; align-items: center; padding: 3px 10px;
+      border-radius: 999px; font-size: 12px; font-weight: 600; white-space: nowrap;
+    }
+    .auth-badge { background: #fef3c7; color: #92400e; }
+    .public-badge { background: #d1fae5; color: #065f46; }
+    .flow-path {
+      font-family: Consolas, monospace; font-size: 13px;
+      background: var(--code); padding: 3px 8px; border-radius: 6px;
+    }
+    .flow-detail { font-size: 14px; color: var(--muted); margin: 0 0 8px; line-height: 1.6; }
+    .flow-response {
+      font-size: 13px; font-family: Consolas, monospace;
+      background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0;
+      padding: 6px 12px; border-radius: 8px; margin-top: 6px;
+    }
+    .flow-details summary { font-size: 13px; color: var(--accent); margin-bottom: 4px; }
+    .flow-details pre { font-size: 12px; max-height: 200px; }
+    .flows-nav { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+    .flow-nav-btn {
+      padding: 8px 16px; border-radius: 10px; border: 1px solid var(--line);
+      background: var(--card); color: var(--ink); cursor: pointer; font: inherit;
+      font-size: 13px; transition: all .15s; text-decoration: none;
+    }
+    .flow-nav-btn:hover { background: var(--accent-soft); }
     @media (max-width: 720px) {
       h1 { font-size: 30px; }
       .wrap { padding: 24px 14px 56px; }
@@ -283,9 +476,28 @@ function createHtml(spec) {
         <input id="search" type="search" placeholder="Buscar por path, tag o metodo" />
       </div>
     </section>
-    <section id="content"></section>
+    <div class="tabs">
+      <button class="tab active" id="tab-routes" onclick="switchTab('routes')">📋 Rutas API</button>
+      <button class="tab" id="tab-flows" onclick="switchTab('flows')">🔄 Flujos</button>
+    </div>
+    <div id="routes-panel">
+      <section id="content"></section>
+    </div>
+    <div id="flows-panel">
+      <div class="flows-nav">
+        ${flows.map(f => `<a class="flow-nav-btn" href="#${f.id}">${f.title}</a>`).join('\n        ')}
+      </div>
+      ${renderFlows(flows)}
+    </div>
   </div>
   <script>
+    function switchTab(tab) {
+      document.getElementById('routes-panel').style.display = tab === 'routes' ? 'block' : 'none';
+      document.getElementById('flows-panel').style.display = tab === 'flows' ? 'block' : 'none';
+      document.getElementById('tab-routes').className = 'tab' + (tab === 'routes' ? ' active' : '');
+      document.getElementById('tab-flows').className = 'tab' + (tab === 'flows' ? ' active' : '');
+      document.getElementById('search').style.display = tab === 'routes' ? '' : 'none';
+    }
     const spec = ${JSON.stringify(spec)};
     const operations = Object.entries(spec.paths).flatMap(([path, methods]) =>
       Object.entries(methods).map(([method, operation]) => ({ path, method, operation }))

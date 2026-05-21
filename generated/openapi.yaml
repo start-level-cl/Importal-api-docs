@@ -2581,13 +2581,28 @@ paths:
           required: true
           schema:
             type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                channel:
+                  enum:
+                    - email
+                    - phone
+                    - both
+                  type: string
+              required:
+                - channel
+              type: object
+        required: true
       responses:
         200:
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/GenericMessage"
-          description: OTP generado
+          description: OTP generado y notificacion encolada
         404:
           content:
             application/json:
@@ -2606,7 +2621,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
           description: Rate limit de OTP excedido
-      summary: Generar OTP para una solicitud
+      summary: "Generar OTP para una solicitud (email, phone o ambos)"
       tags:
         - Registration
       x-role-group: publico
@@ -2652,7 +2667,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
           description: Solicitud ya procesada
-      summary: Verificar OTP de una solicitud
+      summary: Verificar OTP y marcar canal como verificado
       tags:
         - Registration
       x-role-group: publico

@@ -214,8 +214,9 @@ export function extractLambdaRoutes({ repoRoot, serviceRoot }) {
   const routes = [
     { method: 'post', path: '/registration-requests', summary: 'Crear solicitud de registro publica' },
     { method: 'get', path: '/registration-requests', summary: 'Listar solicitudes pendientes para revision' },
-    { method: 'post', path: '/registration-requests/{email}/send-code', summary: 'Generar y enviar OTP' },
-    { method: 'post', path: '/registration-requests/{email}/verify', summary: 'Verificar OTP y marcar solicitud' },
+    { method: 'post', path: '/registration-requests/{email}/send-code', summary: 'Generar y enviar OTP al email o telefono' },
+    { method: 'post', path: '/registration-requests/{email}/verify', summary: 'Verificar OTP y marcar canal como verificado' },
+    { method: 'put', path: '/registration-requests/{email}/update-contact', summary: 'Actualizar email o telefono de una solicitud pendiente' },
   ]
 
   for (const route of routes) {

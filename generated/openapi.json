@@ -3795,6 +3795,29 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "channel": {
+                    "enum": [
+                      "email",
+                      "phone",
+                      "both"
+                    ],
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "channel"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "content": {
@@ -3804,7 +3827,7 @@
                 }
               }
             },
-            "description": "OTP generado"
+            "description": "OTP generado y notificacion encolada"
           },
           "404": {
             "content": {
@@ -3837,7 +3860,7 @@
             "description": "Rate limit de OTP excedido"
           }
         },
-        "summary": "Generar OTP para una solicitud",
+        "summary": "Generar OTP para una solicitud (email, phone o ambos)",
         "tags": [
           "Registration"
         ],
@@ -3911,7 +3934,7 @@
             "description": "Solicitud ya procesada"
           }
         },
-        "summary": "Verificar OTP de una solicitud",
+        "summary": "Verificar OTP y marcar canal como verificado",
         "tags": [
           "Registration"
         ],
