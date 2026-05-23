@@ -3376,6 +3376,30 @@
       "post": {
         "operationId": "backend_post_api_v1_vendedor_pagos_solicitar",
         "parameters": [],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "properties": {
+                  "file": {
+                    "description": "Comprobante de solicitud de pago (imagen/pdf)",
+                    "format": "binary",
+                    "type": "string"
+                  },
+                  "note": {
+                    "description": "Nota o comentario adicional para la solicitud",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "file"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "201": {
             "content": {

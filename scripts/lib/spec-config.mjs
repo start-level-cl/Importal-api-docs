@@ -724,6 +724,21 @@ export const operationOverrides = {
   },
   'post /api/v1/vendedor/pagos/solicitar': {
     summary: 'Solicitar retiro de saldo o pago (Vendedor)',
+    requestBody: {
+      required: true,
+      content: {
+        'multipart/form-data': {
+          schema: {
+            type: 'object',
+            properties: {
+              file: { type: 'string', format: 'binary', description: 'Comprobante de solicitud de pago (imagen/pdf)' },
+              note: { type: 'string', description: 'Nota o comentario adicional para la solicitud' },
+            },
+            required: ['file'],
+          },
+        },
+      },
+    },
     responses: Object.fromEntries([jsonResponse('201', 'Solicitud de pago creada', 'GenericObject')]),
   },
   'get /api/v1/admin/solicitudes-carga': {

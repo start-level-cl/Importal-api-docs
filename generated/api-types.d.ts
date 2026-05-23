@@ -837,7 +837,10 @@ export interface Operations {
   "backend_post_api_v1_vendedor_pagos_solicitar": {
     method: "POST"
     path: "/api/v1/vendedor/pagos/solicitar"
-    requestBody: undefined
+    requestBody: {
+      file: string
+      note?: string
+    }
     responses: {
       "201": GenericObject
     }
