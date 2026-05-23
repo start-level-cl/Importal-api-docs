@@ -361,7 +361,33 @@ export const schemas = {
     ['id', 'message'],
   ),
   ChatMessageArray: { type: 'array', items: { $ref: '#/components/schemas/ChatMessage' } },
-  DashboardSummary: genericObject,
+  DashboardSummary: objectSchema(
+    {
+      clientes_activos: { type: 'integer', description: 'Número de clientes activos no bloqueados' },
+      clientes_en_mora: { type: 'integer', description: 'Número de clientes en mora' },
+      deuda_pendiente_clp: { type: 'integer', description: 'Sumatoria de deudas totales pendientes' },
+      recaudacion_periodo_clp: { type: 'integer', description: 'Recaudación total confirmada para el periodo' },
+      periodo: objectSchema({
+        inicio: { type: 'string', format: 'date-time' },
+        fin: { type: 'string', format: 'date-time' },
+      }, ['inicio', 'fin']),
+      ultimos_morosos: {
+        type: 'array',
+        items: objectSchema(
+          {
+            cobro_id: { type: 'integer' },
+            client_id: { type: 'integer' },
+            client_name: { type: 'string' },
+            client_rut: { type: 'string' },
+            amount_clp: { type: 'integer' },
+            due_date: { type: 'string', format: 'date' },
+          },
+          ['cobro_id', 'client_id', 'client_name', 'client_rut', 'amount_clp', 'due_date'],
+        ),
+      },
+    },
+    ['clientes_activos', 'clientes_en_mora', 'deuda_pendiente_clp', 'recaudacion_periodo_clp', 'periodo', 'ultimos_morosos'],
+  ),
   Cobro: genericObject,
   CobroArray: { type: 'array', items: { $ref: '#/components/schemas/Cobro' } },
   CreateOrderRequest: objectSchema(
@@ -660,6 +686,18 @@ export const operationOverrides = {
   'get /api/v1/admin/cobros': {
     summary: 'Listar todos los cobros del sistema (Admin/Root)',
     responses: Object.fromEntries([jsonResponse('200', 'Listado de cobros', 'GenericObjectArray')]),
+  },
+  'get /api/v1/admin/cobros/pendientes-validacion': {
+    summary: 'Listar cobros que tienen un comprobante subido pendiente de revisión (Admin/Root)',
+    responses: Object.fromEntries([jsonResponse('200', 'Listado de cobros pendientes de validación', 'GenericObjectArray')]),
+  },
+  'get /api/v1/admin/dashboard': {
+    summary: 'Obtener métricas consolidadas del dashboard administrativo y últimos morosos (Admin/Root)',
+    parameters: [
+      { name: 'startDate', in: 'query', required: false, schema: { type: 'string', format: 'date-time' }, description: 'Fecha de inicio del periodo de recaudación' },
+      { name: 'endDate', in: 'query', required: false, schema: { type: 'string', format: 'date-time' }, description: 'Fecha de fin del periodo de recaudación' },
+    ],
+    responses: Object.fromEntries([jsonResponse('200', 'Métricas del dashboard', 'DashboardSummary')]),
   },
   'post /api/v1/admin/cobros/{id}/confirmar': {
     summary: 'Confirmar o rechazar un cobro manual tras revisar el comprobante (Admin/Root)',

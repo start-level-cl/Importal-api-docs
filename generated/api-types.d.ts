@@ -67,7 +67,22 @@ export type CreateProductRequest = {
 }
 
 export type DashboardSummary = {
-  [key: string]: unknown
+  clientes_activos: number
+  clientes_en_mora: number
+  deuda_pendiente_clp: number
+  periodo: {
+    fin: string
+    inicio: string
+  }
+  recaudacion_periodo_clp: number
+  ultimos_morosos: ({
+    amount_clp: number
+    client_id: number
+    client_name: string
+    client_rut: string
+    cobro_id: number
+    due_date: string
+  })[]
 }
 
 export type ErrorResponse = {
@@ -386,7 +401,7 @@ export interface Operations {
     path: "/api/v1/admin/dashboard"
     requestBody: undefined
     responses: {
-      "200": GenericObject
+      "200": DashboardSummary
     }
   }
   "backend_get_api_v1_admin_exceptions": {

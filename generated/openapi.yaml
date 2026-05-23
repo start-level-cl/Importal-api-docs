@@ -146,7 +146,66 @@ components:
         - price_usd
       type: object
     DashboardSummary:
-      additionalProperties: true
+      additionalProperties: false
+      properties:
+        clientes_activos:
+          description: Número de clientes activos no bloqueados
+          type: integer
+        clientes_en_mora:
+          description: Número de clientes en mora
+          type: integer
+        deuda_pendiente_clp:
+          description: Sumatoria de deudas totales pendientes
+          type: integer
+        periodo:
+          additionalProperties: false
+          properties:
+            fin:
+              format: "date-time"
+              type: string
+            inicio:
+              format: "date-time"
+              type: string
+          required:
+            - inicio
+            - fin
+          type: object
+        recaudacion_periodo_clp:
+          description: Recaudación total confirmada para el periodo
+          type: integer
+        ultimos_morosos:
+          items:
+            additionalProperties: false
+            properties:
+              amount_clp:
+                type: integer
+              client_id:
+                type: integer
+              client_name:
+                type: string
+              client_rut:
+                type: string
+              cobro_id:
+                type: integer
+              due_date:
+                format: date
+                type: string
+            required:
+              - cobro_id
+              - client_id
+              - client_name
+              - client_rut
+              - amount_clp
+              - due_date
+            type: object
+          type: array
+      required:
+        - clientes_activos
+        - clientes_en_mora
+        - deuda_pendiente_clp
+        - recaudacion_periodo_clp
+        - periodo
+        - ultimos_morosos
       type: object
     ErrorResponse:
       additionalProperties: false
@@ -1002,18 +1061,31 @@ paths:
     get:
       operationId: backend_get_api_v1_admin_dashboard
       parameters:
-[]
+        -           description: Fecha de inicio del periodo de recaudación
+          in: query
+          name: startDate
+          required: false
+          schema:
+            format: "date-time"
+            type: string
+        -           description: Fecha de fin del periodo de recaudación
+          in: query
+          name: endDate
+          required: false
+          schema:
+            format: "date-time"
+            type: string
       responses:
         200:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericObject"
-          description: Operacion exitosa
+                $ref: "#/components/schemas/DashboardSummary"
+          description: Métricas del dashboard
       security:
         -           bearerAuth:
 []
-      summary: getDashboard
+      summary: Obtener métricas consolidadas del dashboard administrativo y últimos morosos (Admin/Root)
       tags:
         - Admin
       x-role-group: admin
