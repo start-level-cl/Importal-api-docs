@@ -82,6 +82,14 @@ export const schemas = {
     ['accessToken', 'refreshToken'],
   ),
   ValidateResponse: objectSchema({ valid: { type: 'boolean' } }, ['valid']),
+  ChangePasswordRequest: objectSchema(
+    {
+      token: { type: 'string', description: 'JWT de acceso del usuario' },
+      password: { type: 'string', minLength: 1, description: 'Clave actual del usuario' },
+      newPassword: { type: 'string', minLength: 6, description: 'Nueva clave para la cuenta' },
+    },
+    ['token', 'password', 'newPassword'],
+  ),
   RegisterUserRequest: objectSchema(
     {
       name: { type: 'string' },
@@ -137,13 +145,20 @@ export const schemas = {
               phone: { type: 'string' },
               password: { type: 'string' },
               consentimiento: { type: 'boolean' },
-              profileType: { const: 'cliente', type: 'string' },
-              transporte: { type: 'array', items: stringEnum(['maritimo', 'aereo']) },
-              comprobante: { type: 'string', description: 'Archivo en base64 opcional' },
+              profileType: { const: 'inversor', type: 'string' },
+              housingType: stringEnum(['casa', 'departamento', 'oficina']),
+              streetAndNumber: { type: 'string' },
+              deptOrOffice: { type: 'string' },
+              region: { type: 'string' },
+              comuna: { type: 'string' },
+              reference: { type: 'string', maxLength: 120 },
+              agency: { type: 'string' },
+              transportType: { type: 'array', items: stringEnum(['maritimo', 'aereo']) },
+              comprobante: { type: 'string', description: 'Archivo PDF/Imagen en Base64 (max 5MB)' },
               comprobanteFileName: { type: 'string' },
               comprobanteContentType: { type: 'string' },
             },
-            ['email', 'name', 'rut', 'phone', 'password', 'consentimiento', 'profileType', 'transporte'],
+            ['email', 'name', 'rut', 'phone', 'password', 'consentimiento', 'profileType', 'housingType', 'streetAndNumber', 'region', 'comuna', 'agency', 'transportType', 'comprobante', 'comprobanteFileName'],
           ),
         ],
       },
@@ -157,12 +172,17 @@ export const schemas = {
               phone: { type: 'string' },
               password: { type: 'string' },
               consentimiento: { type: 'boolean' },
-              profileType: { const: 'proveedor', type: 'string' },
-              transporte: { type: 'array', items: stringEnum(['maritimo', 'aereo']) },
-              pais: { type: 'string' },
-              ciudad: { type: 'string' },
+              profileType: stringEnum(['cliente_antiguo', 'cliente']),
+              housingType: stringEnum(['casa', 'departamento', 'oficina']),
+              streetAndNumber: { type: 'string' },
+              deptOrOffice: { type: 'string' },
+              region: { type: 'string' },
+              comuna: { type: 'string' },
+              reference: { type: 'string', maxLength: 120 },
+              agency: { type: 'string' },
+              transportType: { type: 'array', items: stringEnum(['maritimo', 'aereo']) },
             },
-            ['email', 'name', 'rut', 'phone', 'password', 'consentimiento', 'profileType', 'transporte', 'pais', 'ciudad'],
+            ['email', 'name', 'rut', 'phone', 'password', 'consentimiento', 'profileType', 'housingType', 'streetAndNumber', 'region', 'comuna', 'agency', 'transportType'],
           ),
         ],
       },
@@ -176,10 +196,31 @@ export const schemas = {
               phone: { type: 'string' },
               password: { type: 'string' },
               consentimiento: { type: 'boolean' },
-              profileType: { const: 'bodequero', type: 'string' },
-              bodega: { type: 'string' },
+              profileType: stringEnum(['proveedor', 'vendedor']),
+              city: { type: 'string' },
+              transportType: { type: 'array', items: stringEnum(['maritimo', 'aereo']) },
+              address: { type: 'string' },
+              pickupCity: { type: 'string' },
+              pickupState: { type: 'string' },
+              zipCode: { type: 'string' },
             },
-            ['email', 'name', 'rut', 'phone', 'password', 'consentimiento', 'profileType', 'bodega'],
+            ['email', 'name', 'rut', 'phone', 'password', 'consentimiento', 'profileType', 'city', 'transportType', 'address', 'pickupCity', 'pickupState', 'zipCode'],
+          ),
+        ],
+      },
+      {
+        allOf: [
+          objectSchema(
+            {
+              email: { type: 'string', format: 'email' },
+              name: { type: 'string' },
+              rut: { type: 'string' },
+              phone: { type: 'string' },
+              password: { type: 'string' },
+              consentimiento: { type: 'boolean' },
+              profileType: stringEnum(['bodeguero', 'bedeguero']),
+            },
+            ['email', 'name', 'rut', 'phone', 'password', 'consentimiento', 'profileType'],
           ),
         ],
       },
@@ -191,17 +232,28 @@ export const schemas = {
       name: { type: 'string' },
       rut: { type: 'string' },
       phone: { type: 'string' },
-      profileType: stringEnum(['cliente', 'proveedor', 'bodeguero']),
+      profileType: stringEnum(['inversor', 'cliente_antiguo', 'cliente', 'proveedor', 'vendedor', 'bodeguero', 'bedeguero']),
       status: stringEnum(['PENDING', 'APPROVED', 'REJECTED']),
       is_verified: { type: 'boolean' },
+      is_email_verified: { type: 'boolean' },
+      is_phone_verified: { type: 'boolean' },
       consentimiento: { type: 'boolean' },
       requestedAt: { type: 'string', format: 'date-time' },
       reviewedBy: { type: 'string' },
       notes: { type: 'string' },
-      transporte: { type: 'array', items: stringEnum(['maritimo', 'aereo']) },
-      pais: { type: 'string' },
-      ciudad: { type: 'string' },
-      bodega: { type: 'string' },
+      transportType: { type: 'array', items: stringEnum(['maritimo', 'aereo']) },
+      housingType: stringEnum(['casa', 'departamento', 'oficina']),
+      streetAndNumber: { type: 'string' },
+      deptOrOffice: { type: 'string' },
+      region: { type: 'string' },
+      comuna: { type: 'string' },
+      reference: { type: 'string' },
+      agency: { type: 'string' },
+      city: { type: 'string' },
+      address: { type: 'string' },
+      pickupCity: { type: 'string' },
+      pickupState: { type: 'string' },
+      zipCode: { type: 'string' },
       comprobanteKey: { type: 'string' },
     },
     ['email', 'name', 'rut', 'phone', 'profileType', 'status', 'requestedAt'],
@@ -236,7 +288,10 @@ export const schemas = {
     },
     ['request', 'user'],
   ),
-  RegistrationVerifyRequest: objectSchema({ code: { type: 'string' } }, ['code']),
+  RegistrationVerifyRequest: objectSchema({
+    code: { type: 'string' },
+    channel: stringEnum(['email', 'phone']),
+  }, ['code']),
   CreateAdminRequest: objectSchema(
     {
       name: { type: 'string' },
@@ -313,11 +368,19 @@ export const schemas = {
     {
       productId: { type: 'integer' },
       quantity: { type: 'integer' },
+      talla: { type: 'string' },
       cargaId: { type: 'integer' },
     },
-    ['productId', 'quantity', 'cargaId'],
+    ['productId', 'quantity', 'talla'],
   ),
   UpdateOrderStatusRequest: objectSchema({ status: { type: 'string' } }, ['status']),
+  UpdateOrderShippingRequest: objectSchema(
+    {
+      can_ship: { type: 'boolean' },
+      seller_order_number: { type: 'string' },
+    },
+    ['can_ship'],
+  ),
   CreateCargaRequest: objectSchema({ tipo_carga: stringEnum(['AEREA', 'MARITIMA']) }, ['tipo_carga']),
   UpdateCargaStatusRequest: objectSchema(
     {
@@ -340,7 +403,10 @@ export const schemas = {
     },
     ['transaction_id', 'token'],
   ),
-  ConfirmCobroRequest: objectSchema({ approved: { type: 'boolean' } }),
+  ConfirmCobroRequest: objectSchema({
+    approved: { type: 'boolean' },
+    admin_comment: { type: 'string' },
+  }),
   UpdateCommissionTierRequest: objectSchema(
     {
       id: { type: 'integer' },
@@ -395,6 +461,14 @@ export const operationOverrides = {
     responses: Object.fromEntries([
       jsonResponse('200', 'Login exitoso', 'LoginResponse'),
       jsonResponse('401', 'Credenciales invalidas', 'ErrorResponse'),
+    ]),
+  },
+  'post /auth/api/v1/auth/change-password': {
+    summary: 'Actualizar clave de usuario autenticado',
+    requestBody: jsonRequest('ChangePasswordRequest'),
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Clave actualizada exitosamente', 'GenericMessage'),
+      jsonResponse('401', 'Token invalido o clave actual incorrecta', 'ErrorResponse'),
     ]),
   },
   'get /auth/api/v1/auth/validate': {
@@ -551,15 +625,25 @@ export const operationOverrides = {
     responses: Object.fromEntries([jsonResponse('200', 'Producto actualizado', 'Product')]),
   },
   'delete /api/v1/vendedor/productos/{id}': {
+    summary: 'Inactivar un producto del catálogo (Vendedor/Admin/Root)',
     responses: Object.fromEntries([jsonResponse('200', 'Producto inactivado', 'GenericObject')]),
   },
   'post /api/v1/cliente/pedidos': {
     requestBody: jsonRequest('CreateOrderRequest'),
-    responses: Object.fromEntries([jsonResponse('201', 'Pedido creado', 'GenericObject')]),
+    responses: Object.fromEntries([jsonResponse('201', 'Pedido creado con reserva de stock inmediata', 'GenericObject')]),
   },
   'put /api/v1/vendedor/pedidos/{id}/estado': {
     requestBody: jsonRequest('UpdateOrderStatusRequest'),
-    responses: Object.fromEntries([jsonResponse('200', 'Estado de pedido actualizado', 'GenericObject')]),
+    responses: Object.fromEntries([jsonResponse('200', 'Estado de pedido actualizado. Si se cancela/rechaza se libera el stock.', 'GenericObject')]),
+  },
+  'post /api/v1/vendedor/pedidos/{id}/confirmar': {
+    summary: 'Confirmar pedido y efectuar descuento final de stock (Vendedor)',
+    responses: Object.fromEntries([jsonResponse('200', 'Pedido confirmado', 'GenericObject')]),
+  },
+  'put /api/v1/vendedor/pedidos/{id}/envio': {
+    summary: 'Actualizar flag de envío y número de seguimiento del vendedor (Vendedor)',
+    requestBody: jsonRequest('UpdateOrderShippingRequest'),
+    responses: Object.fromEntries([jsonResponse('200', 'Datos de envío actualizados', 'GenericObject')]),
   },
   'post /api/v1/admin/cargas': {
     requestBody: jsonRequest('CreateCargaRequest'),
@@ -573,17 +657,112 @@ export const operationOverrides = {
     requestBody: jsonRequest('UpdateOrderStatusRequest'),
     responses: Object.fromEntries([jsonResponse('200', 'Tracking actualizado', 'GenericOk')]),
   },
+  'get /api/v1/admin/cobros': {
+    summary: 'Listar todos los cobros del sistema (Admin/Root)',
+    responses: Object.fromEntries([jsonResponse('200', 'Listado de cobros', 'GenericObjectArray')]),
+  },
   'post /api/v1/admin/cobros/{id}/confirmar': {
+    summary: 'Confirmar o rechazar un cobro manual tras revisar el comprobante (Admin/Root)',
     requestBody: jsonRequest('ConfirmCobroRequest'),
     responses: Object.fromEntries([jsonResponse('200', 'Cobro confirmado', 'GenericObject')]),
   },
+  'get /api/v1/admin/tarifas/comisiones': {
+    summary: 'Obtener lista de comisiones configuradas (Admin/Root)',
+    responses: Object.fromEntries([jsonResponse('200', 'Comisiones configuradas', 'GenericObjectArray')]),
+  },
   'put /api/v1/admin/tarifas/comisiones': {
+    summary: 'Actualizar porcentaje de comisión de un nivel (Admin/Root)',
     requestBody: jsonRequest('UpdateCommissionTierRequest'),
     responses: Object.fromEntries([jsonResponse('200', 'Comision actualizada', 'GenericObject')]),
   },
+  'get /api/v1/admin/tarifas/logisticas': {
+    summary: 'Obtener lista de tarifas logísticas configuradas (Admin/Root)',
+    responses: Object.fromEntries([jsonResponse('200', 'Tarifas logísticas configuradas', 'GenericObjectArray')]),
+  },
   'put /api/v1/admin/tarifas/logisticas': {
+    summary: 'Actualizar valor de tarifa logística (Admin/Root)',
     requestBody: jsonRequest('UpdateLogisticsRateRequest'),
     responses: Object.fromEntries([jsonResponse('200', 'Tarifa actualizada', 'GenericObject')]),
+  },
+  'get /api/v1/cliente/cobros': {
+    summary: 'Obtener cobros pendientes y facturados del cliente autenticado',
+    responses: Object.fromEntries([jsonResponse('200', 'Cobros del cliente', 'GenericObjectArray')]),
+  },
+  'get /api/v1/cliente/cobros/{id}/pdf': {
+    summary: 'Obtener PDF representativo de un cobro facturado',
+    responses: Object.fromEntries([jsonResponse('200', 'Archivo PDF en base64 o metadatos de descarga', 'GenericObject')]),
+  },
+  'get /api/v1/cliente/estado-mora': {
+    summary: 'Obtener estado e historial de moras del cliente autenticado',
+    responses: Object.fromEntries([jsonResponse('200', 'Estado de mora', 'GenericObject')]),
+  },
+  'get /api/v1/cliente/cobros/pagados': {
+    summary: 'Obtener historial de cobros pagados del cliente',
+    responses: Object.fromEntries([jsonResponse('200', 'Cobros pagados', 'GenericObjectArray')]),
+  },
+  'post /api/v1/cliente/cobros/{id}/pagar': {
+    summary: 'Subir comprobante de pago para un cobro (Multipart File)',
+    requestBody: {
+      required: true,
+      content: {
+        'multipart/form-data': {
+          schema: {
+            type: 'object',
+            properties: {
+              file: { type: 'string', format: 'binary', description: 'Comprobante de pago (imagen/pdf)' },
+            },
+            required: ['file'],
+          },
+        },
+      },
+    },
+    responses: Object.fromEntries([jsonResponse('200', 'Comprobante subido, cobro en revisión', 'GenericObject')]),
+  },
+  'post /api/v1/admin/cobros/trigger': {
+    summary: 'Gatillar manualmente generación de cobros del periodo y cálculo de intereses de mora (Admin/Root)',
+    responses: Object.fromEntries([jsonResponse('200', 'Gatillado de facturación exitoso', 'GenericObject')]),
+  },
+  'post /api/v1/vendedor/pagos/solicitar': {
+    summary: 'Solicitar retiro de saldo o pago (Vendedor)',
+    responses: Object.fromEntries([jsonResponse('201', 'Solicitud de pago creada', 'GenericObject')]),
+  },
+  'get /api/v1/admin/solicitudes-carga': {
+    summary: 'Listar solicitudes de tránsito de carga pendientes de aprobación (Admin/Root)',
+    responses: Object.fromEntries([jsonResponse('200', 'Solicitudes de tránsito', 'GenericObjectArray')]),
+  },
+  'post /api/v1/admin/solicitudes-carga/{id}/aprobar': {
+    summary: 'Aprobar una solicitud de tránsito y asignarle carga (Admin/Root)',
+    responses: Object.fromEntries([jsonResponse('200', 'Solicitud de tránsito aprobada', 'GenericObject')]),
+  },
+  'post /api/v1/admin/solicitudes-carga/{id}/rechazar': {
+    summary: 'Rechazar una solicitud de tránsito de carga (Admin/Root)',
+    responses: Object.fromEntries([jsonResponse('200', 'Solicitud de tránsito rechazada', 'GenericObject')]),
+  },
+  'get /api/v1/bodeguero/cargas': {
+    summary: 'Listar cargas asignadas a la bodega del bodeguero autenticado',
+    responses: Object.fromEntries([jsonResponse('200', 'Cargas de bodega', 'GenericObjectArray')]),
+  },
+  'post /api/v1/vendedor/solicitudes-carga': {
+    summary: 'Crear una nueva solicitud de tránsito de carga (Vendedor)',
+    requestBody: jsonRequest('CreateCargaRequest'),
+    responses: Object.fromEntries([jsonResponse('201', 'Solicitud de tránsito creada', 'GenericObject')]),
+  },
+  'get /api/v1/vendedor/solicitudes-carga': {
+    summary: 'Listar solicitudes de tránsito de carga del vendedor autenticado',
+    responses: Object.fromEntries([jsonResponse('200', 'Solicitudes de tránsito del vendedor', 'GenericObjectArray')]),
+  },
+  'post /api/v1/vendedor/cargas/transicion-cierre': {
+    summary: 'Solicitar transición/cierre de carga por ventanas temporales o salida anticipada (Vendedor)',
+    requestBody: jsonRequest('CreateCargaRequest'),
+    responses: Object.fromEntries([jsonResponse('200', 'Transición procesada', 'GenericObject')]),
+  },
+  'get /api/v1/bodeguero/pedidos': {
+    summary: 'Listar todos los pedidos para la bodega (Bodeguero/Admin/Root)',
+    responses: Object.fromEntries([jsonResponse('200', 'Pedidos de bodega', 'GenericObjectArray')]),
+  },
+  'get /api/v1/bodeguero/pedidos/{id}/auditoria': {
+    summary: 'Consultar el historial de auditoría y transiciones de un pedido (Bodeguero/Admin/Root)',
+    responses: Object.fromEntries([jsonResponse('200', 'Historial de auditoría', 'GenericObjectArray')]),
   },
   'post /api/v1/cliente/pagos/transbank/iniciar': {
     requestBody: jsonRequest('InitiateTransbankRequest'),

@@ -1,5 +1,24 @@
 components:
   schemas:
+    ChangePasswordRequest:
+      additionalProperties: false
+      properties:
+        newPassword:
+          description: Nueva clave para la cuenta
+          minLength: 6
+          type: string
+        password:
+          description: Clave actual del usuario
+          minLength: 1
+          type: string
+        token:
+          description: JWT de acceso del usuario
+          type: string
+      required:
+        - token
+        - password
+        - newPassword
+      type: object
     Chat:
       additionalProperties: false
       properties:
@@ -48,6 +67,8 @@ components:
     ConfirmCobroRequest:
       additionalProperties: false
       properties:
+        admin_comment:
+          type: string
         approved:
           type: boolean
       type: object
@@ -100,10 +121,12 @@ components:
           type: integer
         quantity:
           type: integer
+        talla:
+          type: string
       required:
         - productId
         - quantity
-        - cargaId
+        - talla
       type: object
     CreateProductRequest:
       additionalProperties: false
@@ -350,32 +373,58 @@ components:
     RegistrationRequest:
       additionalProperties: false
       properties:
-        bodega:
+        address:
           type: string
-        ciudad:
+        agency:
+          type: string
+        city:
           type: string
         comprobanteKey:
           type: string
+        comuna:
+          type: string
         consentimiento:
           type: boolean
+        deptOrOffice:
+          type: string
         email:
           format: email
           type: string
+        housingType:
+          enum:
+            - casa
+            - departamento
+            - oficina
+          type: string
+        is_email_verified:
+          type: boolean
+        is_phone_verified:
+          type: boolean
         is_verified:
           type: boolean
         name:
           type: string
         notes:
           type: string
-        pais:
-          type: string
         phone:
+          type: string
+        pickupCity:
+          type: string
+        pickupState:
           type: string
         profileType:
           enum:
+            - inversor
+            - cliente_antiguo
             - cliente
             - proveedor
+            - vendedor
             - bodeguero
+            - bedeguero
+          type: string
+        reference:
+          type: string
+        region:
           type: string
         requestedAt:
           format: "date-time"
@@ -390,13 +439,17 @@ components:
             - APPROVED
             - REJECTED
           type: string
-        transporte:
+        streetAndNumber:
+          type: string
+        transportType:
           items:
             enum:
               - maritimo
               - aereo
             type: string
           type: array
+        zipCode:
+          type: string
       required:
         - email
         - name
@@ -411,17 +464,29 @@ components:
         -           allOf:
             -               additionalProperties: false
               properties:
+                agency:
+                  type: string
                 comprobante:
-                  description: Archivo en base64 opcional
+                  description: Archivo PDF/Imagen en Base64 (max 5MB)
                   type: string
                 comprobanteContentType:
                   type: string
                 comprobanteFileName:
                   type: string
+                comuna:
+                  type: string
                 consentimiento:
                   type: boolean
+                deptOrOffice:
+                  type: string
                 email:
                   format: email
+                  type: string
+                housingType:
+                  enum:
+                    - casa
+                    - departamento
+                    - oficina
                   type: string
                 name:
                   type: string
@@ -430,11 +495,18 @@ components:
                 phone:
                   type: string
                 profileType:
-                  const: cliente
+                  const: inversor
+                  type: string
+                reference:
+                  maxLength: 120
+                  type: string
+                region:
                   type: string
                 rut:
                   type: string
-                transporte:
+                streetAndNumber:
+                  type: string
+                transportType:
                   items:
                     enum:
                       - maritimo
@@ -449,32 +521,56 @@ components:
                 - password
                 - consentimiento
                 - profileType
-                - transporte
+                - housingType
+                - streetAndNumber
+                - region
+                - comuna
+                - agency
+                - transportType
+                - comprobante
+                - comprobanteFileName
               type: object
         -           allOf:
             -               additionalProperties: false
               properties:
-                ciudad:
+                agency:
+                  type: string
+                comuna:
                   type: string
                 consentimiento:
                   type: boolean
+                deptOrOffice:
+                  type: string
                 email:
                   format: email
                   type: string
-                name:
+                housingType:
+                  enum:
+                    - casa
+                    - departamento
+                    - oficina
                   type: string
-                pais:
+                name:
                   type: string
                 password:
                   type: string
                 phone:
                   type: string
                 profileType:
-                  const: proveedor
+                  enum:
+                    - cliente_antiguo
+                    - cliente
+                  type: string
+                reference:
+                  maxLength: 120
+                  type: string
+                region:
                   type: string
                 rut:
                   type: string
-                transporte:
+                streetAndNumber:
+                  type: string
+                transportType:
                   items:
                     enum:
                       - maritimo
@@ -489,14 +585,19 @@ components:
                 - password
                 - consentimiento
                 - profileType
-                - transporte
-                - pais
-                - ciudad
+                - housingType
+                - streetAndNumber
+                - region
+                - comuna
+                - agency
+                - transportType
               type: object
         -           allOf:
             -               additionalProperties: false
               properties:
-                bodega:
+                address:
+                  type: string
+                city:
                   type: string
                 consentimiento:
                   type: boolean
@@ -509,8 +610,59 @@ components:
                   type: string
                 phone:
                   type: string
+                pickupCity:
+                  type: string
+                pickupState:
+                  type: string
                 profileType:
-                  const: bodequero
+                  enum:
+                    - proveedor
+                    - vendedor
+                  type: string
+                rut:
+                  type: string
+                transportType:
+                  items:
+                    enum:
+                      - maritimo
+                      - aereo
+                    type: string
+                  type: array
+                zipCode:
+                  type: string
+              required:
+                - email
+                - name
+                - rut
+                - phone
+                - password
+                - consentimiento
+                - profileType
+                - city
+                - transportType
+                - address
+                - pickupCity
+                - pickupState
+                - zipCode
+              type: object
+        -           allOf:
+            -               additionalProperties: false
+              properties:
+                consentimiento:
+                  type: boolean
+                email:
+                  format: email
+                  type: string
+                name:
+                  type: string
+                password:
+                  type: string
+                phone:
+                  type: string
+                profileType:
+                  enum:
+                    - bodeguero
+                    - bedeguero
                   type: string
                 rut:
                   type: string
@@ -522,11 +674,15 @@ components:
                 - password
                 - consentimiento
                 - profileType
-                - bodega
               type: object
     RegistrationVerifyRequest:
       additionalProperties: false
       properties:
+        channel:
+          enum:
+            - email
+            - phone
+          type: string
         code:
           type: string
       required:
@@ -585,6 +741,16 @@ components:
       required:
         - id
         - rate_value
+      type: object
+    UpdateOrderShippingRequest:
+      additionalProperties: false
+      properties:
+        can_ship:
+          type: boolean
+        seller_order_number:
+          type: string
+      required:
+        - can_ship
       type: object
     UpdateOrderStatusRequest:
       additionalProperties: false
@@ -790,12 +956,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericObject"
-          description: Operacion exitosa
+                $ref: "#/components/schemas/GenericObjectArray"
+          description: Listado de cobros
       security:
         -           bearerAuth:
 []
-      summary: getAllCobros
+      summary: Listar todos los cobros del sistema (Admin/Root)
       tags:
         - Billing
       x-role-group: admin
@@ -826,7 +992,7 @@ paths:
       security:
         -           bearerAuth:
 []
-      summary: confirmCobro
+      summary: Confirmar o rechazar un cobro manual tras revisar el comprobante (Admin/Root)
       tags:
         - Billing
       x-role-group: admin
@@ -1245,12 +1411,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericObject"
-          description: Operacion exitosa
+                $ref: "#/components/schemas/GenericObjectArray"
+          description: Comisiones configuradas
       security:
         -           bearerAuth:
 []
-      summary: getCommissions
+      summary: Obtener lista de comisiones configuradas (Admin/Root)
       tags:
         - Billing
       x-role-group: admin
@@ -1276,7 +1442,7 @@ paths:
       security:
         -           bearerAuth:
 []
-      summary: updateCommission
+      summary: Actualizar porcentaje de comisión de un nivel (Admin/Root)
       tags:
         - Billing
       x-role-group: admin
@@ -1292,12 +1458,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericObject"
-          description: Operacion exitosa
+                $ref: "#/components/schemas/GenericObjectArray"
+          description: Tarifas logísticas configuradas
       security:
         -           bearerAuth:
 []
-      summary: getLogisticsRates
+      summary: Obtener lista de tarifas logísticas configuradas (Admin/Root)
       tags:
         - Billing
       x-role-group: admin
@@ -1323,7 +1489,7 @@ paths:
       security:
         -           bearerAuth:
 []
-      summary: updateLogisticsRate
+      summary: Actualizar valor de tarifa logística (Admin/Root)
       tags:
         - Billing
       x-role-group: admin
@@ -1546,12 +1712,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericObject"
-          description: Operacion exitosa
+                $ref: "#/components/schemas/GenericObjectArray"
+          description: Cargas de bodega
       security:
         -           bearerAuth:
 []
-      summary: getBodegaCargas
+      summary: Listar cargas asignadas a la bodega del bodeguero autenticado
       tags:
         - Orders
       x-role-group: bodeguero
@@ -1598,12 +1764,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericObject"
-          description: Operacion exitosa
+                $ref: "#/components/schemas/GenericObjectArray"
+          description: Pedidos de bodega
       security:
         -           bearerAuth:
 []
-      summary: getBodegaOrders
+      summary: Listar todos los pedidos para la bodega (Bodeguero/Admin/Root)
       tags:
         - Orders
       x-role-group: bodeguero
@@ -1623,12 +1789,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericObject"
-          description: Operacion exitosa
+                $ref: "#/components/schemas/GenericObjectArray"
+          description: Historial de auditoría
       security:
         -           bearerAuth:
 []
-      summary: getOrderAudit
+      summary: Consultar el historial de auditoría y transiciones de un pedido (Bodeguero/Admin/Root)
       tags:
         - Orders
       x-role-group: bodeguero
@@ -1717,12 +1883,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericObject"
-          description: Operacion exitosa
+                $ref: "#/components/schemas/GenericObjectArray"
+          description: Cobros del cliente
       security:
         -           bearerAuth:
 []
-      summary: getClientCobros
+      summary: Obtener cobros pendientes y facturados del cliente autenticado
       tags:
         - Billing
       x-role-group: cliente
@@ -1743,11 +1909,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GenericObject"
-          description: Operacion exitosa
+          description: Archivo PDF en base64 o metadatos de descarga
       security:
         -           bearerAuth:
 []
-      summary: getCobroPdf
+      summary: Obtener PDF representativo de un cobro facturado
       tags:
         - Billing
       x-role-group: cliente
@@ -1785,11 +1951,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GenericObject"
-          description: Operacion exitosa
+          description: Estado de mora
       security:
         -           bearerAuth:
 []
-      summary: getMoraStatus
+      summary: Obtener estado e historial de moras del cliente autenticado
       tags:
         - Billing
       x-role-group: cliente
@@ -1932,7 +2098,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GenericObject"
-          description: Pedido creado
+          description: Pedido creado con reserva de stock inmediata
       security:
         -           bearerAuth:
 []
@@ -2149,16 +2315,16 @@ paths:
       parameters:
 []
       responses:
-        200:
+        201:
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/GenericObject"
-          description: Operacion exitosa
+          description: Solicitud de pago creada
       security:
         -           bearerAuth:
 []
-      summary: requestPayment
+      summary: Solicitar retiro de saldo o pago (Vendedor)
       tags:
         - Billing
       x-role-group: vendedor
@@ -2206,7 +2372,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GenericObject"
-          description: Estado de pedido actualizado
+          description: Estado de pedido actualizado. Si se cancela/rechaza se libera el stock.
       security:
         -           bearerAuth:
 []
@@ -2282,7 +2448,7 @@ paths:
       security:
         -           bearerAuth:
 []
-      summary: deleteProduct
+      summary: Inactivar un producto del catálogo (Vendedor/Admin/Root)
       tags:
         - Orders
       x-role-group: vendedor
