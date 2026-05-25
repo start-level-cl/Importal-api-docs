@@ -163,6 +163,11 @@
       },
       "CreateOrderRequest": {
         "additionalProperties": false,
+        "example": {
+          "productId": 2,
+          "quantity": 1,
+          "talla": "128GB"
+        },
         "properties": {
           "cargaId": {
             "type": "integer"

@@ -390,15 +390,22 @@ export const schemas = {
   ),
   Cobro: genericObject,
   CobroArray: { type: 'array', items: { $ref: '#/components/schemas/Cobro' } },
-  CreateOrderRequest: objectSchema(
-    {
-      productId: { type: 'integer' },
-      quantity: { type: 'integer' },
-      talla: { type: 'string' },
-      cargaId: { type: 'integer' },
+  CreateOrderRequest: {
+    ...objectSchema(
+      {
+        productId: { type: 'integer' },
+        quantity: { type: 'integer' },
+        talla: { type: 'string' },
+        cargaId: { type: 'integer' },
+      },
+      ['productId', 'quantity', 'talla'],
+    ),
+    example: {
+      productId: 2,
+      quantity: 1,
+      talla: '128GB',
     },
-    ['productId', 'quantity', 'talla'],
-  ),
+  },
   UpdateOrderStatusRequest: objectSchema({ status: { type: 'string' } }, ['status']),
   ReviewOrderRequest: objectSchema(
     {
