@@ -63,3 +63,33 @@ npm run validate
 ```
 
 La URL publica final de Vercel debe registrarse aqui despues del primer deploy productivo.
+
+## Flujos de Carga para Vendedores
+
+En Importal, la gestión de cargas y pedidos para los vendedores está sujeta a las siguientes reglas de negocio y flujos técnicos:
+
+### 1. Visualización de Pedidos en la Carga Activa
+El vendedor puede listar los pedidos asociados a su asignación de carga activa llamando a:
+- **Endpoint:** `GET /api/v1/vendedor/pedidos-carga`
+- **Parámetros:** `tipo_carga` (opcional: `AEREA` o `MARITIMA`)
+- **Comportamiento:** Retorna la lista de pedidos que se consolidarán en la carga abierta actual asignada a dicho vendedor.
+
+### 2. Transición Individual de Pedidos a la Siguiente Carga
+Si un vendedor no puede enviar un producto específico en la carga actual (por ejemplo, por falta de stock temporal o retraso logístico), puede enviar una solicitud de transición para esa orden específica:
+- **Endpoint:** `POST /api/v1/vendedor/pedidos/{id}/solicitar-transicion`
+- **Comportamiento:** Registra una solicitud de transición. El administrador del sistema (`ADMIN` o `ROOT`) debe aprobar o rechazar esta solicitud en los endpoints correspondientes de administración. Si se aprueba, la orden pasa a la siguiente carga abierta disponible.
+
+### 3. Solicitud de Tránsito de Carga Anticipada
+Si un vendedor desea avanzar voluntariamente a la siguiente carga antes de que cierre la actual:
+- **Endpoint:** `POST /api/v1/vendedor/solicitudes-carga` (cuerpo: `{ "tipo_carga": "AEREA" | "MARITIMA" }`)
+- **Comportamiento:** Genera una solicitud que requiere aprobación del administrador. Al aprobarse, el vendedor queda asignado a la nueva carga abierta del tipo de transporte seleccionado.
+
+### 4. Transición por Carga Cerrada
+Cuando el administrador cierra oficialmente una carga (`POST /api/v1/admin/cargas/{id}/close`), los vendedores que estaban asignados a ella tienen que migrar su flujo a la nueva carga.
+- **Endpoint:** `POST /api/v1/vendedor/cargas/transicion-cierre`
+- **Comportamiento:** Si el vendedor no tiene pedidos pendientes (`PENDING`) en la carga cerrada anterior, su asignación se actualiza automáticamente a la nueva carga abierta.
+
+### 5. Bloqueo de Publicación por Pedidos Pendientes en Cargas Cerradas
+Para asegurar que los vendedores resuelvan y entreguen a tiempo los pedidos de cargas pasadas:
+- **Regla:** Si un vendedor tiene algún pedido con estado `PENDING` asociado a una carga cerrada (`status = 'CLOSED'`), **se le bloqueará la posibilidad de publicar nuevos productos**.
+- **Comportamiento:** El endpoint `POST /api/v1/vendedor/productos` arrojará un error `400 BadRequestException` con el detalle del bloqueo.

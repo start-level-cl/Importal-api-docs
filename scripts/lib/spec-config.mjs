@@ -827,6 +827,33 @@ export const operationOverrides = {
     requestBody: jsonRequest('CreateCargaRequest'),
     responses: Object.fromEntries([jsonResponse('200', 'Transición procesada', 'GenericObject')]),
   },
+  'post /api/v1/admin/cargas/{id}/close': {
+    summary: 'Cerrar una carga específica, desactivar productos de vendedores asignados y generar cobros de comisión (Admin/Root)',
+    responses: Object.fromEntries([jsonResponse('200', 'Carga cerrada con éxito', 'GenericObject')]),
+  },
+  'get /api/v1/admin/pedidos-transicion': {
+    summary: 'Listar todas las solicitudes de transición de pedidos individuales de vendedores (Admin/Root)',
+    responses: Object.fromEntries([jsonResponse('200', 'Lista de solicitudes', 'GenericObjectArray')]),
+  },
+  'post /api/v1/admin/pedidos-transicion/{id}/aprobar': {
+    summary: 'Aprobar la transición de un pedido a la siguiente carga abierta (Admin/Root)',
+    responses: Object.fromEntries([jsonResponse('200', 'Transición aprobada con éxito', 'GenericObject')]),
+  },
+  'post /api/v1/admin/pedidos-transicion/{id}/rechazar': {
+    summary: 'Rechazar la transición de un pedido (Admin/Root)',
+    responses: Object.fromEntries([jsonResponse('200', 'Transición rechazada con éxito', 'GenericObject')]),
+  },
+  'get /api/v1/vendedor/pedidos-carga': {
+    summary: 'Listar pedidos de la carga activa del vendedor (Vendedor)',
+    parameters: [
+      { name: 'tipo_carga', in: 'query', required: false, schema: { type: 'string', enum: ['AEREA', 'MARITIMA'] }, description: 'Filtrar por tipo de transporte' }
+    ],
+    responses: Object.fromEntries([jsonResponse('200', 'Pedidos de la carga activa', 'GenericObjectArray')]),
+  },
+  'post /api/v1/vendedor/pedidos/{id}/solicitar-transicion': {
+    summary: 'Solicitar transición de un pedido individual a la siguiente carga abierta (Vendedor)',
+    responses: Object.fromEntries([jsonResponse('201', 'Solicitud creada con éxito', 'GenericObject')]),
+  },
   'get /api/v1/bodeguero/pedidos': {
     summary: 'Listar todos los pedidos para la bodega (Bodeguero/Admin/Root)',
     parameters: [
