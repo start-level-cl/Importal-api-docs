@@ -747,6 +747,26 @@ components:
       required:
         - code
       type: object
+    ReviewOrderRequest:
+      additionalProperties: false
+      properties:
+        caja_size:
+          nullable: true
+          type: string
+        dañados:
+          type: integer
+        faltaron:
+          type: integer
+        llegaron:
+          type: integer
+        peso_cobrado_kg:
+          nullable: true
+          type: number
+      required:
+        - llegaron
+        - faltaron
+        - dañados
+      type: object
     SendCodeRequest:
       additionalProperties: false
       properties:
@@ -1830,7 +1850,18 @@ paths:
     get:
       operationId: backend_get_api_v1_bodeguero_pedidos
       parameters:
-[]
+        -           description: Filtrar por vendedor
+          in: query
+          name: sellerId
+          required: false
+          schema:
+            type: integer
+        -           description: Filtrar por cliente
+          in: query
+          name: clientId
+          required: false
+          schema:
+            type: integer
       responses:
         200:
           content:
@@ -1877,19 +1908,13 @@ paths:
       operationId: backend_put_api_v1_bodeguero_tracking_actualizar
       parameters:
 []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/UpdateOrderStatusRequest"
-        required: true
       responses:
         200:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericOk"
-          description: Tracking actualizado
+                $ref: "#/components/schemas/GenericObject"
+          description: Operacion exitosa
       security:
         -           bearerAuth:
 []

@@ -400,6 +400,16 @@ export const schemas = {
     ['productId', 'quantity', 'talla'],
   ),
   UpdateOrderStatusRequest: objectSchema({ status: { type: 'string' } }, ['status']),
+  ReviewOrderRequest: objectSchema(
+    {
+      llegaron: { type: 'integer' },
+      faltaron: { type: 'integer' },
+      dañados: { type: 'integer' },
+      peso_cobrado_kg: { type: 'number', nullable: true },
+      caja_size: { type: 'string', nullable: true },
+    },
+    ['llegaron', 'faltaron', 'dañados'],
+  ),
   UpdateOrderShippingRequest: objectSchema(
     {
       can_ship: { type: 'boolean' },
@@ -679,9 +689,10 @@ export const operationOverrides = {
     requestBody: jsonRequest('UpdateCargaStatusRequest'),
     responses: Object.fromEntries([jsonResponse('200', 'Estado de carga actualizado', 'GenericObject')]),
   },
-  'put /api/v1/bodeguero/tracking/actualizar': {
-    requestBody: jsonRequest('UpdateOrderStatusRequest'),
-    responses: Object.fromEntries([jsonResponse('200', 'Tracking actualizado', 'GenericOk')]),
+  'put /api/v1/bodeguero/pedidos/{id}/revisar': {
+    summary: 'Registrar la revisión física de un pedido por parte del bodeguero',
+    requestBody: jsonRequest('ReviewOrderRequest'),
+    responses: Object.fromEntries([jsonResponse('200', 'Pedido revisado exitosamente', 'GenericObject')]),
   },
   'get /api/v1/admin/cobros': {
     summary: 'Listar todos los cobros del sistema (Admin/Root)',
@@ -811,7 +822,19 @@ export const operationOverrides = {
   },
   'get /api/v1/bodeguero/pedidos': {
     summary: 'Listar todos los pedidos para la bodega (Bodeguero/Admin/Root)',
+    parameters: [
+      { name: 'sellerId', in: 'query', required: false, schema: { type: 'integer' }, description: 'Filtrar por vendedor' },
+      { name: 'clientId', in: 'query', required: false, schema: { type: 'integer' }, description: 'Filtrar por cliente' },
+    ],
     responses: Object.fromEntries([jsonResponse('200', 'Pedidos de bodega', 'GenericObjectArray')]),
+  },
+  'get /api/v1/bodeguero/cargas/{cargaId}/pedidos': {
+    summary: 'Listar todos los pedidos asociados a una carga específica',
+    responses: Object.fromEntries([jsonResponse('200', 'Pedidos de la carga', 'GenericObjectArray')]),
+  },
+  'get /api/v1/bodeguero/cargas/{id}/verificar-revision': {
+    summary: 'Verificar si todos los pedidos de una carga han sido revisados',
+    responses: Object.fromEntries([jsonResponse('200', 'Estado de revisión de la carga', 'GenericObject')]),
   },
   'get /api/v1/bodeguero/pedidos/{id}/auditoria': {
     summary: 'Consultar el historial de auditoría y transiciones de un pedido (Bodeguero/Admin/Root)',

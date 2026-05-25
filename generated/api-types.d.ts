@@ -277,6 +277,14 @@ export type RegistrationVerifyRequest = {
   code: string
 }
 
+export type ReviewOrderRequest = {
+  caja_size?: string
+  dañados: number
+  faltaron: number
+  llegaron: number
+  peso_cobrado_kg?: number
+}
+
 export type SendCodeRequest = {
   target: string
   type: "email" | "phone"
@@ -687,9 +695,9 @@ export interface Operations {
   "backend_put_api_v1_bodeguero_tracking_actualizar": {
     method: "PUT"
     path: "/api/v1/bodeguero/tracking/actualizar"
-    requestBody: UpdateOrderStatusRequest
+    requestBody: undefined
     responses: {
-      "200": GenericOk
+      "200": GenericObject
     }
   }
   "backend_get_api_v1_chats": {
