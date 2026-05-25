@@ -11,6 +11,253 @@ const genericObject = {
   additionalProperties: true,
 }
 
+const schemaExamples = {
+  LoginRequest: { email: 'usuario@ejemplo.com', password: 'Password123!' },
+  LoginResponse: {
+    accessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+    refreshToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+  },
+  ValidateResponse: { valid: true },
+  ChangePasswordRequest: {
+    token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+    password: 'Password123!',
+    newPassword: 'NewPassword123!',
+  },
+  RegisterUserRequest: {
+    name: 'Juan Perez',
+    email: 'juan.perez@ejemplo.com',
+    password: 'Password123!',
+    phone: '+56912345678',
+    role: 'client',
+    rut: '12.345.678-9',
+    transporte: ['maritimo'],
+  },
+  RegisterUserResponse: {
+    userId: 'u_123',
+    email: 'juan.perez@ejemplo.com',
+    name: 'Juan Perez',
+    role: 'client',
+  },
+  SendCodeRequest: { type: 'email', target: 'juan.perez@ejemplo.com' },
+  SendCodeResponse: { message: 'OTP enviado correctamente' },
+  VerifyCodeRequest: { target: 'juan.perez@ejemplo.com', code: '123456' },
+  VerifyCodeResponse: { verified: true, target: 'juan.perez@ejemplo.com' },
+  RegistrationRequestCreate: {
+    email: 'usuario@ejemplo.com',
+    name: 'Juan Perez',
+    rut: '12.345.678-9',
+    phone: '+56912345678',
+    password: 'Password123!',
+    consentimiento: true,
+    profileType: 'inversor',
+    housingType: 'casa',
+    streetAndNumber: 'Av. Ejemplo 123',
+    region: 'Región Metropolitana',
+    comuna: 'Providencia',
+    agency: 'FlowEx',
+    transportType: ['aereo'],
+    comprobante: 'JVBERi0xLjQKJc...',
+    comprobanteFileName: 'comprobante.pdf',
+    comprobanteContentType: 'application/pdf',
+  },
+  RegistrationRequest: {
+    email: 'usuario@ejemplo.com',
+    name: 'Juan Perez',
+    rut: '12.345.678-9',
+    phone: '+56912345678',
+    profileType: 'inversor',
+    status: 'PENDING',
+    is_verified: false,
+    is_email_verified: false,
+    is_phone_verified: false,
+    consentimiento: true,
+    requestedAt: '2026-05-25T12:00:00.000Z',
+    reviewedBy: null,
+    notes: null,
+    transportType: ['aereo'],
+    housingType: 'casa',
+    streetAndNumber: 'Av. Ejemplo 123',
+    region: 'Región Metropolitana',
+    comuna: 'Providencia',
+    agency: 'FlowEx',
+    comprobanteKey: 'registrations/usuario@example.com/comprobante.pdf',
+  },
+  RegistrationListResponse: {
+    items: [
+      {
+        email: 'usuario@ejemplo.com',
+        name: 'Juan Perez',
+        rut: '12.345.678-9',
+        phone: '+56912345678',
+        profileType: 'inversor',
+        status: 'PENDING',
+        is_verified: false,
+        is_email_verified: false,
+        is_phone_verified: false,
+        consentimiento: true,
+        requestedAt: '2026-05-25T12:00:00.000Z',
+      },
+    ],
+    count: 1,
+  },
+  RegistrationApproveRequest: {
+    reviewedBy: 'admin@importal.cl',
+    password: 'Password123!',
+    role: 'client',
+    notes: 'Aprobado luego de validar documentos',
+  },
+  RegistrationRejectRequest: {
+    reviewedBy: 'admin@importal.cl',
+    notes: 'Faltó documentación de respaldo',
+  },
+  RegistrationApprovalResponse: {
+    request: {
+      email: 'usuario@ejemplo.com',
+      name: 'Juan Perez',
+      rut: '12.345.678-9',
+      phone: '+56912345678',
+      profileType: 'inversor',
+      status: 'APPROVED',
+      is_verified: true,
+      is_email_verified: true,
+      is_phone_verified: true,
+      consentimiento: true,
+      requestedAt: '2026-05-25T12:00:00.000Z',
+      reviewedBy: 'admin@importal.cl',
+      notes: 'Aprobado luego de validar documentos',
+    },
+    user: {
+      userId: 'u_123',
+      email: 'usuario@ejemplo.com',
+      name: 'Juan Perez',
+      role: 'client',
+    },
+  },
+  RegistrationVerifyRequest: { code: '123456', channel: 'email' },
+  CreateAdminRequest: {
+    name: 'Admin Importal',
+    email: 'admin@importal.cl',
+    phone: '+56911112222',
+    rut: '11.111.111-1',
+  },
+  CreateProductRequest: {
+    marca: 'Apple',
+    price_usd: 999.99,
+    photo_urls: ['https://cdn.importal.cl/products/iphone.jpg'],
+    status: 'AVAILABLE',
+  },
+  UpdateProductRequest: {
+    marca: 'Apple',
+    price_usd: 949.99,
+    photo_urls: ['https://cdn.importal.cl/products/iphone.jpg'],
+    status: 'AVAILABLE',
+  },
+  Product: {
+    id: 12,
+    marca: 'Apple',
+    price_usd: 999.99,
+    photo_urls: ['https://cdn.importal.cl/products/iphone.jpg'],
+    status: 'AVAILABLE',
+  },
+  ProductArray: [
+    {
+      id: 12,
+      marca: 'Apple',
+      price_usd: 999.99,
+      photo_urls: ['https://cdn.importal.cl/products/iphone.jpg'],
+      status: 'AVAILABLE',
+    },
+  ],
+  Notification: {
+    id: 42,
+    type: 'ORDER_STATUS',
+    title: 'Tu pedido fue confirmado',
+    body: 'El vendedor confirmó tu pedido y será despachado pronto.',
+    is_read: false,
+    created_at: '2026-05-25T12:00:00.000Z',
+  },
+  NotificationArray: [
+    {
+      id: 42,
+      type: 'ORDER_STATUS',
+      title: 'Tu pedido fue confirmado',
+      body: 'El vendedor confirmó tu pedido y será despachado pronto.',
+      is_read: false,
+      created_at: '2026-05-25T12:00:00.000Z',
+    },
+  ],
+  Chat: { id: 7, user_id: 12, transport_type: 'AEREA', provider_code: 'AIR-01' },
+  ChatArray: [
+    { id: 7, user_id: 12, transport_type: 'AEREA', provider_code: 'AIR-01' },
+  ],
+  ChatMessage: {
+    id: 99,
+    chat_id: 7,
+    message: 'Hola, tu pedido está en tránsito.',
+    created_at: '2026-05-25T12:00:00.000Z',
+  },
+  ChatMessageArray: [
+    {
+      id: 99,
+      chat_id: 7,
+      message: 'Hola, tu pedido está en tránsito.',
+      created_at: '2026-05-25T12:00:00.000Z',
+    },
+  ],
+  DashboardSummary: {
+    clientes_activos: 128,
+    clientes_en_mora: 7,
+    deuda_pendiente_clp: 1250000,
+    recaudacion_periodo_clp: 8450000,
+    periodo: {
+      inicio: '2026-05-01T00:00:00.000Z',
+      fin: '2026-05-25T23:59:59.000Z',
+    },
+    ultimos_morosos: [
+      {
+        cobro_id: 501,
+        client_id: 12,
+        client_name: 'Juan Perez',
+        client_rut: '12.345.678-9',
+        amount_clp: 250000,
+        due_date: '2026-05-30',
+      },
+    ],
+  },
+  GenericObject: { ok: true, message: 'Operacion exitosa' },
+  GenericObjectArray: [{ id: 1, message: 'Ejemplo de elemento retornado' }],
+  CreateOrderRequest: {
+    productId: 2,
+    quantity: 1,
+    talla: '128GB',
+    cargaId: 4,
+  },
+  UpdateOrderStatusRequest: { status: 'CONFIRMED' },
+  ReviewOrderRequest: {
+    llegaron: 2,
+    faltaron: 0,
+    dañados: 0,
+    peso_cobrado_kg: 1.2,
+    caja_size: 'M',
+  },
+  UpdateOrderShippingRequest: { can_ship: true, seller_order_number: 'SO-12345' },
+  CreateCargaRequest: { tipo_carga: 'AEREA' },
+  UpdateCargaStatusRequest: { status: 'ARRIVED', notes: 'Carga recibida en bodega' },
+  InitiateTransbankRequest: { cobro_id: 501, amount_clp: 250000 },
+  ConfirmTransbankRequest: { transaction_id: 'trx-123', token: 'token-abc' },
+  ConfirmCobroRequest: { approved: true, admin_comment: 'Comprobante validado' },
+  UpdateCommissionTierRequest: { id: 1, commission_pct: 20 },
+  UpdateLogisticsRateRequest: { id: 1, rate_value: 30 },
+}
+
+function getSchemaExample(schemaRef) {
+  return schemaExamples[schemaRef]
+}
+
+function withExample(content, example) {
+  return example === undefined ? content : { ...content, example }
+}
+
 export const info = {
   title: 'Importal Unified API',
   version: '1.0.0',
@@ -473,7 +720,10 @@ function jsonRequest(schemaRef, required = true) {
     required,
     content: {
       'application/json': {
-        schema: { $ref: `#/components/schemas/${schemaRef}` },
+        ...withExample(
+          { schema: { $ref: `#/components/schemas/${schemaRef}` } },
+          getSchemaExample(schemaRef),
+        ),
       },
     },
   }
@@ -486,7 +736,10 @@ function jsonResponse(status, description, schemaRef) {
       description,
       content: {
         'application/json': {
-          schema: { $ref: `#/components/schemas/${schemaRef}` },
+          ...withExample(
+            { schema: { $ref: `#/components/schemas/${schemaRef}` } },
+            getSchemaExample(schemaRef),
+          ),
         },
       },
     },
@@ -769,6 +1022,9 @@ export const operationOverrides = {
             },
             required: ['file'],
           },
+          example: {
+            file: '(binary file)',
+          },
         },
       },
     },
@@ -791,6 +1047,10 @@ export const operationOverrides = {
               note: { type: 'string', description: 'Nota o comentario adicional para la solicitud' },
             },
             required: ['file'],
+          },
+          example: {
+            file: '(binary file)',
+            note: 'Solicitud de retiro semanal',
           },
         },
       },

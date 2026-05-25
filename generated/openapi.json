@@ -1441,6 +1441,9 @@
         "requestBody": {
           "content": {
             "application/json": {
+              "example": {
+                "tipo_carga": "AEREA"
+              },
               "schema": {
                 "$ref": "#/components/schemas/CreateCargaRequest"
               }
@@ -1452,6 +1455,10 @@
           "201": {
             "content": {
               "application/json": {
+                "example": {
+                  "message": "Operacion exitosa",
+                  "ok": true
+                },
                 "schema": {
                   "$ref": "#/components/schemas/GenericObject"
                 }
@@ -1482,6 +1489,12 @@
           "200": {
             "content": {
               "application/json": {
+                "example": [
+                  {
+                    "id": 1,
+                    "message": "Ejemplo de elemento retornado"
+                  }
+                ],
                 "schema": {
                   "$ref": "#/components/schemas/GenericObjectArray"
                 }
@@ -1520,6 +1533,10 @@
         "requestBody": {
           "content": {
             "application/json": {
+              "example": {
+                "admin_comment": "Comprobante validado",
+                "approved": true
+              },
               "schema": {
                 "$ref": "#/components/schemas/ConfirmCobroRequest"
               }
@@ -1531,6 +1548,10 @@
           "200": {
             "content": {
               "application/json": {
+                "example": {
+                  "message": "Operacion exitosa",
+                  "ok": true
+                },
                 "schema": {
                   "$ref": "#/components/schemas/GenericObject"
                 }
@@ -1582,6 +1603,26 @@
           "200": {
             "content": {
               "application/json": {
+                "example": {
+                  "clientes_activos": 128,
+                  "clientes_en_mora": 7,
+                  "deuda_pendiente_clp": 1250000,
+                  "periodo": {
+                    "fin": "2026-05-25T23:59:59.000Z",
+                    "inicio": "2026-05-01T00:00:00.000Z"
+                  },
+                  "recaudacion_periodo_clp": 8450000,
+                  "ultimos_morosos": [
+                    {
+                      "amount_clp": 250000,
+                      "client_id": 12,
+                      "client_name": "Juan Perez",
+                      "client_rut": "12.345.678-9",
+                      "cobro_id": 501,
+                      "due_date": "2026-05-30"
+                    }
+                  ]
+                },
                 "schema": {
                   "$ref": "#/components/schemas/DashboardSummary"
                 }
@@ -2161,6 +2202,12 @@
           "200": {
             "content": {
               "application/json": {
+                "example": [
+                  {
+                    "id": 1,
+                    "message": "Ejemplo de elemento retornado"
+                  }
+                ],
                 "schema": {
                   "$ref": "#/components/schemas/GenericObjectArray"
                 }
@@ -2188,6 +2235,10 @@
         "requestBody": {
           "content": {
             "application/json": {
+              "example": {
+                "commission_pct": 20,
+                "id": 1
+              },
               "schema": {
                 "$ref": "#/components/schemas/UpdateCommissionTierRequest"
               }
@@ -2199,6 +2250,10 @@
           "200": {
             "content": {
               "application/json": {
+                "example": {
+                  "message": "Operacion exitosa",
+                  "ok": true
+                },
                 "schema": {
                   "$ref": "#/components/schemas/GenericObject"
                 }
@@ -2229,6 +2284,12 @@
           "200": {
             "content": {
               "application/json": {
+                "example": [
+                  {
+                    "id": 1,
+                    "message": "Ejemplo de elemento retornado"
+                  }
+                ],
                 "schema": {
                   "$ref": "#/components/schemas/GenericObjectArray"
                 }
@@ -2256,6 +2317,10 @@
         "requestBody": {
           "content": {
             "application/json": {
+              "example": {
+                "id": 1,
+                "rate_value": 30
+              },
               "schema": {
                 "$ref": "#/components/schemas/UpdateLogisticsRateRequest"
               }
@@ -2267,6 +2332,10 @@
           "200": {
             "content": {
               "application/json": {
+                "example": {
+                  "message": "Operacion exitosa",
+                  "ok": true
+                },
                 "schema": {
                   "$ref": "#/components/schemas/GenericObject"
                 }
@@ -2425,6 +2494,12 @@
         "requestBody": {
           "content": {
             "application/json": {
+              "example": {
+                "email": "admin@importal.cl",
+                "name": "Admin Importal",
+                "phone": "+56911112222",
+                "rut": "11.111.111-1"
+              },
               "schema": {
                 "$ref": "#/components/schemas/CreateAdminRequest"
               }
@@ -2436,6 +2511,10 @@
           "200": {
             "content": {
               "application/json": {
+                "example": {
+                  "message": "Operacion exitosa",
+                  "ok": true
+                },
                 "schema": {
                   "$ref": "#/components/schemas/GenericObject"
                 }
@@ -2604,6 +2683,12 @@
           "200": {
             "content": {
               "application/json": {
+                "example": [
+                  {
+                    "id": 1,
+                    "message": "Ejemplo de elemento retornado"
+                  }
+                ],
                 "schema": {
                   "$ref": "#/components/schemas/GenericObjectArray"
                 }
@@ -2642,6 +2727,10 @@
         "requestBody": {
           "content": {
             "application/json": {
+              "example": {
+                "notes": "Carga recibida en bodega",
+                "status": "ARRIVED"
+              },
               "schema": {
                 "$ref": "#/components/schemas/UpdateCargaStatusRequest"
               }
@@ -2653,6 +2742,10 @@
           "200": {
             "content": {
               "application/json": {
+                "example": {
+                  "message": "Operacion exitosa",
+                  "ok": true
+                },
                 "schema": {
                   "$ref": "#/components/schemas/GenericObject"
                 }
@@ -2702,6 +2795,12 @@
           "200": {
             "content": {
               "application/json": {
+                "example": [
+                  {
+                    "id": 1,
+                    "message": "Ejemplo de elemento retornado"
+                  }
+                ],
                 "schema": {
                   "$ref": "#/components/schemas/GenericObjectArray"
                 }
@@ -2741,6 +2840,12 @@
           "200": {
             "content": {
               "application/json": {
+                "example": [
+                  {
+                    "id": 1,
+                    "message": "Ejemplo de elemento retornado"
+                  }
+                ],
                 "schema": {
                   "$ref": "#/components/schemas/GenericObjectArray"
                 }
@@ -2801,6 +2906,14 @@
           "200": {
             "content": {
               "application/json": {
+                "example": [
+                  {
+                    "id": 7,
+                    "provider_code": "AIR-01",
+                    "transport_type": "AEREA",
+                    "user_id": 12
+                  }
+                ],
                 "schema": {
                   "$ref": "#/components/schemas/ChatArray"
                 }
@@ -2840,6 +2953,14 @@
           "200": {
             "content": {
               "application/json": {
+                "example": [
+                  {
+                    "chat_id": 7,
+                    "created_at": "2026-05-25T12:00:00.000Z",
+                    "id": 99,
+                    "message": "Hola, tu pedido está en tránsito."
+                  }
+                ],
                 "schema": {
                   "$ref": "#/components/schemas/ChatMessageArray"
                 }
@@ -2870,6 +2991,12 @@
           "200": {
             "content": {
               "application/json": {
+                "example": [
+                  {
+                    "id": 1,
+                    "message": "Ejemplo de elemento retornado"
+                  }
+                ],
                 "schema": {
                   "$ref": "#/components/schemas/GenericObjectArray"
                 }
@@ -2909,6 +3036,10 @@
           "200": {
             "content": {
               "application/json": {
+                "example": {
+                  "message": "Operacion exitosa",
+                  "ok": true
+                },
                 "schema": {
                   "$ref": "#/components/schemas/GenericObject"
                 }
@@ -2969,6 +3100,10 @@
           "200": {
             "content": {
               "application/json": {
+                "example": {
+                  "message": "Operacion exitosa",
+                  "ok": true
+                },
                 "schema": {
                   "$ref": "#/components/schemas/GenericObject"
                 }
@@ -3028,6 +3163,10 @@
         "requestBody": {
           "content": {
             "application/json": {
+              "example": {
+                "token": "token-abc",
+                "transaction_id": "trx-123"
+              },
               "schema": {
                 "$ref": "#/components/schemas/ConfirmTransbankRequest"
               }
@@ -3039,6 +3178,10 @@
           "200": {
             "content": {
               "application/json": {
+                "example": {
+                  "message": "Operacion exitosa",
+                  "ok": true
+                },
                 "schema": {
                   "$ref": "#/components/schemas/GenericObject"
                 }
@@ -3068,6 +3211,10 @@
         "requestBody": {
           "content": {
             "application/json": {
+              "example": {
+                "amount_clp": 250000,
+                "cobro_id": 501
+              },
               "schema": {
                 "$ref": "#/components/schemas/InitiateTransbankRequest"
               }
@@ -3079,6 +3226,10 @@
           "201": {
             "content": {
               "application/json": {
+                "example": {
+                  "message": "Operacion exitosa",
+                  "ok": true
+                },
                 "schema": {
                   "$ref": "#/components/schemas/GenericObject"
                 }
@@ -3175,6 +3326,12 @@
         "requestBody": {
           "content": {
             "application/json": {
+              "example": {
+                "cargaId": 4,
+                "productId": 2,
+                "quantity": 1,
+                "talla": "128GB"
+              },
               "schema": {
                 "$ref": "#/components/schemas/CreateOrderRequest"
               }
@@ -3186,6 +3343,10 @@
           "201": {
             "content": {
               "application/json": {
+                "example": {
+                  "message": "Operacion exitosa",
+                  "ok": true
+                },
                 "schema": {
                   "$ref": "#/components/schemas/GenericObject"
                 }
@@ -3216,6 +3377,17 @@
           "200": {
             "content": {
               "application/json": {
+                "example": [
+                  {
+                    "id": 12,
+                    "marca": "Apple",
+                    "photo_urls": [
+                      "https://cdn.importal.cl/products/iphone.jpg"
+                    ],
+                    "price_usd": 999.99,
+                    "status": "AVAILABLE"
+                  }
+                ],
                 "schema": {
                   "$ref": "#/components/schemas/ProductArray"
                 }
@@ -3246,6 +3418,16 @@
           "200": {
             "content": {
               "application/json": {
+                "example": [
+                  {
+                    "body": "El vendedor confirmó tu pedido y será despachado pronto.",
+                    "created_at": "2026-05-25T12:00:00.000Z",
+                    "id": 42,
+                    "is_read": false,
+                    "title": "Tu pedido fue confirmado",
+                    "type": "ORDER_STATUS"
+                  }
+                ],
                 "schema": {
                   "$ref": "#/components/schemas/NotificationArray"
                 }
@@ -3285,6 +3467,10 @@
           "200": {
             "content": {
               "application/json": {
+                "example": {
+                  "message": "Operacion exitosa",
+                  "ok": true
+                },
                 "schema": {
                   "$ref": "#/components/schemas/GenericObject"
                 }
@@ -3315,6 +3501,24 @@
           "200": {
             "content": {
               "application/json": {
+                "example": {
+                  "count": 1,
+                  "items": [
+                    {
+                      "consentimiento": true,
+                      "email": "usuario@ejemplo.com",
+                      "is_email_verified": false,
+                      "is_phone_verified": false,
+                      "is_verified": false,
+                      "name": "Juan Perez",
+                      "phone": "+56912345678",
+                      "profileType": "inversor",
+                      "requestedAt": "2026-05-25T12:00:00.000Z",
+                      "rut": "12.345.678-9",
+                      "status": "PENDING"
+                    }
+                  ]
+                },
                 "schema": {
                   "$ref": "#/components/schemas/RegistrationListResponse"
                 }
@@ -3353,6 +3557,12 @@
         "requestBody": {
           "content": {
             "application/json": {
+              "example": {
+                "notes": "Aprobado luego de validar documentos",
+                "password": "Password123!",
+                "reviewedBy": "admin@importal.cl",
+                "role": "client"
+              },
               "schema": {
                 "$ref": "#/components/schemas/RegistrationApproveRequest"
               }
@@ -3364,6 +3574,29 @@
           "200": {
             "content": {
               "application/json": {
+                "example": {
+                  "request": {
+                    "consentimiento": true,
+                    "email": "usuario@ejemplo.com",
+                    "is_email_verified": true,
+                    "is_phone_verified": true,
+                    "is_verified": true,
+                    "name": "Juan Perez",
+                    "notes": "Aprobado luego de validar documentos",
+                    "phone": "+56912345678",
+                    "profileType": "inversor",
+                    "requestedAt": "2026-05-25T12:00:00.000Z",
+                    "reviewedBy": "admin@importal.cl",
+                    "rut": "12.345.678-9",
+                    "status": "APPROVED"
+                  },
+                  "user": {
+                    "email": "usuario@ejemplo.com",
+                    "name": "Juan Perez",
+                    "role": "client",
+                    "userId": "u_123"
+                  }
+                },
                 "schema": {
                   "$ref": "#/components/schemas/RegistrationApprovalResponse"
                 }
@@ -3432,6 +3665,10 @@
         "requestBody": {
           "content": {
             "application/json": {
+              "example": {
+                "notes": "Faltó documentación de respaldo",
+                "reviewedBy": "admin@importal.cl"
+              },
               "schema": {
                 "$ref": "#/components/schemas/RegistrationRejectRequest"
               }
@@ -3443,6 +3680,30 @@
           "200": {
             "content": {
               "application/json": {
+                "example": {
+                  "agency": "FlowEx",
+                  "comprobanteKey": "registrations/usuario@example.com/comprobante.pdf",
+                  "comuna": "Providencia",
+                  "consentimiento": true,
+                  "email": "usuario@ejemplo.com",
+                  "housingType": "casa",
+                  "is_email_verified": false,
+                  "is_phone_verified": false,
+                  "is_verified": false,
+                  "name": "Juan Perez",
+                  "notes": null,
+                  "phone": "+56912345678",
+                  "profileType": "inversor",
+                  "region": "Región Metropolitana",
+                  "requestedAt": "2026-05-25T12:00:00.000Z",
+                  "reviewedBy": null,
+                  "rut": "12.345.678-9",
+                  "status": "PENDING",
+                  "streetAndNumber": "Av. Ejemplo 123",
+                  "transportType": [
+                    "aereo"
+                  ]
+                },
                 "schema": {
                   "$ref": "#/components/schemas/RegistrationRequest"
                 }
@@ -3522,6 +3783,10 @@
         "requestBody": {
           "content": {
             "multipart/form-data": {
+              "example": {
+                "file": "(binary file)",
+                "note": "Solicitud de retiro semanal"
+              },
               "schema": {
                 "properties": {
                   "file": {
@@ -3547,6 +3812,10 @@
           "201": {
             "content": {
               "application/json": {
+                "example": {
+                  "message": "Operacion exitosa",
+                  "ok": true
+                },
                 "schema": {
                   "$ref": "#/components/schemas/GenericObject"
                 }
@@ -3615,6 +3884,9 @@
         "requestBody": {
           "content": {
             "application/json": {
+              "example": {
+                "status": "CONFIRMED"
+              },
               "schema": {
                 "$ref": "#/components/schemas/UpdateOrderStatusRequest"
               }
@@ -3626,6 +3898,10 @@
           "200": {
             "content": {
               "application/json": {
+                "example": {
+                  "message": "Operacion exitosa",
+                  "ok": true
+                },
                 "schema": {
                   "$ref": "#/components/schemas/GenericObject"
                 }
@@ -3656,6 +3932,17 @@
           "200": {
             "content": {
               "application/json": {
+                "example": [
+                  {
+                    "id": 12,
+                    "marca": "Apple",
+                    "photo_urls": [
+                      "https://cdn.importal.cl/products/iphone.jpg"
+                    ],
+                    "price_usd": 999.99,
+                    "status": "AVAILABLE"
+                  }
+                ],
                 "schema": {
                   "$ref": "#/components/schemas/ProductArray"
                 }
@@ -3683,6 +3970,14 @@
         "requestBody": {
           "content": {
             "application/json": {
+              "example": {
+                "marca": "Apple",
+                "photo_urls": [
+                  "https://cdn.importal.cl/products/iphone.jpg"
+                ],
+                "price_usd": 999.99,
+                "status": "AVAILABLE"
+              },
               "schema": {
                 "$ref": "#/components/schemas/CreateProductRequest"
               }
@@ -3694,6 +3989,15 @@
           "201": {
             "content": {
               "application/json": {
+                "example": {
+                  "id": 12,
+                  "marca": "Apple",
+                  "photo_urls": [
+                    "https://cdn.importal.cl/products/iphone.jpg"
+                  ],
+                  "price_usd": 999.99,
+                  "status": "AVAILABLE"
+                },
                 "schema": {
                   "$ref": "#/components/schemas/Product"
                 }
@@ -3733,6 +4037,10 @@
           "200": {
             "content": {
               "application/json": {
+                "example": {
+                  "message": "Operacion exitosa",
+                  "ok": true
+                },
                 "schema": {
                   "$ref": "#/components/schemas/GenericObject"
                 }
@@ -3769,6 +4077,14 @@
         "requestBody": {
           "content": {
             "application/json": {
+              "example": {
+                "marca": "Apple",
+                "photo_urls": [
+                  "https://cdn.importal.cl/products/iphone.jpg"
+                ],
+                "price_usd": 949.99,
+                "status": "AVAILABLE"
+              },
               "schema": {
                 "$ref": "#/components/schemas/UpdateProductRequest"
               }
@@ -3780,6 +4096,15 @@
           "200": {
             "content": {
               "application/json": {
+                "example": {
+                  "id": 12,
+                  "marca": "Apple",
+                  "photo_urls": [
+                    "https://cdn.importal.cl/products/iphone.jpg"
+                  ],
+                  "price_usd": 999.99,
+                  "status": "AVAILABLE"
+                },
                 "schema": {
                   "$ref": "#/components/schemas/Product"
                 }
@@ -3859,6 +4184,10 @@
         "requestBody": {
           "content": {
             "application/json": {
+              "example": {
+                "email": "usuario@ejemplo.com",
+                "password": "Password123!"
+              },
               "schema": {
                 "$ref": "#/components/schemas/LoginRequest"
               }
@@ -3870,6 +4199,10 @@
           "200": {
             "content": {
               "application/json": {
+                "example": {
+                  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                },
                 "schema": {
                   "$ref": "#/components/schemas/LoginResponse"
                 }
@@ -3909,6 +4242,17 @@
         "requestBody": {
           "content": {
             "application/json": {
+              "example": {
+                "email": "juan.perez@ejemplo.com",
+                "name": "Juan Perez",
+                "password": "Password123!",
+                "phone": "+56912345678",
+                "role": "client",
+                "rut": "12.345.678-9",
+                "transporte": [
+                  "maritimo"
+                ]
+              },
               "schema": {
                 "$ref": "#/components/schemas/RegisterUserRequest"
               }
@@ -3920,6 +4264,12 @@
           "201": {
             "content": {
               "application/json": {
+                "example": {
+                  "email": "juan.perez@ejemplo.com",
+                  "name": "Juan Perez",
+                  "role": "client",
+                  "userId": "u_123"
+                },
                 "schema": {
                   "$ref": "#/components/schemas/RegisterUserResponse"
                 }
@@ -3969,6 +4319,10 @@
         "requestBody": {
           "content": {
             "application/json": {
+              "example": {
+                "target": "juan.perez@ejemplo.com",
+                "type": "email"
+              },
               "schema": {
                 "$ref": "#/components/schemas/SendCodeRequest"
               }
@@ -3980,6 +4334,9 @@
           "200": {
             "content": {
               "application/json": {
+                "example": {
+                  "message": "OTP enviado correctamente"
+                },
                 "schema": {
                   "$ref": "#/components/schemas/SendCodeResponse"
                 }
@@ -4010,6 +4367,9 @@
           "200": {
             "content": {
               "application/json": {
+                "example": {
+                  "valid": true
+                },
                 "schema": {
                   "$ref": "#/components/schemas/ValidateResponse"
                 }
@@ -4049,6 +4409,10 @@
         "requestBody": {
           "content": {
             "application/json": {
+              "example": {
+                "code": "123456",
+                "target": "juan.perez@ejemplo.com"
+              },
               "schema": {
                 "$ref": "#/components/schemas/VerifyCodeRequest"
               }
@@ -4060,6 +4424,10 @@
           "200": {
             "content": {
               "application/json": {
+                "example": {
+                  "target": "juan.perez@ejemplo.com",
+                  "verified": true
+                },
                 "schema": {
                   "$ref": "#/components/schemas/VerifyCodeResponse"
                 }
@@ -4100,6 +4468,24 @@
           "200": {
             "content": {
               "application/json": {
+                "example": {
+                  "count": 1,
+                  "items": [
+                    {
+                      "consentimiento": true,
+                      "email": "usuario@ejemplo.com",
+                      "is_email_verified": false,
+                      "is_phone_verified": false,
+                      "is_verified": false,
+                      "name": "Juan Perez",
+                      "phone": "+56912345678",
+                      "profileType": "inversor",
+                      "requestedAt": "2026-05-25T12:00:00.000Z",
+                      "rut": "12.345.678-9",
+                      "status": "PENDING"
+                    }
+                  ]
+                },
                 "schema": {
                   "$ref": "#/components/schemas/RegistrationListResponse"
                 }
@@ -4122,6 +4508,26 @@
         "requestBody": {
           "content": {
             "application/json": {
+              "example": {
+                "agency": "FlowEx",
+                "comprobante": "JVBERi0xLjQKJc...",
+                "comprobanteContentType": "application/pdf",
+                "comprobanteFileName": "comprobante.pdf",
+                "comuna": "Providencia",
+                "consentimiento": true,
+                "email": "usuario@ejemplo.com",
+                "housingType": "casa",
+                "name": "Juan Perez",
+                "password": "Password123!",
+                "phone": "+56912345678",
+                "profileType": "inversor",
+                "region": "Región Metropolitana",
+                "rut": "12.345.678-9",
+                "streetAndNumber": "Av. Ejemplo 123",
+                "transportType": [
+                  "aereo"
+                ]
+              },
               "schema": {
                 "$ref": "#/components/schemas/RegistrationRequestCreate"
               }
@@ -4133,6 +4539,30 @@
           "201": {
             "content": {
               "application/json": {
+                "example": {
+                  "agency": "FlowEx",
+                  "comprobanteKey": "registrations/usuario@example.com/comprobante.pdf",
+                  "comuna": "Providencia",
+                  "consentimiento": true,
+                  "email": "usuario@ejemplo.com",
+                  "housingType": "casa",
+                  "is_email_verified": false,
+                  "is_phone_verified": false,
+                  "is_verified": false,
+                  "name": "Juan Perez",
+                  "notes": null,
+                  "phone": "+56912345678",
+                  "profileType": "inversor",
+                  "region": "Región Metropolitana",
+                  "requestedAt": "2026-05-25T12:00:00.000Z",
+                  "reviewedBy": null,
+                  "rut": "12.345.678-9",
+                  "status": "PENDING",
+                  "streetAndNumber": "Av. Ejemplo 123",
+                  "transportType": [
+                    "aereo"
+                  ]
+                },
                 "schema": {
                   "$ref": "#/components/schemas/RegistrationRequest"
                 }
@@ -4283,6 +4713,10 @@
         "requestBody": {
           "content": {
             "application/json": {
+              "example": {
+                "channel": "email",
+                "code": "123456"
+              },
               "schema": {
                 "$ref": "#/components/schemas/RegistrationVerifyRequest"
               }
