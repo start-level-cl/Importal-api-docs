@@ -187,6 +187,22 @@ const schemaExamples = {
     },
   ],
   Chat: { id: 7, user_id: 12, transport_type: 'AEREA', provider_code: 'AIR-01' },
+  ChatDetails: {
+    id: 7,
+    user_id: 12,
+    transport_type: 'AEREA',
+    provider_code: 'AIR-01',
+    messages: [
+      { id: 1, chat_id: 7, message: '[Usuario-12]: Hola', created_at: '2026-05-25T12:00:00.000Z' }
+    ],
+    websocket: {
+      url: 'ws://localhost:3000/v1',
+      path: '/socket.io',
+      namespace: '/v1',
+      event: 'join_chat',
+      room: 'chat_7'
+    }
+  },
   ChatArray: [
     { id: 7, user_id: 12, transport_type: 'AEREA', provider_code: 'AIR-01' },
   ],
@@ -598,6 +614,23 @@ export const schemas = {
     ['id'],
   ),
   ChatArray: { type: 'array', items: { $ref: '#/components/schemas/Chat' } },
+  ChatDetails: objectSchema(
+    {
+      id: { type: 'integer' },
+      user_id: { type: 'integer' },
+      transport_type: { type: 'string' },
+      provider_code: { type: 'string' },
+      messages: { type: 'array', items: { $ref: '#/components/schemas/ChatMessage' } },
+      websocket: objectSchema({
+        url: { type: 'string' },
+        path: { type: 'string' },
+        namespace: { type: 'string' },
+        event: { type: 'string' },
+        room: { type: 'string' },
+      }, ['url', 'path', 'namespace', 'event', 'room']),
+    },
+    ['id', 'websocket'],
+  ),
   ChatMessage: objectSchema(
     {
       id: { type: 'integer' },
@@ -902,6 +935,9 @@ export const operationOverrides = {
   },
   'get /api/v1/chats': {
     responses: Object.fromEntries([jsonResponse('200', 'Listado de chats', 'ChatArray')]),
+  },
+  'get /api/v1/chats/{id}': {
+    responses: Object.fromEntries([jsonResponse('200', 'Detalles del chat y configuración websocket', 'ChatDetails')]),
   },
   'get /api/v1/chats/{id}/mensajes': {
     responses: Object.fromEntries([jsonResponse('200', 'Mensajes del chat', 'ChatMessageArray')]),

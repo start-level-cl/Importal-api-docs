@@ -16,6 +16,21 @@ export type Chat = {
 
 export type ChatArray = (Chat)[]
 
+export type ChatDetails = {
+  id: number
+  messages?: (ChatMessage)[]
+  provider_code?: string
+  transport_type?: string
+  user_id?: number
+  websocket: {
+    event: string
+    namespace: string
+    path: string
+    room: string
+    url: string
+  }
+}
+
 export type ChatMessage = {
   chat_id?: number
   created_at?: string
