@@ -264,6 +264,10 @@ const schemaExamples = {
   ConfirmCobroRequest: { approved: true, admin_comment: 'Comprobante validado' },
   UpdateCommissionTierRequest: { id: 1, commission_pct: 20 },
   UpdateLogisticsRateRequest: { id: 1, rate_value: 30 },
+  CreateMessageRequest: { message: 'Hola, ¿cómo estás?' },
+  RequestContactChangeRequest: { type: 'email', newValue: 'nuevo@correo.com', password: 'Password123!' },
+  VerifyContactChangeRequest: { token: 'token-transaction-123', code: '123456' },
+  UpdateUserRequest: { email: 'nuevo@correo.com', phone: '+56912345678' },
 }
 
 function getSchemaExample(schemaRef) {
@@ -744,6 +748,34 @@ export const schemas = {
     },
     ['id', 'rate_value'],
   ),
+  CreateMessageRequest: objectSchema(
+    {
+      message: { type: 'string', description: 'Contenido del mensaje' },
+    },
+    ['message'],
+  ),
+  RequestContactChangeRequest: objectSchema(
+    {
+      type: stringEnum(['email', 'phone']),
+      newValue: { type: 'string', description: 'Nuevo correo o número de teléfono' },
+      password: { type: 'string', description: 'Contraseña actual del usuario' },
+    },
+    ['type', 'newValue', 'password'],
+  ),
+  VerifyContactChangeRequest: objectSchema(
+    {
+      token: { type: 'string', description: 'Token de transacción de la solicitud' },
+      code: { type: 'string', minLength: 6, description: 'Código OTP recibido' },
+    },
+    ['token', 'code'],
+  ),
+  UpdateUserRequest: objectSchema(
+    {
+      email: { type: 'string', format: 'email', description: 'Nuevo correo electrónico' },
+      phone: { type: 'string', description: 'Nuevo número de teléfono' },
+    },
+    [],
+  ),
   GenericObject: genericObject,
   GenericObjectArray: { type: 'array', items: genericObject },
 }
@@ -856,6 +888,9 @@ export const operationOverrides = {
             },
             required: ['channel'],
           },
+          example: {
+            channel: 'both',
+          },
         },
       },
     },
@@ -888,6 +923,10 @@ export const operationOverrides = {
               email: { type: 'string', format: 'email' },
               phone: { type: 'string' },
             },
+          },
+          example: {
+            email: 'nuevo_correo@ejemplo.com',
+            phone: '+56987654321',
           },
         },
       },
@@ -1177,6 +1216,34 @@ export const operationOverrides = {
   'post /api/v1/cliente/pagos/transbank/confirmar': {
     requestBody: jsonRequest('ConfirmTransbankRequest'),
     responses: Object.fromEntries([jsonResponse('200', 'Pago confirmado', 'GenericObject')]),
+  },
+  'post /api/v1/chats/{id}/mensajes': {
+    summary: 'Enviar un nuevo mensaje en el chat',
+    requestBody: jsonRequest('CreateMessageRequest'),
+    responses: Object.fromEntries([
+      jsonResponse('201', 'Mensaje enviado exitosamente', 'ChatMessage'),
+    ]),
+  },
+  'post /api/v1/users/change-contact/request': {
+    summary: 'Solicitar cambio de correo o teléfono de contacto',
+    requestBody: jsonRequest('RequestContactChangeRequest'),
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Solicitud creada, OTP enviado al nuevo destino', 'GenericObject'),
+    ]),
+  },
+  'post /api/v1/users/change-contact/verify': {
+    summary: 'Verificar código OTP y completar el cambio de contacto',
+    requestBody: jsonRequest('VerifyContactChangeRequest'),
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Contacto actualizado exitosamente', 'GenericObject'),
+    ]),
+  },
+  'put /auth/api/v1/auth/users/{userId}': {
+    summary: 'Actualizar email o teléfono de un usuario desde VPC',
+    requestBody: jsonRequest('UpdateUserRequest'),
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Usuario actualizado correctamente', 'GenericObject'),
+    ]),
   },
 }
 

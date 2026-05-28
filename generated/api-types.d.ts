@@ -67,6 +67,10 @@ export type CreateCargaRequest = {
   tipo_carga: "AEREA" | "MARITIMA"
 }
 
+export type CreateMessageRequest = {
+  message: string
+}
+
 export type CreateOrderRequest = {
   cargaId?: number
   productId: number
@@ -292,6 +296,12 @@ export type RegistrationVerifyRequest = {
   code: string
 }
 
+export type RequestContactChangeRequest = {
+  newValue: string
+  password: string
+  type: "email" | "phone"
+}
+
 export type ReviewOrderRequest = {
   caja_size?: string
   dañados: number
@@ -340,6 +350,11 @@ export type UpdateProductRequest = {
   status?: string
 }
 
+export type UpdateUserRequest = {
+  email?: string
+  phone?: string
+}
+
 export type ValidateResponse = {
   valid: boolean
 }
@@ -352,6 +367,11 @@ export type VerifyCodeRequest = {
 export type VerifyCodeResponse = {
   target: string
   verified: boolean
+}
+
+export type VerifyContactChangeRequest = {
+  code: string
+  token: string
 }
 
 export interface Operations {
@@ -838,9 +858,9 @@ export interface Operations {
   "backend_post_api_v1_chats_id_mensajes": {
     method: "POST"
     path: "/api/v1/chats/{id}/mensajes"
-    requestBody: undefined
+    requestBody: CreateMessageRequest
     responses: {
-      "200": GenericObject
+      "201": ChatMessage
     }
   }
   "backend_get_api_v1_cliente_cobros": {
@@ -981,7 +1001,7 @@ export interface Operations {
   "backend_post_api_v1_users_change_contact_request": {
     method: "POST"
     path: "/api/v1/users/change-contact/request"
-    requestBody: undefined
+    requestBody: RequestContactChangeRequest
     responses: {
       "200": GenericObject
     }
@@ -989,7 +1009,7 @@ export interface Operations {
   "backend_post_api_v1_users_change_contact_verify": {
     method: "POST"
     path: "/api/v1/users/change-contact/verify"
-    requestBody: undefined
+    requestBody: VerifyContactChangeRequest
     responses: {
       "200": GenericObject
     }
@@ -1228,7 +1248,7 @@ export interface Operations {
   "auth_put_auth_api_v1_auth_users_userId": {
     method: "PUT"
     path: "/auth/api/v1/auth/users/{userId}"
-    requestBody: undefined
+    requestBody: UpdateUserRequest
     responses: {
       "200": GenericObject
     }

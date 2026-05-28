@@ -1597,18 +1597,23 @@
       "path": "/api/v1/chats/{id}/mensajes",
       "method": "post",
       "operationId": "backend_post_api_v1_chats_id_mensajes",
-      "summary": "createChatMessage",
+      "summary": "Enviar un nuevo mensaje en el chat",
       "tags": [
         "Messaging"
       ],
       "parameters": [],
       "responses": {
-        "200": {
-          "description": "Operacion exitosa",
+        "201": {
+          "description": "Mensaje enviado exitosamente",
           "schema": {
-            "$ref": "#/components/schemas/GenericObject"
+            "$ref": "#/components/schemas/ChatMessage"
           },
-          "example": null
+          "example": {
+            "chat_id": 7,
+            "created_at": "2026-05-25T12:00:00.000Z",
+            "id": 99,
+            "message": "Hola, tu pedido está en tránsito."
+          }
         }
       }
     },
@@ -2061,18 +2066,21 @@
       "path": "/api/v1/users/change-contact/request",
       "method": "post",
       "operationId": "backend_post_api_v1_users_change_contact_request",
-      "summary": "requestContactChange",
+      "summary": "Solicitar cambio de correo o teléfono de contacto",
       "tags": [
         "Users"
       ],
       "parameters": [],
       "responses": {
         "200": {
-          "description": "Operacion exitosa",
+          "description": "Solicitud creada, OTP enviado al nuevo destino",
           "schema": {
             "$ref": "#/components/schemas/GenericObject"
           },
-          "example": null
+          "example": {
+            "message": "Operacion exitosa",
+            "ok": true
+          }
         }
       }
     },
@@ -2080,18 +2088,21 @@
       "path": "/api/v1/users/change-contact/verify",
       "method": "post",
       "operationId": "backend_post_api_v1_users_change_contact_verify",
-      "summary": "verifyContactChange",
+      "summary": "Verificar código OTP y completar el cambio de contacto",
       "tags": [
         "Users"
       ],
       "parameters": [],
       "responses": {
         "200": {
-          "description": "Operacion exitosa",
+          "description": "Contacto actualizado exitosamente",
           "schema": {
             "$ref": "#/components/schemas/GenericObject"
           },
-          "example": null
+          "example": {
+            "message": "Operacion exitosa",
+            "ok": true
+          }
         }
       }
     },
@@ -2757,18 +2768,21 @@
       "path": "/auth/api/v1/auth/users/{userId}",
       "method": "put",
       "operationId": "auth_put_auth_api_v1_auth_users_userId",
-      "summary": "updateUser",
+      "summary": "Actualizar email o teléfono de un usuario desde VPC",
       "tags": [
         "Auth"
       ],
       "parameters": [],
       "responses": {
         "200": {
-          "description": "Operacion exitosa",
+          "description": "Usuario actualizado correctamente",
           "schema": {
             "$ref": "#/components/schemas/GenericObject"
           },
-          "example": null
+          "example": {
+            "message": "Operacion exitosa",
+            "ok": true
+          }
         }
       }
     },

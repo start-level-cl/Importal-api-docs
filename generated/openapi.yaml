@@ -151,6 +151,15 @@ components:
       required:
         - tipo_carga
       type: object
+    CreateMessageRequest:
+      additionalProperties: false
+      properties:
+        message:
+          description: Contenido del mensaje
+          type: string
+      required:
+        - message
+      type: object
     CreateOrderRequest:
       additionalProperties: false
       example:
@@ -790,6 +799,25 @@ components:
       required:
         - code
       type: object
+    RequestContactChangeRequest:
+      additionalProperties: false
+      properties:
+        newValue:
+          description: Nuevo correo o número de teléfono
+          type: string
+        password:
+          description: Contraseña actual del usuario
+          type: string
+        type:
+          enum:
+            - email
+            - phone
+          type: string
+      required:
+        - type
+        - newValue
+        - password
+      type: object
     ReviewOrderRequest:
       additionalProperties: false
       properties:
@@ -896,6 +924,17 @@ components:
         status:
           type: string
       type: object
+    UpdateUserRequest:
+      additionalProperties: false
+      properties:
+        email:
+          description: Nuevo correo electrónico
+          format: email
+          type: string
+        phone:
+          description: Nuevo número de teléfono
+          type: string
+      type: object
     ValidateResponse:
       additionalProperties: false
       properties:
@@ -927,6 +966,20 @@ components:
       required:
         - verified
         - target
+      type: object
+    VerifyContactChangeRequest:
+      additionalProperties: false
+      properties:
+        code:
+          description: Código OTP recibido
+          minLength: 6
+          type: string
+        token:
+          description: Token de transacción de la solicitud
+          type: string
+      required:
+        - token
+        - code
       type: object
   securitySchemes:
     bearerAuth:
@@ -2660,17 +2713,30 @@ paths:
           required: true
           schema:
             type: string
+      requestBody:
+        content:
+          application/json:
+            example:
+              message: "Hola, ¿cómo estás?"
+            schema:
+              $ref: "#/components/schemas/CreateMessageRequest"
+        required: true
       responses:
-        200:
+        201:
           content:
             application/json:
+              example:
+                chat_id: 7
+                created_at: "2026-05-25T12:00:00.000Z"
+                id: 99
+                message: "Hola, tu pedido está en tránsito."
               schema:
-                $ref: "#/components/schemas/GenericObject"
-          description: Operacion exitosa
+                $ref: "#/components/schemas/ChatMessage"
+          description: Mensaje enviado exitosamente
       security:
         -           bearerAuth:
 []
-      summary: createChatMessage
+      summary: Enviar un nuevo mensaje en el chat
       tags:
         - Messaging
       x-role-group: comun
@@ -3216,17 +3282,30 @@ paths:
       operationId: backend_post_api_v1_users_change_contact_request
       parameters:
 []
+      requestBody:
+        content:
+          application/json:
+            example:
+              newValue: "nuevo@correo.com"
+              password: "Password123!"
+              type: email
+            schema:
+              $ref: "#/components/schemas/RequestContactChangeRequest"
+        required: true
       responses:
         200:
           content:
             application/json:
+              example:
+                message: Operacion exitosa
+                ok: true
               schema:
                 $ref: "#/components/schemas/GenericObject"
-          description: Operacion exitosa
+          description: "Solicitud creada, OTP enviado al nuevo destino"
       security:
         -           bearerAuth:
 []
-      summary: requestContactChange
+      summary: Solicitar cambio de correo o teléfono de contacto
       tags:
         - Users
       x-role-group: comun
@@ -3237,17 +3316,29 @@ paths:
       operationId: backend_post_api_v1_users_change_contact_verify
       parameters:
 []
+      requestBody:
+        content:
+          application/json:
+            example:
+              code: 123456
+              token: "token-transaction-123"
+            schema:
+              $ref: "#/components/schemas/VerifyContactChangeRequest"
+        required: true
       responses:
         200:
           content:
             application/json:
+              example:
+                message: Operacion exitosa
+                ok: true
               schema:
                 $ref: "#/components/schemas/GenericObject"
-          description: Operacion exitosa
+          description: Contacto actualizado exitosamente
       security:
         -           bearerAuth:
 []
-      summary: verifyContactChange
+      summary: Verificar código OTP y completar el cambio de contacto
       tags:
         - Users
       x-role-group: comun
@@ -4107,17 +4198,29 @@ paths:
           required: true
           schema:
             type: string
+      requestBody:
+        content:
+          application/json:
+            example:
+              email: "nuevo@correo.com"
+              phone: +56912345678
+            schema:
+              $ref: "#/components/schemas/UpdateUserRequest"
+        required: true
       responses:
         200:
           content:
             application/json:
+              example:
+                message: Operacion exitosa
+                ok: true
               schema:
                 $ref: "#/components/schemas/GenericObject"
-          description: Operacion exitosa
+          description: Usuario actualizado correctamente
       security:
         -           bearerAuth:
 []
-      summary: updateUser
+      summary: Actualizar email o teléfono de un usuario desde VPC
       tags:
         - Auth
       x-role-group: interno
@@ -4316,6 +4419,8 @@ paths:
       requestBody:
         content:
           application/json:
+            example:
+              channel: both
             schema:
               properties:
                 channel:
@@ -4371,6 +4476,9 @@ paths:
       requestBody:
         content:
           application/json:
+            example:
+              email: "nuevo_correo@ejemplo.com"
+              phone: +56987654321
             schema:
               properties:
                 email:
