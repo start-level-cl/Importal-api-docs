@@ -705,7 +705,7 @@ function createHtml(spec) {
       margin: 12px 0 0; padding: 14px; border-radius: 12px; overflow: auto;
       background: #201814; color: #f9efe3; font-size: 13px;
     }
-    .filters-box, .responses-box {
+    .filters-box, .responses-box, .request-body-box {
       margin-top: 12px;
       padding: 14px;
       border: 1px solid var(--line);
@@ -718,7 +718,7 @@ function createHtml(spec) {
       font-size: 14px;
       font-weight: 700;
     }
-    .parameter-list, .response-list { display: grid; gap: 10px; }
+    .parameter-list, .response-list, .request-body-list { display: grid; gap: 10px; }
     .parameter-item, .response-item {
       padding: 10px 12px; border-radius: 12px; background: var(--card); border: 1px solid var(--line);
     }
@@ -922,6 +922,7 @@ function createHtml(spec) {
           </header>
           <p class="meta">\${operation.summary || ''}</p>
           \${renderParameters(operation.parameters || [])}
+          \${renderRequestBody(operation.requestBody)}
           \${renderResponses(operation.responses || {})}
           <details>
             <summary>Ver operacion completa</summary>
@@ -980,6 +981,39 @@ function createHtml(spec) {
             '<header>' +
             '<span class="parameter-name">' + escapeHtml(status) + '</span>' +
             '<span class="badge">' + escapeHtml(response.description || '') + '</span>' +
+            '</header>' +
+            exampleHtml +
+            '</div>';
+        }).join('') +
+        '</div>' +
+        '</section>';
+    }
+
+    function renderRequestBody(requestBody) {
+      if (!requestBody) {
+        return '';
+      }
+
+      const content = requestBody.content || {};
+      const mediaTypes = Object.entries(content);
+      if (!mediaTypes.length) {
+        return '';
+      }
+
+      return '<section class="request-body-box">' +
+        '<p class="mini-title">Request Body</p>' +
+        '<div class="request-body-list">' +
+        mediaTypes.map(([mediaType, media]) => {
+          const example = media.example || media.examples || null;
+          const exampleText = example ? JSON.stringify(example, null, 2) : '';
+          const exampleHtml = exampleText
+            ? '<div class="response-meta">Ejemplo (' + escapeHtml(mediaType) + ')</div><pre class="response-example">' + escapeHtml(exampleText) + '</pre>'
+            : '<div class="response-meta">Sin ejemplo disponible</div>';
+
+          return '<div class="response-item">' +
+            '<header>' +
+            '<span class="parameter-name">' + escapeHtml(mediaType) + '</span>' +
+            '<span class="badge">' + (requestBody.required ? 'Requerido' : 'Opcional') + '</span>' +
             '</header>' +
             exampleHtml +
             '</div>';
