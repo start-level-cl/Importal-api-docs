@@ -359,6 +359,20 @@ export type ValidateResponse = {
   valid: boolean
 }
 
+export type VendorOrder = {
+  cantidad: number
+  carga: {
+    id: number
+    status: string
+    tipo_carga: string
+  }
+  id: number
+  nombre_producto: string
+  status: string
+}
+
+export type VendorOrderArray = (VendorOrder)[]
+
 export type VerifyCodeRequest = {
   code: string
   target: string
@@ -1086,7 +1100,7 @@ export interface Operations {
     path: "/api/v1/vendedor/pedidos"
     requestBody: undefined
     responses: {
-      "200": GenericObject
+      "200": VendorOrderArray
     }
   }
   "backend_get_api_v1_vendedor_pedidos_carga": {

@@ -690,6 +690,26 @@ export const schemas = {
       talla: '128GB',
     },
   },
+  VendorOrder: objectSchema(
+    {
+      id: { type: 'integer' },
+      status: { type: 'string' },
+      cantidad: { type: 'integer' },
+      nombre_producto: { type: 'string', nullable: true },
+      carga: {
+        type: 'object',
+        nullable: true,
+        properties: {
+          id: { type: 'integer' },
+          tipo_carga: { type: 'string' },
+          status: { type: 'string' },
+        },
+        required: ['id', 'tipo_carga', 'status'],
+      },
+    },
+    ['id', 'status', 'cantidad', 'nombre_producto', 'carga'],
+  ),
+  VendorOrderArray: { type: 'array', items: { $ref: '#/components/schemas/VendorOrder' } },
   UpdateOrderStatusRequest: objectSchema({ status: { type: 'string' } }, ['status']),
   ReviewOrderRequest: objectSchema(
     {
@@ -1002,6 +1022,10 @@ export const operationOverrides = {
   'post /api/v1/cliente/pedidos': {
     requestBody: jsonRequest('CreateOrderRequest'),
     responses: Object.fromEntries([jsonResponse('201', 'Pedido creado con reserva de stock inmediata', 'GenericObject')]),
+  },
+  'get /api/v1/vendedor/pedidos': {
+    summary: 'Listar pedidos del vendedor autenticado (Vendedor)',
+    responses: Object.fromEntries([jsonResponse('200', 'Pedidos del vendedor', 'VendorOrderArray')]),
   },
   'put /api/v1/vendedor/pedidos/{id}/estado': {
     requestBody: jsonRequest('UpdateOrderStatusRequest'),

@@ -2268,16 +2268,16 @@
       "path": "/api/v1/vendedor/pedidos",
       "method": "get",
       "operationId": "backend_get_api_v1_vendedor_pedidos",
-      "summary": "getVendorOrders",
+      "summary": "Listar pedidos del vendedor autenticado (Vendedor)",
       "tags": [
         "Orders"
       ],
       "parameters": [],
       "responses": {
         "200": {
-          "description": "Operacion exitosa",
+          "description": "Pedidos del vendedor",
           "schema": {
-            "$ref": "#/components/schemas/GenericObject"
+            "$ref": "#/components/schemas/VendorOrderArray"
           },
           "example": null
         }

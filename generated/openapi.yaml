@@ -943,6 +943,43 @@ components:
       required:
         - valid
       type: object
+    VendorOrder:
+      additionalProperties: false
+      properties:
+        cantidad:
+          type: integer
+        carga:
+          nullable: true
+          properties:
+            id:
+              type: integer
+            status:
+              type: string
+            tipo_carga:
+              type: string
+          required:
+            - id
+            - tipo_carga
+            - status
+          type: object
+        id:
+          type: integer
+        nombre_producto:
+          nullable: true
+          type: string
+        status:
+          type: string
+      required:
+        - id
+        - status
+        - cantidad
+        - nombre_producto
+        - carga
+      type: object
+    VendorOrderArray:
+      items:
+        $ref: "#/components/schemas/VendorOrder"
+      type: array
     VerifyCodeRequest:
       additionalProperties: false
       properties:
@@ -3574,12 +3611,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericObject"
-          description: Operacion exitosa
+                $ref: "#/components/schemas/VendorOrderArray"
+          description: Pedidos del vendedor
       security:
         -           bearerAuth:
 []
-      summary: getVendorOrders
+      summary: Listar pedidos del vendedor autenticado (Vendedor)
       tags:
         - Orders
       x-role-group: vendedor
