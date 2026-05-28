@@ -30,6 +30,38 @@
   {
     "service": "auth",
     "source": "Importal-auth/src/modules/auth/controllers/auth.controller.ts",
+    "method": "post",
+    "path": "/auth/api/v1/auth/login",
+    "operationId": "auth_post_auth_api_v1_auth_login",
+    "tag": "Auth",
+    "tags": [
+      "Auth"
+    ],
+    "roles": [],
+    "security": true,
+    "methodName": "login",
+    "parameters": [],
+    "roleGroup": "interno"
+  },
+  {
+    "service": "auth",
+    "source": "Importal-auth/src/modules/auth/controllers/auth.controller.ts",
+    "method": "post",
+    "path": "/auth/api/v1/auth/change-password",
+    "operationId": "auth_post_auth_api_v1_auth_change_password",
+    "tag": "Auth",
+    "tags": [
+      "Auth"
+    ],
+    "roles": [],
+    "security": true,
+    "methodName": "changePassword",
+    "parameters": [],
+    "roleGroup": "interno"
+  },
+  {
+    "service": "auth",
+    "source": "Importal-auth/src/modules/auth/controllers/auth.controller.ts",
     "method": "get",
     "path": "/auth/api/v1/auth/validate",
     "operationId": "auth_get_auth_api_v1_auth_validate",
@@ -40,6 +72,22 @@
     "roles": [],
     "security": true,
     "methodName": "validate",
+    "parameters": [],
+    "roleGroup": "interno"
+  },
+  {
+    "service": "auth",
+    "source": "Importal-auth/src/modules/auth/controllers/auth.controller.ts",
+    "method": "post",
+    "path": "/auth/api/v1/auth/register-user",
+    "operationId": "auth_post_auth_api_v1_auth_register_user",
+    "tag": "Auth",
+    "tags": [
+      "Auth"
+    ],
+    "roles": [],
+    "security": true,
+    "methodName": "registerUser",
     "parameters": [],
     "roleGroup": "interno"
   },
@@ -2183,6 +2231,25 @@
     "service": "backend",
     "source": "Importal-backend/src/modules/users/controllers/users.controller.ts",
     "method": "get",
+    "path": "/api/v1/users/{id}",
+    "operationId": "backend_get_api_v1_users_id",
+    "tag": "Users",
+    "tags": [
+      "Users"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": true,
+    "methodName": "getUserSummary",
+    "parameters": [],
+    "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/users/controllers/users.controller.ts",
+    "method": "get",
     "path": "/api/v1/users/{id}/orders",
     "operationId": "backend_get_api_v1_users_id_orders",
     "tag": "Users",
@@ -2195,6 +2262,25 @@
     ],
     "security": true,
     "methodName": "getUserOrders",
+    "parameters": [],
+    "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/users/controllers/users.controller.ts",
+    "method": "get",
+    "path": "/api/v1/users/{id}/pedidos",
+    "operationId": "backend_get_api_v1_users_id_pedidos",
+    "tag": "Users",
+    "tags": [
+      "Users"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": true,
+    "methodName": "getUserPedidos",
     "parameters": [],
     "roleGroup": "comun"
   },
@@ -2216,6 +2302,24 @@
     "methodName": "getUserCobros",
     "parameters": [],
     "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/users/controllers/users.controller.ts",
+    "method": "delete",
+    "path": "/api/v1/users/{id}",
+    "operationId": "backend_delete_api_v1_users_id",
+    "tag": "Users",
+    "tags": [
+      "Users"
+    ],
+    "roles": [
+      "root"
+    ],
+    "security": true,
+    "methodName": "deleteUser",
+    "parameters": [],
+    "roleGroup": "root"
   },
   {
     "service": "backend",

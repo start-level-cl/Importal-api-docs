@@ -591,9 +591,21 @@ function collectControllerOperations(filePath, serviceConfig) {
   const operations = []
   let decorators = []
   let collectingMethod = null
+  let insideMethodBody = false
+  let methodBodyBraceBalance = 0
+  let decoratorBalance = 0
 
   for (const line of lines) {
     const trimmed = line.trim()
+
+    if (insideMethodBody) {
+      methodBodyBraceBalance += countMatches(trimmed, /\{/g)
+      methodBodyBraceBalance -= countMatches(trimmed, /\}/g)
+      if (methodBodyBraceBalance <= 0) {
+        insideMethodBody = false
+      }
+      continue
+    }
 
     if (collectingMethod) {
       collectingMethod.lines.push(trimmed)
@@ -612,6 +624,8 @@ function collectControllerOperations(filePath, serviceConfig) {
 
         decorators = []
         collectingMethod = null
+        insideMethodBody = true
+        methodBodyBraceBalance = countMatches(trimmed, /\{/g) - countMatches(trimmed, /\}/g)
 
         if (!metadata) {
           continue
@@ -678,7 +692,12 @@ function collectControllerOperations(filePath, serviceConfig) {
       continue
     }
 
-    if (trimmed.startsWith('@')) {
+    if (trimmed.startsWith('@') || decoratorBalance > 0) {
+      if (trimmed.startsWith('@') && decoratorBalance === 0) {
+        decoratorBalance = countMatches(trimmed, /\(/g) - countMatches(trimmed, /\)/g)
+      } else {
+        decoratorBalance += countMatches(trimmed, /\(/g) - countMatches(trimmed, /\)/g)
+      }
       decorators.push(trimmed)
       continue
     }
@@ -709,6 +728,8 @@ function collectControllerOperations(filePath, serviceConfig) {
 
       decorators = []
       collectingMethod = null
+      insideMethodBody = true
+      methodBodyBraceBalance = countMatches(trimmed, /\{/g) - countMatches(trimmed, /\}/g)
 
       if (!metadata) {
         continue

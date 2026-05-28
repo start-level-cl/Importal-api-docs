@@ -4768,6 +4768,82 @@
         "x-source": "Importal-backend/src/modules/users/controllers/users.controller.ts"
       }
     },
+    "/api/v1/users/{id}": {
+      "delete": {
+        "operationId": "backend_delete_api_v1_users_id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "deleteUser",
+        "tags": [
+          "Users"
+        ],
+        "x-role-group": "root",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/users/controllers/users.controller.ts"
+      },
+      "get": {
+        "operationId": "backend_get_api_v1_users_id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "getUserSummary",
+        "tags": [
+          "Users"
+        ],
+        "x-role-group": "comun",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/users/controllers/users.controller.ts"
+      }
+    },
     "/api/v1/users/{id}/cobros": {
       "get": {
         "operationId": "backend_get_api_v1_users_id_cobros",
@@ -4838,6 +4914,45 @@
           }
         ],
         "summary": "getUserOrders",
+        "tags": [
+          "Users"
+        ],
+        "x-role-group": "comun",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/users/controllers/users.controller.ts"
+      }
+    },
+    "/api/v1/users/{id}/pedidos": {
+      "get": {
+        "operationId": "backend_get_api_v1_users_id_pedidos",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "getUserPedidos",
         "tags": [
           "Users"
         ],
@@ -5640,6 +5755,196 @@
         "x-role-group": "publico",
         "x-service": "auth",
         "x-source": "Importal-auth/src/modules/app/controllers/app.controller.ts"
+      }
+    },
+    "/auth/api/v1/auth/change-password": {
+      "post": {
+        "operationId": "auth_post_auth_api_v1_auth_change_password",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "newPassword": "NewPassword123!",
+                "password": "Password123!",
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+              },
+              "schema": {
+                "$ref": "#/components/schemas/ChangePasswordRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericMessage"
+                }
+              }
+            },
+            "description": "Clave actualizada exitosamente"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Token invalido o clave actual incorrecta"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Actualizar clave de usuario autenticado",
+        "tags": [
+          "Auth"
+        ],
+        "x-role-group": "interno",
+        "x-service": "auth",
+        "x-source": "Importal-auth/src/modules/auth/controllers/auth.controller.ts"
+      }
+    },
+    "/auth/api/v1/auth/login": {
+      "post": {
+        "operationId": "auth_post_auth_api_v1_auth_login",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "email": "usuario@ejemplo.com",
+                "password": "Password123!"
+              },
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            },
+            "description": "Login exitoso"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Credenciales invalidas"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Autenticar usuario y emitir JWT",
+        "tags": [
+          "Auth"
+        ],
+        "x-role-group": "interno",
+        "x-service": "auth",
+        "x-source": "Importal-auth/src/modules/auth/controllers/auth.controller.ts"
+      }
+    },
+    "/auth/api/v1/auth/register-user": {
+      "post": {
+        "operationId": "auth_post_auth_api_v1_auth_register_user",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "email": "juan.perez@ejemplo.com",
+                "name": "Juan Perez",
+                "password": "Password123!",
+                "phone": "+56912345678",
+                "role": "client",
+                "rut": "12.345.678-9",
+                "transporte": [
+                  "maritimo"
+                ]
+              },
+              "schema": {
+                "$ref": "#/components/schemas/RegisterUserRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "email": "juan.perez@ejemplo.com",
+                  "name": "Juan Perez",
+                  "role": "client",
+                  "userId": "u_123"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/RegisterUserResponse"
+                }
+              }
+            },
+            "description": "Usuario registrado"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Acceso restringido a VPC"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Usuario ya existe"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Registrar usuario desde servicios internos",
+        "tags": [
+          "Auth"
+        ],
+        "x-role-group": "interno",
+        "x-service": "auth",
+        "x-source": "Importal-auth/src/modules/auth/controllers/auth.controller.ts"
       }
     },
     "/auth/api/v1/auth/send-code": {

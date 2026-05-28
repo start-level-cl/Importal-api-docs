@@ -46,7 +46,56 @@
       "tags": [
         "Audit"
       ],
-      "parameters": [],
+      "parameters": [
+        {
+          "name": "resource",
+          "description": null,
+          "schema": {
+            "type": "string"
+          },
+          "required": false
+        },
+        {
+          "name": "userId",
+          "description": null,
+          "schema": {
+            "type": "string"
+          },
+          "required": false
+        },
+        {
+          "name": "action",
+          "description": null,
+          "schema": {
+            "enum": [
+              "CREATE",
+              "READ",
+              "UPDATE",
+              "DELETE",
+              "LOGIN",
+              "LOGOUT"
+            ],
+            "type": "string"
+          },
+          "required": false
+        },
+        {
+          "name": "timeRange",
+          "description": null,
+          "schema": {
+            "type": "string"
+          },
+          "required": false
+        },
+        {
+          "name": "limit",
+          "description": null,
+          "schema": {
+            "type": "number"
+          },
+          "required": false
+        }
+      ],
       "responses": {
         "200": {
           "description": "Operacion exitosa",
@@ -118,6 +167,28 @@
       }
     },
     {
+      "path": "/api/v1/admin/cargas/{id}/close",
+      "method": "post",
+      "operationId": "backend_post_api_v1_admin_cargas_id_close",
+      "summary": "Cerrar una carga específica, desactivar productos de vendedores asignados y generar cobros de comisión (Admin/Root)",
+      "tags": [
+        "Orders"
+      ],
+      "parameters": [],
+      "responses": {
+        "200": {
+          "description": "Carga cerrada con éxito",
+          "schema": {
+            "$ref": "#/components/schemas/GenericObject"
+          },
+          "example": {
+            "message": "Operacion exitosa",
+            "ok": true
+          }
+        }
+      }
+    },
+    {
       "path": "/api/v1/admin/cobros",
       "method": "get",
       "operationId": "backend_get_api_v1_admin_cobros",
@@ -138,6 +209,71 @@
               "message": "Ejemplo de elemento retornado"
             }
           ]
+        }
+      }
+    },
+    {
+      "path": "/api/v1/admin/cobros/pendientes-validacion",
+      "method": "get",
+      "operationId": "backend_get_api_v1_admin_cobros_pendientes_validacion",
+      "summary": "Listar cobros que tienen un comprobante subido pendiente de revisión (Admin/Root)",
+      "tags": [
+        "Billing"
+      ],
+      "parameters": [],
+      "responses": {
+        "200": {
+          "description": "Listado de cobros pendientes de validación",
+          "schema": {
+            "$ref": "#/components/schemas/GenericObjectArray"
+          },
+          "example": [
+            {
+              "id": 1,
+              "message": "Ejemplo de elemento retornado"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "path": "/api/v1/admin/cobros/trigger",
+      "method": "post",
+      "operationId": "backend_post_api_v1_admin_cobros_trigger",
+      "summary": "Gatillar manualmente generación de cobros del periodo y cálculo de intereses de mora (Admin/Root)",
+      "tags": [
+        "Billing"
+      ],
+      "parameters": [],
+      "responses": {
+        "200": {
+          "description": "Gatillado de facturación exitoso",
+          "schema": {
+            "$ref": "#/components/schemas/GenericObject"
+          },
+          "example": {
+            "message": "Operacion exitosa",
+            "ok": true
+          }
+        }
+      }
+    },
+    {
+      "path": "/api/v1/admin/cobros/{id}/comprobantes",
+      "method": "get",
+      "operationId": "backend_get_api_v1_admin_cobros_id_comprobantes",
+      "summary": "getCobroProofImages",
+      "tags": [
+        "Billing"
+      ],
+      "parameters": [],
+      "responses": {
+        "200": {
+          "description": "Operacion exitosa",
+          "schema": {
+            "$ref": "#/components/schemas/GenericObject"
+          },
+          "example": null
         }
       }
     },
@@ -228,7 +364,29 @@
       "tags": [
         "Audit"
       ],
-      "parameters": [],
+      "parameters": [
+        {
+          "name": "level",
+          "description": null,
+          "schema": {
+            "enum": [
+              "CRITICAL",
+              "ERROR",
+              "WARNING"
+            ],
+            "type": "string"
+          },
+          "required": false
+        },
+        {
+          "name": "limit",
+          "description": null,
+          "schema": {
+            "type": "number"
+          },
+          "required": false
+        }
+      ],
       "responses": {
         "200": {
           "description": "Operacion exitosa",
@@ -285,7 +443,54 @@
       "tags": [
         "Audit"
       ],
-      "parameters": [],
+      "parameters": [
+        {
+          "name": "service",
+          "description": null,
+          "schema": {
+            "type": "string"
+          },
+          "required": false
+        },
+        {
+          "name": "level",
+          "description": null,
+          "schema": {
+            "enum": [
+              "ERROR",
+              "WARN",
+              "INFO",
+              "DEBUG"
+            ],
+            "type": "string"
+          },
+          "required": false
+        },
+        {
+          "name": "timeRange",
+          "description": "1h, 24h, 7d, 30d",
+          "schema": {
+            "type": "string"
+          },
+          "required": false
+        },
+        {
+          "name": "limit",
+          "description": null,
+          "schema": {
+            "type": "number"
+          },
+          "required": false
+        },
+        {
+          "name": "offset",
+          "description": null,
+          "schema": {
+            "type": "number"
+          },
+          "required": false
+        }
+      ],
       "responses": {
         "200": {
           "description": "Operacion exitosa",
@@ -304,7 +509,24 @@
       "tags": [
         "Audit"
       ],
-      "parameters": [],
+      "parameters": [
+        {
+          "name": "query",
+          "description": null,
+          "schema": {
+            "type": "string"
+          },
+          "required": true
+        },
+        {
+          "name": "limit",
+          "description": null,
+          "schema": {
+            "type": "number"
+          },
+          "required": false
+        }
+      ],
       "responses": {
         "200": {
           "description": "Operacion exitosa",
@@ -342,7 +564,16 @@
       "tags": [
         "Admin Metrics"
       ],
-      "parameters": [],
+      "parameters": [
+        {
+          "name": "timeRange",
+          "description": "1d, 7d, 30d",
+          "schema": {
+            "type": "string"
+          },
+          "required": false
+        }
+      ],
       "responses": {
         "200": {
           "description": "Operacion exitosa",
@@ -361,7 +592,16 @@
       "tags": [
         "Admin Metrics"
       ],
-      "parameters": [],
+      "parameters": [
+        {
+          "name": "timeRange",
+          "description": null,
+          "schema": {
+            "type": "string"
+          },
+          "required": false
+        }
+      ],
       "responses": {
         "200": {
           "description": "Operacion exitosa",
@@ -380,7 +620,28 @@
       "tags": [
         "Admin Metrics"
       ],
-      "parameters": [],
+      "parameters": [
+        {
+          "name": "timeRange",
+          "description": null,
+          "schema": {
+            "type": "string"
+          },
+          "required": false
+        },
+        {
+          "name": "currency",
+          "description": null,
+          "schema": {
+            "enum": [
+              "CLP",
+              "USD"
+            ],
+            "type": "string"
+          },
+          "required": false
+        }
+      ],
       "responses": {
         "200": {
           "description": "Operacion exitosa",
@@ -399,7 +660,16 @@
       "tags": [
         "Admin Metrics"
       ],
-      "parameters": [],
+      "parameters": [
+        {
+          "name": "timeRange",
+          "description": null,
+          "schema": {
+            "type": "string"
+          },
+          "required": false
+        }
+      ],
       "responses": {
         "200": {
           "description": "Operacion exitosa",
@@ -418,7 +688,16 @@
       "tags": [
         "Admin Metrics"
       ],
-      "parameters": [],
+      "parameters": [
+        {
+          "name": "timeRange",
+          "description": null,
+          "schema": {
+            "type": "string"
+          },
+          "required": false
+        }
+      ],
       "responses": {
         "200": {
           "description": "Operacion exitosa",
@@ -430,6 +709,142 @@
       }
     },
     {
+      "path": "/api/v1/admin/pedidos-transicion",
+      "method": "get",
+      "operationId": "backend_get_api_v1_admin_pedidos_transicion",
+      "summary": "Listar todas las solicitudes de transición de pedidos individuales de vendedores (Admin/Root)",
+      "tags": [
+        "Orders"
+      ],
+      "parameters": [],
+      "responses": {
+        "200": {
+          "description": "Lista de solicitudes",
+          "schema": {
+            "$ref": "#/components/schemas/GenericObjectArray"
+          },
+          "example": [
+            {
+              "id": 1,
+              "message": "Ejemplo de elemento retornado"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "path": "/api/v1/admin/pedidos-transicion/{id}/aprobar",
+      "method": "post",
+      "operationId": "backend_post_api_v1_admin_pedidos_transicion_id_aprobar",
+      "summary": "Aprobar la transición de un pedido a la siguiente carga abierta (Admin/Root)",
+      "tags": [
+        "Orders"
+      ],
+      "parameters": [],
+      "responses": {
+        "200": {
+          "description": "Transición aprobada con éxito",
+          "schema": {
+            "$ref": "#/components/schemas/GenericObject"
+          },
+          "example": {
+            "message": "Operacion exitosa",
+            "ok": true
+          }
+        }
+      }
+    },
+    {
+      "path": "/api/v1/admin/pedidos-transicion/{id}/rechazar",
+      "method": "post",
+      "operationId": "backend_post_api_v1_admin_pedidos_transicion_id_rechazar",
+      "summary": "Rechazar la transición de un pedido (Admin/Root)",
+      "tags": [
+        "Orders"
+      ],
+      "parameters": [],
+      "responses": {
+        "200": {
+          "description": "Transición rechazada con éxito",
+          "schema": {
+            "$ref": "#/components/schemas/GenericObject"
+          },
+          "example": {
+            "message": "Operacion exitosa",
+            "ok": true
+          }
+        }
+      }
+    },
+    {
+      "path": "/api/v1/admin/solicitudes-carga",
+      "method": "get",
+      "operationId": "backend_get_api_v1_admin_solicitudes_carga",
+      "summary": "Listar solicitudes de tránsito de carga pendientes de aprobación (Admin/Root)",
+      "tags": [
+        "Orders"
+      ],
+      "parameters": [],
+      "responses": {
+        "200": {
+          "description": "Solicitudes de tránsito",
+          "schema": {
+            "$ref": "#/components/schemas/GenericObjectArray"
+          },
+          "example": [
+            {
+              "id": 1,
+              "message": "Ejemplo de elemento retornado"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "path": "/api/v1/admin/solicitudes-carga/{id}/aprobar",
+      "method": "post",
+      "operationId": "backend_post_api_v1_admin_solicitudes_carga_id_aprobar",
+      "summary": "Aprobar una solicitud de tránsito y asignarle carga (Admin/Root)",
+      "tags": [
+        "Orders"
+      ],
+      "parameters": [],
+      "responses": {
+        "200": {
+          "description": "Solicitud de tránsito aprobada",
+          "schema": {
+            "$ref": "#/components/schemas/GenericObject"
+          },
+          "example": {
+            "message": "Operacion exitosa",
+            "ok": true
+          }
+        }
+      }
+    },
+    {
+      "path": "/api/v1/admin/solicitudes-carga/{id}/rechazar",
+      "method": "post",
+      "operationId": "backend_post_api_v1_admin_solicitudes_carga_id_rechazar",
+      "summary": "Rechazar una solicitud de tránsito de carga (Admin/Root)",
+      "tags": [
+        "Orders"
+      ],
+      "parameters": [],
+      "responses": {
+        "200": {
+          "description": "Solicitud de tránsito rechazada",
+          "schema": {
+            "$ref": "#/components/schemas/GenericObject"
+          },
+          "example": {
+            "message": "Operacion exitosa",
+            "ok": true
+          }
+        }
+      }
+    },
+    {
       "path": "/api/v1/admin/system/alerts",
       "method": "get",
       "operationId": "backend_get_api_v1_admin_system_alerts",
@@ -437,7 +852,21 @@
       "tags": [
         "System"
       ],
-      "parameters": [],
+      "parameters": [
+        {
+          "name": "severity",
+          "description": null,
+          "schema": {
+            "enum": [
+              "CRITICAL",
+              "WARNING",
+              "INFO"
+            ],
+            "type": "string"
+          },
+          "required": false
+        }
+      ],
       "responses": {
         "200": {
           "description": "Operacion exitosa",
@@ -662,7 +1091,16 @@
       "tags": [
         "Audit"
       ],
-      "parameters": [],
+      "parameters": [
+        {
+          "name": "limit",
+          "description": null,
+          "schema": {
+            "type": "number"
+          },
+          "required": false
+        }
+      ],
       "responses": {
         "200": {
           "description": "Operacion exitosa",
@@ -719,7 +1157,24 @@
       "tags": [
         "Audit"
       ],
-      "parameters": [],
+      "parameters": [
+        {
+          "name": "timeRange",
+          "description": null,
+          "schema": {
+            "type": "string"
+          },
+          "required": false
+        },
+        {
+          "name": "limit",
+          "description": null,
+          "schema": {
+            "type": "number"
+          },
+          "required": false
+        }
+      ],
       "responses": {
         "200": {
           "description": "Operacion exitosa",
@@ -760,7 +1215,29 @@
       "tags": [
         "Audit"
       ],
-      "parameters": [],
+      "parameters": [
+        {
+          "name": "status",
+          "description": null,
+          "schema": {
+            "enum": [
+              "failed",
+              "success",
+              "all"
+            ],
+            "type": "string"
+          },
+          "required": false
+        },
+        {
+          "name": "timeRange",
+          "description": null,
+          "schema": {
+            "type": "string"
+          },
+          "required": false
+        }
+      ],
       "responses": {
         "200": {
           "description": "Operacion exitosa",
@@ -798,7 +1275,16 @@
       "tags": [
         "Audit"
       ],
-      "parameters": [],
+      "parameters": [
+        {
+          "name": "limit",
+          "description": null,
+          "schema": {
+            "type": "number"
+          },
+          "required": false
+        }
+      ],
       "responses": {
         "200": {
           "description": "Operacion exitosa",
@@ -817,7 +1303,16 @@
       "tags": [
         "Audit"
       ],
-      "parameters": [],
+      "parameters": [
+        {
+          "name": "limit",
+          "description": null,
+          "schema": {
+            "type": "number"
+          },
+          "required": false
+        }
+      ],
       "responses": {
         "200": {
           "description": "Operacion exitosa",
@@ -853,6 +1348,30 @@
       }
     },
     {
+      "path": "/api/v1/bodeguero/cargas/{cargaId}/pedidos",
+      "method": "get",
+      "operationId": "backend_get_api_v1_bodeguero_cargas_cargaId_pedidos",
+      "summary": "Listar todos los pedidos asociados a una carga específica",
+      "tags": [
+        "Orders"
+      ],
+      "parameters": [],
+      "responses": {
+        "200": {
+          "description": "Pedidos de la carga",
+          "schema": {
+            "$ref": "#/components/schemas/GenericObjectArray"
+          },
+          "example": [
+            {
+              "id": 1,
+              "message": "Ejemplo de elemento retornado"
+            }
+          ]
+        }
+      }
+    },
+    {
       "path": "/api/v1/bodeguero/cargas/{id}/status",
       "method": "put",
       "operationId": "backend_put_api_v1_bodeguero_cargas_id_status",
@@ -864,6 +1383,28 @@
       "responses": {
         "200": {
           "description": "Estado de carga actualizado",
+          "schema": {
+            "$ref": "#/components/schemas/GenericObject"
+          },
+          "example": {
+            "message": "Operacion exitosa",
+            "ok": true
+          }
+        }
+      }
+    },
+    {
+      "path": "/api/v1/bodeguero/cargas/{id}/verificar-revision",
+      "method": "get",
+      "operationId": "backend_get_api_v1_bodeguero_cargas_id_verificar_revision",
+      "summary": "Verificar si todos los pedidos de una carga han sido revisados",
+      "tags": [
+        "Orders"
+      ],
+      "parameters": [],
+      "responses": {
+        "200": {
+          "description": "Estado de revisión de la carga",
           "schema": {
             "$ref": "#/components/schemas/GenericObject"
           },
@@ -940,21 +1481,24 @@
       }
     },
     {
-      "path": "/api/v1/bodeguero/tracking/actualizar",
+      "path": "/api/v1/bodeguero/pedidos/{id}/revisar",
       "method": "put",
-      "operationId": "backend_put_api_v1_bodeguero_tracking_actualizar",
-      "summary": "updateTracking",
+      "operationId": "backend_put_api_v1_bodeguero_pedidos_id_revisar",
+      "summary": "Registrar la revisión física de un pedido por parte del bodeguero",
       "tags": [
         "Orders"
       ],
       "parameters": [],
       "responses": {
         "200": {
-          "description": "Operacion exitosa",
+          "description": "Pedido revisado exitosamente",
           "schema": {
             "$ref": "#/components/schemas/GenericObject"
           },
-          "example": null
+          "example": {
+            "message": "Operacion exitosa",
+            "ok": true
+          }
         }
       }
     },
@@ -985,6 +1529,45 @@
       }
     },
     {
+      "path": "/api/v1/chats/{id}",
+      "method": "get",
+      "operationId": "backend_get_api_v1_chats_id",
+      "summary": "getChatDetails",
+      "tags": [
+        "Messaging"
+      ],
+      "parameters": [],
+      "responses": {
+        "200": {
+          "description": "Detalles del chat y configuración websocket",
+          "schema": {
+            "$ref": "#/components/schemas/ChatDetails"
+          },
+          "example": {
+            "id": 7,
+            "messages": [
+              {
+                "chat_id": 7,
+                "created_at": "2026-05-25T12:00:00.000Z",
+                "id": 1,
+                "message": "[Usuario-12]: Hola"
+              }
+            ],
+            "provider_code": "AIR-01",
+            "transport_type": "AEREA",
+            "user_id": 12,
+            "websocket": {
+              "event": "join_chat",
+              "namespace": "/v1",
+              "path": "/socket.io",
+              "room": "chat_7",
+              "url": "ws://localhost:3000/v1"
+            }
+          }
+        }
+      }
+    },
+    {
       "path": "/api/v1/chats/{id}/mensajes",
       "method": "get",
       "operationId": "backend_get_api_v1_chats_id_mensajes",
@@ -1011,6 +1594,25 @@
       }
     },
     {
+      "path": "/api/v1/chats/{id}/mensajes",
+      "method": "post",
+      "operationId": "backend_post_api_v1_chats_id_mensajes",
+      "summary": "createChatMessage",
+      "tags": [
+        "Messaging"
+      ],
+      "parameters": [],
+      "responses": {
+        "200": {
+          "description": "Operacion exitosa",
+          "schema": {
+            "$ref": "#/components/schemas/GenericObject"
+          },
+          "example": null
+        }
+      }
+    },
+    {
       "path": "/api/v1/cliente/cobros",
       "method": "get",
       "operationId": "backend_get_api_v1_cliente_cobros",
@@ -1031,6 +1633,71 @@
               "message": "Ejemplo de elemento retornado"
             }
           ]
+        }
+      }
+    },
+    {
+      "path": "/api/v1/cliente/cobros/pagados",
+      "method": "get",
+      "operationId": "backend_get_api_v1_cliente_cobros_pagados",
+      "summary": "Obtener historial de cobros pagados del cliente",
+      "tags": [
+        "Billing"
+      ],
+      "parameters": [],
+      "responses": {
+        "200": {
+          "description": "Cobros pagados",
+          "schema": {
+            "$ref": "#/components/schemas/GenericObjectArray"
+          },
+          "example": [
+            {
+              "id": 1,
+              "message": "Ejemplo de elemento retornado"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "path": "/api/v1/cliente/cobros/{id}/comprobante",
+      "method": "delete",
+      "operationId": "backend_delete_api_v1_cliente_cobros_id_comprobante",
+      "summary": "deletePaymentProof",
+      "tags": [
+        "Billing"
+      ],
+      "parameters": [],
+      "responses": {
+        "200": {
+          "description": "Operacion exitosa",
+          "schema": {
+            "$ref": "#/components/schemas/GenericObject"
+          },
+          "example": null
+        }
+      }
+    },
+    {
+      "path": "/api/v1/cliente/cobros/{id}/pagar",
+      "method": "post",
+      "operationId": "backend_post_api_v1_cliente_cobros_id_pagar",
+      "summary": "Subir comprobante de pago para un cobro (Multipart File)",
+      "tags": [
+        "Billing"
+      ],
+      "parameters": [],
+      "responses": {
+        "200": {
+          "description": "Comprobante subido, cobro en revisión",
+          "schema": {
+            "$ref": "#/components/schemas/GenericObject"
+          },
+          "example": {
+            "message": "Operacion exitosa",
+            "ok": true
+          }
         }
       }
     },
@@ -1094,88 +1761,6 @@
             "message": "Operacion exitosa",
             "ok": true
           }
-        }
-      }
-    },
-    {
-      "path": "/api/v1/cliente/pagos/historial",
-      "method": "get",
-      "operationId": "backend_get_api_v1_cliente_pagos_historial",
-      "summary": "getPaymentHistory",
-      "tags": [
-        "Billing"
-      ],
-      "parameters": [],
-      "responses": {
-        "200": {
-          "description": "Operacion exitosa",
-          "schema": {
-            "$ref": "#/components/schemas/GenericObject"
-          },
-          "example": null
-        }
-      }
-    },
-    {
-      "path": "/api/v1/cliente/pagos/transbank/confirmar",
-      "method": "post",
-      "operationId": "backend_post_api_v1_cliente_pagos_transbank_confirmar",
-      "summary": "confirmTransbank",
-      "tags": [
-        "Billing"
-      ],
-      "parameters": [],
-      "responses": {
-        "200": {
-          "description": "Pago confirmado",
-          "schema": {
-            "$ref": "#/components/schemas/GenericObject"
-          },
-          "example": {
-            "message": "Operacion exitosa",
-            "ok": true
-          }
-        }
-      }
-    },
-    {
-      "path": "/api/v1/cliente/pagos/transbank/iniciar",
-      "method": "post",
-      "operationId": "backend_post_api_v1_cliente_pagos_transbank_iniciar",
-      "summary": "initiateTransbank",
-      "tags": [
-        "Billing"
-      ],
-      "parameters": [],
-      "responses": {
-        "201": {
-          "description": "Pago iniciado",
-          "schema": {
-            "$ref": "#/components/schemas/GenericObject"
-          },
-          "example": {
-            "message": "Operacion exitosa",
-            "ok": true
-          }
-        }
-      }
-    },
-    {
-      "path": "/api/v1/cliente/pagos/transbank/{id}/estado",
-      "method": "get",
-      "operationId": "backend_get_api_v1_cliente_pagos_transbank_id_estado",
-      "summary": "getTransbankStatus",
-      "tags": [
-        "Billing"
-      ],
-      "parameters": [],
-      "responses": {
-        "200": {
-          "description": "Operacion exitosa",
-          "schema": {
-            "$ref": "#/components/schemas/GenericObject"
-          },
-          "example": null
         }
       }
     },
@@ -1454,6 +2039,180 @@
       }
     },
     {
+      "path": "/api/v1/users",
+      "method": "get",
+      "operationId": "backend_get_api_v1_users",
+      "summary": "getUsers",
+      "tags": [
+        "Users"
+      ],
+      "parameters": [],
+      "responses": {
+        "200": {
+          "description": "Operacion exitosa",
+          "schema": {
+            "$ref": "#/components/schemas/GenericObject"
+          },
+          "example": null
+        }
+      }
+    },
+    {
+      "path": "/api/v1/users/change-contact/request",
+      "method": "post",
+      "operationId": "backend_post_api_v1_users_change_contact_request",
+      "summary": "requestContactChange",
+      "tags": [
+        "Users"
+      ],
+      "parameters": [],
+      "responses": {
+        "200": {
+          "description": "Operacion exitosa",
+          "schema": {
+            "$ref": "#/components/schemas/GenericObject"
+          },
+          "example": null
+        }
+      }
+    },
+    {
+      "path": "/api/v1/users/change-contact/verify",
+      "method": "post",
+      "operationId": "backend_post_api_v1_users_change_contact_verify",
+      "summary": "verifyContactChange",
+      "tags": [
+        "Users"
+      ],
+      "parameters": [],
+      "responses": {
+        "200": {
+          "description": "Operacion exitosa",
+          "schema": {
+            "$ref": "#/components/schemas/GenericObject"
+          },
+          "example": null
+        }
+      }
+    },
+    {
+      "path": "/api/v1/users/{id}",
+      "method": "delete",
+      "operationId": "backend_delete_api_v1_users_id",
+      "summary": "deleteUser",
+      "tags": [
+        "Users"
+      ],
+      "parameters": [],
+      "responses": {
+        "200": {
+          "description": "Operacion exitosa",
+          "schema": {
+            "$ref": "#/components/schemas/GenericObject"
+          },
+          "example": null
+        }
+      }
+    },
+    {
+      "path": "/api/v1/users/{id}",
+      "method": "get",
+      "operationId": "backend_get_api_v1_users_id",
+      "summary": "getUserSummary",
+      "tags": [
+        "Users"
+      ],
+      "parameters": [],
+      "responses": {
+        "200": {
+          "description": "Operacion exitosa",
+          "schema": {
+            "$ref": "#/components/schemas/GenericObject"
+          },
+          "example": null
+        }
+      }
+    },
+    {
+      "path": "/api/v1/users/{id}/cobros",
+      "method": "get",
+      "operationId": "backend_get_api_v1_users_id_cobros",
+      "summary": "getUserCobros",
+      "tags": [
+        "Users"
+      ],
+      "parameters": [],
+      "responses": {
+        "200": {
+          "description": "Operacion exitosa",
+          "schema": {
+            "$ref": "#/components/schemas/GenericObject"
+          },
+          "example": null
+        }
+      }
+    },
+    {
+      "path": "/api/v1/users/{id}/orders",
+      "method": "get",
+      "operationId": "backend_get_api_v1_users_id_orders",
+      "summary": "getUserOrders",
+      "tags": [
+        "Users"
+      ],
+      "parameters": [],
+      "responses": {
+        "200": {
+          "description": "Operacion exitosa",
+          "schema": {
+            "$ref": "#/components/schemas/GenericObject"
+          },
+          "example": null
+        }
+      }
+    },
+    {
+      "path": "/api/v1/users/{id}/pedidos",
+      "method": "get",
+      "operationId": "backend_get_api_v1_users_id_pedidos",
+      "summary": "getUserPedidos",
+      "tags": [
+        "Users"
+      ],
+      "parameters": [],
+      "responses": {
+        "200": {
+          "description": "Operacion exitosa",
+          "schema": {
+            "$ref": "#/components/schemas/GenericObject"
+          },
+          "example": null
+        }
+      }
+    },
+    {
+      "path": "/api/v1/vendedor/cargas/transicion-cierre",
+      "method": "post",
+      "operationId": "backend_post_api_v1_vendedor_cargas_transicion_cierre",
+      "summary": "Solicitar transición/cierre de carga por ventanas temporales o salida anticipada (Vendedor)",
+      "tags": [
+        "Orders"
+      ],
+      "parameters": [],
+      "responses": {
+        "200": {
+          "description": "Transición procesada",
+          "schema": {
+            "$ref": "#/components/schemas/GenericObject"
+          },
+          "example": {
+            "message": "Operacion exitosa",
+            "ok": true
+          }
+        }
+      }
+    },
+    {
       "path": "/api/v1/vendedor/dashboard",
       "method": "get",
       "operationId": "backend_get_api_v1_vendedor_dashboard",
@@ -1514,6 +2273,119 @@
       }
     },
     {
+      "path": "/api/v1/vendedor/pedidos-carga",
+      "method": "get",
+      "operationId": "backend_get_api_v1_vendedor_pedidos_carga",
+      "summary": "Listar pedidos de la carga activa del vendedor (Vendedor)",
+      "tags": [
+        "Orders"
+      ],
+      "parameters": [
+        {
+          "name": "tipo_carga",
+          "description": "Filtrar por tipo de transporte",
+          "schema": {
+            "enum": [
+              "AEREA",
+              "MARITIMA"
+            ],
+            "type": "string"
+          },
+          "required": false
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Pedidos de la carga activa",
+          "schema": {
+            "$ref": "#/components/schemas/GenericObjectArray"
+          },
+          "example": [
+            {
+              "id": 1,
+              "message": "Ejemplo de elemento retornado"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "path": "/api/v1/vendedor/pedidos-carga/status",
+      "method": "get",
+      "operationId": "backend_get_api_v1_vendedor_pedidos_carga_status",
+      "summary": "getVendorCargaStatus",
+      "tags": [
+        "Orders"
+      ],
+      "parameters": [
+        {
+          "name": "tipo_carga",
+          "description": "Opcional: AEREA o MARITIMA",
+          "schema": {
+            "enum": [
+              "AEREA",
+              "MARITIMA"
+            ],
+            "type": "string"
+          },
+          "required": false
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Operacion exitosa",
+          "schema": {
+            "$ref": "#/components/schemas/GenericObject"
+          },
+          "example": null
+        }
+      }
+    },
+    {
+      "path": "/api/v1/vendedor/pedidos/{id}/confirmar",
+      "method": "post",
+      "operationId": "backend_post_api_v1_vendedor_pedidos_id_confirmar",
+      "summary": "Confirmar pedido y efectuar descuento final de stock (Vendedor)",
+      "tags": [
+        "Orders"
+      ],
+      "parameters": [],
+      "responses": {
+        "200": {
+          "description": "Pedido confirmado",
+          "schema": {
+            "$ref": "#/components/schemas/GenericObject"
+          },
+          "example": {
+            "message": "Operacion exitosa",
+            "ok": true
+          }
+        }
+      }
+    },
+    {
+      "path": "/api/v1/vendedor/pedidos/{id}/envio",
+      "method": "put",
+      "operationId": "backend_put_api_v1_vendedor_pedidos_id_envio",
+      "summary": "Actualizar flag de envío y número de seguimiento del vendedor (Vendedor)",
+      "tags": [
+        "Orders"
+      ],
+      "parameters": [],
+      "responses": {
+        "200": {
+          "description": "Datos de envío actualizados",
+          "schema": {
+            "$ref": "#/components/schemas/GenericObject"
+          },
+          "example": {
+            "message": "Operacion exitosa",
+            "ok": true
+          }
+        }
+      }
+    },
+    {
       "path": "/api/v1/vendedor/pedidos/{id}/estado",
       "method": "put",
       "operationId": "backend_put_api_v1_vendedor_pedidos_id_estado",
@@ -1525,6 +2397,28 @@
       "responses": {
         "200": {
           "description": "Estado de pedido actualizado. Si se cancela/rechaza se libera el stock.",
+          "schema": {
+            "$ref": "#/components/schemas/GenericObject"
+          },
+          "example": {
+            "message": "Operacion exitosa",
+            "ok": true
+          }
+        }
+      }
+    },
+    {
+      "path": "/api/v1/vendedor/pedidos/{id}/solicitar-transicion",
+      "method": "post",
+      "operationId": "backend_post_api_v1_vendedor_pedidos_id_solicitar_transicion",
+      "summary": "Solicitar transición de un pedido individual a la siguiente carga abierta (Vendedor)",
+      "tags": [
+        "Orders"
+      ],
+      "parameters": [],
+      "responses": {
+        "201": {
+          "description": "Solicitud creada con éxito",
           "schema": {
             "$ref": "#/components/schemas/GenericObject"
           },
@@ -1639,6 +2533,52 @@
           }
         }
       }
+    },
+    {
+      "path": "/api/v1/vendedor/solicitudes-carga",
+      "method": "get",
+      "operationId": "backend_get_api_v1_vendedor_solicitudes_carga",
+      "summary": "Listar solicitudes de tránsito de carga del vendedor autenticado",
+      "tags": [
+        "Orders"
+      ],
+      "parameters": [],
+      "responses": {
+        "200": {
+          "description": "Solicitudes de tránsito del vendedor",
+          "schema": {
+            "$ref": "#/components/schemas/GenericObjectArray"
+          },
+          "example": [
+            {
+              "id": 1,
+              "message": "Ejemplo de elemento retornado"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "path": "/api/v1/vendedor/solicitudes-carga",
+      "method": "post",
+      "operationId": "backend_post_api_v1_vendedor_solicitudes_carga",
+      "summary": "Crear una nueva solicitud de tránsito de carga (Vendedor)",
+      "tags": [
+        "Orders"
+      ],
+      "parameters": [],
+      "responses": {
+        "201": {
+          "description": "Solicitud de tránsito creada",
+          "schema": {
+            "$ref": "#/components/schemas/GenericObject"
+          },
+          "example": {
+            "message": "Operacion exitosa",
+            "ok": true
+          }
+        }
+      }
     }
   ],
   "auth": [
@@ -1675,6 +2615,32 @@
           "description": "Operacion exitosa",
           "schema": {
             "$ref": "#/components/schemas/GenericObject"
+          },
+          "example": null
+        }
+      }
+    },
+    {
+      "path": "/auth/api/v1/auth/change-password",
+      "method": "post",
+      "operationId": "auth_post_auth_api_v1_auth_change_password",
+      "summary": "Actualizar clave de usuario autenticado",
+      "tags": [
+        "Auth"
+      ],
+      "parameters": [],
+      "responses": {
+        "200": {
+          "description": "Clave actualizada exitosamente",
+          "schema": {
+            "$ref": "#/components/schemas/GenericMessage"
+          },
+          "example": null
+        },
+        "401": {
+          "description": "Token invalido o clave actual incorrecta",
+          "schema": {
+            "$ref": "#/components/schemas/ErrorResponse"
           },
           "example": null
         }
@@ -1765,6 +2731,44 @@
           "example": {
             "message": "OTP enviado correctamente"
           }
+        }
+      }
+    },
+    {
+      "path": "/auth/api/v1/auth/users/{userId}",
+      "method": "delete",
+      "operationId": "auth_delete_auth_api_v1_auth_users_userId",
+      "summary": "deleteUser",
+      "tags": [
+        "Auth"
+      ],
+      "parameters": [],
+      "responses": {
+        "200": {
+          "description": "Operacion exitosa",
+          "schema": {
+            "$ref": "#/components/schemas/GenericObject"
+          },
+          "example": null
+        }
+      }
+    },
+    {
+      "path": "/auth/api/v1/auth/users/{userId}",
+      "method": "put",
+      "operationId": "auth_put_auth_api_v1_auth_users_userId",
+      "summary": "updateUser",
+      "tags": [
+        "Auth"
+      ],
+      "parameters": [],
+      "responses": {
+        "200": {
+          "description": "Operacion exitosa",
+          "schema": {
+            "$ref": "#/components/schemas/GenericObject"
+          },
+          "example": null
         }
       }
     },
@@ -1959,6 +2963,46 @@
         },
         "429": {
           "description": "Rate limit de OTP excedido",
+          "schema": {
+            "$ref": "#/components/schemas/ErrorResponse"
+          },
+          "example": null
+        }
+      }
+    },
+    {
+      "path": "/registration-requests/{email}/update-contact",
+      "method": "put",
+      "operationId": "registration_lambda_put_registration_requests_email_update_contact",
+      "summary": "Actualizar email o telefono de una solicitud pendiente",
+      "tags": [
+        "Registration"
+      ],
+      "parameters": [],
+      "responses": {
+        "200": {
+          "description": "Contacto actualizado",
+          "schema": {
+            "$ref": "#/components/schemas/GenericMessage"
+          },
+          "example": null
+        },
+        "400": {
+          "description": "Payload invalido",
+          "schema": {
+            "$ref": "#/components/schemas/ErrorResponse"
+          },
+          "example": null
+        },
+        "404": {
+          "description": "Solicitud no encontrada",
+          "schema": {
+            "$ref": "#/components/schemas/ErrorResponse"
+          },
+          "example": null
+        },
+        "409": {
+          "description": "Solicitud no esta en estado PENDING",
           "schema": {
             "$ref": "#/components/schemas/ErrorResponse"
           },

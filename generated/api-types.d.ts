@@ -994,6 +994,22 @@ export interface Operations {
       "200": GenericObject
     }
   }
+  "backend_delete_api_v1_users_id": {
+    method: "DELETE"
+    path: "/api/v1/users/{id}"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_get_api_v1_users_id": {
+    method: "GET"
+    path: "/api/v1/users/{id}"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
   "backend_get_api_v1_users_id_cobros": {
     method: "GET"
     path: "/api/v1/users/{id}/cobros"
@@ -1005,6 +1021,14 @@ export interface Operations {
   "backend_get_api_v1_users_id_orders": {
     method: "GET"
     path: "/api/v1/users/{id}/orders"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_get_api_v1_users_id_pedidos": {
+    method: "GET"
+    path: "/api/v1/users/{id}/pedidos"
     requestBody: undefined
     responses: {
       "200": GenericObject
@@ -1155,6 +1179,34 @@ export interface Operations {
     requestBody: undefined
     responses: {
       "200": GenericObject
+    }
+  }
+  "auth_post_auth_api_v1_auth_change_password": {
+    method: "POST"
+    path: "/auth/api/v1/auth/change-password"
+    requestBody: ChangePasswordRequest
+    responses: {
+      "200": GenericMessage
+      "401": ErrorResponse
+    }
+  }
+  "auth_post_auth_api_v1_auth_login": {
+    method: "POST"
+    path: "/auth/api/v1/auth/login"
+    requestBody: LoginRequest
+    responses: {
+      "200": LoginResponse
+      "401": ErrorResponse
+    }
+  }
+  "auth_post_auth_api_v1_auth_register_user": {
+    method: "POST"
+    path: "/auth/api/v1/auth/register-user"
+    requestBody: RegisterUserRequest
+    responses: {
+      "201": RegisterUserResponse
+      "403": ErrorResponse
+      "409": ErrorResponse
     }
   }
   "auth_post_auth_api_v1_auth_send_code": {
