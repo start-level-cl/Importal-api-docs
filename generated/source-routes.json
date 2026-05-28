@@ -31,8 +31,8 @@
     "service": "auth",
     "source": "Importal-auth/src/modules/auth/controllers/auth.controller.ts",
     "method": "post",
-    "path": "/auth/api/v1/auth/login",
-    "operationId": "auth_post_auth_api_v1_auth_login",
+    "path": "/auth/api/v1/login",
+    "operationId": "auth_post_auth_api_v1_login",
     "tag": "Auth",
     "tags": [
       "Auth"
@@ -47,8 +47,8 @@
     "service": "auth",
     "source": "Importal-auth/src/modules/auth/controllers/auth.controller.ts",
     "method": "post",
-    "path": "/auth/api/v1/auth/change-password",
-    "operationId": "auth_post_auth_api_v1_auth_change_password",
+    "path": "/auth/api/v1/change-password",
+    "operationId": "auth_post_auth_api_v1_change_password",
     "tag": "Auth",
     "tags": [
       "Auth"
@@ -63,8 +63,8 @@
     "service": "auth",
     "source": "Importal-auth/src/modules/auth/controllers/auth.controller.ts",
     "method": "get",
-    "path": "/auth/api/v1/auth/validate",
-    "operationId": "auth_get_auth_api_v1_auth_validate",
+    "path": "/auth/api/v1/validate",
+    "operationId": "auth_get_auth_api_v1_validate",
     "tag": "Auth",
     "tags": [
       "Auth"
@@ -79,8 +79,8 @@
     "service": "auth",
     "source": "Importal-auth/src/modules/auth/controllers/auth.controller.ts",
     "method": "post",
-    "path": "/auth/api/v1/auth/register-user",
-    "operationId": "auth_post_auth_api_v1_auth_register_user",
+    "path": "/auth/api/v1/register-user",
+    "operationId": "auth_post_auth_api_v1_register_user",
     "tag": "Auth",
     "tags": [
       "Auth"
@@ -95,8 +95,8 @@
     "service": "auth",
     "source": "Importal-auth/src/modules/auth/controllers/auth.controller.ts",
     "method": "delete",
-    "path": "/auth/api/v1/auth/users/{userId}",
-    "operationId": "auth_delete_auth_api_v1_auth_users_userId",
+    "path": "/auth/api/v1/users/{userId}",
+    "operationId": "auth_delete_auth_api_v1_users_userId",
     "tag": "Auth",
     "tags": [
       "Auth"
@@ -111,8 +111,8 @@
     "service": "auth",
     "source": "Importal-auth/src/modules/auth/controllers/auth.controller.ts",
     "method": "put",
-    "path": "/auth/api/v1/auth/users/{userId}",
-    "operationId": "auth_put_auth_api_v1_auth_users_userId",
+    "path": "/auth/api/v1/users/{userId}",
+    "operationId": "auth_put_auth_api_v1_users_userId",
     "tag": "Auth",
     "tags": [
       "Auth"
@@ -127,8 +127,8 @@
     "service": "auth",
     "source": "Importal-auth/src/modules/auth/controllers/auth.controller.ts",
     "method": "post",
-    "path": "/auth/api/v1/auth/send-code",
-    "operationId": "auth_post_auth_api_v1_auth_send_code",
+    "path": "/auth/api/v1/send-code",
+    "operationId": "auth_post_auth_api_v1_send_code",
     "tag": "Auth",
     "tags": [
       "Auth"
@@ -143,8 +143,8 @@
     "service": "auth",
     "source": "Importal-auth/src/modules/auth/controllers/auth.controller.ts",
     "method": "post",
-    "path": "/auth/api/v1/auth/verify-code",
-    "operationId": "auth_post_auth_api_v1_auth_verify_code",
+    "path": "/auth/api/v1/verify-code",
+    "operationId": "auth_post_auth_api_v1_verify_code",
     "tag": "Auth",
     "tags": [
       "Auth"

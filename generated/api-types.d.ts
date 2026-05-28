@@ -1215,27 +1215,27 @@ export interface Operations {
       "200": GenericObject
     }
   }
-  "auth_post_auth_api_v1_auth_change_password": {
+  "auth_post_auth_api_v1_change_password": {
     method: "POST"
-    path: "/auth/api/v1/auth/change-password"
+    path: "/auth/api/v1/change-password"
     requestBody: ChangePasswordRequest
     responses: {
       "200": GenericMessage
       "401": ErrorResponse
     }
   }
-  "auth_post_auth_api_v1_auth_login": {
+  "auth_post_auth_api_v1_login": {
     method: "POST"
-    path: "/auth/api/v1/auth/login"
+    path: "/auth/api/v1/login"
     requestBody: LoginRequest
     responses: {
       "200": LoginResponse
       "401": ErrorResponse
     }
   }
-  "auth_post_auth_api_v1_auth_register_user": {
+  "auth_post_auth_api_v1_register_user": {
     method: "POST"
-    path: "/auth/api/v1/auth/register-user"
+    path: "/auth/api/v1/register-user"
     requestBody: RegisterUserRequest
     responses: {
       "201": RegisterUserResponse
@@ -1243,42 +1243,42 @@ export interface Operations {
       "409": ErrorResponse
     }
   }
-  "auth_post_auth_api_v1_auth_send_code": {
+  "auth_post_auth_api_v1_send_code": {
     method: "POST"
-    path: "/auth/api/v1/auth/send-code"
+    path: "/auth/api/v1/send-code"
     requestBody: SendCodeRequest
     responses: {
       "200": SendCodeResponse
     }
   }
-  "auth_delete_auth_api_v1_auth_users_userId": {
+  "auth_delete_auth_api_v1_users_userId": {
     method: "DELETE"
-    path: "/auth/api/v1/auth/users/{userId}"
+    path: "/auth/api/v1/users/{userId}"
     requestBody: undefined
     responses: {
       "200": GenericObject
     }
   }
-  "auth_put_auth_api_v1_auth_users_userId": {
+  "auth_put_auth_api_v1_users_userId": {
     method: "PUT"
-    path: "/auth/api/v1/auth/users/{userId}"
+    path: "/auth/api/v1/users/{userId}"
     requestBody: UpdateUserRequest
     responses: {
       "200": GenericObject
     }
   }
-  "auth_get_auth_api_v1_auth_validate": {
+  "auth_get_auth_api_v1_validate": {
     method: "GET"
-    path: "/auth/api/v1/auth/validate"
+    path: "/auth/api/v1/validate"
     requestBody: undefined
     responses: {
       "200": ValidateResponse
       "401": ErrorResponse
     }
   }
-  "auth_post_auth_api_v1_auth_verify_code": {
+  "auth_post_auth_api_v1_verify_code": {
     method: "POST"
-    path: "/auth/api/v1/auth/verify-code"
+    path: "/auth/api/v1/verify-code"
     requestBody: VerifyCodeRequest
     responses: {
       "200": VerifyCodeResponse

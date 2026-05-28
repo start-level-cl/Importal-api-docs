@@ -836,7 +836,7 @@ function noContentResponse(status, description) {
 }
 
 export const operationOverrides = {
-  'post /auth/api/v1/auth/login': {
+  'post /auth/api/v1/login': {
     summary: 'Autenticar usuario y emitir JWT',
     requestBody: jsonRequest('LoginRequest'),
     responses: Object.fromEntries([
@@ -844,7 +844,7 @@ export const operationOverrides = {
       jsonResponse('401', 'Credenciales invalidas', 'ErrorResponse'),
     ]),
   },
-  'post /auth/api/v1/auth/change-password': {
+  'post /auth/api/v1/change-password': {
     summary: 'Actualizar clave de usuario autenticado',
     requestBody: jsonRequest('ChangePasswordRequest'),
     responses: Object.fromEntries([
@@ -852,14 +852,14 @@ export const operationOverrides = {
       jsonResponse('401', 'Token invalido o clave actual incorrecta', 'ErrorResponse'),
     ]),
   },
-  'get /auth/api/v1/auth/validate': {
+  'get /auth/api/v1/validate': {
     summary: 'Validar JWT emitido por auth',
     responses: Object.fromEntries([
       jsonResponse('200', 'Token valido', 'ValidateResponse'),
       jsonResponse('401', 'Token invalido o expirado', 'ErrorResponse'),
     ]),
   },
-  'post /auth/api/v1/auth/register-user': {
+  'post /auth/api/v1/register-user': {
     summary: 'Registrar usuario desde servicios internos',
     requestBody: jsonRequest('RegisterUserRequest'),
     responses: Object.fromEntries([
@@ -868,12 +868,12 @@ export const operationOverrides = {
       jsonResponse('409', 'Usuario ya existe', 'ErrorResponse'),
     ]),
   },
-  'post /auth/api/v1/auth/send-code': {
+  'post /auth/api/v1/send-code': {
     summary: 'Enviar OTP via auth service',
     requestBody: jsonRequest('SendCodeRequest'),
     responses: Object.fromEntries([jsonResponse('200', 'OTP enviado', 'SendCodeResponse')]),
   },
-  'post /auth/api/v1/auth/verify-code': {
+  'post /auth/api/v1/verify-code': {
     summary: 'Validar OTP via auth service',
     requestBody: jsonRequest('VerifyCodeRequest'),
     responses: Object.fromEntries([
@@ -1262,7 +1262,7 @@ export const operationOverrides = {
       jsonResponse('200', 'Contacto actualizado exitosamente', 'GenericObject'),
     ]),
   },
-  'put /auth/api/v1/auth/users/{userId}': {
+  'put /auth/api/v1/users/{userId}': {
     summary: 'Actualizar email o teléfono de un usuario desde VPC',
     requestBody: jsonRequest('UpdateUserRequest'),
     responses: Object.fromEntries([

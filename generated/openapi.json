@@ -5938,9 +5938,9 @@
         "x-source": "Importal-auth/src/modules/app/controllers/app.controller.ts"
       }
     },
-    "/auth/api/v1/auth/change-password": {
+    "/auth/api/v1/change-password": {
       "post": {
-        "operationId": "auth_post_auth_api_v1_auth_change_password",
+        "operationId": "auth_post_auth_api_v1_change_password",
         "parameters": [],
         "requestBody": {
           "content": {
@@ -5993,9 +5993,9 @@
         "x-source": "Importal-auth/src/modules/auth/controllers/auth.controller.ts"
       }
     },
-    "/auth/api/v1/auth/login": {
+    "/auth/api/v1/login": {
       "post": {
-        "operationId": "auth_post_auth_api_v1_auth_login",
+        "operationId": "auth_post_auth_api_v1_login",
         "parameters": [],
         "requestBody": {
           "content": {
@@ -6051,9 +6051,9 @@
         "x-source": "Importal-auth/src/modules/auth/controllers/auth.controller.ts"
       }
     },
-    "/auth/api/v1/auth/register-user": {
+    "/auth/api/v1/register-user": {
       "post": {
-        "operationId": "auth_post_auth_api_v1_auth_register_user",
+        "operationId": "auth_post_auth_api_v1_register_user",
         "parameters": [],
         "requestBody": {
           "content": {
@@ -6128,9 +6128,9 @@
         "x-source": "Importal-auth/src/modules/auth/controllers/auth.controller.ts"
       }
     },
-    "/auth/api/v1/auth/send-code": {
+    "/auth/api/v1/send-code": {
       "post": {
-        "operationId": "auth_post_auth_api_v1_auth_send_code",
+        "operationId": "auth_post_auth_api_v1_send_code",
         "parameters": [],
         "requestBody": {
           "content": {
@@ -6175,9 +6175,9 @@
         "x-source": "Importal-auth/src/modules/auth/controllers/auth.controller.ts"
       }
     },
-    "/auth/api/v1/auth/users/{userId}": {
+    "/auth/api/v1/users/{userId}": {
       "delete": {
-        "operationId": "auth_delete_auth_api_v1_auth_users_userId",
+        "operationId": "auth_delete_auth_api_v1_users_userId",
         "parameters": [
           {
             "in": "path",
@@ -6214,7 +6214,7 @@
         "x-source": "Importal-auth/src/modules/auth/controllers/auth.controller.ts"
       },
       "put": {
-        "operationId": "auth_put_auth_api_v1_auth_users_userId",
+        "operationId": "auth_put_auth_api_v1_users_userId",
         "parameters": [
           {
             "in": "path",
@@ -6269,9 +6269,9 @@
         "x-source": "Importal-auth/src/modules/auth/controllers/auth.controller.ts"
       }
     },
-    "/auth/api/v1/auth/validate": {
+    "/auth/api/v1/validate": {
       "get": {
-        "operationId": "auth_get_auth_api_v1_auth_validate",
+        "operationId": "auth_get_auth_api_v1_validate",
         "parameters": [],
         "responses": {
           "200": {
@@ -6312,9 +6312,9 @@
         "x-source": "Importal-auth/src/modules/auth/controllers/auth.controller.ts"
       }
     },
-    "/auth/api/v1/auth/verify-code": {
+    "/auth/api/v1/verify-code": {
       "post": {
-        "operationId": "auth_post_auth_api_v1_auth_verify_code",
+        "operationId": "auth_post_auth_api_v1_verify_code",
         "parameters": [],
         "requestBody": {
           "content": {

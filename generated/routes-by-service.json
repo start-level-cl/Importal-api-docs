@@ -2632,9 +2632,9 @@
       }
     },
     {
-      "path": "/auth/api/v1/auth/change-password",
+      "path": "/auth/api/v1/change-password",
       "method": "post",
-      "operationId": "auth_post_auth_api_v1_auth_change_password",
+      "operationId": "auth_post_auth_api_v1_change_password",
       "summary": "Actualizar clave de usuario autenticado",
       "tags": [
         "Auth"
@@ -2658,9 +2658,9 @@
       }
     },
     {
-      "path": "/auth/api/v1/auth/login",
+      "path": "/auth/api/v1/login",
       "method": "post",
-      "operationId": "auth_post_auth_api_v1_auth_login",
+      "operationId": "auth_post_auth_api_v1_login",
       "summary": "Autenticar usuario y emitir JWT",
       "tags": [
         "Auth"
@@ -2687,9 +2687,9 @@
       }
     },
     {
-      "path": "/auth/api/v1/auth/register-user",
+      "path": "/auth/api/v1/register-user",
       "method": "post",
-      "operationId": "auth_post_auth_api_v1_auth_register_user",
+      "operationId": "auth_post_auth_api_v1_register_user",
       "summary": "Registrar usuario desde servicios internos",
       "tags": [
         "Auth"
@@ -2725,9 +2725,9 @@
       }
     },
     {
-      "path": "/auth/api/v1/auth/send-code",
+      "path": "/auth/api/v1/send-code",
       "method": "post",
-      "operationId": "auth_post_auth_api_v1_auth_send_code",
+      "operationId": "auth_post_auth_api_v1_send_code",
       "summary": "Enviar OTP via auth service",
       "tags": [
         "Auth"
@@ -2746,9 +2746,9 @@
       }
     },
     {
-      "path": "/auth/api/v1/auth/users/{userId}",
+      "path": "/auth/api/v1/users/{userId}",
       "method": "delete",
-      "operationId": "auth_delete_auth_api_v1_auth_users_userId",
+      "operationId": "auth_delete_auth_api_v1_users_userId",
       "summary": "deleteUser",
       "tags": [
         "Auth"
@@ -2765,9 +2765,9 @@
       }
     },
     {
-      "path": "/auth/api/v1/auth/users/{userId}",
+      "path": "/auth/api/v1/users/{userId}",
       "method": "put",
-      "operationId": "auth_put_auth_api_v1_auth_users_userId",
+      "operationId": "auth_put_auth_api_v1_users_userId",
       "summary": "Actualizar email o teléfono de un usuario desde VPC",
       "tags": [
         "Auth"
@@ -2787,9 +2787,9 @@
       }
     },
     {
-      "path": "/auth/api/v1/auth/validate",
+      "path": "/auth/api/v1/validate",
       "method": "get",
-      "operationId": "auth_get_auth_api_v1_auth_validate",
+      "operationId": "auth_get_auth_api_v1_validate",
       "summary": "Validar JWT emitido por auth",
       "tags": [
         "Auth"
@@ -2815,9 +2815,9 @@
       }
     },
     {
-      "path": "/auth/api/v1/auth/verify-code",
+      "path": "/auth/api/v1/verify-code",
       "method": "post",
-      "operationId": "auth_post_auth_api_v1_auth_verify_code",
+      "operationId": "auth_post_auth_api_v1_verify_code",
       "summary": "Validar OTP via auth service",
       "tags": [
         "Auth"
