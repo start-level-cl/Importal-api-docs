@@ -14,7 +14,7 @@ import {
 import { generateTypeDeclarations } from './lib/typegen.mjs'
 
 const currentDir = path.dirname(fileURLToPath(import.meta.url))
-const repoRoot = path.resolve(currentDir, '..', '..', '..')
+const repoRoot = path.resolve(currentDir, '..', '..')
 const docsRoot = path.resolve(currentDir, '..')
 const generatedDir = path.join(docsRoot, 'generated')
 const docsDir = path.join(docsRoot, 'docs')
@@ -28,7 +28,7 @@ function hasSourceRepos() {
 
 function loadSourceRoutes() {
   if (hasSourceRepos()) {
-    return enrichRoutes([
+    const routes = enrichRoutes([
       ...extractNestRoutes({
         repoRoot,
         serviceRoot: 'Importal-auth',
@@ -46,6 +46,68 @@ function loadSourceRoutes() {
         serviceRoot: 'Importal-registration-lambda',
       }),
     ])
+
+    if (!routes.some(route => route.path === '/api/v1/vendedor/pedidos-carga/status' && route.method === 'get')) {
+      routes.push(
+        ...enrichRoutes([
+          {
+            service: 'backend',
+            source: 'Importal-backend/src/modules/orders/controllers/orders.controller.ts',
+            method: 'get',
+            path: '/api/v1/vendedor/pedidos-carga/status',
+            operationId: 'backend_get_api_v1_vendedor_pedidos_carga_status',
+            tag: 'Orders',
+            tags: ['Orders'],
+            summary: 'Consultar estado de pedidos de carga del vendedor',
+            roles: ['vendor'],
+            security: true,
+            methodName: 'getVendorCargaStatus',
+            parameters: [
+              {
+                name: 'tipo_carga',
+                in: 'query',
+                required: false,
+                description: 'Opcional: AEREA o MARITIMA',
+                schema: {
+                  type: 'string',
+                  enum: ['AEREA', 'MARITIMA'],
+                },
+              },
+            ],
+          },
+        ]),
+      )
+    }
+
+    for (const route of routes) {
+      if (route.service === 'backend' && route.path === '/api/v1/vendedor/pedidos-carga/status' && route.method === 'get') {
+        route.parameters = [
+          {
+            name: 'tipo_carga',
+            in: 'query',
+            required: false,
+            description: 'Opcional: AEREA o MARITIMA',
+            schema: {
+              type: 'string',
+              enum: ['AEREA', 'MARITIMA'],
+            },
+          },
+        ]
+      }
+    }
+
+    // Targeted expansion: if billing route uses GetCobrosQueryDto, ensure parameters are expanded
+    for (const r of routes) {
+      if (r.service === 'backend' && r.path === '/api/v1/admin/cobros' && r.method === 'get') {
+        const dtoFile = path.join(repoRoot, 'Importal-backend', 'src', 'modules', 'billing', 'dto', 'billing.dto.ts')
+        const params = parseDtoParameters(dtoFile, 'GetCobrosQueryDto')
+        if (params.length > 0) {
+          r.parameters = params
+        }
+      }
+    }
+
+    return routes
   }
 
   if (!fs.existsSync(sourceRoutesPath)) {
@@ -55,6 +117,35 @@ function loadSourceRoutes() {
   }
 
   return JSON.parse(fs.readFileSync(sourceRoutesPath, 'utf8'))
+}
+
+function parseDtoParameters(dtoFile, dtoName) {
+  if (!fs.existsSync(dtoFile)) return []
+  const src = fs.readFileSync(dtoFile, 'utf8')
+  const classMatch = src.match(new RegExp(`export\\s+class\\s+${dtoName}\\s*{([\\s\\S]*?)\\n}\\s*(?:export\\s+class|$)`))
+  if (!classMatch) return []
+  const body = classMatch[1]
+  const params = []
+  for (const match of body.matchAll(/((?:^\s*@.*\n)+)\s*([A-Za-z_][A-Za-z0-9_]*)(\?)?\s*:\s*([^=;\n]+)(?:\s*=\s*[^;\n]+)?/gm)) {
+    const decoratorBlock = match[1]
+    const name = match[2]
+    const optional = Boolean(match[3]) || /@IsOptional\(/.test(decoratorBlock)
+    const declaredType = match[4].trim()
+    const decorators = decoratorBlock.split(/\r?\n/).map(l => l.trim()).filter(Boolean)
+    const schema = { type: 'string' }
+    if (/@IsIn\(/.test(decoratorBlock)) {
+      const enumMatch = decoratorBlock.match(/@IsIn\(\s*\[([\s\S]*?)\]\s*\)/)
+      if (enumMatch) schema.enum = [...enumMatch[1].matchAll(/['"]([^'"]+)['"]/g)].map(m => m[1])
+    }
+    if (/@Type\(\(\)\s*=>\s*Number\)/.test(decoratorBlock) || /@IsInt\(/.test(decoratorBlock) || /@Min\(/.test(decoratorBlock)) {
+      schema.type = 'integer'
+    }
+    if (/@IsNumber\(/.test(decoratorBlock)) schema.type = 'number'
+    if (/@IsBoolean\(/.test(decoratorBlock)) schema.type = 'boolean'
+
+    params.push({ name, in: 'query', required: !optional, schema })
+  }
+  return params
 }
 
 function ensureDir(dir) {
@@ -573,6 +664,10 @@ function createHtml(spec) {
       flex: 1 1 280px; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line);
       background: var(--card); font: inherit;
     }
+    select {
+      min-width: 240px; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line);
+      background: var(--card); font: inherit; color: var(--ink);
+    }
     .tabs { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
     .tab {
       padding: 10px 22px; border-radius: 999px; border: 1.5px solid var(--line);
@@ -610,6 +705,27 @@ function createHtml(spec) {
       margin: 12px 0 0; padding: 14px; border-radius: 12px; overflow: auto;
       background: #201814; color: #f9efe3; font-size: 13px;
     }
+    .filters-box, .responses-box {
+      margin-top: 12px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fffaf2;
+    }
+    .mini-title {
+      margin: 0 0 10px;
+      color: var(--ink);
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .parameter-list, .response-list { display: grid; gap: 10px; }
+    .parameter-item, .response-item {
+      padding: 10px 12px; border-radius: 12px; background: var(--card); border: 1px solid var(--line);
+    }
+    .parameter-item header, .response-item header { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 6px; }
+    .parameter-name { font-weight: 700; color: var(--ink); }
+    .parameter-meta, .response-meta { font-size: 12px; color: var(--muted); }
+    .response-example { margin-top: 8px; }
     /* Flows */
     #flows-panel { display: none; }
     #routes-panel { display: block; }
@@ -673,6 +789,7 @@ function createHtml(spec) {
       <p>${spec.info.description}</p>
       <div class="topbar">
         <input id="search" type="search" placeholder="Buscar por path, tag o metodo" />
+        <select id="service-filter"></select>
       </div>
     </section>
     <div class="tabs">
@@ -704,6 +821,7 @@ function createHtml(spec) {
 
     const content = document.getElementById('content');
     const search = document.getElementById('search');
+    const serviceFilter = document.getElementById('service-filter');
 
     const serviceOrder = ['auth', 'backend', 'registration-lambda'];
     const roleOrder = ['admin', 'cliente', 'vendedor', 'bodeguero', 'root', 'comun', 'interno', 'publico'];
@@ -723,8 +841,15 @@ function createHtml(spec) {
       'publico': 'Publico',
     };
 
+    serviceFilter.innerHTML = [
+      '<option value="">Todos los servicios</option>',
+      ...serviceOrder.map(service => '<option value="' + service + '">' + (serviceLabels[service] || service) + '</option>'),
+      '<option value="unknown">unknown</option>',
+    ].join('');
+
     function render(filter = '') {
       const q = filter.trim().toLowerCase();
+      const selectedService = serviceFilter.value;
       const items = operations.filter(({ path, method, operation }) => {
         const tags = (operation.tags || []).join(' ');
         return !q || [
@@ -737,7 +862,11 @@ function createHtml(spec) {
         ].join(' ').toLowerCase().includes(q);
       });
 
-      const groupedByService = groupBy(items, item => item.operation['x-service'] || 'unknown');
+      const filteredItems = items.filter(({ operation }) => {
+        return !selectedService || (operation['x-service'] || 'unknown') === selectedService;
+      });
+
+      const groupedByService = groupBy(filteredItems, item => item.operation['x-service'] || 'unknown');
 
       content.innerHTML = serviceOrder
         .filter(service => groupedByService[service]?.length)
@@ -792,12 +921,71 @@ function createHtml(spec) {
             <span class="badge">\${roles}</span>
           </header>
           <p class="meta">\${operation.summary || ''}</p>
+          \${renderParameters(operation.parameters || [])}
+          \${renderResponses(operation.responses || {})}
           <details>
-            <summary>Ver operacion</summary>
+            <summary>Ver operacion completa</summary>
             <pre>\${escapeHtml(JSON.stringify(operation, null, 2))}</pre>
           </details>
         </article>
       \`;
+    }
+
+    function renderParameters(parameters) {
+      const queryParameters = parameters.filter(parameter => parameter.in === 'query');
+      if (!queryParameters.length) {
+        return '';
+      }
+
+      return '<section class="filters-box">' +
+        '<p class="mini-title">Filtros</p>' +
+        '<div class="parameter-list">' +
+        queryParameters.map(parameter => {
+          const enumText = parameter.schema?.enum
+            ? '<div class="parameter-meta">Valores: ' + escapeHtml(parameter.schema.enum.join(', ')) + '</div>'
+            : '';
+
+          return '<div class="parameter-item">' +
+            '<header>' +
+            '<span class="parameter-name">' + escapeHtml(parameter.name) + '</span>' +
+            '<span class="badge">' + (parameter.required ? 'Requerido' : 'Opcional') + '</span>' +
+            '<span class="badge">' + (parameter.schema?.type || 'string') + '</span>' +
+            '</header>' +
+            '<div class="parameter-meta">' + escapeHtml(parameter.description || 'Filtro documentado desde el backend') + '</div>' +
+            enumText +
+            '</div>';
+        }).join('') +
+        '</div>' +
+        '</section>';
+    }
+
+    function renderResponses(responses) {
+      const entries = Object.entries(responses || {});
+      if (!entries.length) {
+        return '';
+      }
+
+      return '<section class="responses-box">' +
+        '<p class="mini-title">Responses</p>' +
+        '<div class="response-list">' +
+        entries.map(([status, response]) => {
+          const media = response.content && response.content['application/json'];
+          const example = media && (media.example || media.examples || null);
+          const exampleText = example ? JSON.stringify(example, null, 2) : '';
+          const exampleHtml = exampleText
+            ? '<div class="response-meta">Ejemplo</div><pre class="response-example">' + escapeHtml(exampleText) + '</pre>'
+            : '<div class="response-meta">Sin ejemplo disponible</div>';
+
+          return '<div class="response-item">' +
+            '<header>' +
+            '<span class="parameter-name">' + escapeHtml(status) + '</span>' +
+            '<span class="badge">' + escapeHtml(response.description || '') + '</span>' +
+            '</header>' +
+            exampleHtml +
+            '</div>';
+        }).join('') +
+        '</div>' +
+        '</section>';
     }
 
     function groupBy(items, keySelector) {
@@ -816,6 +1004,7 @@ function createHtml(spec) {
     }
 
     search.addEventListener('input', event => render(event.target.value));
+    serviceFilter.addEventListener('change', () => render(search.value));
     render();
   </script>
 </body>

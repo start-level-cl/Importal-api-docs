@@ -10,6 +10,7 @@
     "roles": [],
     "security": false,
     "methodName": "getHello",
+    "parameters": [],
     "roleGroup": "publico"
   },
   {
@@ -23,22 +24,8 @@
     "roles": [],
     "security": false,
     "methodName": "getHealth",
+    "parameters": [],
     "roleGroup": "publico"
-  },
-  {
-    "service": "auth",
-    "source": "Importal-auth/src/modules/auth/controllers/auth.controller.ts",
-    "method": "post",
-    "path": "/auth/api/v1/auth/login",
-    "operationId": "auth_post_auth_api_v1_auth_login",
-    "tag": "Auth",
-    "tags": [
-      "Auth"
-    ],
-    "roles": [],
-    "security": true,
-    "methodName": "login",
-    "roleGroup": "interno"
   },
   {
     "service": "auth",
@@ -53,21 +40,39 @@
     "roles": [],
     "security": true,
     "methodName": "validate",
+    "parameters": [],
     "roleGroup": "interno"
   },
   {
     "service": "auth",
     "source": "Importal-auth/src/modules/auth/controllers/auth.controller.ts",
-    "method": "post",
-    "path": "/auth/api/v1/auth/register-user",
-    "operationId": "auth_post_auth_api_v1_auth_register_user",
+    "method": "delete",
+    "path": "/auth/api/v1/auth/users/{userId}",
+    "operationId": "auth_delete_auth_api_v1_auth_users_userId",
     "tag": "Auth",
     "tags": [
       "Auth"
     ],
     "roles": [],
     "security": true,
-    "methodName": "registerUser",
+    "methodName": "deleteUser",
+    "parameters": [],
+    "roleGroup": "interno"
+  },
+  {
+    "service": "auth",
+    "source": "Importal-auth/src/modules/auth/controllers/auth.controller.ts",
+    "method": "put",
+    "path": "/auth/api/v1/auth/users/{userId}",
+    "operationId": "auth_put_auth_api_v1_auth_users_userId",
+    "tag": "Auth",
+    "tags": [
+      "Auth"
+    ],
+    "roles": [],
+    "security": true,
+    "methodName": "updateUser",
+    "parameters": [],
     "roleGroup": "interno"
   },
   {
@@ -83,6 +88,7 @@
     "roles": [],
     "security": true,
     "methodName": "sendCode",
+    "parameters": [],
     "roleGroup": "interno"
   },
   {
@@ -98,6 +104,7 @@
     "roles": [],
     "security": true,
     "methodName": "verifyCode",
+    "parameters": [],
     "roleGroup": "interno"
   },
   {
@@ -115,6 +122,17 @@
     ],
     "security": true,
     "methodName": "getOrdersMetrics",
+    "parameters": [
+      {
+        "name": "timeRange",
+        "in": "query",
+        "required": false,
+        "description": "1d, 7d, 30d",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
     "roleGroup": "admin"
   },
   {
@@ -132,6 +150,28 @@
     ],
     "security": true,
     "methodName": "getRevenueMetrics",
+    "parameters": [
+      {
+        "name": "timeRange",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "currency",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "CLP",
+            "USD"
+          ]
+        }
+      }
+    ],
     "roleGroup": "admin"
   },
   {
@@ -149,6 +189,16 @@
     ],
     "security": true,
     "methodName": "getUsersMetrics",
+    "parameters": [
+      {
+        "name": "timeRange",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
     "roleGroup": "admin"
   },
   {
@@ -166,6 +216,16 @@
     ],
     "security": true,
     "methodName": "getPerformanceMetrics",
+    "parameters": [
+      {
+        "name": "timeRange",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
     "roleGroup": "admin"
   },
   {
@@ -183,6 +243,16 @@
     ],
     "security": true,
     "methodName": "getTransactionMetrics",
+    "parameters": [
+      {
+        "name": "timeRange",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
     "roleGroup": "admin"
   },
   {
@@ -200,6 +270,7 @@
     ],
     "security": true,
     "methodName": "getComplianceMetrics",
+    "parameters": [],
     "roleGroup": "admin"
   },
   {
@@ -218,6 +289,7 @@
     ],
     "security": true,
     "methodName": "getDashboard",
+    "parameters": [],
     "roleGroup": "admin"
   },
   {
@@ -235,6 +307,7 @@
     ],
     "security": true,
     "methodName": "getClientDashboard",
+    "parameters": [],
     "roleGroup": "cliente"
   },
   {
@@ -252,6 +325,7 @@
     ],
     "security": true,
     "methodName": "getVendorDashboard",
+    "parameters": [],
     "roleGroup": "vendedor"
   },
   {
@@ -269,6 +343,7 @@
     ],
     "security": true,
     "methodName": "createAdmin",
+    "parameters": [],
     "roleGroup": "admin"
   },
   {
@@ -282,6 +357,7 @@
     "roles": [],
     "security": false,
     "methodName": "getHello",
+    "parameters": [],
     "roleGroup": "comun"
   },
   {
@@ -299,6 +375,55 @@
     ],
     "security": true,
     "methodName": "getLogs",
+    "parameters": [
+      {
+        "name": "service",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "level",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "ERROR",
+            "WARN",
+            "INFO",
+            "DEBUG"
+          ]
+        }
+      },
+      {
+        "name": "timeRange",
+        "in": "query",
+        "required": false,
+        "description": "1h, 24h, 7d, 30d",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "number"
+        }
+      },
+      {
+        "name": "offset",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "number"
+        }
+      }
+    ],
     "roleGroup": "admin"
   },
   {
@@ -316,6 +441,24 @@
     ],
     "security": true,
     "methodName": "searchLogs",
+    "parameters": [
+      {
+        "name": "query",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "number"
+        }
+      }
+    ],
     "roleGroup": "admin"
   },
   {
@@ -333,6 +476,56 @@
     ],
     "security": true,
     "methodName": "getAuditTrail",
+    "parameters": [
+      {
+        "name": "resource",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "userId",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "action",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "CREATE",
+            "READ",
+            "UPDATE",
+            "DELETE",
+            "LOGIN",
+            "LOGOUT"
+          ]
+        }
+      },
+      {
+        "name": "timeRange",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "number"
+        }
+      }
+    ],
     "roleGroup": "admin"
   },
   {
@@ -350,6 +543,7 @@
     ],
     "security": true,
     "methodName": "getAuditTrailDetail",
+    "parameters": [],
     "roleGroup": "admin"
   },
   {
@@ -367,6 +561,24 @@
     ],
     "security": true,
     "methodName": "getUsersActivity",
+    "parameters": [
+      {
+        "name": "timeRange",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "number"
+        }
+      }
+    ],
     "roleGroup": "admin"
   },
   {
@@ -384,6 +596,16 @@
     ],
     "security": true,
     "methodName": "getUserSessionLog",
+    "parameters": [
+      {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "number"
+        }
+      }
+    ],
     "roleGroup": "admin"
   },
   {
@@ -401,6 +623,16 @@
     ],
     "security": true,
     "methodName": "getUserActionsLog",
+    "parameters": [
+      {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "number"
+        }
+      }
+    ],
     "roleGroup": "admin"
   },
   {
@@ -418,6 +650,29 @@
     ],
     "security": true,
     "methodName": "getLoginAttempts",
+    "parameters": [
+      {
+        "name": "status",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "failed",
+            "success",
+            "all"
+          ]
+        }
+      },
+      {
+        "name": "timeRange",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
     "roleGroup": "admin"
   },
   {
@@ -435,6 +690,7 @@
     ],
     "security": true,
     "methodName": "getSuspiciousActivity",
+    "parameters": [],
     "roleGroup": "admin"
   },
   {
@@ -452,6 +708,29 @@
     ],
     "security": true,
     "methodName": "getExceptions",
+    "parameters": [
+      {
+        "name": "level",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "CRITICAL",
+            "ERROR",
+            "WARNING"
+          ]
+        }
+      },
+      {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "number"
+        }
+      }
+    ],
     "roleGroup": "admin"
   },
   {
@@ -469,6 +748,7 @@
     ],
     "security": true,
     "methodName": "getExceptionDetail",
+    "parameters": [],
     "roleGroup": "admin"
   },
   {
@@ -486,6 +766,7 @@
     ],
     "security": true,
     "methodName": "getExceptionStatistics",
+    "parameters": [],
     "roleGroup": "admin"
   },
   {
@@ -503,6 +784,16 @@
     ],
     "security": true,
     "methodName": "getTraces",
+    "parameters": [
+      {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "number"
+        }
+      }
+    ],
     "roleGroup": "admin"
   },
   {
@@ -520,6 +811,7 @@
     ],
     "security": true,
     "methodName": "getTraceDetail",
+    "parameters": [],
     "roleGroup": "admin"
   },
   {
@@ -537,6 +829,7 @@
     ],
     "security": true,
     "methodName": "getSlowQueries",
+    "parameters": [],
     "roleGroup": "admin"
   },
   {
@@ -550,6 +843,7 @@
     "roles": [],
     "security": false,
     "methodName": "getHealth",
+    "parameters": [],
     "roleGroup": "comun"
   },
   {
@@ -567,6 +861,7 @@
     ],
     "security": true,
     "methodName": "getSystemHealth",
+    "parameters": [],
     "roleGroup": "admin"
   },
   {
@@ -584,6 +879,7 @@
     ],
     "security": true,
     "methodName": "getDatabaseStatus",
+    "parameters": [],
     "roleGroup": "admin"
   },
   {
@@ -601,6 +897,7 @@
     ],
     "security": true,
     "methodName": "getCacheStatus",
+    "parameters": [],
     "roleGroup": "admin"
   },
   {
@@ -618,6 +915,7 @@
     ],
     "security": true,
     "methodName": "getQueueStatus",
+    "parameters": [],
     "roleGroup": "admin"
   },
   {
@@ -635,6 +933,7 @@
     ],
     "security": true,
     "methodName": "getStorageStatus",
+    "parameters": [],
     "roleGroup": "admin"
   },
   {
@@ -652,6 +951,7 @@
     ],
     "security": true,
     "methodName": "getUptime",
+    "parameters": [],
     "roleGroup": "admin"
   },
   {
@@ -669,6 +969,21 @@
     ],
     "security": true,
     "methodName": "getAlerts",
+    "parameters": [
+      {
+        "name": "severity",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "CRITICAL",
+            "WARNING",
+            "INFO"
+          ]
+        }
+      }
+    ],
     "roleGroup": "admin"
   },
   {
@@ -687,6 +1002,45 @@
     ],
     "security": true,
     "methodName": "getAllCobros",
+    "parameters": [],
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/cobros/{id}/comprobantes",
+    "operationId": "backend_get_api_v1_admin_cobros_id_comprobantes",
+    "tag": "Billing",
+    "tags": [
+      "Billing"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": true,
+    "methodName": "getCobroProofImages",
+    "parameters": [],
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/cobros/pendientes-validacion",
+    "operationId": "backend_get_api_v1_admin_cobros_pendientes_validacion",
+    "tag": "Billing",
+    "tags": [
+      "Billing"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": true,
+    "methodName": "getPendingValidationCobros",
+    "parameters": [],
     "roleGroup": "admin"
   },
   {
@@ -705,6 +1059,7 @@
     ],
     "security": true,
     "methodName": "confirmCobro",
+    "parameters": [],
     "roleGroup": "admin"
   },
   {
@@ -723,6 +1078,7 @@
     ],
     "security": true,
     "methodName": "getCommissions",
+    "parameters": [],
     "roleGroup": "admin"
   },
   {
@@ -741,6 +1097,7 @@
     ],
     "security": true,
     "methodName": "updateCommission",
+    "parameters": [],
     "roleGroup": "admin"
   },
   {
@@ -759,6 +1116,7 @@
     ],
     "security": true,
     "methodName": "getLogisticsRates",
+    "parameters": [],
     "roleGroup": "admin"
   },
   {
@@ -777,6 +1135,7 @@
     ],
     "security": true,
     "methodName": "updateLogisticsRate",
+    "parameters": [],
     "roleGroup": "admin"
   },
   {
@@ -794,6 +1153,7 @@
     ],
     "security": true,
     "methodName": "getClientCobros",
+    "parameters": [],
     "roleGroup": "cliente"
   },
   {
@@ -813,6 +1173,7 @@
     ],
     "security": true,
     "methodName": "getCobroPdf",
+    "parameters": [],
     "roleGroup": "cliente"
   },
   {
@@ -830,77 +1191,81 @@
     ],
     "security": true,
     "methodName": "getMoraStatus",
-    "roleGroup": "cliente"
-  },
-  {
-    "service": "backend",
-    "source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts",
-    "method": "post",
-    "path": "/api/v1/cliente/pagos/transbank/iniciar",
-    "operationId": "backend_post_api_v1_cliente_pagos_transbank_iniciar",
-    "tag": "Billing",
-    "tags": [
-      "Billing"
-    ],
-    "roles": [
-      "client"
-    ],
-    "security": true,
-    "methodName": "initiateTransbank",
-    "roleGroup": "cliente"
-  },
-  {
-    "service": "backend",
-    "source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts",
-    "method": "post",
-    "path": "/api/v1/cliente/pagos/transbank/confirmar",
-    "operationId": "backend_post_api_v1_cliente_pagos_transbank_confirmar",
-    "tag": "Billing",
-    "tags": [
-      "Billing"
-    ],
-    "roles": [
-      "client"
-    ],
-    "security": true,
-    "methodName": "confirmTransbank",
+    "parameters": [],
     "roleGroup": "cliente"
   },
   {
     "service": "backend",
     "source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts",
     "method": "get",
-    "path": "/api/v1/cliente/pagos/transbank/{id}/estado",
-    "operationId": "backend_get_api_v1_cliente_pagos_transbank_id_estado",
+    "path": "/api/v1/cliente/cobros/pagados",
+    "operationId": "backend_get_api_v1_cliente_cobros_pagados",
     "tag": "Billing",
     "tags": [
       "Billing"
     ],
     "roles": [
-      "client",
+      "client"
+    ],
+    "security": true,
+    "methodName": "getPaidCobros",
+    "parameters": [],
+    "roleGroup": "cliente"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts",
+    "method": "post",
+    "path": "/api/v1/cliente/cobros/{id}/pagar",
+    "operationId": "backend_post_api_v1_cliente_cobros_id_pagar",
+    "tag": "Billing",
+    "tags": [
+      "Billing"
+    ],
+    "roles": [
+      "client"
+    ],
+    "security": true,
+    "methodName": "uploadPaymentProof",
+    "parameters": [],
+    "roleGroup": "cliente"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts",
+    "method": "delete",
+    "path": "/api/v1/cliente/cobros/{id}/comprobante",
+    "operationId": "backend_delete_api_v1_cliente_cobros_id_comprobante",
+    "tag": "Billing",
+    "tags": [
+      "Billing"
+    ],
+    "roles": [
+      "client"
+    ],
+    "security": true,
+    "methodName": "deletePaymentProof",
+    "parameters": [],
+    "roleGroup": "cliente"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts",
+    "method": "post",
+    "path": "/api/v1/admin/cobros/trigger",
+    "operationId": "backend_post_api_v1_admin_cobros_trigger",
+    "tag": "Billing",
+    "tags": [
+      "Billing"
+    ],
+    "roles": [
       "admin",
       "root"
     ],
     "security": true,
-    "methodName": "getTransbankStatus",
-    "roleGroup": "cliente"
-  },
-  {
-    "service": "backend",
-    "source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts",
-    "method": "get",
-    "path": "/api/v1/cliente/pagos/historial",
-    "operationId": "backend_get_api_v1_cliente_pagos_historial",
-    "tag": "Billing",
-    "tags": [
-      "Billing"
-    ],
-    "roles": [
-      "client"
-    ],
-    "security": true,
-    "methodName": "getPaymentHistory",
-    "roleGroup": "cliente"
+    "methodName": "triggerBilling",
+    "parameters": [],
+    "roleGroup": "admin"
   },
   {
     "service": "backend",
@@ -917,6 +1282,7 @@
     ],
     "security": true,
     "methodName": "requestPayment",
+    "parameters": [],
     "roleGroup": "vendedor"
   },
   {
@@ -938,6 +1304,29 @@
     ],
     "security": true,
     "methodName": "getChats",
+    "parameters": [],
+    "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/messaging/controllers/messaging.controller.ts",
+    "method": "get",
+    "path": "/api/v1/chats/{id}",
+    "operationId": "backend_get_api_v1_chats_id",
+    "tag": "Messaging",
+    "tags": [
+      "Messaging"
+    ],
+    "roles": [
+      "admin",
+      "client",
+      "vendor",
+      "bodeguero",
+      "root"
+    ],
+    "security": true,
+    "methodName": "getChatDetails",
+    "parameters": [],
     "roleGroup": "comun"
   },
   {
@@ -959,6 +1348,29 @@
     ],
     "security": true,
     "methodName": "getChatMessages",
+    "parameters": [],
+    "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/messaging/controllers/messaging.controller.ts",
+    "method": "post",
+    "path": "/api/v1/chats/{id}/mensajes",
+    "operationId": "backend_post_api_v1_chats_id_mensajes",
+    "tag": "Messaging",
+    "tags": [
+      "Messaging"
+    ],
+    "roles": [
+      "admin",
+      "client",
+      "vendor",
+      "bodeguero",
+      "root"
+    ],
+    "security": true,
+    "methodName": "createChatMessage",
+    "parameters": [],
     "roleGroup": "comun"
   },
   {
@@ -980,6 +1392,7 @@
     ],
     "security": true,
     "methodName": "getNotifications",
+    "parameters": [],
     "roleGroup": "comun"
   },
   {
@@ -1001,6 +1414,7 @@
     ],
     "security": true,
     "methodName": "markAsRead",
+    "parameters": [],
     "roleGroup": "comun"
   },
   {
@@ -1019,6 +1433,7 @@
     ],
     "security": true,
     "methodName": "getCargas",
+    "parameters": [],
     "roleGroup": "admin"
   },
   {
@@ -1037,6 +1452,140 @@
     ],
     "security": true,
     "methodName": "createCarga",
+    "parameters": [],
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "post",
+    "path": "/api/v1/admin/cargas/{id}/close",
+    "operationId": "backend_post_api_v1_admin_cargas_id_close",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": true,
+    "methodName": "closeCarga",
+    "parameters": [],
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/solicitudes-carga",
+    "operationId": "backend_get_api_v1_admin_solicitudes_carga",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": true,
+    "methodName": "getAdminTransitionRequests",
+    "parameters": [],
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "post",
+    "path": "/api/v1/admin/solicitudes-carga/{id}/aprobar",
+    "operationId": "backend_post_api_v1_admin_solicitudes_carga_id_aprobar",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": true,
+    "methodName": "approveTransitionRequest",
+    "parameters": [],
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "post",
+    "path": "/api/v1/admin/solicitudes-carga/{id}/rechazar",
+    "operationId": "backend_post_api_v1_admin_solicitudes_carga_id_rechazar",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": true,
+    "methodName": "rejectTransitionRequest",
+    "parameters": [],
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/pedidos-transicion",
+    "operationId": "backend_get_api_v1_admin_pedidos_transicion",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": true,
+    "methodName": "getAdminOrderTransitionRequests",
+    "parameters": [],
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "post",
+    "path": "/api/v1/admin/pedidos-transicion/{id}/aprobar",
+    "operationId": "backend_post_api_v1_admin_pedidos_transicion_id_aprobar",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": true,
+    "methodName": "approveOrderTransitionRequest",
+    "parameters": [],
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "post",
+    "path": "/api/v1/admin/pedidos-transicion/{id}/rechazar",
+    "operationId": "backend_post_api_v1_admin_pedidos_transicion_id_rechazar",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": true,
+    "methodName": "rejectOrderTransitionRequest",
+    "parameters": [],
     "roleGroup": "admin"
   },
   {
@@ -1056,6 +1605,7 @@
     ],
     "security": true,
     "methodName": "getBodegaCargas",
+    "parameters": [],
     "roleGroup": "bodeguero"
   },
   {
@@ -1075,6 +1625,7 @@
     ],
     "security": true,
     "methodName": "updateCargaStatus",
+    "parameters": [],
     "roleGroup": "bodeguero"
   },
   {
@@ -1092,6 +1643,7 @@
     ],
     "security": true,
     "methodName": "getClientOrders",
+    "parameters": [],
     "roleGroup": "cliente"
   },
   {
@@ -1109,6 +1661,7 @@
     ],
     "security": true,
     "methodName": "createOrder",
+    "parameters": [],
     "roleGroup": "cliente"
   },
   {
@@ -1126,6 +1679,93 @@
     ],
     "security": true,
     "methodName": "getVendorOrders",
+    "parameters": [],
+    "roleGroup": "vendedor"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "get",
+    "path": "/api/v1/vendedor/pedidos-carga",
+    "operationId": "backend_get_api_v1_vendedor_pedidos_carga",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "vendor"
+    ],
+    "security": true,
+    "methodName": "getVendorActiveCargaOrders",
+    "parameters": [],
+    "roleGroup": "vendedor"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "get",
+    "path": "/api/v1/vendedor/pedidos-carga/status",
+    "operationId": "backend_get_api_v1_vendedor_pedidos_carga_status",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "vendor"
+    ],
+    "security": true,
+    "methodName": "getVendorCargaStatus",
+    "parameters": [
+      {
+        "name": "tipo_carga",
+        "in": "query",
+        "required": false,
+        "description": "Opcional: AEREA o MARITIMA",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "AEREA",
+            "MARITIMA"
+          ]
+        }
+      }
+    ],
+    "roleGroup": "vendedor"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "post",
+    "path": "/api/v1/vendedor/pedidos/{id}/solicitar-transicion",
+    "operationId": "backend_post_api_v1_vendedor_pedidos_id_solicitar_transicion",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "vendor"
+    ],
+    "security": true,
+    "methodName": "createOrderTransitionRequest",
+    "parameters": [],
+    "roleGroup": "vendedor"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "post",
+    "path": "/api/v1/vendedor/pedidos/{id}/confirmar",
+    "operationId": "backend_post_api_v1_vendedor_pedidos_id_confirmar",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "vendor"
+    ],
+    "security": true,
+    "methodName": "confirmOrder",
+    "parameters": [],
     "roleGroup": "vendedor"
   },
   {
@@ -1143,6 +1783,79 @@
     ],
     "security": true,
     "methodName": "updateOrderStatus",
+    "parameters": [],
+    "roleGroup": "vendedor"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "put",
+    "path": "/api/v1/vendedor/pedidos/{id}/envio",
+    "operationId": "backend_put_api_v1_vendedor_pedidos_id_envio",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "vendor"
+    ],
+    "security": true,
+    "methodName": "updateOrderShipping",
+    "parameters": [],
+    "roleGroup": "vendedor"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "post",
+    "path": "/api/v1/vendedor/solicitudes-carga",
+    "operationId": "backend_post_api_v1_vendedor_solicitudes_carga",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "vendor"
+    ],
+    "security": true,
+    "methodName": "createTransitionRequest",
+    "parameters": [],
+    "roleGroup": "vendedor"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "get",
+    "path": "/api/v1/vendedor/solicitudes-carga",
+    "operationId": "backend_get_api_v1_vendedor_solicitudes_carga",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "vendor"
+    ],
+    "security": true,
+    "methodName": "getVendorTransitionRequests",
+    "parameters": [],
+    "roleGroup": "vendedor"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "post",
+    "path": "/api/v1/vendedor/cargas/transicion-cierre",
+    "operationId": "backend_post_api_v1_vendedor_cargas_transicion_cierre",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "vendor"
+    ],
+    "security": true,
+    "methodName": "transitionClosedCarga",
+    "parameters": [],
     "roleGroup": "vendedor"
   },
   {
@@ -1162,6 +1875,7 @@
     ],
     "security": true,
     "methodName": "getBodegaOrders",
+    "parameters": [],
     "roleGroup": "bodeguero"
   },
   {
@@ -1181,14 +1895,15 @@
     ],
     "security": true,
     "methodName": "getOrderAudit",
+    "parameters": [],
     "roleGroup": "bodeguero"
   },
   {
     "service": "backend",
     "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
     "method": "put",
-    "path": "/api/v1/bodeguero/tracking/actualizar",
-    "operationId": "backend_put_api_v1_bodeguero_tracking_actualizar",
+    "path": "/api/v1/bodeguero/pedidos/{id}/revisar",
+    "operationId": "backend_put_api_v1_bodeguero_pedidos_id_revisar",
     "tag": "Orders",
     "tags": [
       "Orders"
@@ -1199,7 +1914,48 @@
       "root"
     ],
     "security": true,
-    "methodName": "updateTracking",
+    "methodName": "reviewOrder",
+    "parameters": [],
+    "roleGroup": "bodeguero"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "get",
+    "path": "/api/v1/bodeguero/cargas/{cargaId}/pedidos",
+    "operationId": "backend_get_api_v1_bodeguero_cargas_cargaId_pedidos",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "bodeguero",
+      "admin",
+      "root"
+    ],
+    "security": true,
+    "methodName": "getOrdersByCarga",
+    "parameters": [],
+    "roleGroup": "bodeguero"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "get",
+    "path": "/api/v1/bodeguero/cargas/{id}/verificar-revision",
+    "operationId": "backend_get_api_v1_bodeguero_cargas_id_verificar_revision",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "bodeguero",
+      "admin",
+      "root"
+    ],
+    "security": true,
+    "methodName": "verifyCargaRevision",
+    "parameters": [],
     "roleGroup": "bodeguero"
   },
   {
@@ -1219,6 +1975,7 @@
     ],
     "security": true,
     "methodName": "deleteProduct",
+    "parameters": [],
     "roleGroup": "vendedor"
   },
   {
@@ -1238,6 +1995,7 @@
     ],
     "security": true,
     "methodName": "getClientProducts",
+    "parameters": [],
     "roleGroup": "cliente"
   },
   {
@@ -1257,6 +2015,7 @@
     ],
     "security": true,
     "methodName": "getVendorProducts",
+    "parameters": [],
     "roleGroup": "vendedor"
   },
   {
@@ -1274,6 +2033,7 @@
     ],
     "security": true,
     "methodName": "createProduct",
+    "parameters": [],
     "roleGroup": "vendedor"
   },
   {
@@ -1293,6 +2053,7 @@
     ],
     "security": true,
     "methodName": "updateProduct",
+    "parameters": [],
     "roleGroup": "vendedor"
   },
   {
@@ -1312,6 +2073,7 @@
     ],
     "security": true,
     "methodName": "deleteProduct",
+    "parameters": [],
     "roleGroup": "vendedor"
   },
   {
@@ -1333,6 +2095,16 @@
     "responseStatus": 200,
     "responseDescription": "Returns list of pending requests",
     "methodName": "listPendingRequests",
+    "parameters": [
+      {
+        "name": " items: Omit<RegistrationRequest, \"password\">[]; count: number ",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
     "roleGroup": "comun"
   },
   {
@@ -1354,6 +2126,16 @@
     "responseStatus": 200,
     "responseDescription": "Registration request approved and user created",
     "methodName": "approveRequest",
+    "parameters": [
+      {
+        "name": " request: Omit<RegistrationRequest, 'password'>; user: any ",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
     "roleGroup": "comun"
   },
   {
@@ -1375,6 +2157,108 @@
     "responseStatus": 200,
     "responseDescription": "Registration request rejected",
     "methodName": "rejectRequest",
+    "parameters": [],
+    "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/users/controllers/users.controller.ts",
+    "method": "get",
+    "path": "/api/v1/users",
+    "operationId": "backend_get_api_v1_users",
+    "tag": "Users",
+    "tags": [
+      "Users"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": true,
+    "methodName": "getUsers",
+    "parameters": [],
+    "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/users/controllers/users.controller.ts",
+    "method": "get",
+    "path": "/api/v1/users/{id}/orders",
+    "operationId": "backend_get_api_v1_users_id_orders",
+    "tag": "Users",
+    "tags": [
+      "Users"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": true,
+    "methodName": "getUserOrders",
+    "parameters": [],
+    "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/users/controllers/users.controller.ts",
+    "method": "get",
+    "path": "/api/v1/users/{id}/cobros",
+    "operationId": "backend_get_api_v1_users_id_cobros",
+    "tag": "Users",
+    "tags": [
+      "Users"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": true,
+    "methodName": "getUserCobros",
+    "parameters": [],
+    "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/users/controllers/users.controller.ts",
+    "method": "post",
+    "path": "/api/v1/users/change-contact/request",
+    "operationId": "backend_post_api_v1_users_change_contact_request",
+    "tag": "Users",
+    "tags": [
+      "Users"
+    ],
+    "roles": [
+      "root",
+      "admin",
+      "client",
+      "vendor",
+      "bodeguero"
+    ],
+    "security": true,
+    "methodName": "requestContactChange",
+    "parameters": [],
+    "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/users/controllers/users.controller.ts",
+    "method": "post",
+    "path": "/api/v1/users/change-contact/verify",
+    "operationId": "backend_post_api_v1_users_change_contact_verify",
+    "tag": "Users",
+    "tags": [
+      "Users"
+    ],
+    "roles": [
+      "root",
+      "admin",
+      "client",
+      "vendor",
+      "bodeguero"
+    ],
+    "security": true,
+    "methodName": "verifyContactChange",
+    "parameters": [],
     "roleGroup": "comun"
   },
   {
@@ -1417,7 +2301,7 @@
     "tags": [
       "Registration"
     ],
-    "summary": "Generar y enviar OTP",
+    "summary": "Generar y enviar OTP al email o telefono",
     "roles": [],
     "security": false,
     "roleGroup": "publico"
@@ -1432,7 +2316,22 @@
     "tags": [
       "Registration"
     ],
-    "summary": "Verificar OTP y marcar solicitud",
+    "summary": "Verificar OTP y marcar canal como verificado",
+    "roles": [],
+    "security": false,
+    "roleGroup": "publico"
+  },
+  {
+    "service": "registration-lambda",
+    "source": "Importal-registration-lambda/src/index.ts",
+    "method": "put",
+    "path": "/registration-requests/{email}/update-contact",
+    "operationId": "registration_lambda_put_registration_requests_email_update_contact",
+    "tag": "Registration",
+    "tags": [
+      "Registration"
+    ],
+    "summary": "Actualizar email o telefono de una solicitud pendiente",
     "roles": [],
     "security": false,
     "roleGroup": "publico"

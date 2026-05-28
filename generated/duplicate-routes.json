@@ -16,6 +16,7 @@
     ],
     "security": true,
     "methodName": "deleteProduct",
+    "parameters": [],
     "roleGroup": "vendedor"
   }
 ]

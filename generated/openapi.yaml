@@ -979,7 +979,43 @@ paths:
     get:
       operationId: backend_get_api_v1_admin_audit_trail
       parameters:
-[]
+        -           description: undefined
+          in: query
+          name: resource
+          required: false
+          schema:
+            type: string
+        -           description: undefined
+          in: query
+          name: userId
+          required: false
+          schema:
+            type: string
+        -           description: undefined
+          in: query
+          name: action
+          required: false
+          schema:
+            enum:
+              - CREATE
+              - READ
+              - UPDATE
+              - DELETE
+              - LOGIN
+              - LOGOUT
+            type: string
+        -           description: undefined
+          in: query
+          name: timeRange
+          required: false
+          schema:
+            type: string
+        -           description: undefined
+          in: query
+          name: limit
+          required: false
+          schema:
+            type: number
       responses:
         200:
           content:
@@ -1073,6 +1109,34 @@ paths:
       x-role-group: admin
       x-service: backend
       x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+  /api/v1/admin/cargas/{id}/close:
+    post:
+      operationId: backend_post_api_v1_admin_cargas_id_close
+      parameters:
+        -           in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                message: Operacion exitosa
+                ok: true
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Carga cerrada con éxito
+      security:
+        -           bearerAuth:
+[]
+      summary: "Cerrar una carga específica, desactivar productos de vendedores asignados y generar cobros de comisión (Admin/Root)"
+      tags:
+        - Orders
+      x-role-group: admin
+      x-service: backend
+      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
   /api/v1/admin/cobros:
     get:
       operationId: backend_get_api_v1_admin_cobros
@@ -1092,6 +1156,79 @@ paths:
         -           bearerAuth:
 []
       summary: Listar todos los cobros del sistema (Admin/Root)
+      tags:
+        - Billing
+      x-role-group: admin
+      x-service: backend
+      x-source: "Importal-backend/src/modules/billing/controllers/billing.controller.ts"
+  /api/v1/admin/cobros/pendientes-validacion:
+    get:
+      operationId: backend_get_api_v1_admin_cobros_pendientes_validacion
+      parameters:
+[]
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                -                   id: 1
+                  message: Ejemplo de elemento retornado
+              schema:
+                $ref: "#/components/schemas/GenericObjectArray"
+          description: Listado de cobros pendientes de validación
+      security:
+        -           bearerAuth:
+[]
+      summary: Listar cobros que tienen un comprobante subido pendiente de revisión (Admin/Root)
+      tags:
+        - Billing
+      x-role-group: admin
+      x-service: backend
+      x-source: "Importal-backend/src/modules/billing/controllers/billing.controller.ts"
+  /api/v1/admin/cobros/trigger:
+    post:
+      operationId: backend_post_api_v1_admin_cobros_trigger
+      parameters:
+[]
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                message: Operacion exitosa
+                ok: true
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Gatillado de facturación exitoso
+      security:
+        -           bearerAuth:
+[]
+      summary: Gatillar manualmente generación de cobros del periodo y cálculo de intereses de mora (Admin/Root)
+      tags:
+        - Billing
+      x-role-group: admin
+      x-service: backend
+      x-source: "Importal-backend/src/modules/billing/controllers/billing.controller.ts"
+  /api/v1/admin/cobros/{id}/comprobantes:
+    get:
+      operationId: backend_get_api_v1_admin_cobros_id_comprobantes
+      parameters:
+        -           in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Operacion exitosa
+      security:
+        -           bearerAuth:
+[]
+      summary: getCobroProofImages
       tags:
         - Billing
       x-role-group: admin
@@ -1187,7 +1324,22 @@ paths:
     get:
       operationId: backend_get_api_v1_admin_exceptions
       parameters:
-[]
+        -           description: undefined
+          in: query
+          name: level
+          required: false
+          schema:
+            enum:
+              - CRITICAL
+              - ERROR
+              - WARNING
+            type: string
+        -           description: undefined
+          in: query
+          name: limit
+          required: false
+          schema:
+            type: number
       responses:
         200:
           content:
@@ -1254,7 +1406,41 @@ paths:
     get:
       operationId: backend_get_api_v1_admin_logs
       parameters:
-[]
+        -           description: undefined
+          in: query
+          name: service
+          required: false
+          schema:
+            type: string
+        -           description: undefined
+          in: query
+          name: level
+          required: false
+          schema:
+            enum:
+              - ERROR
+              - WARN
+              - INFO
+              - DEBUG
+            type: string
+        -           description: "1h, 24h, 7d, 30d"
+          in: query
+          name: timeRange
+          required: false
+          schema:
+            type: string
+        -           description: undefined
+          in: query
+          name: limit
+          required: false
+          schema:
+            type: number
+        -           description: undefined
+          in: query
+          name: offset
+          required: false
+          schema:
+            type: number
       responses:
         200:
           content:
@@ -1275,7 +1461,18 @@ paths:
     get:
       operationId: backend_get_api_v1_admin_logs_search
       parameters:
-[]
+        -           description: undefined
+          in: query
+          name: query
+          required: true
+          schema:
+            type: string
+        -           description: undefined
+          in: query
+          name: limit
+          required: false
+          schema:
+            type: number
       responses:
         200:
           content:
@@ -1317,7 +1514,12 @@ paths:
     get:
       operationId: backend_get_api_v1_admin_metrics_orders
       parameters:
-[]
+        -           description: "1d, 7d, 30d"
+          in: query
+          name: timeRange
+          required: false
+          schema:
+            type: string
       responses:
         200:
           content:
@@ -1338,7 +1540,12 @@ paths:
     get:
       operationId: backend_get_api_v1_admin_metrics_performance
       parameters:
-[]
+        -           description: undefined
+          in: query
+          name: timeRange
+          required: false
+          schema:
+            type: string
       responses:
         200:
           content:
@@ -1359,7 +1566,21 @@ paths:
     get:
       operationId: backend_get_api_v1_admin_metrics_revenue
       parameters:
-[]
+        -           description: undefined
+          in: query
+          name: timeRange
+          required: false
+          schema:
+            type: string
+        -           description: undefined
+          in: query
+          name: currency
+          required: false
+          schema:
+            enum:
+              - CLP
+              - USD
+            type: string
       responses:
         200:
           content:
@@ -1380,7 +1601,12 @@ paths:
     get:
       operationId: backend_get_api_v1_admin_metrics_transactions
       parameters:
-[]
+        -           description: undefined
+          in: query
+          name: timeRange
+          required: false
+          schema:
+            type: string
       responses:
         200:
           content:
@@ -1401,7 +1627,12 @@ paths:
     get:
       operationId: backend_get_api_v1_admin_metrics_users
       parameters:
-[]
+        -           description: undefined
+          in: query
+          name: timeRange
+          required: false
+          schema:
+            type: string
       responses:
         200:
           content:
@@ -1418,11 +1649,180 @@ paths:
       x-role-group: admin
       x-service: backend
       x-source: "Importal-backend/src/modules/app/controllers/admin-metrics.controller.ts"
+  /api/v1/admin/pedidos-transicion:
+    get:
+      operationId: backend_get_api_v1_admin_pedidos_transicion
+      parameters:
+[]
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                -                   id: 1
+                  message: Ejemplo de elemento retornado
+              schema:
+                $ref: "#/components/schemas/GenericObjectArray"
+          description: Lista de solicitudes
+      security:
+        -           bearerAuth:
+[]
+      summary: Listar todas las solicitudes de transición de pedidos individuales de vendedores (Admin/Root)
+      tags:
+        - Orders
+      x-role-group: admin
+      x-service: backend
+      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+  /api/v1/admin/pedidos-transicion/{id}/aprobar:
+    post:
+      operationId: backend_post_api_v1_admin_pedidos_transicion_id_aprobar
+      parameters:
+        -           in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                message: Operacion exitosa
+                ok: true
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Transición aprobada con éxito
+      security:
+        -           bearerAuth:
+[]
+      summary: Aprobar la transición de un pedido a la siguiente carga abierta (Admin/Root)
+      tags:
+        - Orders
+      x-role-group: admin
+      x-service: backend
+      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+  /api/v1/admin/pedidos-transicion/{id}/rechazar:
+    post:
+      operationId: backend_post_api_v1_admin_pedidos_transicion_id_rechazar
+      parameters:
+        -           in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                message: Operacion exitosa
+                ok: true
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Transición rechazada con éxito
+      security:
+        -           bearerAuth:
+[]
+      summary: Rechazar la transición de un pedido (Admin/Root)
+      tags:
+        - Orders
+      x-role-group: admin
+      x-service: backend
+      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+  /api/v1/admin/solicitudes-carga:
+    get:
+      operationId: backend_get_api_v1_admin_solicitudes_carga
+      parameters:
+[]
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                -                   id: 1
+                  message: Ejemplo de elemento retornado
+              schema:
+                $ref: "#/components/schemas/GenericObjectArray"
+          description: Solicitudes de tránsito
+      security:
+        -           bearerAuth:
+[]
+      summary: Listar solicitudes de tránsito de carga pendientes de aprobación (Admin/Root)
+      tags:
+        - Orders
+      x-role-group: admin
+      x-service: backend
+      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+  /api/v1/admin/solicitudes-carga/{id}/aprobar:
+    post:
+      operationId: backend_post_api_v1_admin_solicitudes_carga_id_aprobar
+      parameters:
+        -           in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                message: Operacion exitosa
+                ok: true
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Solicitud de tránsito aprobada
+      security:
+        -           bearerAuth:
+[]
+      summary: Aprobar una solicitud de tránsito y asignarle carga (Admin/Root)
+      tags:
+        - Orders
+      x-role-group: admin
+      x-service: backend
+      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+  /api/v1/admin/solicitudes-carga/{id}/rechazar:
+    post:
+      operationId: backend_post_api_v1_admin_solicitudes_carga_id_rechazar
+      parameters:
+        -           in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                message: Operacion exitosa
+                ok: true
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Solicitud de tránsito rechazada
+      security:
+        -           bearerAuth:
+[]
+      summary: Rechazar una solicitud de tránsito de carga (Admin/Root)
+      tags:
+        - Orders
+      x-role-group: admin
+      x-service: backend
+      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
   /api/v1/admin/system/alerts:
     get:
       operationId: backend_get_api_v1_admin_system_alerts
       parameters:
-[]
+        -           description: undefined
+          in: query
+          name: severity
+          required: false
+          schema:
+            enum:
+              - CRITICAL
+              - WARNING
+              - INFO
+            type: string
       responses:
         200:
           content:
@@ -1681,7 +2081,12 @@ paths:
     get:
       operationId: backend_get_api_v1_admin_traces
       parameters:
-[]
+        -           description: undefined
+          in: query
+          name: limit
+          required: false
+          schema:
+            type: number
       responses:
         200:
           content:
@@ -1748,7 +2153,18 @@ paths:
     get:
       operationId: backend_get_api_v1_admin_users_activity
       parameters:
-[]
+        -           description: undefined
+          in: query
+          name: timeRange
+          required: false
+          schema:
+            type: string
+        -           description: undefined
+          in: query
+          name: limit
+          required: false
+          schema:
+            type: number
       responses:
         200:
           content:
@@ -1804,7 +2220,22 @@ paths:
     get:
       operationId: backend_get_api_v1_admin_users_login_attempts
       parameters:
-[]
+        -           description: undefined
+          in: query
+          name: status
+          required: false
+          schema:
+            enum:
+              - failed
+              - success
+              - all
+            type: string
+        -           description: undefined
+          in: query
+          name: timeRange
+          required: false
+          schema:
+            type: string
       responses:
         200:
           content:
@@ -1851,6 +2282,12 @@ paths:
           required: true
           schema:
             type: string
+        -           description: undefined
+          in: query
+          name: limit
+          required: false
+          schema:
+            type: number
       responses:
         200:
           content:
@@ -1876,6 +2313,12 @@ paths:
           required: true
           schema:
             type: string
+        -           description: undefined
+          in: query
+          name: limit
+          required: false
+          schema:
+            type: number
       responses:
         200:
           content:
@@ -1916,6 +2359,34 @@ paths:
       x-role-group: bodeguero
       x-service: backend
       x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+  /api/v1/bodeguero/cargas/{cargaId}/pedidos:
+    get:
+      operationId: backend_get_api_v1_bodeguero_cargas_cargaId_pedidos
+      parameters:
+        -           in: path
+          name: cargaId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                -                   id: 1
+                  message: Ejemplo de elemento retornado
+              schema:
+                $ref: "#/components/schemas/GenericObjectArray"
+          description: Pedidos de la carga
+      security:
+        -           bearerAuth:
+[]
+      summary: Listar todos los pedidos asociados a una carga específica
+      tags:
+        - Orders
+      x-role-group: bodeguero
+      x-service: backend
+      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
   /api/v1/bodeguero/cargas/{id}/status:
     put:
       operationId: backend_put_api_v1_bodeguero_cargas_id_status
@@ -1948,6 +2419,34 @@ paths:
         -           bearerAuth:
 []
       summary: updateCargaStatus
+      tags:
+        - Orders
+      x-role-group: bodeguero
+      x-service: backend
+      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+  /api/v1/bodeguero/cargas/{id}/verificar-revision:
+    get:
+      operationId: backend_get_api_v1_bodeguero_cargas_id_verificar_revision
+      parameters:
+        -           in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                message: Operacion exitosa
+                ok: true
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Estado de revisión de la carga
+      security:
+        -           bearerAuth:
+[]
+      summary: Verificar si todos los pedidos de una carga han sido revisados
       tags:
         - Orders
       x-role-group: bodeguero
@@ -2016,22 +2515,41 @@ paths:
       x-role-group: bodeguero
       x-service: backend
       x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
-  /api/v1/bodeguero/tracking/actualizar:
+  /api/v1/bodeguero/pedidos/{id}/revisar:
     put:
-      operationId: backend_put_api_v1_bodeguero_tracking_actualizar
+      operationId: backend_put_api_v1_bodeguero_pedidos_id_revisar
       parameters:
-[]
+        -           in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            example:
+              caja_size: M
+              dañados: 0
+              faltaron: 0
+              llegaron: 2
+              peso_cobrado_kg: 1.2
+            schema:
+              $ref: "#/components/schemas/ReviewOrderRequest"
+        required: true
       responses:
         200:
           content:
             application/json:
+              example:
+                message: Operacion exitosa
+                ok: true
               schema:
                 $ref: "#/components/schemas/GenericObject"
-          description: Operacion exitosa
+          description: Pedido revisado exitosamente
       security:
         -           bearerAuth:
 []
-      summary: updateTracking
+      summary: Registrar la revisión física de un pedido por parte del bodeguero
       tags:
         - Orders
       x-role-group: bodeguero
@@ -2058,6 +2576,47 @@ paths:
         -           bearerAuth:
 []
       summary: getChats
+      tags:
+        - Messaging
+      x-role-group: comun
+      x-service: backend
+      x-source: "Importal-backend/src/modules/messaging/controllers/messaging.controller.ts"
+  /api/v1/chats/{id}:
+    get:
+      operationId: backend_get_api_v1_chats_id
+      parameters:
+        -           in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                id: 7
+                messages:
+                  -                     chat_id: 7
+                    created_at: "2026-05-25T12:00:00.000Z"
+                    id: 1
+                    message: "[Usuario-12]: Hola"
+                provider_code: "AIR-01"
+                transport_type: AEREA
+                user_id: 12
+                websocket:
+                  event: join_chat
+                  namespace: /v1
+                  path: /socket.io
+                  room: chat_7
+                  url: "ws://localhost:3000/v1"
+              schema:
+                $ref: "#/components/schemas/ChatDetails"
+          description: Detalles del chat y configuración websocket
+      security:
+        -           bearerAuth:
+[]
+      summary: getChatDetails
       tags:
         - Messaging
       x-role-group: comun
@@ -2093,6 +2652,30 @@ paths:
       x-role-group: comun
       x-service: backend
       x-source: "Importal-backend/src/modules/messaging/controllers/messaging.controller.ts"
+    post:
+      operationId: backend_post_api_v1_chats_id_mensajes
+      parameters:
+        -           in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Operacion exitosa
+      security:
+        -           bearerAuth:
+[]
+      summary: createChatMessage
+      tags:
+        - Messaging
+      x-role-group: comun
+      x-service: backend
+      x-source: "Importal-backend/src/modules/messaging/controllers/messaging.controller.ts"
   /api/v1/cliente/cobros:
     get:
       operationId: backend_get_api_v1_cliente_cobros
@@ -2112,6 +2695,98 @@ paths:
         -           bearerAuth:
 []
       summary: Obtener cobros pendientes y facturados del cliente autenticado
+      tags:
+        - Billing
+      x-role-group: cliente
+      x-service: backend
+      x-source: "Importal-backend/src/modules/billing/controllers/billing.controller.ts"
+  /api/v1/cliente/cobros/pagados:
+    get:
+      operationId: backend_get_api_v1_cliente_cobros_pagados
+      parameters:
+[]
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                -                   id: 1
+                  message: Ejemplo de elemento retornado
+              schema:
+                $ref: "#/components/schemas/GenericObjectArray"
+          description: Cobros pagados
+      security:
+        -           bearerAuth:
+[]
+      summary: Obtener historial de cobros pagados del cliente
+      tags:
+        - Billing
+      x-role-group: cliente
+      x-service: backend
+      x-source: "Importal-backend/src/modules/billing/controllers/billing.controller.ts"
+  /api/v1/cliente/cobros/{id}/comprobante:
+    delete:
+      operationId: backend_delete_api_v1_cliente_cobros_id_comprobante
+      parameters:
+        -           in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Operacion exitosa
+      security:
+        -           bearerAuth:
+[]
+      summary: deletePaymentProof
+      tags:
+        - Billing
+      x-role-group: cliente
+      x-service: backend
+      x-source: "Importal-backend/src/modules/billing/controllers/billing.controller.ts"
+  /api/v1/cliente/cobros/{id}/pagar:
+    post:
+      operationId: backend_post_api_v1_cliente_cobros_id_pagar
+      parameters:
+        -           in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            example:
+              file: (binary file)
+            schema:
+              properties:
+                file:
+                  description: Comprobante de pago (imagen/pdf)
+                  format: binary
+                  type: string
+              required:
+                - file
+              type: object
+        required: true
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                message: Operacion exitosa
+                ok: true
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: "Comprobante subido, cobro en revisión"
+      security:
+        -           bearerAuth:
+[]
+      summary: Subir comprobante de pago para un cobro (Multipart File)
       tags:
         - Billing
       x-role-group: cliente
@@ -2185,118 +2860,6 @@ paths:
         -           bearerAuth:
 []
       summary: Obtener estado e historial de moras del cliente autenticado
-      tags:
-        - Billing
-      x-role-group: cliente
-      x-service: backend
-      x-source: "Importal-backend/src/modules/billing/controllers/billing.controller.ts"
-  /api/v1/cliente/pagos/historial:
-    get:
-      operationId: backend_get_api_v1_cliente_pagos_historial
-      parameters:
-[]
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GenericObject"
-          description: Operacion exitosa
-      security:
-        -           bearerAuth:
-[]
-      summary: getPaymentHistory
-      tags:
-        - Billing
-      x-role-group: cliente
-      x-service: backend
-      x-source: "Importal-backend/src/modules/billing/controllers/billing.controller.ts"
-  /api/v1/cliente/pagos/transbank/confirmar:
-    post:
-      operationId: backend_post_api_v1_cliente_pagos_transbank_confirmar
-      parameters:
-[]
-      requestBody:
-        content:
-          application/json:
-            example:
-              token: "token-abc"
-              transaction_id: "trx-123"
-            schema:
-              $ref: "#/components/schemas/ConfirmTransbankRequest"
-        required: true
-      responses:
-        200:
-          content:
-            application/json:
-              example:
-                message: Operacion exitosa
-                ok: true
-              schema:
-                $ref: "#/components/schemas/GenericObject"
-          description: Pago confirmado
-      security:
-        -           bearerAuth:
-[]
-      summary: confirmTransbank
-      tags:
-        - Billing
-      x-role-group: cliente
-      x-service: backend
-      x-source: "Importal-backend/src/modules/billing/controllers/billing.controller.ts"
-  /api/v1/cliente/pagos/transbank/iniciar:
-    post:
-      operationId: backend_post_api_v1_cliente_pagos_transbank_iniciar
-      parameters:
-[]
-      requestBody:
-        content:
-          application/json:
-            example:
-              amount_clp: 250000
-              cobro_id: 501
-            schema:
-              $ref: "#/components/schemas/InitiateTransbankRequest"
-        required: true
-      responses:
-        201:
-          content:
-            application/json:
-              example:
-                message: Operacion exitosa
-                ok: true
-              schema:
-                $ref: "#/components/schemas/GenericObject"
-          description: Pago iniciado
-      security:
-        -           bearerAuth:
-[]
-      summary: initiateTransbank
-      tags:
-        - Billing
-      x-role-group: cliente
-      x-service: backend
-      x-source: "Importal-backend/src/modules/billing/controllers/billing.controller.ts"
-  /api/v1/cliente/pagos/transbank/{id}/estado:
-    get:
-      operationId: backend_get_api_v1_cliente_pagos_transbank_id_estado
-      parameters:
-        -           in: path
-          name: id
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GenericObject"
-          description: Operacion exitosa
-      security:
-        -           bearerAuth:
-[]
-      summary: getTransbankStatus
       tags:
         - Billing
       x-role-group: cliente
@@ -2445,7 +3008,11 @@ paths:
     get:
       operationId: backend_get_api_v1_registration_requests
       parameters:
-[]
+        -           in: path
+          name: " items: Omit<RegistrationRequest, \"password\">[]; count: number "
+          required: true
+          schema:
+            type: string
       responses:
         200:
           content:
@@ -2482,6 +3049,11 @@ paths:
       parameters:
         -           in: path
           name: email
+          required: true
+          schema:
+            type: string
+        -           in: path
+          name: " request: Omit<RegistrationRequest, 'password'>; user: any "
           required: true
           schema:
             type: string
@@ -2618,6 +3190,151 @@ paths:
       x-role-group: comun
       x-service: backend
       x-source: "Importal-backend/src/modules/registration/controllers/registration.controller.ts"
+  /api/v1/users:
+    get:
+      operationId: backend_get_api_v1_users
+      parameters:
+[]
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Operacion exitosa
+      security:
+        -           bearerAuth:
+[]
+      summary: getUsers
+      tags:
+        - Users
+      x-role-group: comun
+      x-service: backend
+      x-source: "Importal-backend/src/modules/users/controllers/users.controller.ts"
+  /api/v1/users/change-contact/request:
+    post:
+      operationId: backend_post_api_v1_users_change_contact_request
+      parameters:
+[]
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Operacion exitosa
+      security:
+        -           bearerAuth:
+[]
+      summary: requestContactChange
+      tags:
+        - Users
+      x-role-group: comun
+      x-service: backend
+      x-source: "Importal-backend/src/modules/users/controllers/users.controller.ts"
+  /api/v1/users/change-contact/verify:
+    post:
+      operationId: backend_post_api_v1_users_change_contact_verify
+      parameters:
+[]
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Operacion exitosa
+      security:
+        -           bearerAuth:
+[]
+      summary: verifyContactChange
+      tags:
+        - Users
+      x-role-group: comun
+      x-service: backend
+      x-source: "Importal-backend/src/modules/users/controllers/users.controller.ts"
+  /api/v1/users/{id}/cobros:
+    get:
+      operationId: backend_get_api_v1_users_id_cobros
+      parameters:
+        -           in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Operacion exitosa
+      security:
+        -           bearerAuth:
+[]
+      summary: getUserCobros
+      tags:
+        - Users
+      x-role-group: comun
+      x-service: backend
+      x-source: "Importal-backend/src/modules/users/controllers/users.controller.ts"
+  /api/v1/users/{id}/orders:
+    get:
+      operationId: backend_get_api_v1_users_id_orders
+      parameters:
+        -           in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Operacion exitosa
+      security:
+        -           bearerAuth:
+[]
+      summary: getUserOrders
+      tags:
+        - Users
+      x-role-group: comun
+      x-service: backend
+      x-source: "Importal-backend/src/modules/users/controllers/users.controller.ts"
+  /api/v1/vendedor/cargas/transicion-cierre:
+    post:
+      operationId: backend_post_api_v1_vendedor_cargas_transicion_cierre
+      parameters:
+[]
+      requestBody:
+        content:
+          application/json:
+            example:
+              tipo_carga: AEREA
+            schema:
+              $ref: "#/components/schemas/CreateCargaRequest"
+        required: true
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                message: Operacion exitosa
+                ok: true
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Transición procesada
+      security:
+        -           bearerAuth:
+[]
+      summary: Solicitar transición/cierre de carga por ventanas temporales o salida anticipada (Vendedor)
+      tags:
+        - Orders
+      x-role-group: vendedor
+      x-service: backend
+      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
   /api/v1/vendedor/dashboard:
     get:
       operationId: backend_get_api_v1_vendedor_dashboard
@@ -2703,6 +3420,132 @@ paths:
       x-role-group: vendedor
       x-service: backend
       x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+  /api/v1/vendedor/pedidos-carga:
+    get:
+      operationId: backend_get_api_v1_vendedor_pedidos_carga
+      parameters:
+        -           description: Filtrar por tipo de transporte
+          in: query
+          name: tipo_carga
+          required: false
+          schema:
+            enum:
+              - AEREA
+              - MARITIMA
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                -                   id: 1
+                  message: Ejemplo de elemento retornado
+              schema:
+                $ref: "#/components/schemas/GenericObjectArray"
+          description: Pedidos de la carga activa
+      security:
+        -           bearerAuth:
+[]
+      summary: Listar pedidos de la carga activa del vendedor (Vendedor)
+      tags:
+        - Orders
+      x-role-group: vendedor
+      x-service: backend
+      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+  /api/v1/vendedor/pedidos-carga/status:
+    get:
+      operationId: backend_get_api_v1_vendedor_pedidos_carga_status
+      parameters:
+        -           description: "Opcional: AEREA o MARITIMA"
+          in: query
+          name: tipo_carga
+          required: false
+          schema:
+            enum:
+              - AEREA
+              - MARITIMA
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Operacion exitosa
+      security:
+        -           bearerAuth:
+[]
+      summary: getVendorCargaStatus
+      tags:
+        - Orders
+      x-role-group: vendedor
+      x-service: backend
+      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+  /api/v1/vendedor/pedidos/{id}/confirmar:
+    post:
+      operationId: backend_post_api_v1_vendedor_pedidos_id_confirmar
+      parameters:
+        -           in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                message: Operacion exitosa
+                ok: true
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Pedido confirmado
+      security:
+        -           bearerAuth:
+[]
+      summary: Confirmar pedido y efectuar descuento final de stock (Vendedor)
+      tags:
+        - Orders
+      x-role-group: vendedor
+      x-service: backend
+      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+  /api/v1/vendedor/pedidos/{id}/envio:
+    put:
+      operationId: backend_put_api_v1_vendedor_pedidos_id_envio
+      parameters:
+        -           in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            example:
+              can_ship: true
+              seller_order_number: "SO-12345"
+            schema:
+              $ref: "#/components/schemas/UpdateOrderShippingRequest"
+        required: true
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                message: Operacion exitosa
+                ok: true
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Datos de envío actualizados
+      security:
+        -           bearerAuth:
+[]
+      summary: Actualizar flag de envío y número de seguimiento del vendedor (Vendedor)
+      tags:
+        - Orders
+      x-role-group: vendedor
+      x-service: backend
+      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
   /api/v1/vendedor/pedidos/{id}/estado:
     put:
       operationId: backend_put_api_v1_vendedor_pedidos_id_estado
@@ -2734,6 +3577,34 @@ paths:
         -           bearerAuth:
 []
       summary: updateOrderStatus
+      tags:
+        - Orders
+      x-role-group: vendedor
+      x-service: backend
+      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+  /api/v1/vendedor/pedidos/{id}/solicitar-transicion:
+    post:
+      operationId: backend_post_api_v1_vendedor_pedidos_id_solicitar_transicion
+      parameters:
+        -           in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        201:
+          content:
+            application/json:
+              example:
+                message: Operacion exitosa
+                ok: true
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Solicitud creada con éxito
+      security:
+        -           bearerAuth:
+[]
+      summary: Solicitar transición de un pedido individual a la siguiente carga abierta (Vendedor)
       tags:
         - Orders
       x-role-group: vendedor
@@ -2877,6 +3748,61 @@ paths:
       x-role-group: vendedor
       x-service: backend
       x-source: "Importal-backend/src/modules/products/controllers/products.controller.ts"
+  /api/v1/vendedor/solicitudes-carga:
+    get:
+      operationId: backend_get_api_v1_vendedor_solicitudes_carga
+      parameters:
+[]
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                -                   id: 1
+                  message: Ejemplo de elemento retornado
+              schema:
+                $ref: "#/components/schemas/GenericObjectArray"
+          description: Solicitudes de tránsito del vendedor
+      security:
+        -           bearerAuth:
+[]
+      summary: Listar solicitudes de tránsito de carga del vendedor autenticado
+      tags:
+        - Orders
+      x-role-group: vendedor
+      x-service: backend
+      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+    post:
+      operationId: backend_post_api_v1_vendedor_solicitudes_carga
+      parameters:
+[]
+      requestBody:
+        content:
+          application/json:
+            example:
+              tipo_carga: AEREA
+            schema:
+              $ref: "#/components/schemas/CreateCargaRequest"
+        required: true
+      responses:
+        201:
+          content:
+            application/json:
+              example:
+                message: Operacion exitosa
+                ok: true
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Solicitud de tránsito creada
+      security:
+        -           bearerAuth:
+[]
+      summary: Crear una nueva solicitud de tránsito de carga (Vendedor)
+      tags:
+        - Orders
+      x-role-group: vendedor
+      x-service: backend
+      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
   /auth/api/health:
     get:
       operationId: auth_get_auth_api_health
@@ -2913,98 +3839,6 @@ paths:
       x-role-group: publico
       x-service: auth
       x-source: "Importal-auth/src/modules/app/controllers/app.controller.ts"
-  /auth/api/v1/auth/login:
-    post:
-      operationId: auth_post_auth_api_v1_auth_login
-      parameters:
-[]
-      requestBody:
-        content:
-          application/json:
-            example:
-              email: "usuario@ejemplo.com"
-              password: "Password123!"
-            schema:
-              $ref: "#/components/schemas/LoginRequest"
-        required: true
-      responses:
-        200:
-          content:
-            application/json:
-              example:
-                accessToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-                refreshToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-              schema:
-                $ref: "#/components/schemas/LoginResponse"
-          description: Login exitoso
-        401:
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-          description: Credenciales invalidas
-      security:
-        -           bearerAuth:
-[]
-      summary: Autenticar usuario y emitir JWT
-      tags:
-        - Auth
-      x-role-group: interno
-      x-service: auth
-      x-source: "Importal-auth/src/modules/auth/controllers/auth.controller.ts"
-  /auth/api/v1/auth/register-user:
-    post:
-      operationId: auth_post_auth_api_v1_auth_register_user
-      parameters:
-[]
-      requestBody:
-        content:
-          application/json:
-            example:
-              email: "juan.perez@ejemplo.com"
-              name: Juan Perez
-              password: "Password123!"
-              phone: +56912345678
-              role: client
-              rut: "12.345.678-9"
-              transporte:
-                - maritimo
-            schema:
-              $ref: "#/components/schemas/RegisterUserRequest"
-        required: true
-      responses:
-        201:
-          content:
-            application/json:
-              example:
-                email: "juan.perez@ejemplo.com"
-                name: Juan Perez
-                role: client
-                userId: u_123
-              schema:
-                $ref: "#/components/schemas/RegisterUserResponse"
-          description: Usuario registrado
-        403:
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-          description: Acceso restringido a VPC
-        409:
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-          description: Usuario ya existe
-      security:
-        -           bearerAuth:
-[]
-      summary: Registrar usuario desde servicios internos
-      tags:
-        - Auth
-      x-role-group: interno
-      x-service: auth
-      x-source: "Importal-auth/src/modules/auth/controllers/auth.controller.ts"
   /auth/api/v1/auth/send-code:
     post:
       operationId: auth_post_auth_api_v1_auth_send_code
@@ -3032,6 +3866,55 @@ paths:
         -           bearerAuth:
 []
       summary: Enviar OTP via auth service
+      tags:
+        - Auth
+      x-role-group: interno
+      x-service: auth
+      x-source: "Importal-auth/src/modules/auth/controllers/auth.controller.ts"
+  /auth/api/v1/auth/users/{userId}:
+    delete:
+      operationId: auth_delete_auth_api_v1_auth_users_userId
+      parameters:
+        -           in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Operacion exitosa
+      security:
+        -           bearerAuth:
+[]
+      summary: deleteUser
+      tags:
+        - Auth
+      x-role-group: interno
+      x-service: auth
+      x-source: "Importal-auth/src/modules/auth/controllers/auth.controller.ts"
+    put:
+      operationId: auth_put_auth_api_v1_auth_users_userId
+      parameters:
+        -           in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Operacion exitosa
+      security:
+        -           bearerAuth:
+[]
+      summary: updateUser
       tags:
         - Auth
       x-role-group: interno
@@ -3268,6 +4151,58 @@ paths:
                 $ref: "#/components/schemas/ErrorResponse"
           description: Rate limit de OTP excedido
       summary: "Generar OTP para una solicitud (email, phone o ambos)"
+      tags:
+        - Registration
+      x-role-group: publico
+      x-service: "registration-lambda"
+      x-source: "Importal-registration-lambda/src/index.ts"
+  /registration-requests/{email}/update-contact:
+    put:
+      operationId: registration_lambda_put_registration_requests_email_update_contact
+      parameters:
+        -           in: path
+          name: email
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                email:
+                  format: email
+                  type: string
+                phone:
+                  type: string
+              type: object
+        required: true
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericMessage"
+          description: Contacto actualizado
+        400:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: Payload invalido
+        404:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: Solicitud no encontrada
+        409:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: Solicitud no esta en estado PENDING
+      summary: Actualizar email o telefono de una solicitud pendiente
       tags:
         - Registration
       x-role-group: publico

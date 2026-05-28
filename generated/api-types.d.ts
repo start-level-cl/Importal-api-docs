@@ -403,12 +403,44 @@ export interface Operations {
       "201": GenericObject
     }
   }
+  "backend_post_api_v1_admin_cargas_id_close": {
+    method: "POST"
+    path: "/api/v1/admin/cargas/{id}/close"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
   "backend_get_api_v1_admin_cobros": {
     method: "GET"
     path: "/api/v1/admin/cobros"
     requestBody: undefined
     responses: {
       "200": GenericObjectArray
+    }
+  }
+  "backend_get_api_v1_admin_cobros_pendientes_validacion": {
+    method: "GET"
+    path: "/api/v1/admin/cobros/pendientes-validacion"
+    requestBody: undefined
+    responses: {
+      "200": GenericObjectArray
+    }
+  }
+  "backend_post_api_v1_admin_cobros_trigger": {
+    method: "POST"
+    path: "/api/v1/admin/cobros/trigger"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_get_api_v1_admin_cobros_id_comprobantes": {
+    method: "GET"
+    path: "/api/v1/admin/cobros/{id}/comprobantes"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
     }
   }
   "backend_post_api_v1_admin_cobros_id_confirmar": {
@@ -510,6 +542,54 @@ export interface Operations {
   "backend_get_api_v1_admin_metrics_users": {
     method: "GET"
     path: "/api/v1/admin/metrics/users"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_get_api_v1_admin_pedidos_transicion": {
+    method: "GET"
+    path: "/api/v1/admin/pedidos-transicion"
+    requestBody: undefined
+    responses: {
+      "200": GenericObjectArray
+    }
+  }
+  "backend_post_api_v1_admin_pedidos_transicion_id_aprobar": {
+    method: "POST"
+    path: "/api/v1/admin/pedidos-transicion/{id}/aprobar"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_post_api_v1_admin_pedidos_transicion_id_rechazar": {
+    method: "POST"
+    path: "/api/v1/admin/pedidos-transicion/{id}/rechazar"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_get_api_v1_admin_solicitudes_carga": {
+    method: "GET"
+    path: "/api/v1/admin/solicitudes-carga"
+    requestBody: undefined
+    responses: {
+      "200": GenericObjectArray
+    }
+  }
+  "backend_post_api_v1_admin_solicitudes_carga_id_aprobar": {
+    method: "POST"
+    path: "/api/v1/admin/solicitudes-carga/{id}/aprobar"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_post_api_v1_admin_solicitudes_carga_id_rechazar": {
+    method: "POST"
+    path: "/api/v1/admin/solicitudes-carga/{id}/rechazar"
     requestBody: undefined
     responses: {
       "200": GenericObject
@@ -683,10 +763,26 @@ export interface Operations {
       "200": GenericObjectArray
     }
   }
+  "backend_get_api_v1_bodeguero_cargas_cargaId_pedidos": {
+    method: "GET"
+    path: "/api/v1/bodeguero/cargas/{cargaId}/pedidos"
+    requestBody: undefined
+    responses: {
+      "200": GenericObjectArray
+    }
+  }
   "backend_put_api_v1_bodeguero_cargas_id_status": {
     method: "PUT"
     path: "/api/v1/bodeguero/cargas/{id}/status"
     requestBody: UpdateCargaStatusRequest
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_get_api_v1_bodeguero_cargas_id_verificar_revision": {
+    method: "GET"
+    path: "/api/v1/bodeguero/cargas/{id}/verificar-revision"
+    requestBody: undefined
     responses: {
       "200": GenericObject
     }
@@ -707,10 +803,10 @@ export interface Operations {
       "200": GenericObjectArray
     }
   }
-  "backend_put_api_v1_bodeguero_tracking_actualizar": {
+  "backend_put_api_v1_bodeguero_pedidos_id_revisar": {
     method: "PUT"
-    path: "/api/v1/bodeguero/tracking/actualizar"
-    requestBody: undefined
+    path: "/api/v1/bodeguero/pedidos/{id}/revisar"
+    requestBody: ReviewOrderRequest
     responses: {
       "200": GenericObject
     }
@@ -723,6 +819,14 @@ export interface Operations {
       "200": ChatArray
     }
   }
+  "backend_get_api_v1_chats_id": {
+    method: "GET"
+    path: "/api/v1/chats/{id}"
+    requestBody: undefined
+    responses: {
+      "200": ChatDetails
+    }
+  }
   "backend_get_api_v1_chats_id_mensajes": {
     method: "GET"
     path: "/api/v1/chats/{id}/mensajes"
@@ -731,12 +835,46 @@ export interface Operations {
       "200": ChatMessageArray
     }
   }
+  "backend_post_api_v1_chats_id_mensajes": {
+    method: "POST"
+    path: "/api/v1/chats/{id}/mensajes"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
   "backend_get_api_v1_cliente_cobros": {
     method: "GET"
     path: "/api/v1/cliente/cobros"
     requestBody: undefined
     responses: {
       "200": GenericObjectArray
+    }
+  }
+  "backend_get_api_v1_cliente_cobros_pagados": {
+    method: "GET"
+    path: "/api/v1/cliente/cobros/pagados"
+    requestBody: undefined
+    responses: {
+      "200": GenericObjectArray
+    }
+  }
+  "backend_delete_api_v1_cliente_cobros_id_comprobante": {
+    method: "DELETE"
+    path: "/api/v1/cliente/cobros/{id}/comprobante"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_post_api_v1_cliente_cobros_id_pagar": {
+    method: "POST"
+    path: "/api/v1/cliente/cobros/{id}/pagar"
+    requestBody: {
+      file: string
+    }
+    responses: {
+      "200": GenericObject
     }
   }
   "backend_get_api_v1_cliente_cobros_id_pdf": {
@@ -758,38 +896,6 @@ export interface Operations {
   "backend_get_api_v1_cliente_estado_mora": {
     method: "GET"
     path: "/api/v1/cliente/estado-mora"
-    requestBody: undefined
-    responses: {
-      "200": GenericObject
-    }
-  }
-  "backend_get_api_v1_cliente_pagos_historial": {
-    method: "GET"
-    path: "/api/v1/cliente/pagos/historial"
-    requestBody: undefined
-    responses: {
-      "200": GenericObject
-    }
-  }
-  "backend_post_api_v1_cliente_pagos_transbank_confirmar": {
-    method: "POST"
-    path: "/api/v1/cliente/pagos/transbank/confirmar"
-    requestBody: ConfirmTransbankRequest
-    responses: {
-      "200": GenericObject
-    }
-  }
-  "backend_post_api_v1_cliente_pagos_transbank_iniciar": {
-    method: "POST"
-    path: "/api/v1/cliente/pagos/transbank/iniciar"
-    requestBody: InitiateTransbankRequest
-    responses: {
-      "201": GenericObject
-    }
-  }
-  "backend_get_api_v1_cliente_pagos_transbank_id_estado": {
-    method: "GET"
-    path: "/api/v1/cliente/pagos/transbank/{id}/estado"
     requestBody: undefined
     responses: {
       "200": GenericObject
@@ -864,6 +970,54 @@ export interface Operations {
       "409": ErrorResponse
     }
   }
+  "backend_get_api_v1_users": {
+    method: "GET"
+    path: "/api/v1/users"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_post_api_v1_users_change_contact_request": {
+    method: "POST"
+    path: "/api/v1/users/change-contact/request"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_post_api_v1_users_change_contact_verify": {
+    method: "POST"
+    path: "/api/v1/users/change-contact/verify"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_get_api_v1_users_id_cobros": {
+    method: "GET"
+    path: "/api/v1/users/{id}/cobros"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_get_api_v1_users_id_orders": {
+    method: "GET"
+    path: "/api/v1/users/{id}/orders"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_post_api_v1_vendedor_cargas_transicion_cierre": {
+    method: "POST"
+    path: "/api/v1/vendedor/cargas/transicion-cierre"
+    requestBody: CreateCargaRequest
+    responses: {
+      "200": GenericObject
+    }
+  }
   "backend_get_api_v1_vendedor_dashboard": {
     method: "GET"
     path: "/api/v1/vendedor/dashboard"
@@ -891,12 +1045,52 @@ export interface Operations {
       "200": GenericObject
     }
   }
+  "backend_get_api_v1_vendedor_pedidos_carga": {
+    method: "GET"
+    path: "/api/v1/vendedor/pedidos-carga"
+    requestBody: undefined
+    responses: {
+      "200": GenericObjectArray
+    }
+  }
+  "backend_get_api_v1_vendedor_pedidos_carga_status": {
+    method: "GET"
+    path: "/api/v1/vendedor/pedidos-carga/status"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_post_api_v1_vendedor_pedidos_id_confirmar": {
+    method: "POST"
+    path: "/api/v1/vendedor/pedidos/{id}/confirmar"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_put_api_v1_vendedor_pedidos_id_envio": {
+    method: "PUT"
+    path: "/api/v1/vendedor/pedidos/{id}/envio"
+    requestBody: UpdateOrderShippingRequest
+    responses: {
+      "200": GenericObject
+    }
+  }
   "backend_put_api_v1_vendedor_pedidos_id_estado": {
     method: "PUT"
     path: "/api/v1/vendedor/pedidos/{id}/estado"
     requestBody: UpdateOrderStatusRequest
     responses: {
       "200": GenericObject
+    }
+  }
+  "backend_post_api_v1_vendedor_pedidos_id_solicitar_transicion": {
+    method: "POST"
+    path: "/api/v1/vendedor/pedidos/{id}/solicitar-transicion"
+    requestBody: undefined
+    responses: {
+      "201": GenericObject
     }
   }
   "backend_get_api_v1_vendedor_productos": {
@@ -931,6 +1125,22 @@ export interface Operations {
       "200": Product
     }
   }
+  "backend_get_api_v1_vendedor_solicitudes_carga": {
+    method: "GET"
+    path: "/api/v1/vendedor/solicitudes-carga"
+    requestBody: undefined
+    responses: {
+      "200": GenericObjectArray
+    }
+  }
+  "backend_post_api_v1_vendedor_solicitudes_carga": {
+    method: "POST"
+    path: "/api/v1/vendedor/solicitudes-carga"
+    requestBody: CreateCargaRequest
+    responses: {
+      "201": GenericObject
+    }
+  }
   "auth_get_auth_api_health": {
     method: "GET"
     path: "/auth/api/health"
@@ -947,31 +1157,28 @@ export interface Operations {
       "200": GenericObject
     }
   }
-  "auth_post_auth_api_v1_auth_login": {
-    method: "POST"
-    path: "/auth/api/v1/auth/login"
-    requestBody: LoginRequest
-    responses: {
-      "200": LoginResponse
-      "401": ErrorResponse
-    }
-  }
-  "auth_post_auth_api_v1_auth_register_user": {
-    method: "POST"
-    path: "/auth/api/v1/auth/register-user"
-    requestBody: RegisterUserRequest
-    responses: {
-      "201": RegisterUserResponse
-      "403": ErrorResponse
-      "409": ErrorResponse
-    }
-  }
   "auth_post_auth_api_v1_auth_send_code": {
     method: "POST"
     path: "/auth/api/v1/auth/send-code"
     requestBody: SendCodeRequest
     responses: {
       "200": SendCodeResponse
+    }
+  }
+  "auth_delete_auth_api_v1_auth_users_userId": {
+    method: "DELETE"
+    path: "/auth/api/v1/auth/users/{userId}"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "auth_put_auth_api_v1_auth_users_userId": {
+    method: "PUT"
+    path: "/auth/api/v1/auth/users/{userId}"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
     }
   }
   "auth_get_auth_api_v1_auth_validate": {
@@ -1022,6 +1229,20 @@ export interface Operations {
       "404": ErrorResponse
       "409": ErrorResponse
       "429": ErrorResponse
+    }
+  }
+  "registration_lambda_put_registration_requests_email_update_contact": {
+    method: "PUT"
+    path: "/registration-requests/{email}/update-contact"
+    requestBody: {
+      email?: string
+      phone?: string
+    }
+    responses: {
+      "200": GenericMessage
+      "400": ErrorResponse
+      "404": ErrorResponse
+      "409": ErrorResponse
     }
   }
   "registration_lambda_post_registration_requests_email_verify": {

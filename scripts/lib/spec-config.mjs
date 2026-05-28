@@ -1187,12 +1187,13 @@ export function createDefaultOperation(route) {
     required: true,
     schema: { type: 'string' },
   }))
+  const routeParameters = Array.isArray(route.parameters) ? route.parameters : []
 
   return {
     tags: route.tags.length > 0 ? route.tags : [route.tag],
     operationId: route.operationId,
     summary: route.summary || route.methodName || `${route.method.toUpperCase()} ${route.path}`,
-    parameters: pathParams,
+    parameters: [...pathParams, ...routeParameters],
     'x-service': route.service,
     'x-role-group': route.roleGroup || 'publico',
     'x-source': route.source,
