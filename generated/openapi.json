@@ -1350,6 +1350,10 @@
       "VendorOrder": {
         "additionalProperties": false,
         "properties": {
+          "can_ship": {
+            "nullable": true,
+            "type": "boolean"
+          },
           "cantidad": {
             "type": "integer"
           },
@@ -1380,6 +1384,10 @@
             "nullable": true,
             "type": "string"
           },
+          "seller_order_number": {
+            "nullable": true,
+            "type": "string"
+          },
           "status": {
             "type": "string"
           }
@@ -1398,6 +1406,46 @@
           "$ref": "#/components/schemas/VendorOrder"
         },
         "type": "array"
+      },
+      "VendorOrdersPaginatedResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/VendorOrder"
+            },
+            "type": "array"
+          },
+          "meta": {
+            "additionalProperties": false,
+            "properties": {
+              "last_page": {
+                "type": "integer"
+              },
+              "limit": {
+                "type": "integer"
+              },
+              "page": {
+                "type": "integer"
+              },
+              "total": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "total",
+              "page",
+              "limit",
+              "last_page"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
       },
       "VerifyCodeRequest": {
         "additionalProperties": false,
@@ -1637,34 +1685,6 @@
       }
     },
     "/api/v1/admin/cargas": {
-      "get": {
-        "operationId": "backend_get_api_v1_admin_cargas",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericObject"
-                }
-              }
-            },
-            "description": "Operacion exitosa"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "summary": "getCargas",
-        "tags": [
-          "Orders"
-        ],
-        "x-role-group": "admin",
-        "x-service": "backend",
-        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
-      },
       "post": {
         "operationId": "backend_post_api_v1_admin_cargas",
         "parameters": [],
@@ -3865,6 +3885,36 @@
         "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
       }
     },
+    "/api/v1/cargas": {
+      "get": {
+        "operationId": "backend_get_api_v1_cargas",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "getCargas",
+        "tags": [
+          "Orders"
+        ],
+        "x-role-group": "comun",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+      }
+    },
     "/api/v1/chats": {
       "get": {
         "operationId": "backend_get_api_v1_chats",
@@ -5284,13 +5334,43 @@
     "/api/v1/vendedor/pedidos": {
       "get": {
         "operationId": "backend_get_api_v1_vendedor_pedidos",
-        "parameters": [],
+        "parameters": [
+          {
+            "description": "Filtrar por pedidos que se pueden enviar (true/false)",
+            "in": "query",
+            "name": "can_ship",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "description": "Número de página",
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "default": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Límite de resultados por página",
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 10,
+              "type": "integer"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/VendorOrderArray"
+                  "$ref": "#/components/schemas/VendorOrdersPaginatedResponse"
                 }
               }
             },

@@ -360,6 +360,7 @@ export type ValidateResponse = {
 }
 
 export type VendorOrder = {
+  can_ship?: boolean
   cantidad: number
   carga: {
     id: number
@@ -368,10 +369,21 @@ export type VendorOrder = {
   }
   id: number
   nombre_producto: string
+  seller_order_number?: string
   status: string
 }
 
 export type VendorOrderArray = (VendorOrder)[]
+
+export type VendorOrdersPaginatedResponse = {
+  data: (VendorOrder)[]
+  meta: {
+    last_page: number
+    limit: number
+    page: number
+    total: number
+  }
+}
 
 export type VerifyCodeRequest = {
   code: string
@@ -416,14 +428,6 @@ export interface Operations {
   "backend_get_api_v1_admin_audit_trail_id": {
     method: "GET"
     path: "/api/v1/admin/audit/trail/{id}"
-    requestBody: undefined
-    responses: {
-      "200": GenericObject
-    }
-  }
-  "backend_get_api_v1_admin_cargas": {
-    method: "GET"
-    path: "/api/v1/admin/cargas"
     requestBody: undefined
     responses: {
       "200": GenericObject
@@ -845,6 +849,14 @@ export interface Operations {
       "200": GenericObject
     }
   }
+  "backend_get_api_v1_cargas": {
+    method: "GET"
+    path: "/api/v1/cargas"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
   "backend_get_api_v1_chats": {
     method: "GET"
     path: "/api/v1/chats"
@@ -1100,7 +1112,7 @@ export interface Operations {
     path: "/api/v1/vendedor/pedidos"
     requestBody: undefined
     responses: {
-      "200": VendorOrderArray
+      "200": VendorOrdersPaginatedResponse
     }
   }
   "backend_get_api_v1_vendedor_pedidos_carga": {

@@ -1469,20 +1469,23 @@
     "service": "backend",
     "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
     "method": "get",
-    "path": "/api/v1/admin/cargas",
-    "operationId": "backend_get_api_v1_admin_cargas",
+    "path": "/api/v1/cargas",
+    "operationId": "backend_get_api_v1_cargas",
     "tag": "Orders",
     "tags": [
       "Orders"
     ],
     "roles": [
       "admin",
-      "root"
+      "root",
+      "client",
+      "vendor",
+      "bodeguero"
     ],
     "security": true,
     "methodName": "getCargas",
     "parameters": [],
-    "roleGroup": "admin"
+    "roleGroup": "comun"
   },
   {
     "service": "backend",

@@ -696,6 +696,8 @@ export const schemas = {
       status: { type: 'string' },
       cantidad: { type: 'integer' },
       nombre_producto: { type: 'string', nullable: true },
+      can_ship: { type: 'boolean', nullable: true },
+      seller_order_number: { type: 'string', nullable: true },
       carga: {
         type: 'object',
         nullable: true,
@@ -710,6 +712,21 @@ export const schemas = {
     ['id', 'status', 'cantidad', 'nombre_producto', 'carga'],
   ),
   VendorOrderArray: { type: 'array', items: { $ref: '#/components/schemas/VendorOrder' } },
+  VendorOrdersPaginatedResponse: objectSchema(
+    {
+      data: { type: 'array', items: { $ref: '#/components/schemas/VendorOrder' } },
+      meta: objectSchema(
+        {
+          total: { type: 'integer' },
+          page: { type: 'integer' },
+          limit: { type: 'integer' },
+          last_page: { type: 'integer' },
+        },
+        ['total', 'page', 'limit', 'last_page'],
+      ),
+    },
+    ['data', 'meta'],
+  ),
   UpdateOrderStatusRequest: objectSchema({ status: { type: 'string' } }, ['status']),
   ReviewOrderRequest: objectSchema(
     {
@@ -1025,7 +1042,12 @@ export const operationOverrides = {
   },
   'get /api/v1/vendedor/pedidos': {
     summary: 'Listar pedidos del vendedor autenticado (Vendedor)',
-    responses: Object.fromEntries([jsonResponse('200', 'Pedidos del vendedor', 'VendorOrderArray')]),
+    parameters: [
+      { name: 'can_ship', in: 'query', required: false, schema: { type: 'boolean' }, description: 'Filtrar por pedidos que se pueden enviar (true/false)' },
+      { name: 'page', in: 'query', required: false, schema: { type: 'integer', default: 1 }, description: 'Número de página' },
+      { name: 'limit', in: 'query', required: false, schema: { type: 'integer', default: 10 }, description: 'Límite de resultados por página' }
+    ],
+    responses: Object.fromEntries([jsonResponse('200', 'Pedidos del vendedor', 'VendorOrdersPaginatedResponse')]),
   },
   'put /api/v1/vendedor/pedidos/{id}/estado': {
     requestBody: jsonRequest('UpdateOrderStatusRequest'),
