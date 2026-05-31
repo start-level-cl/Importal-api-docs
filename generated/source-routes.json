@@ -2146,16 +2146,7 @@
     "responseStatus": 200,
     "responseDescription": "Returns list of pending requests",
     "methodName": "listPendingRequests",
-    "parameters": [
-      {
-        "name": " items: Omit<RegistrationRequest, \"password\">[]; count: number ",
-        "in": "path",
-        "required": true,
-        "schema": {
-          "type": "string"
-        }
-      }
-    ],
+    "parameters": [],
     "roleGroup": "comun"
   },
   {
@@ -2209,6 +2200,37 @@
     "responseDescription": "Registration request rejected",
     "methodName": "rejectRequest",
     "parameters": [],
+    "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/registration/controllers/registration.controller.ts",
+    "method": "get",
+    "path": "/api/v1/registration-requests/{email}/comprobante",
+    "operationId": "backend_get_api_v1_registration_requests_email_comprobante",
+    "tag": "Registration",
+    "tags": [
+      "Registration"
+    ],
+    "summary": "Get base64 registration proof/comprobante for a request",
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": true,
+    "responseStatus": 200,
+    "responseDescription": "Returns base64 data url",
+    "methodName": "getComprobante",
+    "parameters": [
+      {
+        "name": " email: string; comprobante: string ",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
     "roleGroup": "comun"
   },
   {

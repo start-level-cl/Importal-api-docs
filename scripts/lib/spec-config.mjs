@@ -133,6 +133,10 @@ const schemaExamples = {
       role: 'client',
     },
   },
+  RegistrationComprobanteResponse: {
+    email: 'usuario@ejemplo.com',
+    comprobante: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIA...',
+  },
   RegistrationVerifyRequest: { code: '123456', channel: 'email' },
   CreateAdminRequest: {
     name: 'Admin Importal',
@@ -554,6 +558,13 @@ export const schemas = {
       user: { $ref: '#/components/schemas/RegisterUserResponse' },
     },
     ['request', 'user'],
+  ),
+  RegistrationComprobanteResponse: objectSchema(
+    {
+      email: { type: 'string', format: 'email' },
+      comprobante: { type: 'string', description: 'Comprobante de registro codificado en base64' },
+    },
+    ['email', 'comprobante'],
   ),
   RegistrationVerifyRequest: objectSchema({
     code: { type: 'string' },
@@ -996,6 +1007,14 @@ export const operationOverrides = {
       jsonResponse('200', 'Solicitud rechazada', 'RegistrationRequest'),
       jsonResponse('404', 'Solicitud no encontrada', 'ErrorResponse'),
       jsonResponse('409', 'Solicitud ya procesada', 'ErrorResponse'),
+    ]),
+  },
+  'get /api/v1/registration-requests/{email}/comprobante': {
+    summary: 'Obtener comprobante de registro de un usuario (Admin/Root)',
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Comprobante retornado exitosamente', 'RegistrationComprobanteResponse'),
+      jsonResponse('400', 'Email invalido', 'ErrorResponse'),
+      jsonResponse('404', 'Solicitud o comprobante no encontrado', 'ErrorResponse'),
     ]),
   },
   'post /api/v1/admin/users/create-admin': {

@@ -458,6 +458,19 @@ components:
       required:
         - reviewedBy
       type: object
+    RegistrationComprobanteResponse:
+      additionalProperties: false
+      properties:
+        comprobante:
+          description: Comprobante de registro codificado en base64
+          type: string
+        email:
+          format: email
+          type: string
+      required:
+        - email
+        - comprobante
+      type: object
     RegistrationListResponse:
       additionalProperties: false
       properties:
@@ -3146,11 +3159,7 @@ paths:
     get:
       operationId: backend_get_api_v1_registration_requests
       parameters:
-        -           in: path
-          name: " items: Omit<RegistrationRequest, \"password\">[]; count: number "
-          required: true
-          schema:
-            type: string
+[]
       responses:
         200:
           content:
@@ -3255,6 +3264,51 @@ paths:
         -           bearerAuth:
 []
       summary: Aprobar solicitud y crear usuario en auth
+      tags:
+        - Registration
+      x-role-group: comun
+      x-service: backend
+      x-source: "Importal-backend/src/modules/registration/controllers/registration.controller.ts"
+  /api/v1/registration-requests/{email}/comprobante:
+    get:
+      operationId: backend_get_api_v1_registration_requests_email_comprobante
+      parameters:
+        -           in: path
+          name: email
+          required: true
+          schema:
+            type: string
+        -           in: path
+          name: " email: string; comprobante: string "
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                comprobante: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIA..."
+                email: "usuario@ejemplo.com"
+              schema:
+                $ref: "#/components/schemas/RegistrationComprobanteResponse"
+          description: Comprobante retornado exitosamente
+        400:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: Email invalido
+        404:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: Solicitud o comprobante no encontrado
+      security:
+        -           bearerAuth:
+[]
+      summary: Obtener comprobante de registro de un usuario (Admin/Root)
       tags:
         - Registration
       x-role-group: comun

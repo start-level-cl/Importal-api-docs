@@ -93,3 +93,27 @@ Cuando el administrador cierra oficialmente una carga (`POST /api/v1/admin/carga
 Para asegurar que los vendedores resuelvan y entreguen a tiempo los pedidos de cargas pasadas:
 - **Regla:** Si un vendedor tiene algún pedido con estado `PENDING` asociado a una carga cerrada (`status = 'CLOSED'`), **se le bloqueará la posibilidad de publicar nuevos productos**.
 - **Comportamiento:** El endpoint `POST /api/v1/vendedor/productos` arrojará un error `400 BadRequestException` con el detalle del bloqueo.
+
+## Flujo de Aprobación de Registro para Nuevos Usuarios (Clientes/Inversores)
+
+Cuando un nuevo usuario solicita ingresar a la plataforma, se sigue el siguiente flujo de validación y revisión por parte del administrador:
+
+### 1. Creación de Solicitud y Carga de Comprobante
+El usuario crea su solicitud de registro y sube un comprobante de transferencia o validación. La solicitud queda almacenada temporalmente en DynamoDB en estado `PENDING`.
+
+### 2. Listado de Solicitudes Pendientes (Admin)
+El administrador visualiza todas las solicitudes pendientes que han verificado su correo o teléfono:
+- **Endpoint:** `GET /api/v1/registration-requests`
+- **Roles permitidos:** `ADMIN`, `ROOT`
+
+### 3. Visualización del Comprobante (Admin)
+Para validar la veracidad de la información de pago o verificación cargada por el usuario:
+- **Endpoint:** `GET /api/v1/registration-requests/{email}/comprobante`
+- **Roles permitidos:** `ADMIN`, `ROOT`
+- **Comportamiento:** Retorna el comprobante cargado por el usuario codificado en formato Base64 Data URL, permitiendo al administrador previsualizarlo directamente en el panel.
+
+### 4. Resolución de la Solicitud (Aprobación/Rechazo)
+Una vez validado el comprobante, el administrador procede a resolver la solicitud:
+- **Aprobación:** `POST /api/v1/registration-requests/{email}/approve` (Crea al usuario en la base de datos local y en el servicio de autenticación auth, asignándole su rol correspondiente).
+- **Rechazo:** `POST /api/v1/registration-requests/{email}/reject` (Marca la solicitud como rechazada).
+
