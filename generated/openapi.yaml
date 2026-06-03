@@ -151,6 +151,33 @@ components:
       required:
         - tipo_carga
       type: object
+    CreateLogisticsRateRequest:
+      additionalProperties: false
+      properties:
+        concept:
+          description: Concepto de cobro logístico
+          type: string
+        rate_unit:
+          description: "Unidad de medida (ej. KG, CBM)"
+          type: string
+        rate_value:
+          description: Valor de la tarifa
+          type: number
+        sub_type:
+          description: Subtipo opcional del concepto
+          type: string
+        transport_type:
+          description: Tipo de carga
+          enum:
+            - AEREA
+            - MARITIMA
+          type: string
+      required:
+        - transport_type
+        - concept
+        - rate_value
+        - rate_unit
+      type: object
     CreateMessageRequest:
       additionalProperties: false
       properties:
@@ -382,6 +409,24 @@ components:
       items:
         $ref: "#/components/schemas/Product"
       type: array
+    RefreshRequest:
+      additionalProperties: false
+      properties:
+        refreshToken:
+          description: Refresh token del usuario
+          type: string
+      required:
+        - refreshToken
+      type: object
+    RefreshResponse:
+      additionalProperties: false
+      properties:
+        accessToken:
+          description: Nuevo access token de usuario
+          type: string
+      required:
+        - accessToken
+      type: object
     RegisterUserRequest:
       additionalProperties: false
       properties:
@@ -2157,6 +2202,41 @@ paths:
         -           bearerAuth:
 []
       summary: Obtener lista de tarifas logísticas configuradas (Admin/Root)
+      tags:
+        - Billing
+      x-role-group: admin
+      x-service: backend
+      x-source: "Importal-backend/src/modules/billing/controllers/billing.controller.ts"
+    post:
+      operationId: backend_post_api_v1_admin_tarifas_logisticas
+      parameters:
+[]
+      requestBody:
+        content:
+          application/json:
+            example:
+              concept: Flete internacional aéreo
+              rate_unit: KG
+              rate_value: 8.5
+              sub_type: Carga General
+              transport_type: AEREA
+            schema:
+              $ref: "#/components/schemas/CreateLogisticsRateRequest"
+        required: true
+      responses:
+        201:
+          content:
+            application/json:
+              example:
+                message: Operacion exitosa
+                ok: true
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Tarifa creada exitosamente
+      security:
+        -           bearerAuth:
+[]
+      summary: Crear nueva tarifa logística (Admin/Root)
       tags:
         - Billing
       x-role-group: admin
@@ -4220,6 +4300,66 @@ paths:
         -           bearerAuth:
 []
       summary: Autenticar usuario y emitir JWT
+      tags:
+        - Auth
+      x-role-group: interno
+      x-service: auth
+      x-source: "Importal-auth/src/modules/auth/controllers/auth.controller.ts"
+  /auth/api/v1/logout:
+    post:
+      operationId: auth_post_auth_api_v1_logout
+      parameters:
+[]
+      responses:
+        200:
+          description: "Logout exitoso, tokens invalidados"
+        401:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: Token invalido o expirado
+      security:
+        -           bearerAuth:
+[]
+      summary: Cerrar sesión e invalidar tokens
+      tags:
+        - Auth
+      x-role-group: interno
+      x-service: auth
+      x-source: "Importal-auth/src/modules/auth/controllers/auth.controller.ts"
+  /auth/api/v1/refresh:
+    post:
+      operationId: auth_post_auth_api_v1_refresh
+      parameters:
+[]
+      requestBody:
+        content:
+          application/json:
+            example:
+              refreshToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+            schema:
+              $ref: "#/components/schemas/RefreshRequest"
+        required: true
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                accessToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+              schema:
+                $ref: "#/components/schemas/RefreshResponse"
+          description: "Token refrescado, retorna nuevo access token"
+        401:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: Refresh token invalido o expirado
+      security:
+        -           bearerAuth:
+[]
+      summary: Refrescar token de acceso
       tags:
         - Auth
       x-role-group: interno

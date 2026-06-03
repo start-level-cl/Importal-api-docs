@@ -272,6 +272,15 @@ const schemaExamples = {
   RequestContactChangeRequest: { type: 'email', newValue: 'nuevo@correo.com', password: 'Password123!' },
   VerifyContactChangeRequest: { token: 'token-transaction-123', code: '123456' },
   UpdateUserRequest: { email: 'nuevo@correo.com', phone: '+56912345678' },
+  RefreshRequest: { refreshToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...' },
+  RefreshResponse: { accessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...' },
+  CreateLogisticsRateRequest: {
+    transport_type: 'AEREA',
+    concept: 'Flete internacional aéreo',
+    sub_type: 'Carga General',
+    rate_value: 8.5,
+    rate_unit: 'KG',
+  },
 }
 
 function getSchemaExample(schemaRef) {
@@ -826,6 +835,28 @@ export const schemas = {
   ),
   GenericObject: genericObject,
   GenericObjectArray: { type: 'array', items: genericObject },
+  RefreshRequest: objectSchema(
+    {
+      refreshToken: { type: 'string', description: 'Refresh token del usuario' },
+    },
+    ['refreshToken'],
+  ),
+  RefreshResponse: objectSchema(
+    {
+      accessToken: { type: 'string', description: 'Nuevo access token de usuario' },
+    },
+    ['accessToken'],
+  ),
+  CreateLogisticsRateRequest: objectSchema(
+    {
+      transport_type: { type: 'string', enum: ['AEREA', 'MARITIMA'], description: 'Tipo de carga' },
+      concept: { type: 'string', description: 'Concepto de cobro logístico' },
+      sub_type: { type: 'string', description: 'Subtipo opcional del concepto' },
+      rate_value: { type: 'number', description: 'Valor de la tarifa' },
+      rate_unit: { type: 'string', description: 'Unidad de medida (ej. KG, CBM)' },
+    },
+    ['transport_type', 'concept', 'rate_value', 'rate_unit'],
+  ),
 }
 
 function jsonRequest(schemaRef, required = true) {
@@ -885,6 +916,21 @@ export const operationOverrides = {
     responses: Object.fromEntries([
       jsonResponse('200', 'Token valido', 'ValidateResponse'),
       jsonResponse('401', 'Token invalido o expirado', 'ErrorResponse'),
+    ]),
+  },
+  'post /auth/api/v1/logout': {
+    summary: 'Cerrar sesión e invalidar tokens',
+    responses: Object.fromEntries([
+      noContentResponse('200', 'Logout exitoso, tokens invalidados'),
+      jsonResponse('401', 'Token invalido o expirado', 'ErrorResponse'),
+    ]),
+  },
+  'post /auth/api/v1/refresh': {
+    summary: 'Refrescar token de acceso',
+    requestBody: jsonRequest('RefreshRequest'),
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Token refrescado, retorna nuevo access token', 'RefreshResponse'),
+      jsonResponse('401', 'Refresh token invalido o expirado', 'ErrorResponse'),
     ]),
   },
   'post /auth/api/v1/register-user': {
@@ -1127,6 +1173,11 @@ export const operationOverrides = {
   'get /api/v1/admin/tarifas/logisticas': {
     summary: 'Obtener lista de tarifas logísticas configuradas (Admin/Root)',
     responses: Object.fromEntries([jsonResponse('200', 'Tarifas logísticas configuradas', 'GenericObjectArray')]),
+  },
+  'post /api/v1/admin/tarifas/logisticas': {
+    summary: 'Crear nueva tarifa logística (Admin/Root)',
+    requestBody: jsonRequest('CreateLogisticsRateRequest'),
+    responses: Object.fromEntries([jsonResponse('201', 'Tarifa creada exitosamente', 'GenericObject')]),
   },
   'put /api/v1/admin/tarifas/logisticas': {
     summary: 'Actualizar valor de tarifa logística (Admin/Root)',

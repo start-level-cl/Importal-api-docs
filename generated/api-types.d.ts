@@ -67,6 +67,14 @@ export type CreateCargaRequest = {
   tipo_carga: "AEREA" | "MARITIMA"
 }
 
+export type CreateLogisticsRateRequest = {
+  concept: string
+  rate_unit: string
+  rate_value: number
+  sub_type?: string
+  transport_type: "AEREA" | "MARITIMA"
+}
+
 export type CreateMessageRequest = {
   message: string
 }
@@ -162,6 +170,14 @@ export type Product = {
 }
 
 export type ProductArray = (Product)[]
+
+export type RefreshRequest = {
+  refreshToken: string
+}
+
+export type RefreshResponse = {
+  accessToken: string
+}
 
 export type RegisterUserRequest = {
   email: string
@@ -718,6 +734,14 @@ export interface Operations {
       "200": GenericObjectArray
     }
   }
+  "backend_post_api_v1_admin_tarifas_logisticas": {
+    method: "POST"
+    path: "/api/v1/admin/tarifas/logisticas"
+    requestBody: CreateLogisticsRateRequest
+    responses: {
+      "201": GenericObject
+    }
+  }
   "backend_put_api_v1_admin_tarifas_logisticas": {
     method: "PUT"
     path: "/api/v1/admin/tarifas/logisticas"
@@ -1257,6 +1281,24 @@ export interface Operations {
     requestBody: LoginRequest
     responses: {
       "200": LoginResponse
+      "401": ErrorResponse
+    }
+  }
+  "auth_post_auth_api_v1_logout": {
+    method: "POST"
+    path: "/auth/api/v1/logout"
+    requestBody: undefined
+    responses: {
+      "200": undefined
+      "401": ErrorResponse
+    }
+  }
+  "auth_post_auth_api_v1_refresh": {
+    method: "POST"
+    path: "/auth/api/v1/refresh"
+    requestBody: RefreshRequest
+    responses: {
+      "200": RefreshResponse
       "401": ErrorResponse
     }
   }
