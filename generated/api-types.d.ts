@@ -93,6 +93,11 @@ export type CreateProductRequest = {
   status?: string
 }
 
+export type CreateSupportTicketRequest = {
+  description: string
+  title: string
+}
+
 export type DashboardSummary = {
   clientes_activos: number
   clientes_en_mora: number
@@ -323,6 +328,11 @@ export type RequestContactChangeRequest = {
   type: "email" | "phone"
 }
 
+export type ResolveSupportTicketRequest = {
+  resolution: string
+  status: "RESOLVED" | "REJECTED"
+}
+
 export type ReviewOrderRequest = {
   caja_size?: string
   dañados?: number
@@ -338,6 +348,28 @@ export type SendCodeRequest = {
 
 export type SendCodeResponse = {
   message: string
+}
+
+export type SupportTicket = {
+  created_at: string
+  description: string
+  id: number
+  resolution?: string
+  resolved_at?: string
+  resolved_by?: number
+  status: "PENDING" | "IN_PROGRESS" | "RESOLVED" | "REJECTED"
+  title: string
+  updated_at: string
+  user_id: number
+}
+
+export type SupportTicketArray = (SupportTicket)[]
+
+export type SupportTicketPaginated = {
+  data: (SupportTicket)[]
+  limit: number
+  page: number
+  total: number
 }
 
 export type UpdateCargaStatusRequest = {
@@ -652,6 +684,22 @@ export interface Operations {
     requestBody: undefined
     responses: {
       "200": GenericObject
+    }
+  }
+  "backend_get_api_v1_admin_soporte_tickets": {
+    method: "GET"
+    path: "/api/v1/admin/soporte/tickets"
+    requestBody: undefined
+    responses: {
+      "200": SupportTicketPaginated
+    }
+  }
+  "backend_put_api_v1_admin_soporte_tickets_id_resolucion": {
+    method: "PUT"
+    path: "/api/v1/admin/soporte/tickets/{id}/resolucion"
+    requestBody: ResolveSupportTicketRequest
+    responses: {
+      "200": SupportTicket
     }
   }
   "backend_get_api_v1_admin_system_alerts": {
@@ -1069,6 +1117,30 @@ export interface Operations {
       "200": RegistrationRequest
       "404": ErrorResponse
       "409": ErrorResponse
+    }
+  }
+  "backend_get_api_v1_soporte_tickets": {
+    method: "GET"
+    path: "/api/v1/soporte/tickets"
+    requestBody: undefined
+    responses: {
+      "200": SupportTicketArray
+    }
+  }
+  "backend_post_api_v1_soporte_tickets": {
+    method: "POST"
+    path: "/api/v1/soporte/tickets"
+    requestBody: CreateSupportTicketRequest
+    responses: {
+      "201": SupportTicket
+    }
+  }
+  "backend_get_api_v1_soporte_tickets_id": {
+    method: "GET"
+    path: "/api/v1/soporte/tickets/{id}"
+    requestBody: undefined
+    responses: {
+      "200": SupportTicket
     }
   }
   "backend_get_api_v1_users": {

@@ -2355,6 +2355,110 @@
   },
   {
     "service": "backend",
+    "source": "Importal-backend/src/modules/support/controllers/support.controller.ts",
+    "method": "post",
+    "path": "/api/v1/soporte/tickets",
+    "operationId": "backend_post_api_v1_soporte_tickets",
+    "tag": "Support",
+    "tags": [
+      "Support"
+    ],
+    "roles": [
+      "client",
+      "vendor",
+      "bodeguero",
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "createTicket",
+    "parameters": [],
+    "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/support/controllers/support.controller.ts",
+    "method": "get",
+    "path": "/api/v1/soporte/tickets",
+    "operationId": "backend_get_api_v1_soporte_tickets",
+    "tag": "Support",
+    "tags": [
+      "Support"
+    ],
+    "roles": [
+      "client",
+      "vendor",
+      "bodeguero",
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "getTicketsByUser",
+    "parameters": [],
+    "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/support/controllers/support.controller.ts",
+    "method": "get",
+    "path": "/api/v1/soporte/tickets/{id}",
+    "operationId": "backend_get_api_v1_soporte_tickets_id",
+    "tag": "Support",
+    "tags": [
+      "Support"
+    ],
+    "roles": [
+      "client",
+      "vendor",
+      "bodeguero",
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "getTicketById",
+    "parameters": [],
+    "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/support/controllers/support.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/soporte/tickets",
+    "operationId": "backend_get_api_v1_admin_soporte_tickets",
+    "tag": "Support",
+    "tags": [
+      "Support"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "getAllTicketsForAdmin",
+    "parameters": [],
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/support/controllers/support.controller.ts",
+    "method": "put",
+    "path": "/api/v1/admin/soporte/tickets/{id}/resolucion",
+    "operationId": "backend_put_api_v1_admin_soporte_tickets_id_resolucion",
+    "tag": "Support",
+    "tags": [
+      "Support"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "resolveTicket",
+    "parameters": [],
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
     "source": "Importal-backend/src/modules/users/controllers/users.controller.ts",
     "method": "get",
     "path": "/api/v1/users",

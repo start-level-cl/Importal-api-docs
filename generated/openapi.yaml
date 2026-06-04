@@ -224,6 +224,22 @@ components:
         - marca
         - price_usd
       type: object
+    CreateSupportTicketRequest:
+      additionalProperties: false
+      properties:
+        description:
+          description: Detalle del problema reportado
+          minLength: 10
+          type: string
+        title:
+          description: Título del ticket de soporte
+          maxLength: 150
+          minLength: 5
+          type: string
+      required:
+        - title
+        - description
+      type: object
     DashboardSummary:
       additionalProperties: false
       properties:
@@ -874,6 +890,22 @@ components:
         - newValue
         - password
       type: object
+    ResolveSupportTicketRequest:
+      additionalProperties: false
+      properties:
+        resolution:
+          description: Respuesta o resolución dada por el administrador
+          minLength: 5
+          type: string
+        status:
+          enum:
+            - RESOLVED
+            - REJECTED
+          type: string
+      required:
+        - status
+        - resolution
+      type: object
     ReviewOrderRequest:
       additionalProperties: false
       properties:
@@ -911,6 +943,72 @@ components:
           type: string
       required:
         - message
+      type: object
+    SupportTicket:
+      additionalProperties: false
+      properties:
+        created_at:
+          format: "date-time"
+          type: string
+        description:
+          type: string
+        id:
+          type: integer
+        resolution:
+          nullable: true
+          type: string
+        resolved_at:
+          format: "date-time"
+          nullable: true
+          type: string
+        resolved_by:
+          nullable: true
+          type: integer
+        status:
+          enum:
+            - PENDING
+            - IN_PROGRESS
+            - RESOLVED
+            - REJECTED
+          type: string
+        title:
+          type: string
+        updated_at:
+          format: "date-time"
+          type: string
+        user_id:
+          type: integer
+      required:
+        - id
+        - user_id
+        - title
+        - description
+        - status
+        - created_at
+        - updated_at
+      type: object
+    SupportTicketArray:
+      items:
+        $ref: "#/components/schemas/SupportTicket"
+      type: array
+    SupportTicketPaginated:
+      additionalProperties: false
+      properties:
+        data:
+          items:
+            $ref: "#/components/schemas/SupportTicket"
+          type: array
+        limit:
+          type: integer
+        page:
+          type: integer
+        total:
+          type: integer
+      required:
+        - data
+        - total
+        - page
+        - limit
       type: object
     UpdateCargaStatusRequest:
       additionalProperties: false
@@ -1975,6 +2073,109 @@ paths:
       x-role-group: admin
       x-service: backend
       x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+  /api/v1/admin/soporte/tickets:
+    get:
+      operationId: backend_get_api_v1_admin_soporte_tickets
+      parameters:
+        -           description: Filtrar por estado
+          in: query
+          name: status
+          required: false
+          schema:
+            enum:
+              - PENDING
+              - IN_PROGRESS
+              - RESOLVED
+              - REJECTED
+            type: string
+        -           description: Número de página
+          in: query
+          name: page
+          required: false
+          schema:
+            type: integer
+        -           description: Cantidad por página
+          in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                data:
+                  -                     created_at: "2026-06-04T15:40:00.000Z"
+                    description: La plataforma arroja error 500 al intentar subir imágenes de 2MB.
+                    id: 101
+                    resolution: Se corrigió la cuota y almacenamiento en el bucket S3. Ya puedes volver a subir tus imágenes.
+                    resolved_at: "2026-06-04T15:45:00.000Z"
+                    resolved_by: 1
+                    status: RESOLVED
+                    title: Error al subir foto del producto
+                    updated_at: "2026-06-04T15:45:00.000Z"
+                    user_id: 12
+                limit: 10
+                page: 1
+                total: 1
+              schema:
+                $ref: "#/components/schemas/SupportTicketPaginated"
+          description: Bandeja de tickets de soporte paginada
+      security:
+        -           bearerAuth:
+[]
+      summary: Listar todos los tickets de soporte del sistema con filtros y paginación (Admin / Root)
+      tags:
+        - Support
+      x-role-group: admin
+      x-service: backend
+      x-source: "Importal-backend/src/modules/support/controllers/support.controller.ts"
+  /api/v1/admin/soporte/tickets/{id}/resolucion:
+    put:
+      operationId: backend_put_api_v1_admin_soporte_tickets_id_resolucion
+      parameters:
+        -           in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            example:
+              resolution: Se corrigió la cuota y almacenamiento en el bucket S3. Ya puedes volver a subir tus imágenes.
+              status: RESOLVED
+            schema:
+              $ref: "#/components/schemas/ResolveSupportTicketRequest"
+        required: true
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                created_at: "2026-06-04T15:40:00.000Z"
+                description: La plataforma arroja error 500 al intentar subir imágenes de 2MB.
+                id: 101
+                resolution: Se corrigió la cuota y almacenamiento en el bucket S3. Ya puedes volver a subir tus imágenes.
+                resolved_at: "2026-06-04T15:45:00.000Z"
+                resolved_by: 1
+                status: RESOLVED
+                title: Error al subir foto del producto
+                updated_at: "2026-06-04T15:45:00.000Z"
+                user_id: 12
+              schema:
+                $ref: "#/components/schemas/SupportTicket"
+          description: Ticket de soporte resuelto con éxito
+      security:
+        -           bearerAuth:
+[]
+      summary: Resolver o rechazar un ticket de soporte ingresando la respuesta del administrador (Admin / Root)
+      tags:
+        - Support
+      x-role-group: admin
+      x-service: backend
+      x-source: "Importal-backend/src/modules/support/controllers/support.controller.ts"
   /api/v1/admin/system/alerts:
     get:
       operationId: backend_get_api_v1_admin_system_alerts
@@ -3516,6 +3717,114 @@ paths:
       x-role-group: comun
       x-service: backend
       x-source: "Importal-backend/src/modules/registration/controllers/registration.controller.ts"
+  /api/v1/soporte/tickets:
+    get:
+      operationId: backend_get_api_v1_soporte_tickets
+      parameters:
+[]
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                -                   created_at: "2026-06-04T15:40:00.000Z"
+                  description: La plataforma arroja error 500 al intentar subir imágenes de 2MB.
+                  id: 101
+                  resolution: Se corrigió la cuota y almacenamiento en el bucket S3. Ya puedes volver a subir tus imágenes.
+                  resolved_at: "2026-06-04T15:45:00.000Z"
+                  resolved_by: 1
+                  status: RESOLVED
+                  title: Error al subir foto del producto
+                  updated_at: "2026-06-04T15:45:00.000Z"
+                  user_id: 12
+              schema:
+                $ref: "#/components/schemas/SupportTicketArray"
+          description: Listado de tickets de soporte
+      security:
+        -           bearerAuth:
+[]
+      summary: Listar todos los tickets de soporte creados por el usuario en sesión
+      tags:
+        - Support
+      x-role-group: comun
+      x-service: backend
+      x-source: "Importal-backend/src/modules/support/controllers/support.controller.ts"
+    post:
+      operationId: backend_post_api_v1_soporte_tickets
+      parameters:
+[]
+      requestBody:
+        content:
+          application/json:
+            example:
+              description: La plataforma arroja error 500 al intentar subir imágenes de 2MB.
+              title: Error al subir foto del producto
+            schema:
+              $ref: "#/components/schemas/CreateSupportTicketRequest"
+        required: true
+      responses:
+        201:
+          content:
+            application/json:
+              example:
+                created_at: "2026-06-04T15:40:00.000Z"
+                description: La plataforma arroja error 500 al intentar subir imágenes de 2MB.
+                id: 101
+                resolution: Se corrigió la cuota y almacenamiento en el bucket S3. Ya puedes volver a subir tus imágenes.
+                resolved_at: "2026-06-04T15:45:00.000Z"
+                resolved_by: 1
+                status: RESOLVED
+                title: Error al subir foto del producto
+                updated_at: "2026-06-04T15:45:00.000Z"
+                user_id: 12
+              schema:
+                $ref: "#/components/schemas/SupportTicket"
+          description: Ticket registrado exitosamente
+      security:
+        -           bearerAuth:
+[]
+      summary: Registrar un nuevo ticket de soporte por problemas en la plataforma (Usuario)
+      tags:
+        - Support
+      x-role-group: comun
+      x-service: backend
+      x-source: "Importal-backend/src/modules/support/controllers/support.controller.ts"
+  /api/v1/soporte/tickets/{id}:
+    get:
+      operationId: backend_get_api_v1_soporte_tickets_id
+      parameters:
+        -           in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                created_at: "2026-06-04T15:40:00.000Z"
+                description: La plataforma arroja error 500 al intentar subir imágenes de 2MB.
+                id: 101
+                resolution: Se corrigió la cuota y almacenamiento en el bucket S3. Ya puedes volver a subir tus imágenes.
+                resolved_at: "2026-06-04T15:45:00.000Z"
+                resolved_by: 1
+                status: RESOLVED
+                title: Error al subir foto del producto
+                updated_at: "2026-06-04T15:45:00.000Z"
+                user_id: 12
+              schema:
+                $ref: "#/components/schemas/SupportTicket"
+          description: Detalle del ticket de soporte
+      security:
+        -           bearerAuth:
+[]
+      summary: Obtener detalle de un ticket de soporte específico (Usuario / Admin)
+      tags:
+        - Support
+      x-role-group: comun
+      x-service: backend
+      x-source: "Importal-backend/src/modules/support/controllers/support.controller.ts"
   /api/v1/users:
     get:
       operationId: backend_get_api_v1_users

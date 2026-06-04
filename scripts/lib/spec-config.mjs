@@ -246,6 +246,59 @@ const schemaExamples = {
   },
   GenericObject: { ok: true, message: 'Operacion exitosa' },
   GenericObjectArray: [{ id: 1, message: 'Ejemplo de elemento retornado' }],
+  CreateSupportTicketRequest: {
+    title: 'Error al subir foto del producto',
+    description: 'La plataforma arroja error 500 al intentar subir imágenes de 2MB.',
+  },
+  ResolveSupportTicketRequest: {
+    status: 'RESOLVED',
+    resolution: 'Se corrigió la cuota y almacenamiento en el bucket S3. Ya puedes volver a subir tus imágenes.',
+  },
+  SupportTicket: {
+    id: 101,
+    user_id: 12,
+    title: 'Error al subir foto del producto',
+    description: 'La plataforma arroja error 500 al intentar subir imágenes de 2MB.',
+    status: 'RESOLVED',
+    resolution: 'Se corrigió la cuota y almacenamiento en el bucket S3. Ya puedes volver a subir tus imágenes.',
+    resolved_by: 1,
+    resolved_at: '2026-06-04T15:45:00.000Z',
+    created_at: '2026-06-04T15:40:00.000Z',
+    updated_at: '2026-06-04T15:45:00.000Z',
+  },
+  SupportTicketArray: [
+    {
+      id: 101,
+      user_id: 12,
+      title: 'Error al subir foto del producto',
+      description: 'La plataforma arroja error 500 al intentar subir imágenes de 2MB.',
+      status: 'RESOLVED',
+      resolution: 'Se corrigió la cuota y almacenamiento en el bucket S3. Ya puedes volver a subir tus imágenes.',
+      resolved_by: 1,
+      resolved_at: '2026-06-04T15:45:00.000Z',
+      created_at: '2026-06-04T15:40:00.000Z',
+      updated_at: '2026-06-04T15:45:00.000Z',
+    },
+  ],
+  SupportTicketPaginated: {
+    data: [
+      {
+        id: 101,
+        user_id: 12,
+        title: 'Error al subir foto del producto',
+        description: 'La plataforma arroja error 500 al intentar subir imágenes de 2MB.',
+        status: 'RESOLVED',
+        resolution: 'Se corrigió la cuota y almacenamiento en el bucket S3. Ya puedes volver a subir tus imágenes.',
+        resolved_by: 1,
+        resolved_at: '2026-06-04T15:45:00.000Z',
+        created_at: '2026-06-04T15:40:00.000Z',
+        updated_at: '2026-06-04T15:45:00.000Z',
+      },
+    ],
+    total: 1,
+    page: 1,
+    limit: 10,
+  },
   CreateOrderRequest: {
     productId: 2,
     quantity: 1,
@@ -869,6 +922,48 @@ export const schemas = {
     },
     ['transport_type', 'concept', 'rate_value', 'rate_unit'],
   ),
+  CreateSupportTicketRequest: objectSchema(
+    {
+      title: { type: 'string', minLength: 5, maxLength: 150, description: 'Título del ticket de soporte' },
+      description: { type: 'string', minLength: 10, description: 'Detalle del problema reportado' },
+    },
+    ['title', 'description'],
+  ),
+  ResolveSupportTicketRequest: objectSchema(
+    {
+      status: stringEnum(['RESOLVED', 'REJECTED']),
+      resolution: { type: 'string', minLength: 5, description: 'Respuesta o resolución dada por el administrador' },
+    },
+    ['status', 'resolution'],
+  ),
+  SupportTicket: objectSchema(
+    {
+      id: { type: 'integer' },
+      user_id: { type: 'integer' },
+      title: { type: 'string' },
+      description: { type: 'string' },
+      status: stringEnum(['PENDING', 'IN_PROGRESS', 'RESOLVED', 'REJECTED']),
+      resolution: { type: 'string', nullable: true },
+      resolved_by: { type: 'integer', nullable: true },
+      resolved_at: { type: 'string', format: 'date-time', nullable: true },
+      created_at: { type: 'string', format: 'date-time' },
+      updated_at: { type: 'string', format: 'date-time' },
+    },
+    ['id', 'user_id', 'title', 'description', 'status', 'created_at', 'updated_at'],
+  ),
+  SupportTicketArray: {
+    type: 'array',
+    items: { $ref: '#/components/schemas/SupportTicket' },
+  },
+  SupportTicketPaginated: objectSchema(
+    {
+      data: { type: 'array', items: { $ref: '#/components/schemas/SupportTicket' } },
+      total: { type: 'integer' },
+      page: { type: 'integer' },
+      limit: { type: 'integer' },
+    },
+    ['data', 'total', 'page', 'limit'],
+  ),
 }
 
 function jsonRequest(schemaRef, required = true) {
@@ -1371,6 +1466,43 @@ export const operationOverrides = {
     requestBody: jsonRequest('UpdateUserRequest'),
     responses: Object.fromEntries([
       jsonResponse('200', 'Usuario actualizado correctamente', 'GenericObject'),
+    ]),
+  },
+  'post /api/v1/soporte/tickets': {
+    summary: 'Registrar un nuevo ticket de soporte por problemas en la plataforma (Usuario)',
+    requestBody: jsonRequest('CreateSupportTicketRequest'),
+    responses: Object.fromEntries([
+      jsonResponse('201', 'Ticket registrado exitosamente', 'SupportTicket'),
+    ]),
+  },
+  'get /api/v1/soporte/tickets': {
+    summary: 'Listar todos los tickets de soporte creados por el usuario en sesión',
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Listado de tickets de soporte', 'SupportTicketArray'),
+    ]),
+  },
+  'get /api/v1/soporte/tickets/{id}': {
+    summary: 'Obtener detalle de un ticket de soporte específico (Usuario / Admin)',
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Detalle del ticket de soporte', 'SupportTicket'),
+    ]),
+  },
+  'get /api/v1/admin/soporte/tickets': {
+    summary: 'Listar todos los tickets de soporte del sistema con filtros y paginación (Admin / Root)',
+    parameters: [
+      { name: 'status', in: 'query', required: false, schema: { type: 'string', enum: ['PENDING', 'IN_PROGRESS', 'RESOLVED', 'REJECTED'] }, description: 'Filtrar por estado' },
+      { name: 'page', in: 'query', required: false, schema: { type: 'integer' }, description: 'Número de página' },
+      { name: 'limit', in: 'query', required: false, schema: { type: 'integer' }, description: 'Cantidad por página' },
+    ],
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Bandeja de tickets de soporte paginada', 'SupportTicketPaginated'),
+    ]),
+  },
+  'put /api/v1/admin/soporte/tickets/{id}/resolucion': {
+    summary: 'Resolver o rechazar un ticket de soporte ingresando la respuesta del administrador (Admin / Root)',
+    requestBody: jsonRequest('ResolveSupportTicketRequest'),
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Ticket de soporte resuelto con éxito', 'SupportTicket'),
     ]),
   },
 }
