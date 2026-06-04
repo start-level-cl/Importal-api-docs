@@ -911,7 +911,7 @@ export const operationOverrides = {
     summary: 'Autenticar usuario y emitir JWT',
     requestBody: jsonRequest('LoginRequest'),
     responses: Object.fromEntries([
-      jsonResponse('200', 'Login exitoso', 'LoginResponse'),
+      jsonResponse('200', 'Login exitoso. Retorna JWT en JSON y configura cookies HTTP-Only, Secure y SameSite=None (access_token y refresh_token)', 'LoginResponse'),
       jsonResponse('401', 'Credenciales invalidas', 'ErrorResponse'),
     ]),
   },
@@ -933,7 +933,7 @@ export const operationOverrides = {
   'post /auth/api/v1/logout': {
     summary: 'Cerrar sesión e invalidar tokens',
     responses: Object.fromEntries([
-      noContentResponse('200', 'Logout exitoso, tokens invalidados'),
+      noContentResponse('200', 'Logout exitoso. Invalida tokens y elimina las cookies access_token y refresh_token'),
       jsonResponse('401', 'Token invalido o expirado', 'ErrorResponse'),
     ]),
   },
@@ -941,7 +941,7 @@ export const operationOverrides = {
     summary: 'Refrescar token de acceso',
     requestBody: jsonRequest('RefreshRequest'),
     responses: Object.fromEntries([
-      jsonResponse('200', 'Token refrescado, retorna nuevo access token', 'RefreshResponse'),
+      jsonResponse('200', 'Token refrescado. Retorna nuevo access token en JSON y actualiza la cookie access_token', 'RefreshResponse'),
       jsonResponse('401', 'Refresh token invalido o expirado', 'ErrorResponse'),
     ]),
   },

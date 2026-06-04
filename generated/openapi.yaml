@@ -4349,7 +4349,7 @@ paths:
                 refreshToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
               schema:
                 $ref: "#/components/schemas/LoginResponse"
-          description: Login exitoso
+          description: "Login exitoso. Retorna JWT en JSON y configura cookies HTTP-Only, Secure y SameSite=None (access_token y refresh_token)"
         401:
           content:
             application/json:
@@ -4376,7 +4376,7 @@ paths:
             type: string
       responses:
         200:
-          description: "Logout exitoso, tokens invalidados"
+          description: Logout exitoso. Invalida tokens y elimina las cookies access_token y refresh_token
         401:
           content:
             application/json:
@@ -4419,7 +4419,7 @@ paths:
                 accessToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
               schema:
                 $ref: "#/components/schemas/RefreshResponse"
-          description: "Token refrescado, retorna nuevo access token"
+          description: Token refrescado. Retorna nuevo access token en JSON y actualiza la cookie access_token
         401:
           content:
             application/json:
