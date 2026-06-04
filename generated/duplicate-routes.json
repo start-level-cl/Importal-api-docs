@@ -14,7 +14,7 @@
       "admin",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "deleteProduct",
     "parameters": [],
     "roleGroup": "vendedor"

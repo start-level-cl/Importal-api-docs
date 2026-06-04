@@ -1111,6 +1111,16 @@ components:
       bearerFormat: JWT
       scheme: bearer
       type: http
+    cookieAccessAuth:
+      description: "Access Token en cookie HTTP-Only"
+      in: cookie
+      name: access_token
+      type: apiKey
+    cookieRefreshAuth:
+      description: "Refresh Token en cookie HTTP-Only"
+      in: cookie
+      name: refresh_token
+      type: apiKey
 info:
   description: "Especificacion OpenAPI centralizada para Importal-auth, Importal-backend y el flujo publico de registro."
   title: Importal Unified API
@@ -4374,6 +4384,8 @@ paths:
                 $ref: "#/components/schemas/ErrorResponse"
           description: Token invalido o expirado
       security:
+        -           cookieAccessAuth:
+[]
         -           bearerAuth:
 []
       summary: Cerrar sesión e invalidar tokens
@@ -4415,7 +4427,7 @@ paths:
                 $ref: "#/components/schemas/ErrorResponse"
           description: Refresh token invalido o expirado
       security:
-        -           bearerAuth:
+        -           cookieRefreshAuth:
 []
       summary: Refrescar token de acceso
       tags:
@@ -4590,6 +4602,8 @@ paths:
                 $ref: "#/components/schemas/ErrorResponse"
           description: Token invalido o expirado
       security:
+        -           cookieAccessAuth:
+[]
         -           bearerAuth:
 []
       summary: Validar JWT emitido por auth

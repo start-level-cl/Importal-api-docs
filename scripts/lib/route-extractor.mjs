@@ -571,6 +571,9 @@ function extractOperationMetadata(decoratorLines, signatureText, methodName, con
 
   const parameters = mergeParameters(pathParameters, apiQueryParameters, controllerQueryParameters)
 
+  const cookieMatch = joined.match(/@ApiCookieAuth\(\s*['"]?([^'")]*)['"]?\s*\)/)
+  const cookieAuth = cookieMatch ? cookieMatch[1] || 'access_token' : null
+
   return {
     method: routeMatch[1].toLowerCase(),
     routePath: routeMatch[2] ?? '',
@@ -581,6 +584,7 @@ function extractOperationMetadata(decoratorLines, signatureText, methodName, con
     roles,
     httpCode: statusMatch?.[1],
     parameters,
+    cookieAuth,
   }
 }
 
@@ -681,7 +685,9 @@ function collectControllerOperations(filePath, serviceConfig) {
           tags: controller.tags,
           summary: metadata.summary,
           roles: metadata.roles,
-          security: controller.hasBearerAuth,
+          security: metadata.cookieAuth 
+            ? (metadata.cookieAuth === 'refresh_token' ? 'cookieRefreshAuth' : 'cookieAccessAuth')
+            : (controller.hasBearerAuth ? 'bearerAuth' : false),
           responseStatus: metadata.responseStatus,
           responseDescription: metadata.responseDescription,
           methodName: metadata.methodName,
@@ -753,7 +759,9 @@ function collectControllerOperations(filePath, serviceConfig) {
         tags: controller.tags,
         summary: metadata.summary,
         roles: metadata.roles,
-        security: controller.hasBearerAuth,
+        security: metadata.cookieAuth 
+          ? (metadata.cookieAuth === 'refresh_token' ? 'cookieRefreshAuth' : 'cookieAccessAuth')
+          : (controller.hasBearerAuth ? 'bearerAuth' : false),
         responseStatus: metadata.responseStatus,
         responseDescription: metadata.responseDescription,
         methodName: metadata.methodName,

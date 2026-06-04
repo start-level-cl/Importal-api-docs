@@ -1581,6 +1581,18 @@
         "bearerFormat": "JWT",
         "scheme": "bearer",
         "type": "http"
+      },
+      "cookieAccessAuth": {
+        "description": "Access Token en cookie HTTP-Only",
+        "in": "cookie",
+        "name": "access_token",
+        "type": "apiKey"
+      },
+      "cookieRefreshAuth": {
+        "description": "Refresh Token en cookie HTTP-Only",
+        "in": "cookie",
+        "name": "refresh_token",
+        "type": "apiKey"
       }
     }
   },
@@ -6434,6 +6446,9 @@
         },
         "security": [
           {
+            "cookieAccessAuth": []
+          },
+          {
             "bearerAuth": []
           }
         ],
@@ -6499,7 +6514,7 @@
         },
         "security": [
           {
-            "bearerAuth": []
+            "cookieRefreshAuth": []
           }
         ],
         "summary": "Refrescar token de acceso",
@@ -6759,6 +6774,9 @@
           }
         },
         "security": [
+          {
+            "cookieAccessAuth": []
+          },
           {
             "bearerAuth": []
           }

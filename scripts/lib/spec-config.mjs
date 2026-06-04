@@ -328,6 +328,18 @@ export const securitySchemes = {
     scheme: 'bearer',
     bearerFormat: 'JWT',
   },
+  cookieAccessAuth: {
+    type: 'apiKey',
+    in: 'cookie',
+    name: 'access_token',
+    description: 'Access Token en cookie HTTP-Only',
+  },
+  cookieRefreshAuth: {
+    type: 'apiKey',
+    in: 'cookie',
+    name: 'refresh_token',
+    description: 'Refresh Token en cookie HTTP-Only',
+  },
 }
 
 export const schemas = {
@@ -1392,6 +1404,12 @@ export function createDefaultOperation(route) {
         },
       },
     },
-    ...(route.security ? { security: [{ bearerAuth: [] }] } : {}),
+    ...(route.security === 'cookieAccessAuth'
+      ? { security: [{ cookieAccessAuth: [] }, { bearerAuth: [] }] }
+      : route.security === 'cookieRefreshAuth'
+      ? { security: [{ cookieRefreshAuth: [] }] }
+      : route.security === 'bearerAuth' || route.security === true
+      ? { security: [{ bearerAuth: [] }] }
+      : {}),
   }
 }

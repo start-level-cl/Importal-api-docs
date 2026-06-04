@@ -38,7 +38,7 @@
       "Auth"
     ],
     "roles": [],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "login",
     "parameters": [
       {
@@ -63,7 +63,7 @@
       "Auth"
     ],
     "roles": [],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "changePassword",
     "parameters": [],
     "roleGroup": "interno"
@@ -79,7 +79,7 @@
       "Auth"
     ],
     "roles": [],
-    "security": true,
+    "security": "cookieAccessAuth",
     "methodName": "validate",
     "parameters": [],
     "roleGroup": "interno"
@@ -95,7 +95,7 @@
       "Auth"
     ],
     "roles": [],
-    "security": true,
+    "security": "cookieAccessAuth",
     "methodName": "logout",
     "parameters": [
       {
@@ -120,7 +120,7 @@
       "Auth"
     ],
     "roles": [],
-    "security": true,
+    "security": "cookieRefreshAuth",
     "methodName": "refresh",
     "parameters": [
       {
@@ -145,7 +145,7 @@
       "Auth"
     ],
     "roles": [],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "registerUser",
     "parameters": [],
     "roleGroup": "interno"
@@ -161,7 +161,7 @@
       "Auth"
     ],
     "roles": [],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "deleteUser",
     "parameters": [],
     "roleGroup": "interno"
@@ -177,7 +177,7 @@
       "Auth"
     ],
     "roles": [],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "updateUser",
     "parameters": [],
     "roleGroup": "interno"
@@ -193,7 +193,7 @@
       "Auth"
     ],
     "roles": [],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "sendCode",
     "parameters": [],
     "roleGroup": "interno"
@@ -209,7 +209,7 @@
       "Auth"
     ],
     "roles": [],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "verifyCode",
     "parameters": [],
     "roleGroup": "interno"
@@ -227,7 +227,7 @@
     "roles": [
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getOrdersMetrics",
     "parameters": [
       {
@@ -255,7 +255,7 @@
     "roles": [
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getRevenueMetrics",
     "parameters": [
       {
@@ -294,7 +294,7 @@
     "roles": [
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getUsersMetrics",
     "parameters": [
       {
@@ -321,7 +321,7 @@
     "roles": [
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getPerformanceMetrics",
     "parameters": [
       {
@@ -348,7 +348,7 @@
     "roles": [
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getTransactionMetrics",
     "parameters": [
       {
@@ -375,7 +375,7 @@
     "roles": [
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getComplianceMetrics",
     "parameters": [],
     "roleGroup": "admin"
@@ -394,7 +394,7 @@
       "admin",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getDashboard",
     "parameters": [],
     "roleGroup": "admin"
@@ -412,7 +412,7 @@
     "roles": [
       "client"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getClientDashboard",
     "parameters": [],
     "roleGroup": "cliente"
@@ -430,7 +430,7 @@
     "roles": [
       "vendor"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getVendorDashboard",
     "parameters": [],
     "roleGroup": "vendedor"
@@ -448,7 +448,7 @@
     "roles": [
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "createAdmin",
     "parameters": [],
     "roleGroup": "admin"
@@ -480,7 +480,7 @@
     "roles": [
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getLogs",
     "parameters": [
       {
@@ -546,7 +546,7 @@
     "roles": [
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "searchLogs",
     "parameters": [
       {
@@ -581,7 +581,7 @@
     "roles": [
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getAuditTrail",
     "parameters": [
       {
@@ -648,7 +648,7 @@
     "roles": [
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getAuditTrailDetail",
     "parameters": [],
     "roleGroup": "admin"
@@ -666,7 +666,7 @@
     "roles": [
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getUsersActivity",
     "parameters": [
       {
@@ -701,7 +701,7 @@
     "roles": [
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getUserSessionLog",
     "parameters": [
       {
@@ -728,7 +728,7 @@
     "roles": [
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getUserActionsLog",
     "parameters": [
       {
@@ -755,7 +755,7 @@
     "roles": [
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getLoginAttempts",
     "parameters": [
       {
@@ -795,7 +795,7 @@
     "roles": [
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getSuspiciousActivity",
     "parameters": [],
     "roleGroup": "admin"
@@ -813,7 +813,7 @@
     "roles": [
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getExceptions",
     "parameters": [
       {
@@ -853,7 +853,7 @@
     "roles": [
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getExceptionDetail",
     "parameters": [],
     "roleGroup": "admin"
@@ -871,7 +871,7 @@
     "roles": [
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getExceptionStatistics",
     "parameters": [],
     "roleGroup": "admin"
@@ -889,7 +889,7 @@
     "roles": [
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getTraces",
     "parameters": [
       {
@@ -916,7 +916,7 @@
     "roles": [
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getTraceDetail",
     "parameters": [],
     "roleGroup": "admin"
@@ -934,7 +934,7 @@
     "roles": [
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getSlowQueries",
     "parameters": [],
     "roleGroup": "admin"
@@ -966,7 +966,7 @@
     "roles": [
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getSystemHealth",
     "parameters": [],
     "roleGroup": "admin"
@@ -984,7 +984,7 @@
     "roles": [
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getDatabaseStatus",
     "parameters": [],
     "roleGroup": "admin"
@@ -1002,7 +1002,7 @@
     "roles": [
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getCacheStatus",
     "parameters": [],
     "roleGroup": "admin"
@@ -1020,7 +1020,7 @@
     "roles": [
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getQueueStatus",
     "parameters": [],
     "roleGroup": "admin"
@@ -1038,7 +1038,7 @@
     "roles": [
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getStorageStatus",
     "parameters": [],
     "roleGroup": "admin"
@@ -1056,7 +1056,7 @@
     "roles": [
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getUptime",
     "parameters": [],
     "roleGroup": "admin"
@@ -1074,7 +1074,7 @@
     "roles": [
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getAlerts",
     "parameters": [
       {
@@ -1107,7 +1107,7 @@
       "admin",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getAllCobros",
     "parameters": [],
     "roleGroup": "admin"
@@ -1126,7 +1126,7 @@
       "admin",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getCobroProofImages",
     "parameters": [],
     "roleGroup": "admin"
@@ -1145,7 +1145,7 @@
       "admin",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getPendingValidationCobros",
     "parameters": [],
     "roleGroup": "admin"
@@ -1164,7 +1164,7 @@
       "admin",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "confirmCobro",
     "parameters": [],
     "roleGroup": "admin"
@@ -1183,7 +1183,7 @@
       "admin",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getCommissions",
     "parameters": [],
     "roleGroup": "admin"
@@ -1202,7 +1202,7 @@
       "admin",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "updateCommission",
     "parameters": [],
     "roleGroup": "admin"
@@ -1221,7 +1221,7 @@
       "admin",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getLogisticsRates",
     "parameters": [],
     "roleGroup": "admin"
@@ -1240,7 +1240,7 @@
       "admin",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "createLogisticsRate",
     "parameters": [],
     "roleGroup": "admin"
@@ -1259,7 +1259,7 @@
       "admin",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "updateLogisticsRate",
     "parameters": [],
     "roleGroup": "admin"
@@ -1277,7 +1277,7 @@
     "roles": [
       "client"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getClientCobros",
     "parameters": [],
     "roleGroup": "cliente"
@@ -1297,7 +1297,7 @@
       "admin",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getCobroPdf",
     "parameters": [],
     "roleGroup": "cliente"
@@ -1315,7 +1315,7 @@
     "roles": [
       "client"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getMoraStatus",
     "parameters": [],
     "roleGroup": "cliente"
@@ -1333,7 +1333,7 @@
     "roles": [
       "client"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getPaidCobros",
     "parameters": [],
     "roleGroup": "cliente"
@@ -1351,7 +1351,7 @@
     "roles": [
       "client"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "uploadPaymentProof",
     "parameters": [],
     "roleGroup": "cliente"
@@ -1369,7 +1369,7 @@
     "roles": [
       "client"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "deletePaymentProof",
     "parameters": [],
     "roleGroup": "cliente"
@@ -1388,7 +1388,7 @@
       "admin",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "triggerBilling",
     "parameters": [],
     "roleGroup": "admin"
@@ -1406,7 +1406,7 @@
     "roles": [
       "vendor"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "requestPayment",
     "parameters": [],
     "roleGroup": "vendedor"
@@ -1428,7 +1428,7 @@
       "bodeguero",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getChats",
     "parameters": [],
     "roleGroup": "comun"
@@ -1450,7 +1450,7 @@
       "bodeguero",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getChatDetails",
     "parameters": [],
     "roleGroup": "comun"
@@ -1472,7 +1472,7 @@
       "bodeguero",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getChatMessages",
     "parameters": [],
     "roleGroup": "comun"
@@ -1494,7 +1494,7 @@
       "bodeguero",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "createChatMessage",
     "parameters": [],
     "roleGroup": "comun"
@@ -1516,7 +1516,7 @@
       "bodeguero",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getNotifications",
     "parameters": [],
     "roleGroup": "comun"
@@ -1538,7 +1538,7 @@
       "bodeguero",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "markAsRead",
     "parameters": [],
     "roleGroup": "comun"
@@ -1560,7 +1560,7 @@
       "vendor",
       "bodeguero"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getCargas",
     "parameters": [],
     "roleGroup": "comun"
@@ -1579,7 +1579,7 @@
       "admin",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "createCarga",
     "parameters": [],
     "roleGroup": "admin"
@@ -1598,7 +1598,7 @@
       "admin",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "closeCarga",
     "parameters": [],
     "roleGroup": "admin"
@@ -1617,7 +1617,7 @@
       "admin",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getAdminTransitionRequests",
     "parameters": [],
     "roleGroup": "admin"
@@ -1636,7 +1636,7 @@
       "admin",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "approveTransitionRequest",
     "parameters": [],
     "roleGroup": "admin"
@@ -1655,7 +1655,7 @@
       "admin",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "rejectTransitionRequest",
     "parameters": [],
     "roleGroup": "admin"
@@ -1674,7 +1674,7 @@
       "admin",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getAdminOrderTransitionRequests",
     "parameters": [],
     "roleGroup": "admin"
@@ -1693,7 +1693,7 @@
       "admin",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "approveOrderTransitionRequest",
     "parameters": [],
     "roleGroup": "admin"
@@ -1712,7 +1712,7 @@
       "admin",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "rejectOrderTransitionRequest",
     "parameters": [],
     "roleGroup": "admin"
@@ -1732,7 +1732,7 @@
       "admin",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getBodegaCargas",
     "parameters": [],
     "roleGroup": "bodeguero"
@@ -1752,7 +1752,7 @@
       "admin",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "updateCargaStatus",
     "parameters": [],
     "roleGroup": "bodeguero"
@@ -1770,7 +1770,7 @@
     "roles": [
       "client"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getClientOrders",
     "parameters": [],
     "roleGroup": "cliente"
@@ -1788,7 +1788,7 @@
     "roles": [
       "client"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "createOrder",
     "parameters": [],
     "roleGroup": "cliente"
@@ -1806,7 +1806,7 @@
     "roles": [
       "vendor"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getVendorOrders",
     "parameters": [],
     "roleGroup": "vendedor"
@@ -1824,7 +1824,7 @@
     "roles": [
       "vendor"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getVendorActiveCargaOrders",
     "parameters": [],
     "roleGroup": "vendedor"
@@ -1842,7 +1842,7 @@
     "roles": [
       "vendor"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getVendorCargaStatus",
     "parameters": [
       {
@@ -1874,7 +1874,7 @@
     "roles": [
       "vendor"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "createOrderTransitionRequest",
     "parameters": [],
     "roleGroup": "vendedor"
@@ -1892,7 +1892,7 @@
     "roles": [
       "vendor"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "confirmOrder",
     "parameters": [],
     "roleGroup": "vendedor"
@@ -1910,7 +1910,7 @@
     "roles": [
       "vendor"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "updateOrderStatus",
     "parameters": [],
     "roleGroup": "vendedor"
@@ -1928,7 +1928,7 @@
     "roles": [
       "vendor"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "updateOrderShipping",
     "parameters": [],
     "roleGroup": "vendedor"
@@ -1946,7 +1946,7 @@
     "roles": [
       "vendor"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "createTransitionRequest",
     "parameters": [],
     "roleGroup": "vendedor"
@@ -1964,7 +1964,7 @@
     "roles": [
       "vendor"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getVendorTransitionRequests",
     "parameters": [],
     "roleGroup": "vendedor"
@@ -1982,7 +1982,7 @@
     "roles": [
       "vendor"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "transitionClosedCarga",
     "parameters": [],
     "roleGroup": "vendedor"
@@ -2002,7 +2002,7 @@
       "admin",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getBodegaOrders",
     "parameters": [],
     "roleGroup": "bodeguero"
@@ -2022,7 +2022,7 @@
       "admin",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getOrderAudit",
     "parameters": [],
     "roleGroup": "bodeguero"
@@ -2042,7 +2042,7 @@
       "admin",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "reviewOrder",
     "parameters": [],
     "roleGroup": "bodeguero"
@@ -2062,7 +2062,7 @@
       "admin",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getOrdersByCarga",
     "parameters": [],
     "roleGroup": "bodeguero"
@@ -2082,7 +2082,7 @@
       "admin",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "verifyCargaRevision",
     "parameters": [],
     "roleGroup": "bodeguero"
@@ -2102,7 +2102,7 @@
       "admin",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getArmarPedidos",
     "parameters": [],
     "roleGroup": "bodeguero"
@@ -2122,7 +2122,7 @@
       "admin",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "deleteProduct",
     "parameters": [],
     "roleGroup": "vendedor"
@@ -2142,7 +2142,7 @@
       "admin",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getClientProducts",
     "parameters": [],
     "roleGroup": "cliente"
@@ -2164,7 +2164,7 @@
       "admin",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getProductById",
     "parameters": [],
     "roleGroup": "comun"
@@ -2184,7 +2184,7 @@
       "admin",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getVendorProducts",
     "parameters": [],
     "roleGroup": "vendedor"
@@ -2202,7 +2202,7 @@
     "roles": [
       "vendor"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "createProduct",
     "parameters": [],
     "roleGroup": "vendedor"
@@ -2222,7 +2222,7 @@
       "admin",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "updateProduct",
     "parameters": [],
     "roleGroup": "vendedor"
@@ -2242,7 +2242,7 @@
       "admin",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "deleteProduct",
     "parameters": [],
     "roleGroup": "vendedor"
@@ -2262,7 +2262,7 @@
       "admin",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "responseStatus": 200,
     "responseDescription": "Returns list of pending requests",
     "methodName": "listPendingRequests",
@@ -2284,7 +2284,7 @@
       "admin",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "responseStatus": 200,
     "responseDescription": "Registration request approved and user created",
     "methodName": "approveRequest",
@@ -2315,7 +2315,7 @@
       "admin",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "responseStatus": 200,
     "responseDescription": "Registration request rejected",
     "methodName": "rejectRequest",
@@ -2337,7 +2337,7 @@
       "admin",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "responseStatus": 200,
     "responseDescription": "Returns base64 data url",
     "methodName": "getComprobante",
@@ -2367,7 +2367,7 @@
       "admin",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getUsers",
     "parameters": [],
     "roleGroup": "comun"
@@ -2386,7 +2386,7 @@
       "admin",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getUserSummary",
     "parameters": [],
     "roleGroup": "comun"
@@ -2405,7 +2405,7 @@
       "admin",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getUserOrders",
     "parameters": [],
     "roleGroup": "comun"
@@ -2424,7 +2424,7 @@
       "admin",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getUserPedidos",
     "parameters": [],
     "roleGroup": "comun"
@@ -2443,7 +2443,7 @@
       "admin",
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "getUserCobros",
     "parameters": [],
     "roleGroup": "comun"
@@ -2461,7 +2461,7 @@
     "roles": [
       "root"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "deleteUser",
     "parameters": [],
     "roleGroup": "root"
@@ -2483,7 +2483,7 @@
       "vendor",
       "bodeguero"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "requestContactChange",
     "parameters": [],
     "roleGroup": "comun"
@@ -2505,7 +2505,7 @@
       "vendor",
       "bodeguero"
     ],
-    "security": true,
+    "security": "bearerAuth",
     "methodName": "verifyContactChange",
     "parameters": [],
     "roleGroup": "comun"
