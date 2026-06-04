@@ -1293,6 +1293,9 @@ export const operationOverrides = {
   },
   'get /api/v1/cliente/cobros': {
     summary: 'Obtener cobros pendientes y facturados del cliente autenticado',
+    parameters: [
+      { name: 'carga_id', in: 'query', required: false, schema: { type: 'integer' }, description: 'Opcional: filtrar cobros asociados a una carga específica' }
+    ],
     responses: Object.fromEntries([jsonResponse('200', 'Cobros del cliente', 'GenericObjectArray')]),
   },
   'get /api/v1/cliente/cobros/{id}/pdf': {

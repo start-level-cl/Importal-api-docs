@@ -4572,7 +4572,17 @@
     "/api/v1/cliente/cobros": {
       "get": {
         "operationId": "backend_get_api_v1_cliente_cobros",
-        "parameters": [],
+        "parameters": [
+          {
+            "description": "Opcional: filtrar cobros asociados a una carga específica",
+            "in": "query",
+            "name": "carga_id",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "content": {
