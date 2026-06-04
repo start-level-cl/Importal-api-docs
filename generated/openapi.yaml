@@ -891,10 +891,6 @@ components:
         peso_cobrado_kg:
           nullable: true
           type: number
-      required:
-        - llegaron
-        - faltaron
-        - dañados
       type: object
     SendCodeRequest:
       additionalProperties: false
@@ -2556,6 +2552,31 @@ paths:
       x-role-group: bodeguero
       x-service: backend
       x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+  /api/v1/bodeguero/cargas/{cargaId}/armar-pedidos:
+    get:
+      operationId: backend_get_api_v1_bodeguero_cargas_cargaId_armar_pedidos
+      parameters:
+        -           in: path
+          name: cargaId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Operacion exitosa
+      security:
+        -           bearerAuth:
+[]
+      summary: getArmarPedidos
+      tags:
+        - Orders
+      x-role-group: bodeguero
+      x-service: backend
+      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
   /api/v1/bodeguero/cargas/{cargaId}/pedidos:
     get:
       operationId: backend_get_api_v1_bodeguero_cargas_cargaId_pedidos
@@ -3235,6 +3256,31 @@ paths:
       x-role-group: comun
       x-service: backend
       x-source: "Importal-backend/src/modules/notifications/controllers/notifications.controller.ts"
+  /api/v1/productos/{id}:
+    get:
+      operationId: backend_get_api_v1_productos_id
+      parameters:
+        -           in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Operacion exitosa
+      security:
+        -           bearerAuth:
+[]
+      summary: getProductById
+      tags:
+        - Products
+      x-role-group: comun
+      x-service: backend
+      x-source: "Importal-backend/src/modules/products/controllers/products.controller.ts"
   /api/v1/registration-requests:
     get:
       operationId: backend_get_api_v1_registration_requests
@@ -4270,7 +4316,11 @@ paths:
     post:
       operationId: auth_post_auth_api_v1_login
       parameters:
-[]
+        -           in: path
+          name: " passthrough: true "
+          required: true
+          schema:
+            type: string
       requestBody:
         content:
           application/json:
@@ -4309,7 +4359,11 @@ paths:
     post:
       operationId: auth_post_auth_api_v1_logout
       parameters:
-[]
+        -           in: path
+          name: " passthrough: true "
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: "Logout exitoso, tokens invalidados"
@@ -4332,7 +4386,11 @@ paths:
     post:
       operationId: auth_post_auth_api_v1_refresh
       parameters:
-[]
+        -           in: path
+          name: " passthrough: true "
+          required: true
+          schema:
+            type: string
       requestBody:
         content:
           application/json:

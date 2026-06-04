@@ -756,7 +756,7 @@ export const schemas = {
       peso_cobrado_kg: { type: 'number', nullable: true },
       caja_size: { type: 'string', nullable: true },
     },
-    ['llegaron', 'faltaron', 'dañados'],
+    [],
   ),
   UpdateOrderShippingRequest: objectSchema(
     {

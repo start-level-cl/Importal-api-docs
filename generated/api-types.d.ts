@@ -325,9 +325,9 @@ export type RequestContactChangeRequest = {
 
 export type ReviewOrderRequest = {
   caja_size?: string
-  dañados: number
-  faltaron: number
-  llegaron: number
+  dañados?: number
+  faltaron?: number
+  llegaron?: number
   peso_cobrado_kg?: number
 }
 
@@ -830,6 +830,14 @@ export interface Operations {
       "200": GenericObjectArray
     }
   }
+  "backend_get_api_v1_bodeguero_cargas_cargaId_armar_pedidos": {
+    method: "GET"
+    path: "/api/v1/bodeguero/cargas/{cargaId}/armar-pedidos"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
   "backend_get_api_v1_bodeguero_cargas_cargaId_pedidos": {
     method: "GET"
     path: "/api/v1/bodeguero/cargas/{cargaId}/pedidos"
@@ -1011,6 +1019,14 @@ export interface Operations {
   "backend_put_api_v1_notificaciones_id_leer": {
     method: "PUT"
     path: "/api/v1/notificaciones/{id}/leer"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_get_api_v1_productos_id": {
+    method: "GET"
+    path: "/api/v1/productos/{id}"
     requestBody: undefined
     responses: {
       "200": GenericObject

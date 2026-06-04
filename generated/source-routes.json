@@ -40,7 +40,16 @@
     "roles": [],
     "security": true,
     "methodName": "login",
-    "parameters": [],
+    "parameters": [
+      {
+        "name": " passthrough: true ",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
     "roleGroup": "interno"
   },
   {
@@ -88,7 +97,16 @@
     "roles": [],
     "security": true,
     "methodName": "logout",
-    "parameters": [],
+    "parameters": [
+      {
+        "name": " passthrough: true ",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
     "roleGroup": "interno"
   },
   {
@@ -104,7 +122,16 @@
     "roles": [],
     "security": true,
     "methodName": "refresh",
-    "parameters": [],
+    "parameters": [
+      {
+        "name": " passthrough: true ",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
     "roleGroup": "interno"
   },
   {
@@ -2063,6 +2090,26 @@
   {
     "service": "backend",
     "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "get",
+    "path": "/api/v1/bodeguero/cargas/{cargaId}/armar-pedidos",
+    "operationId": "backend_get_api_v1_bodeguero_cargas_cargaId_armar_pedidos",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "bodeguero",
+      "admin",
+      "root"
+    ],
+    "security": true,
+    "methodName": "getArmarPedidos",
+    "parameters": [],
+    "roleGroup": "bodeguero"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
     "method": "delete",
     "path": "/api/v1/vendedor/productos/{id}",
     "operationId": "backend_delete_api_v1_vendedor_productos_id",
@@ -2099,6 +2146,28 @@
     "methodName": "getClientProducts",
     "parameters": [],
     "roleGroup": "cliente"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/products/controllers/products.controller.ts",
+    "method": "get",
+    "path": "/api/v1/productos/{id}",
+    "operationId": "backend_get_api_v1_productos_id",
+    "tag": "Products",
+    "tags": [
+      "Products"
+    ],
+    "roles": [
+      "client",
+      "vendor",
+      "bodeguero",
+      "admin",
+      "root"
+    ],
+    "security": true,
+    "methodName": "getProductById",
+    "parameters": [],
+    "roleGroup": "comun"
   },
   {
     "service": "backend",

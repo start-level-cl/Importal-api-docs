@@ -127,25 +127,6 @@
     },
     {
       "path": "/api/v1/admin/cargas",
-      "method": "get",
-      "operationId": "backend_get_api_v1_admin_cargas",
-      "summary": "getCargas",
-      "tags": [
-        "Orders"
-      ],
-      "parameters": [],
-      "responses": {
-        "200": {
-          "description": "Operacion exitosa",
-          "schema": {
-            "$ref": "#/components/schemas/GenericObject"
-          },
-          "example": null
-        }
-      }
-    },
-    {
-      "path": "/api/v1/admin/cargas",
       "method": "post",
       "operationId": "backend_post_api_v1_admin_cargas",
       "summary": "createCarga",
@@ -1063,6 +1044,28 @@
     },
     {
       "path": "/api/v1/admin/tarifas/logisticas",
+      "method": "post",
+      "operationId": "backend_post_api_v1_admin_tarifas_logisticas",
+      "summary": "Crear nueva tarifa logística (Admin/Root)",
+      "tags": [
+        "Billing"
+      ],
+      "parameters": [],
+      "responses": {
+        "201": {
+          "description": "Tarifa creada exitosamente",
+          "schema": {
+            "$ref": "#/components/schemas/GenericObject"
+          },
+          "example": {
+            "message": "Operacion exitosa",
+            "ok": true
+          }
+        }
+      }
+    },
+    {
+      "path": "/api/v1/admin/tarifas/logisticas",
       "method": "put",
       "operationId": "backend_put_api_v1_admin_tarifas_logisticas",
       "summary": "Actualizar valor de tarifa logística (Admin/Root)",
@@ -1348,6 +1351,25 @@
       }
     },
     {
+      "path": "/api/v1/bodeguero/cargas/{cargaId}/armar-pedidos",
+      "method": "get",
+      "operationId": "backend_get_api_v1_bodeguero_cargas_cargaId_armar_pedidos",
+      "summary": "getArmarPedidos",
+      "tags": [
+        "Orders"
+      ],
+      "parameters": [],
+      "responses": {
+        "200": {
+          "description": "Operacion exitosa",
+          "schema": {
+            "$ref": "#/components/schemas/GenericObject"
+          },
+          "example": null
+        }
+      }
+    },
+    {
       "path": "/api/v1/bodeguero/cargas/{cargaId}/pedidos",
       "method": "get",
       "operationId": "backend_get_api_v1_bodeguero_cargas_cargaId_pedidos",
@@ -1499,6 +1521,25 @@
             "message": "Operacion exitosa",
             "ok": true
           }
+        }
+      }
+    },
+    {
+      "path": "/api/v1/cargas",
+      "method": "get",
+      "operationId": "backend_get_api_v1_cargas",
+      "summary": "getCargas",
+      "tags": [
+        "Orders"
+      ],
+      "parameters": [],
+      "responses": {
+        "200": {
+          "description": "Operacion exitosa",
+          "schema": {
+            "$ref": "#/components/schemas/GenericObject"
+          },
+          "example": null
         }
       }
     },
@@ -1890,6 +1931,25 @@
       }
     },
     {
+      "path": "/api/v1/productos/{id}",
+      "method": "get",
+      "operationId": "backend_get_api_v1_productos_id",
+      "summary": "getProductById",
+      "tags": [
+        "Products"
+      ],
+      "parameters": [],
+      "responses": {
+        "200": {
+          "description": "Operacion exitosa",
+          "schema": {
+            "$ref": "#/components/schemas/GenericObject"
+          },
+          "example": null
+        }
+      }
+    },
+    {
       "path": "/api/v1/registration-requests",
       "method": "get",
       "operationId": "backend_get_api_v1_registration_requests",
@@ -1980,6 +2040,42 @@
         },
         "409": {
           "description": "Solicitud ya procesada o usuario existente",
+          "schema": {
+            "$ref": "#/components/schemas/ErrorResponse"
+          },
+          "example": null
+        }
+      }
+    },
+    {
+      "path": "/api/v1/registration-requests/{email}/comprobante",
+      "method": "get",
+      "operationId": "backend_get_api_v1_registration_requests_email_comprobante",
+      "summary": "Obtener comprobante de registro de un usuario (Admin/Root)",
+      "tags": [
+        "Registration"
+      ],
+      "parameters": [],
+      "responses": {
+        "200": {
+          "description": "Comprobante retornado exitosamente",
+          "schema": {
+            "$ref": "#/components/schemas/RegistrationComprobanteResponse"
+          },
+          "example": {
+            "comprobante": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIA...",
+            "email": "usuario@ejemplo.com"
+          }
+        },
+        "400": {
+          "description": "Email invalido",
+          "schema": {
+            "$ref": "#/components/schemas/ErrorResponse"
+          },
+          "example": null
+        },
+        "404": {
+          "description": "Solicitud o comprobante no encontrado",
           "schema": {
             "$ref": "#/components/schemas/ErrorResponse"
           },
@@ -2272,12 +2368,39 @@
       "tags": [
         "Orders"
       ],
-      "parameters": [],
+      "parameters": [
+        {
+          "name": "can_ship",
+          "description": "Filtrar por pedidos que se pueden enviar (true/false)",
+          "schema": {
+            "type": "boolean"
+          },
+          "required": false
+        },
+        {
+          "name": "page",
+          "description": "Número de página",
+          "schema": {
+            "default": 1,
+            "type": "integer"
+          },
+          "required": false
+        },
+        {
+          "name": "limit",
+          "description": "Límite de resultados por página",
+          "schema": {
+            "default": 10,
+            "type": "integer"
+          },
+          "required": false
+        }
+      ],
       "responses": {
         "200": {
           "description": "Pedidos del vendedor",
           "schema": {
-            "$ref": "#/components/schemas/VendorOrderArray"
+            "$ref": "#/components/schemas/VendorOrdersPaginatedResponse"
           },
           "example": null
         }
@@ -2679,6 +2802,58 @@
         },
         "401": {
           "description": "Credenciales invalidas",
+          "schema": {
+            "$ref": "#/components/schemas/ErrorResponse"
+          },
+          "example": null
+        }
+      }
+    },
+    {
+      "path": "/auth/api/v1/logout",
+      "method": "post",
+      "operationId": "auth_post_auth_api_v1_logout",
+      "summary": "Cerrar sesión e invalidar tokens",
+      "tags": [
+        "Auth"
+      ],
+      "parameters": [],
+      "responses": {
+        "200": {
+          "description": "Logout exitoso, tokens invalidados",
+          "schema": null,
+          "example": null
+        },
+        "401": {
+          "description": "Token invalido o expirado",
+          "schema": {
+            "$ref": "#/components/schemas/ErrorResponse"
+          },
+          "example": null
+        }
+      }
+    },
+    {
+      "path": "/auth/api/v1/refresh",
+      "method": "post",
+      "operationId": "auth_post_auth_api_v1_refresh",
+      "summary": "Refrescar token de acceso",
+      "tags": [
+        "Auth"
+      ],
+      "parameters": [],
+      "responses": {
+        "200": {
+          "description": "Token refrescado, retorna nuevo access token",
+          "schema": {
+            "$ref": "#/components/schemas/RefreshResponse"
+          },
+          "example": {
+            "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+          }
+        },
+        "401": {
+          "description": "Refresh token invalido o expirado",
           "schema": {
             "$ref": "#/components/schemas/ErrorResponse"
           },
