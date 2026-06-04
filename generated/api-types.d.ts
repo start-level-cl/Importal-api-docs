@@ -172,7 +172,7 @@ export type Product = {
 export type ProductArray = (Product)[]
 
 export type RefreshRequest = {
-  refreshToken: string
+  refreshToken?: string
 }
 
 export type RefreshResponse = {

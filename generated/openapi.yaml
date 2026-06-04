@@ -415,8 +415,6 @@ components:
         refreshToken:
           description: Refresh token del usuario
           type: string
-      required:
-        - refreshToken
       type: object
     RefreshResponse:
       additionalProperties: false

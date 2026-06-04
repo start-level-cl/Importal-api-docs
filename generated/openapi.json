@@ -589,9 +589,6 @@
             "type": "string"
           }
         },
-        "required": [
-          "refreshToken"
-        ],
         "type": "object"
       },
       "RefreshResponse": {

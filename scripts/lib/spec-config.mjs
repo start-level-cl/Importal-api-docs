@@ -851,7 +851,7 @@ export const schemas = {
     {
       refreshToken: { type: 'string', description: 'Refresh token del usuario' },
     },
-    ['refreshToken'],
+    [],
   ),
   RefreshResponse: objectSchema(
     {
