@@ -2682,15 +2682,15 @@ paths:
     get:
       operationId: backend_get_api_v1_bodeguero_pedidos
       parameters:
-        -           description: Filtrar por vendedor
-          in: query
-          name: sellerId
-          required: false
-          schema:
-            type: integer
         -           description: Filtrar por cliente
           in: query
           name: clientId
+          required: false
+          schema:
+            type: integer
+        -           description: Filtrar por carga
+          in: query
+          name: cargaId
           required: false
           schema:
             type: integer
@@ -2707,7 +2707,7 @@ paths:
       security:
         -           bearerAuth:
 []
-      summary: Listar todos los pedidos para la bodega (Bodeguero/Admin/Root)
+      summary: Listar pedidos en cargas cerradas para la bodega (Bodeguero/Admin/Root)
       tags:
         - Orders
       x-role-group: bodeguero

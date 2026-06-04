@@ -3902,18 +3902,18 @@
         "operationId": "backend_get_api_v1_bodeguero_pedidos",
         "parameters": [
           {
-            "description": "Filtrar por vendedor",
+            "description": "Filtrar por cliente",
             "in": "query",
-            "name": "sellerId",
+            "name": "clientId",
             "required": false,
             "schema": {
               "type": "integer"
             }
           },
           {
-            "description": "Filtrar por cliente",
+            "description": "Filtrar por carga",
             "in": "query",
-            "name": "clientId",
+            "name": "cargaId",
             "required": false,
             "schema": {
               "type": "integer"
@@ -3943,7 +3943,7 @@
             "bearerAuth": []
           }
         ],
-        "summary": "Listar todos los pedidos para la bodega (Bodeguero/Admin/Root)",
+        "summary": "Listar pedidos en cargas cerradas para la bodega (Bodeguero/Admin/Root)",
         "tags": [
           "Orders"
         ],

@@ -1318,10 +1318,10 @@ export const operationOverrides = {
     responses: Object.fromEntries([jsonResponse('201', 'Solicitud creada con éxito', 'GenericObject')]),
   },
   'get /api/v1/bodeguero/pedidos': {
-    summary: 'Listar todos los pedidos para la bodega (Bodeguero/Admin/Root)',
+    summary: 'Listar pedidos en cargas cerradas para la bodega (Bodeguero/Admin/Root)',
     parameters: [
-      { name: 'sellerId', in: 'query', required: false, schema: { type: 'integer' }, description: 'Filtrar por vendedor' },
       { name: 'clientId', in: 'query', required: false, schema: { type: 'integer' }, description: 'Filtrar por cliente' },
+      { name: 'cargaId', in: 'query', required: false, schema: { type: 'integer' }, description: 'Filtrar por carga' },
     ],
     responses: Object.fromEntries([jsonResponse('200', 'Pedidos de bodega', 'GenericObjectArray')]),
   },
