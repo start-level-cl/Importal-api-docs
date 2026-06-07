@@ -138,6 +138,77 @@
         },
         "type": "array"
       },
+      "ClienteCobrosGroupedResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "carga": {
+                  "nullable": true,
+                  "properties": {
+                    "created_at": {
+                      "format": "date-time",
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "tipo_carga": {
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "carga_id": {
+                  "nullable": true,
+                  "type": "integer"
+                },
+                "cobros": {
+                  "items": {
+                    "$ref": "#/components/schemas/Cobro"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "pagination": {
+            "properties": {
+              "limit": {
+                "type": "integer"
+              },
+              "page": {
+                "type": "integer"
+              },
+              "pages": {
+                "type": "integer"
+              },
+              "total": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "total",
+              "page",
+              "limit",
+              "pages"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "pagination"
+        ],
+        "type": "object"
+      },
       "Cobro": {
         "additionalProperties": true,
         "type": "object"
@@ -4581,24 +4652,38 @@
             "schema": {
               "type": "integer"
             }
+          },
+          {
+            "description": "Opcional: número de página para paginación de cargas",
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "default": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Opcional: límite de cargas por página",
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 6,
+              "type": "integer"
+            }
           }
         ],
         "responses": {
           "200": {
             "content": {
               "application/json": {
-                "example": [
-                  {
-                    "id": 1,
-                    "message": "Ejemplo de elemento retornado"
-                  }
-                ],
                 "schema": {
-                  "$ref": "#/components/schemas/GenericObjectArray"
+                  "$ref": "#/components/schemas/ClienteCobrosGroupedResponse"
                 }
               }
             },
-            "description": "Cobros del cliente"
+            "description": "Cobros del cliente agrupados y paginados por carga"
           }
         },
         "security": [
@@ -4606,7 +4691,7 @@
             "bearerAuth": []
           }
         ],
-        "summary": "Obtener cobros pendientes y facturados del cliente autenticado",
+        "summary": "Obtener cobros pendientes y facturados del cliente autenticado agrupados por carga",
         "tags": [
           "Billing"
         ],

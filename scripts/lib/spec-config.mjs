@@ -759,6 +759,38 @@ export const schemas = {
   ),
   Cobro: genericObject,
   CobroArray: { type: 'array', items: { $ref: '#/components/schemas/Cobro' } },
+  ClienteCobrosGroupedResponse: objectSchema({
+    data: {
+      type: 'array',
+      items: objectSchema({
+        carga_id: { type: 'integer', nullable: true },
+        carga: {
+          type: 'object',
+          nullable: true,
+          properties: {
+            id: { type: 'integer' },
+            tipo_carga: { type: 'string' },
+            status: { type: 'string' },
+            created_at: { type: 'string', format: 'date-time' },
+          }
+        },
+        cobros: {
+          type: 'array',
+          items: { $ref: '#/components/schemas/Cobro' }
+        }
+      })
+    },
+    pagination: {
+      type: 'object',
+      properties: {
+        total: { type: 'integer' },
+        page: { type: 'integer' },
+        limit: { type: 'integer' },
+        pages: { type: 'integer' }
+      },
+      required: ['total', 'page', 'limit', 'pages']
+    }
+  }, ['data', 'pagination']),
   CreateOrderRequest: {
     ...objectSchema(
       {
@@ -1292,11 +1324,13 @@ export const operationOverrides = {
     responses: Object.fromEntries([jsonResponse('200', 'Tarifa actualizada', 'GenericObject')]),
   },
   'get /api/v1/cliente/cobros': {
-    summary: 'Obtener cobros pendientes y facturados del cliente autenticado',
+    summary: 'Obtener cobros pendientes y facturados del cliente autenticado agrupados por carga',
     parameters: [
-      { name: 'carga_id', in: 'query', required: false, schema: { type: 'integer' }, description: 'Opcional: filtrar cobros asociados a una carga específica' }
+      { name: 'carga_id', in: 'query', required: false, schema: { type: 'integer' }, description: 'Opcional: filtrar cobros asociados a una carga específica' },
+      { name: 'page', in: 'query', required: false, schema: { type: 'integer', default: 1 }, description: 'Opcional: número de página para paginación de cargas' },
+      { name: 'limit', in: 'query', required: false, schema: { type: 'integer', default: 6 }, description: 'Opcional: límite de cargas por página' }
     ],
-    responses: Object.fromEntries([jsonResponse('200', 'Cobros del cliente', 'GenericObjectArray')]),
+    responses: Object.fromEntries([jsonResponse('200', 'Cobros del cliente agrupados y paginados por carga', 'ClienteCobrosGroupedResponse')]),
   },
   'get /api/v1/cliente/cobros/{id}/pdf': {
     summary: 'Obtener PDF representativo de un cobro facturado',

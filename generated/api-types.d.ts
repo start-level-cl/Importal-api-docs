@@ -40,6 +40,25 @@ export type ChatMessage = {
 
 export type ChatMessageArray = (ChatMessage)[]
 
+export type ClienteCobrosGroupedResponse = {
+  data: ({
+    carga?: {
+      created_at?: string
+      id?: number
+      status?: string
+      tipo_carga?: string
+    }
+    carga_id?: number
+    cobros?: (Cobro)[]
+  })[]
+  pagination: {
+    limit: number
+    page: number
+    pages: number
+    total: number
+  }
+}
+
 export type Cobro = {
   [key: string]: unknown
 }
@@ -979,7 +998,7 @@ export interface Operations {
     path: "/api/v1/cliente/cobros"
     requestBody: undefined
     responses: {
-      "200": GenericObjectArray
+      "200": ClienteCobrosGroupedResponse
     }
   }
   "backend_get_api_v1_cliente_cobros_pagados": {
