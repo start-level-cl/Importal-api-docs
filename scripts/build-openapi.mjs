@@ -486,7 +486,7 @@ function createHtml(spec) {
           method: 'POST',
           path: '/api/v1/cliente/cobros/{id}/pagar',
           service: 'backend',
-          detail: 'El cliente realiza transferencia bancaria y sube el comprobante (formato PDF o imagen). El estado del cobro pasa a PENDING_REVIEW.',
+          detail: 'El cliente realiza transferencia bancaria y sube el comprobante (formato PDF o imagen). El estado del cobro pasa a IN_REVIEW.',
           body: '[Archivo binario en Multipart/Form-Data]',
           requiresAuth: true,
           roles: ['client'],
