@@ -211,17 +211,25 @@ const schemaExamples = {
     { id: 7, user_id: 12, transport_type: 'AEREA', provider_code: 'AIR-01' },
   ],
   ChatMessage: {
-    id: 99,
-    chat_id: 7,
-    message: 'Hola, tu pedido está en tránsito.',
-    created_at: '2026-05-25T12:00:00.000Z',
+    id: '99',
+    usuario: 'Juan',
+    mensaje: 'Hola, tu pedido está en tránsito.',
+    timestamp: '2026-05-25T12:00:00.000Z',
+    tipo: 'texto',
+    sender_id: 15,
+    sender_role: 'client',
+    referenced_message_id: null,
   },
   ChatMessageArray: [
     {
-      id: 99,
-      chat_id: 7,
-      message: 'Hola, tu pedido está en tránsito.',
-      created_at: '2026-05-25T12:00:00.000Z',
+      id: '99',
+      usuario: 'Juan',
+      mensaje: 'Hola, tu pedido está en tránsito.',
+      timestamp: '2026-05-25T12:00:00.000Z',
+      tipo: 'texto',
+      sender_id: 15,
+      sender_role: 'client',
+      referenced_message_id: null,
     },
   ],
   DashboardSummary: {
@@ -321,7 +329,7 @@ const schemaExamples = {
   ConfirmCobroRequest: { approved: true, admin_comment: 'Comprobante validado' },
   UpdateCommissionTierRequest: { id: 1, commission_pct: 20 },
   UpdateLogisticsRateRequest: { id: 1, rate_value: 30 },
-  CreateMessageRequest: { message: 'Hola, ¿cómo estás?' },
+  CreateMessageRequest: { message: 'Hola, ¿cómo estás?', referenced_message_id: null },
   RequestContactChangeRequest: { type: 'email', newValue: 'nuevo@correo.com', password: 'Password123!' },
   VerifyContactChangeRequest: { token: 'token-transaction-123', code: '123456' },
   UpdateUserRequest: { email: 'nuevo@correo.com', phone: '+56912345678' },
@@ -722,12 +730,23 @@ export const schemas = {
   ),
   ChatMessage: objectSchema(
     {
-      id: { type: 'integer' },
-      chat_id: { type: 'integer' },
-      message: { type: 'string' },
-      created_at: { type: 'string', format: 'date-time' },
+      id: { type: 'string', description: 'ID del mensaje' },
+      usuario: { type: 'string', description: 'Nombre del remitente' },
+      mensaje: { type: 'string', description: 'Contenido del mensaje' },
+      timestamp: { type: 'string', format: 'date-time', description: 'Fecha en formato ISO 8601' },
+      tipo: { type: 'string', enum: ['texto', 'producto'], description: 'Tipo de mensaje' },
+      sender_id: { type: 'integer', nullable: true, description: 'ID de base de datos del remitente' },
+      sender_role: { type: 'string', nullable: true, description: 'Rol del remitente' },
+      referenced_message_id: { type: 'integer', nullable: true, description: 'ID del mensaje al que hace referencia' },
+      productoRef: objectSchema({
+        productoId: { type: 'string' },
+        proveedorId: { type: 'string' },
+        nombre: { type: 'string' },
+        precioUsd: { type: 'number' },
+        foto: { type: 'string', description: 'Imagen de producto (Base64 data URL)' }
+      }, ['productoId', 'proveedorId', 'nombre', 'precioUsd', 'foto'])
     },
-    ['id', 'message'],
+    ['id', 'usuario', 'mensaje', 'timestamp', 'tipo'],
   ),
   ChatMessageArray: { type: 'array', items: { $ref: '#/components/schemas/ChatMessage' } },
   DashboardSummary: objectSchema(
@@ -905,6 +924,7 @@ export const schemas = {
   CreateMessageRequest: objectSchema(
     {
       message: { type: 'string', description: 'Contenido del mensaje' },
+      referenced_message_id: { type: 'integer', description: 'ID del mensaje al que responde', nullable: true },
     },
     ['message'],
   ),
@@ -1212,6 +1232,10 @@ export const operationOverrides = {
   },
   'put /api/v1/notificaciones/{id}/leer': {
     responses: Object.fromEntries([jsonResponse('200', 'Notificacion marcada como leida', 'GenericObject')]),
+  },
+  'put /api/v1/notificaciones/leer-todas': {
+    summary: 'Marcar todas las notificaciones del usuario como leídas',
+    responses: Object.fromEntries([jsonResponse('200', 'Todas las notificaciones marcadas como leídas', 'GenericObject')]),
   },
   'get /api/v1/chats': {
     responses: Object.fromEntries([jsonResponse('200', 'Listado de chats', 'ChatArray')]),

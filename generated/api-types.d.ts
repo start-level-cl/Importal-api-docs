@@ -32,10 +32,21 @@ export type ChatDetails = {
 }
 
 export type ChatMessage = {
-  chat_id?: number
-  created_at?: string
-  id: number
-  message: string
+  id: string
+  mensaje: string
+  productoRef?: {
+    foto: string
+    nombre: string
+    precioUsd: number
+    productoId: string
+    proveedorId: string
+  }
+  referenced_message_id?: number
+  sender_id?: number
+  sender_role?: string
+  timestamp: string
+  tipo: "texto" | "producto"
+  usuario: string
 }
 
 export type ChatMessageArray = (ChatMessage)[]
@@ -96,6 +107,7 @@ export type CreateLogisticsRateRequest = {
 
 export type CreateMessageRequest = {
   message: string
+  referenced_message_id?: number
 }
 
 export type CreateOrderRequest = {
@@ -1081,6 +1093,14 @@ export interface Operations {
     requestBody: undefined
     responses: {
       "200": NotificationArray
+    }
+  }
+  "backend_put_api_v1_notificaciones_leer_todas": {
+    method: "PUT"
+    path: "/api/v1/notificaciones/leer-todas"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
     }
   }
   "backend_put_api_v1_notificaciones_id_leer": {

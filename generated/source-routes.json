@@ -1545,6 +1545,28 @@
   },
   {
     "service": "backend",
+    "source": "Importal-backend/src/modules/notifications/controllers/notifications.controller.ts",
+    "method": "put",
+    "path": "/api/v1/notificaciones/leer-todas",
+    "operationId": "backend_put_api_v1_notificaciones_leer_todas",
+    "tag": "Notifications",
+    "tags": [
+      "Notifications"
+    ],
+    "roles": [
+      "admin",
+      "client",
+      "vendor",
+      "bodeguero",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "markAllAsRead",
+    "parameters": [],
+    "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
     "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
     "method": "get",
     "path": "/api/v1/cargas",

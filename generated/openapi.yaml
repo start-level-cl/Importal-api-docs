@@ -79,18 +79,64 @@ components:
     ChatMessage:
       additionalProperties: false
       properties:
-        chat_id:
+        id:
+          description: ID del mensaje
+          type: string
+        mensaje:
+          description: Contenido del mensaje
+          type: string
+        productoRef:
+          additionalProperties: false
+          properties:
+            foto:
+              description: Imagen de producto (Base64 data URL)
+              type: string
+            nombre:
+              type: string
+            precioUsd:
+              type: number
+            productoId:
+              type: string
+            proveedorId:
+              type: string
+          required:
+            - productoId
+            - proveedorId
+            - nombre
+            - precioUsd
+            - foto
+          type: object
+        referenced_message_id:
+          description: ID del mensaje al que hace referencia
+          nullable: true
           type: integer
-        created_at:
+        sender_id:
+          description: ID de base de datos del remitente
+          nullable: true
+          type: integer
+        sender_role:
+          description: Rol del remitente
+          nullable: true
+          type: string
+        timestamp:
+          description: Fecha en formato ISO 8601
           format: "date-time"
           type: string
-        id:
-          type: integer
-        message:
+        tipo:
+          description: Tipo de mensaje
+          enum:
+            - texto
+            - producto
+          type: string
+        usuario:
+          description: Nombre del remitente
           type: string
       required:
         - id
-        - message
+        - usuario
+        - mensaje
+        - timestamp
+        - tipo
       type: object
     ChatMessageArray:
       items:
@@ -233,6 +279,10 @@ components:
         message:
           description: Contenido del mensaje
           type: string
+        referenced_message_id:
+          description: ID del mensaje al que responde
+          nullable: true
+          type: integer
       required:
         - message
       type: object
@@ -3133,10 +3183,14 @@ paths:
           content:
             application/json:
               example:
-                -                   chat_id: 7
-                  created_at: "2026-05-25T12:00:00.000Z"
-                  id: 99
-                  message: "Hola, tu pedido está en tránsito."
+                -                   id: 99
+                  mensaje: "Hola, tu pedido está en tránsito."
+                  referenced_message_id: null
+                  sender_id: 15
+                  sender_role: client
+                  timestamp: "2026-05-25T12:00:00.000Z"
+                  tipo: texto
+                  usuario: Juan
               schema:
                 $ref: "#/components/schemas/ChatMessageArray"
           description: Mensajes del chat
@@ -3162,6 +3216,7 @@ paths:
           application/json:
             example:
               message: "Hola, ¿cómo estás?"
+              referenced_message_id: null
             schema:
               $ref: "#/components/schemas/CreateMessageRequest"
         required: true
@@ -3170,10 +3225,14 @@ paths:
           content:
             application/json:
               example:
-                chat_id: 7
-                created_at: "2026-05-25T12:00:00.000Z"
                 id: 99
-                message: "Hola, tu pedido está en tránsito."
+                mensaje: "Hola, tu pedido está en tránsito."
+                referenced_message_id: null
+                sender_id: 15
+                sender_role: client
+                timestamp: "2026-05-25T12:00:00.000Z"
+                tipo: texto
+                usuario: Juan
               schema:
                 $ref: "#/components/schemas/ChatMessage"
           description: Mensaje enviado exitosamente
@@ -3497,6 +3556,30 @@ paths:
         -           bearerAuth:
 []
       summary: getNotifications
+      tags:
+        - Notifications
+      x-role-group: comun
+      x-service: backend
+      x-source: "Importal-backend/src/modules/notifications/controllers/notifications.controller.ts"
+  /api/v1/notificaciones/leer-todas:
+    put:
+      operationId: backend_put_api_v1_notificaciones_leer_todas
+      parameters:
+[]
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                message: Operacion exitosa
+                ok: true
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Todas las notificaciones marcadas como leídas
+      security:
+        -           bearerAuth:
+[]
+      summary: Marcar todas las notificaciones del usuario como leídas
       tags:
         - Notifications
       x-role-group: comun
