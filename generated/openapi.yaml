@@ -777,7 +777,9 @@ components:
                 phone:
                   type: string
                 profileType:
-                  const: inversor
+                  enum:
+                    - inversor
+                    - cliente
                   type: string
                 reference:
                   maxLength: 120
@@ -817,6 +819,13 @@ components:
               properties:
                 agency:
                   type: string
+                comprobante:
+                  description: Archivo PDF/Imagen en Base64 (max 5MB) (Opcional)
+                  type: string
+                comprobanteContentType:
+                  type: string
+                comprobanteFileName:
+                  type: string
                 comuna:
                   type: string
                 consentimiento:
@@ -839,9 +848,7 @@ components:
                 phone:
                   type: string
                 profileType:
-                  enum:
-                    - cliente_antiguo
-                    - cliente
+                  const: cliente_antiguo
                   type: string
                 reference:
                   maxLength: 120
@@ -1129,6 +1136,14 @@ components:
       required:
         - id
         - commission_pct
+      type: object
+    UpdateExchangeRateRequest:
+      additionalProperties: false
+      properties:
+        rate:
+          type: number
+      required:
+        - rate
       type: object
     UpdateLogisticsRateRequest:
       additionalProperties: false
@@ -1765,6 +1780,62 @@ paths:
       x-role-group: admin
       x-service: backend
       x-source: "Importal-backend/src/modules/app/controllers/audit.controller.ts"
+  /api/v1/admin/exchange-rate:
+    post:
+      operationId: backend_post_api_v1_admin_exchange_rate
+      parameters:
+[]
+      requestBody:
+        content:
+          application/json:
+            example:
+              rate: 980
+            schema:
+              $ref: "#/components/schemas/UpdateExchangeRateRequest"
+        required: true
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                message: Operacion exitosa
+                ok: true
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Tipo de cambio actualizado exitosamente
+      security:
+        -           bearerAuth:
+[]
+      summary: Actualizar el tipo de cambio del dólar (Admin/Root)
+      tags:
+        - Billing
+      x-role-group: admin
+      x-service: backend
+      x-source: "Importal-backend/src/modules/billing/controllers/billing.controller.ts"
+  /api/v1/admin/exchange-rate/history:
+    get:
+      operationId: backend_get_api_v1_admin_exchange_rate_history
+      parameters:
+[]
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                -                   id: 1
+                  message: Ejemplo de elemento retornado
+              schema:
+                $ref: "#/components/schemas/GenericObjectArray"
+          description: Historial del tipo de cambio
+      security:
+        -           bearerAuth:
+[]
+      summary: Obtener historial de cambios del dólar (Admin/Root)
+      tags:
+        - Billing
+      x-role-group: admin
+      x-service: backend
+      x-source: "Importal-backend/src/modules/billing/controllers/billing.controller.ts"
   /api/v1/admin/logs:
     get:
       operationId: backend_get_api_v1_admin_logs
@@ -2836,6 +2907,30 @@ paths:
       x-role-group: admin
       x-service: backend
       x-source: "Importal-backend/src/modules/app/controllers/audit.controller.ts"
+  /api/v1/billing/exchange-rate:
+    get:
+      operationId: backend_get_api_v1_billing_exchange_rate
+      parameters:
+[]
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                message: Operacion exitosa
+                ok: true
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Tipo de cambio actual
+      security:
+        -           bearerAuth:
+[]
+      summary: Obtener el tipo de cambio activo actual del dólar
+      tags:
+        - Billing
+      x-role-group: comun
+      x-service: backend
+      x-source: "Importal-backend/src/modules/billing/controllers/billing.controller.ts"
   /api/v1/bodeguero/cargas:
     get:
       operationId: backend_get_api_v1_bodeguero_cargas
@@ -3673,6 +3768,31 @@ paths:
       x-role-group: comun
       x-service: backend
       x-source: "Importal-backend/src/modules/registration/controllers/registration.controller.ts"
+  /api/v1/registration-requests/check-exists:
+    get:
+      operationId: backend_get_api_v1_registration_requests_check_exists
+      parameters:
+        -           in: path
+          name: " exists: boolean; field?: 'email' | 'rut' "
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Returns whether the user exists
+      security:
+        -           bearerAuth:
+[]
+      summary: Check if a user with the given email or RUT already exists
+      tags:
+        - Registration
+      x-role-group: comun
+      x-service: backend
+      x-source: "Importal-backend/src/modules/registration/controllers/registration.controller.ts"
   /api/v1/registration-requests/{email}/approve:
     post:
       operationId: backend_post_api_v1_registration_requests_email_approve
@@ -4411,37 +4531,25 @@ paths:
       x-service: backend
       x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
   /api/v1/vendedor/pedidos/{id}/envio:
-    put:
-      operationId: backend_put_api_v1_vendedor_pedidos_id_envio
+    post:
+      operationId: backend_post_api_v1_vendedor_pedidos_id_envio
       parameters:
         -           in: path
           name: id
           required: true
           schema:
             type: string
-      requestBody:
-        content:
-          application/json:
-            example:
-              can_ship: true
-              seller_order_number: "SO-12345"
-            schema:
-              $ref: "#/components/schemas/UpdateOrderShippingRequest"
-        required: true
       responses:
         200:
           content:
             application/json:
-              example:
-                message: Operacion exitosa
-                ok: true
               schema:
                 $ref: "#/components/schemas/GenericObject"
-          description: Datos de envío actualizados
+          description: Operacion exitosa
       security:
         -           bearerAuth:
 []
-      summary: Actualizar flag de envío y número de seguimiento del vendedor (Vendedor)
+      summary: updateOrderShipping
       tags:
         - Orders
       x-role-group: vendedor
@@ -5112,27 +5220,13 @@ paths:
       parameters:
 []
       responses:
-        200:
+        201:
           content:
             application/json:
-              example:
-                count: 1
-                items:
-                  -                     consentimiento: true
-                    email: "usuario@ejemplo.com"
-                    is_email_verified: false
-                    is_phone_verified: false
-                    is_verified: false
-                    name: Juan Perez
-                    phone: +56912345678
-                    profileType: inversor
-                    requestedAt: "2026-05-25T12:00:00.000Z"
-                    rut: "12.345.678-9"
-                    status: PENDING
               schema:
-                $ref: "#/components/schemas/RegistrationListResponse"
-          description: Listado de solicitudes
-      summary: Listar solicitudes pendientes desde la lambda
+                $ref: "#/components/schemas/GenericObject"
+          description: Operacion exitosa
+      summary: Listar solicitudes pendientes para revision
       tags:
         - Registration
       x-role-group: publico

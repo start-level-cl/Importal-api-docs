@@ -302,7 +302,7 @@ export type RegistrationRequestCreate = {
   name: string
   password: string
   phone: string
-  profileType: "inversor"
+  profileType: "inversor" & "cliente"
   reference?: string
   region: string
   rut: string
@@ -310,6 +310,9 @@ export type RegistrationRequestCreate = {
   transportType: ("maritimo" & "aereo")[]
 } | {
   agency: string
+  comprobante?: string
+  comprobanteContentType?: string
+  comprobanteFileName?: string
   comuna: string
   consentimiento: boolean
   deptOrOffice?: string
@@ -318,7 +321,7 @@ export type RegistrationRequestCreate = {
   name: string
   password: string
   phone: string
-  profileType: "cliente_antiguo" & "cliente"
+  profileType: "cliente_antiguo"
   reference?: string
   region: string
   rut: string
@@ -411,6 +414,10 @@ export type UpdateCargaStatusRequest = {
 export type UpdateCommissionTierRequest = {
   commission_pct: number
   id: number
+}
+
+export type UpdateExchangeRateRequest = {
+  rate: number
 }
 
 export type UpdateLogisticsRateRequest = {
@@ -603,6 +610,22 @@ export interface Operations {
     requestBody: undefined
     responses: {
       "200": GenericObject
+    }
+  }
+  "backend_post_api_v1_admin_exchange_rate": {
+    method: "POST"
+    path: "/api/v1/admin/exchange-rate"
+    requestBody: UpdateExchangeRateRequest
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_get_api_v1_admin_exchange_rate_history": {
+    method: "GET"
+    path: "/api/v1/admin/exchange-rate/history"
+    requestBody: undefined
+    responses: {
+      "200": GenericObjectArray
     }
   }
   "backend_get_api_v1_admin_logs": {
@@ -901,6 +924,14 @@ export interface Operations {
       "200": GenericObject
     }
   }
+  "backend_get_api_v1_billing_exchange_rate": {
+    method: "GET"
+    path: "/api/v1/billing/exchange-rate"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
   "backend_get_api_v1_bodeguero_cargas": {
     method: "GET"
     path: "/api/v1/bodeguero/cargas"
@@ -1127,6 +1158,14 @@ export interface Operations {
       "200": RegistrationListResponse
     }
   }
+  "backend_get_api_v1_registration_requests_check_exists": {
+    method: "GET"
+    path: "/api/v1/registration-requests/check-exists"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
   "backend_post_api_v1_registration_requests_email_approve": {
     method: "POST"
     path: "/api/v1/registration-requests/{email}/approve"
@@ -1305,10 +1344,10 @@ export interface Operations {
       "200": GenericObject
     }
   }
-  "backend_put_api_v1_vendedor_pedidos_id_envio": {
-    method: "PUT"
+  "backend_post_api_v1_vendedor_pedidos_id_envio": {
+    method: "POST"
     path: "/api/v1/vendedor/pedidos/{id}/envio"
-    requestBody: UpdateOrderShippingRequest
+    requestBody: undefined
     responses: {
       "200": GenericObject
     }
@@ -1486,7 +1525,7 @@ export interface Operations {
     path: "/registration-requests"
     requestBody: undefined
     responses: {
-      "200": RegistrationListResponse
+      "201": GenericObject
     }
   }
   "registration_lambda_post_registration_requests": {

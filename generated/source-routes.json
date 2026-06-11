@@ -1267,6 +1267,60 @@
   {
     "service": "backend",
     "source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts",
+    "method": "post",
+    "path": "/api/v1/admin/exchange-rate",
+    "operationId": "backend_post_api_v1_admin_exchange_rate",
+    "tag": "Billing",
+    "tags": [
+      "Billing"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "updateExchangeRate",
+    "parameters": [],
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/exchange-rate/history",
+    "operationId": "backend_get_api_v1_admin_exchange_rate_history",
+    "tag": "Billing",
+    "tags": [
+      "Billing"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "getExchangeRateHistory",
+    "parameters": [],
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts",
+    "method": "get",
+    "path": "/api/v1/billing/exchange-rate",
+    "operationId": "backend_get_api_v1_billing_exchange_rate",
+    "tag": "Billing",
+    "tags": [
+      "Billing"
+    ],
+    "roles": [],
+    "security": "bearerAuth",
+    "methodName": "getLatestExchangeRate",
+    "parameters": [],
+    "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts",
     "method": "get",
     "path": "/api/v1/cliente/cobros",
     "operationId": "backend_get_api_v1_cliente_cobros",
@@ -1940,9 +1994,9 @@
   {
     "service": "backend",
     "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
-    "method": "put",
+    "method": "post",
     "path": "/api/v1/vendedor/pedidos/{id}/envio",
-    "operationId": "backend_put_api_v1_vendedor_pedidos_id_envio",
+    "operationId": "backend_post_api_v1_vendedor_pedidos_id_envio",
     "tag": "Orders",
     "tags": [
       "Orders"
@@ -2268,6 +2322,34 @@
     "methodName": "deleteProduct",
     "parameters": [],
     "roleGroup": "vendedor"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/registration/controllers/registration.controller.ts",
+    "method": "get",
+    "path": "/api/v1/registration-requests/check-exists",
+    "operationId": "backend_get_api_v1_registration_requests_check_exists",
+    "tag": "Registration",
+    "tags": [
+      "Registration"
+    ],
+    "summary": "Check if a user with the given email or RUT already exists",
+    "roles": [],
+    "security": "bearerAuth",
+    "responseStatus": 200,
+    "responseDescription": "Returns whether the user exists",
+    "methodName": "checkUserExists",
+    "parameters": [
+      {
+        "name": " exists: boolean; field?: 'email' | 'rut' ",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "roleGroup": "comun"
   },
   {
     "service": "backend",

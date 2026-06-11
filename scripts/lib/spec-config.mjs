@@ -329,6 +329,7 @@ const schemaExamples = {
   ConfirmCobroRequest: { approved: true, admin_comment: 'Comprobante validado' },
   UpdateCommissionTierRequest: { id: 1, commission_pct: 20 },
   UpdateLogisticsRateRequest: { id: 1, rate_value: 30 },
+  UpdateExchangeRateRequest: { rate: 980 },
   CreateMessageRequest: { message: 'Hola, ¿cómo estás?', referenced_message_id: null },
   RequestContactChangeRequest: { type: 'email', newValue: 'nuevo@correo.com', password: 'Password123!' },
   VerifyContactChangeRequest: { token: 'token-transaction-123', code: '123456' },
@@ -498,7 +499,7 @@ export const schemas = {
               phone: { type: 'string' },
               password: { type: 'string' },
               consentimiento: { type: 'boolean' },
-              profileType: { const: 'inversor', type: 'string' },
+              profileType: stringEnum(['inversor', 'cliente']),
               housingType: stringEnum(['casa', 'departamento', 'oficina']),
               streetAndNumber: { type: 'string' },
               deptOrOffice: { type: 'string' },
@@ -525,7 +526,7 @@ export const schemas = {
               phone: { type: 'string' },
               password: { type: 'string' },
               consentimiento: { type: 'boolean' },
-              profileType: stringEnum(['cliente_antiguo', 'cliente']),
+              profileType: { const: 'cliente_antiguo', type: 'string' },
               housingType: stringEnum(['casa', 'departamento', 'oficina']),
               streetAndNumber: { type: 'string' },
               deptOrOffice: { type: 'string' },
@@ -534,6 +535,9 @@ export const schemas = {
               reference: { type: 'string', maxLength: 120 },
               agency: { type: 'string' },
               transportType: { type: 'array', items: stringEnum(['maritimo', 'aereo']) },
+              comprobante: { type: 'string', description: 'Archivo PDF/Imagen en Base64 (max 5MB) (Opcional)' },
+              comprobanteFileName: { type: 'string' },
+              comprobanteContentType: { type: 'string' },
             },
             ['email', 'name', 'rut', 'phone', 'password', 'consentimiento', 'profileType', 'housingType', 'streetAndNumber', 'region', 'comuna', 'agency', 'transportType'],
           ),
@@ -921,6 +925,12 @@ export const schemas = {
     },
     ['id', 'rate_value'],
   ),
+  UpdateExchangeRateRequest: objectSchema(
+    {
+      rate: { type: 'number' },
+    },
+    ['rate'],
+  ),
   CreateMessageRequest: objectSchema(
     {
       message: { type: 'string', description: 'Contenido del mensaje' },
@@ -1123,10 +1133,6 @@ export const operationOverrides = {
       jsonResponse('403', 'Consentimiento requerido', 'ErrorResponse'),
       jsonResponse('409', 'Solicitud duplicada', 'ErrorResponse'),
     ]),
-  },
-  'get /registration-requests': {
-    summary: 'Listar solicitudes pendientes desde la lambda',
-    responses: Object.fromEntries([jsonResponse('200', 'Listado de solicitudes', 'RegistrationListResponse')]),
   },
   'post /registration-requests/{email}/send-code': {
     summary: 'Generar OTP para una solicitud (email, phone o ambos)',
@@ -1346,6 +1352,19 @@ export const operationOverrides = {
     summary: 'Actualizar valor de tarifa logística (Admin/Root)',
     requestBody: jsonRequest('UpdateLogisticsRateRequest'),
     responses: Object.fromEntries([jsonResponse('200', 'Tarifa actualizada', 'GenericObject')]),
+  },
+  'post /api/v1/admin/exchange-rate': {
+    summary: 'Actualizar el tipo de cambio del dólar (Admin/Root)',
+    requestBody: jsonRequest('UpdateExchangeRateRequest'),
+    responses: Object.fromEntries([jsonResponse('200', 'Tipo de cambio actualizado exitosamente', 'GenericObject')]),
+  },
+  'get /api/v1/admin/exchange-rate/history': {
+    summary: 'Obtener historial de cambios del dólar (Admin/Root)',
+    responses: Object.fromEntries([jsonResponse('200', 'Historial del tipo de cambio', 'GenericObjectArray')]),
+  },
+  'get /api/v1/billing/exchange-rate': {
+    summary: 'Obtener el tipo de cambio activo actual del dólar',
+    responses: Object.fromEntries([jsonResponse('200', 'Tipo de cambio actual', 'GenericObject')]),
   },
   'get /api/v1/cliente/cobros': {
     summary: 'Obtener cobros pendientes y facturados del cliente autenticado agrupados por carga',
