@@ -612,6 +612,7 @@ export const schemas = {
       pickupState: { type: 'string' },
       zipCode: { type: 'string' },
       comprobanteKey: { type: 'string' },
+      comprobanteUrl: { type: 'string', description: 'URL firmada de S3 para visualizar el comprobante (validez temporal)' },
     },
     ['email', 'name', 'rut', 'phone', 'profileType', 'status', 'requestedAt'],
   ),
@@ -1218,14 +1219,6 @@ export const operationOverrides = {
       jsonResponse('200', 'Solicitud rechazada', 'RegistrationRequest'),
       jsonResponse('404', 'Solicitud no encontrada', 'ErrorResponse'),
       jsonResponse('409', 'Solicitud ya procesada', 'ErrorResponse'),
-    ]),
-  },
-  'get /api/v1/registration-requests/{email}/comprobante': {
-    summary: 'Obtener comprobante de registro de un usuario (Admin/Root)',
-    responses: Object.fromEntries([
-      jsonResponse('200', 'Comprobante retornado exitosamente', 'RegistrationComprobanteResponse'),
-      jsonResponse('400', 'Email invalido', 'ErrorResponse'),
-      jsonResponse('404', 'Solicitud o comprobante no encontrado', 'ErrorResponse'),
     ]),
   },
   'post /api/v1/admin/users/create-admin': {

@@ -264,6 +264,7 @@ export type RegistrationRequest = {
   agency?: string
   city?: string
   comprobanteKey?: string
+  comprobanteUrl?: string
   comuna?: string
   consentimiento?: boolean
   deptOrOffice?: string
@@ -1175,16 +1176,6 @@ export interface Operations {
       "400": ErrorResponse
       "404": ErrorResponse
       "409": ErrorResponse
-    }
-  }
-  "backend_get_api_v1_registration_requests_email_comprobante": {
-    method: "GET"
-    path: "/api/v1/registration-requests/{email}/comprobante"
-    requestBody: undefined
-    responses: {
-      "200": RegistrationComprobanteResponse
-      "400": ErrorResponse
-      "404": ErrorResponse
     }
   }
   "backend_post_api_v1_registration_requests_email_reject": {
