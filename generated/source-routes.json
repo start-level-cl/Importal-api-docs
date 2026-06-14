@@ -1891,24 +1891,6 @@
     "service": "backend",
     "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
     "method": "get",
-    "path": "/api/v1/vendedor/pedidos-carga",
-    "operationId": "backend_get_api_v1_vendedor_pedidos_carga",
-    "tag": "Orders",
-    "tags": [
-      "Orders"
-    ],
-    "roles": [
-      "vendor"
-    ],
-    "security": "bearerAuth",
-    "methodName": "getVendorActiveCargaOrders",
-    "parameters": [],
-    "roleGroup": "vendedor"
-  },
-  {
-    "service": "backend",
-    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
-    "method": "get",
     "path": "/api/v1/vendedor/pedidos-carga/status",
     "operationId": "backend_get_api_v1_vendedor_pedidos_carga_status",
     "tag": "Orders",

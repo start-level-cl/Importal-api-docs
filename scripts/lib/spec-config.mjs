@@ -1288,6 +1288,8 @@ export const operationOverrides = {
     summary: 'Listar pedidos del vendedor autenticado (Vendedor)',
     parameters: [
       { name: 'can_ship', in: 'query', required: false, schema: { type: 'boolean' }, description: 'Filtrar por pedidos que se pueden enviar (true/false)' },
+      { name: 'active_carga', in: 'query', required: false, schema: { type: 'boolean' }, description: 'Filtrar por pedidos asociados a la asignación de carga activa' },
+      { name: 'tipo_carga', in: 'query', required: false, schema: { type: 'string', enum: ['AEREA', 'MARITIMA'] }, description: 'Filtrar por tipo de transporte (AEREA/MARITIMA)' },
       { name: 'page', in: 'query', required: false, schema: { type: 'integer', default: 1 }, description: 'Número de página' },
       { name: 'limit', in: 'query', required: false, schema: { type: 'integer', default: 10 }, description: 'Límite de resultados por página' }
     ],
@@ -1502,13 +1504,7 @@ export const operationOverrides = {
     summary: 'Rechazar la transición de un pedido (Admin/Root)',
     responses: Object.fromEntries([jsonResponse('200', 'Transición rechazada con éxito', 'GenericObject')]),
   },
-  'get /api/v1/vendedor/pedidos-carga': {
-    summary: 'Listar pedidos de la carga activa del vendedor (Vendedor)',
-    parameters: [
-      { name: 'tipo_carga', in: 'query', required: false, schema: { type: 'string', enum: ['AEREA', 'MARITIMA'] }, description: 'Filtrar por tipo de transporte' }
-    ],
-    responses: Object.fromEntries([jsonResponse('200', 'Pedidos de la carga activa', 'GenericObjectArray')]),
-  },
+
   'get /api/v1/vendedor/pedidos-carga/status': {
     summary: 'Obtener el estado consolidado de la asignación y cargas del vendedor (Vendedor)',
     parameters: [

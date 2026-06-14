@@ -6407,6 +6407,28 @@
             }
           },
           {
+            "description": "Filtrar por pedidos asociados a la asignación de carga activa",
+            "in": "query",
+            "name": "active_carga",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "description": "Filtrar por tipo de transporte (AEREA/MARITIMA)",
+            "in": "query",
+            "name": "tipo_carga",
+            "required": false,
+            "schema": {
+              "enum": [
+                "AEREA",
+                "MARITIMA"
+              ],
+              "type": "string"
+            }
+          },
+          {
             "description": "Número de página",
             "in": "query",
             "name": "page",
@@ -6445,56 +6467,6 @@
           }
         ],
         "summary": "Listar pedidos del vendedor autenticado (Vendedor)",
-        "tags": [
-          "Orders"
-        ],
-        "x-role-group": "vendedor",
-        "x-service": "backend",
-        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
-      }
-    },
-    "/api/v1/vendedor/pedidos-carga": {
-      "get": {
-        "operationId": "backend_get_api_v1_vendedor_pedidos_carga",
-        "parameters": [
-          {
-            "description": "Filtrar por tipo de transporte",
-            "in": "query",
-            "name": "tipo_carga",
-            "required": false,
-            "schema": {
-              "enum": [
-                "AEREA",
-                "MARITIMA"
-              ],
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "example": [
-                  {
-                    "id": 1,
-                    "message": "Ejemplo de elemento retornado"
-                  }
-                ],
-                "schema": {
-                  "$ref": "#/components/schemas/GenericObjectArray"
-                }
-              }
-            },
-            "description": "Pedidos de la carga activa"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "summary": "Listar pedidos de la carga activa del vendedor (Vendedor)",
         "tags": [
           "Orders"
         ],

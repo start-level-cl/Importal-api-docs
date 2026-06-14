@@ -1316,14 +1316,6 @@ export interface Operations {
       "200": VendorOrdersPaginatedResponse
     }
   }
-  "backend_get_api_v1_vendedor_pedidos_carga": {
-    method: "GET"
-    path: "/api/v1/vendedor/pedidos-carga"
-    requestBody: undefined
-    responses: {
-      "200": GenericObjectArray
-    }
-  }
   "backend_get_api_v1_vendedor_pedidos_carga_status": {
     method: "GET"
     path: "/api/v1/vendedor/pedidos-carga/status"

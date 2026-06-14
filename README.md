@@ -70,9 +70,9 @@ En Importal, la gestión de cargas y pedidos para los vendedores está sujeta a 
 
 ### 1. Visualización de Pedidos en la Carga Activa
 El vendedor puede listar los pedidos asociados a su asignación de carga activa llamando a:
-- **Endpoint:** `GET /api/v1/vendedor/pedidos-carga`
-- **Parámetros:** `tipo_carga` (opcional: `AEREA` o `MARITIMA`)
-- **Comportamiento:** Retorna la lista de pedidos que se consolidarán en la carga abierta actual asignada a dicho vendedor.
+- **Endpoint:** `GET /api/v1/vendedor/pedidos`
+- **Parámetros:** `active_carga` (obligatorio: `true`), `tipo_carga` (opcional: `AEREA` o `MARITIMA`)
+- **Comportamiento:** Retorna la lista de pedidos paginados que se consolidarán en la carga abierta actual asignada a dicho vendedor.
 
 ### 2. Transición Individual de Pedidos a la Siguiente Carga
 Si un vendedor no puede enviar un producto específico en la carga actual (por ejemplo, por falta de stock temporal o retraso logístico), puede enviar una solicitud de transición para esa orden específica:
