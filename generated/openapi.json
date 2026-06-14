@@ -867,6 +867,26 @@
         ],
         "type": "object"
       },
+      "RegistrationCheckExistsResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "exists": {
+            "description": "Si el usuario ya existe",
+            "type": "boolean"
+          },
+          "field": {
+            "enum": [
+              "email",
+              "rut"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "exists"
+        ],
+        "type": "object"
+      },
       "RegistrationComprobanteResponse": {
         "additionalProperties": false,
         "properties": {
@@ -2275,12 +2295,18 @@
           "200": {
             "content": {
               "application/json": {
+                "example": [
+                  {
+                    "id": 1,
+                    "message": "Ejemplo de elemento retornado"
+                  }
+                ],
                 "schema": {
-                  "$ref": "#/components/schemas/GenericObject"
+                  "$ref": "#/components/schemas/GenericObjectArray"
                 }
               }
             },
-            "description": "Operacion exitosa"
+            "description": "Lista de comprobantes del cobro"
           }
         },
         "security": [
@@ -2288,7 +2314,7 @@
             "bearerAuth": []
           }
         ],
-        "summary": "getCobroProofImages",
+        "summary": "Obtener los comprobantes de pago subidos para un cobro específico (Admin/Root)",
         "tags": [
           "Billing"
         ],
@@ -4289,12 +4315,18 @@
           "200": {
             "content": {
               "application/json": {
+                "example": [
+                  {
+                    "id": 1,
+                    "message": "Ejemplo de elemento retornado"
+                  }
+                ],
                 "schema": {
-                  "$ref": "#/components/schemas/GenericObject"
+                  "$ref": "#/components/schemas/GenericObjectArray"
                 }
               }
             },
-            "description": "Operacion exitosa"
+            "description": "Información de armado de pedidos"
           }
         },
         "security": [
@@ -4302,7 +4334,7 @@
             "bearerAuth": []
           }
         ],
-        "summary": "getArmarPedidos",
+        "summary": "Obtener información consolidada de pedidos para armar una carga específica",
         "tags": [
           "Orders"
         ],
@@ -4969,12 +5001,16 @@
           "200": {
             "content": {
               "application/json": {
+                "example": {
+                  "message": "Operacion exitosa",
+                  "ok": true
+                },
                 "schema": {
                   "$ref": "#/components/schemas/GenericObject"
                 }
               }
             },
-            "description": "Operacion exitosa"
+            "description": "Comprobante eliminado con éxito"
           }
         },
         "security": [
@@ -4982,7 +5018,7 @@
             "bearerAuth": []
           }
         ],
-        "summary": "deletePaymentProof",
+        "summary": "Eliminar el comprobante de pago subido de un cobro (Cliente)",
         "tags": [
           "Billing"
         ],
@@ -5492,9 +5528,19 @@
         "operationId": "backend_get_api_v1_registration_requests_check_exists",
         "parameters": [
           {
-            "in": "path",
-            "name": " exists: boolean; field?: 'email' | 'rut' ",
-            "required": true,
+            "description": "Correo a verificar",
+            "in": "query",
+            "name": "email",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "RUT a verificar",
+            "in": "query",
+            "name": "rut",
+            "required": false,
             "schema": {
               "type": "string"
             }
@@ -5505,11 +5551,11 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GenericObject"
+                  "$ref": "#/components/schemas/RegistrationCheckExistsResponse"
                 }
               }
             },
-            "description": "Returns whether the user exists"
+            "description": "Resultado de la verificación"
           }
         },
         "security": [
@@ -5517,7 +5563,7 @@
             "bearerAuth": []
           }
         ],
-        "summary": "Check if a user with the given email or RUT already exists",
+        "summary": "Verificar si un email o RUT ya existe en el sistema",
         "tags": [
           "Registration"
         ],
@@ -6462,7 +6508,7 @@
         "operationId": "backend_get_api_v1_vendedor_pedidos_carga_status",
         "parameters": [
           {
-            "description": "Opcional: AEREA o MARITIMA",
+            "description": "Filtrar por tipo de transporte",
             "in": "query",
             "name": "tipo_carga",
             "required": false,
@@ -6479,12 +6525,16 @@
           "200": {
             "content": {
               "application/json": {
+                "example": {
+                  "message": "Operacion exitosa",
+                  "ok": true
+                },
                 "schema": {
                   "$ref": "#/components/schemas/GenericObject"
                 }
               }
             },
-            "description": "Operacion exitosa"
+            "description": "Estado de carga consolidado del vendedor"
           }
         },
         "security": [
@@ -6492,7 +6542,7 @@
             "bearerAuth": []
           }
         ],
-        "summary": "getVendorCargaStatus",
+        "summary": "Obtener el estado consolidado de la asignación y cargas del vendedor (Vendedor)",
         "tags": [
           "Orders"
         ],
@@ -6561,12 +6611,16 @@
           "200": {
             "content": {
               "application/json": {
+                "example": {
+                  "message": "Operacion exitosa",
+                  "ok": true
+                },
                 "schema": {
                   "$ref": "#/components/schemas/GenericObject"
                 }
               }
             },
-            "description": "Operacion exitosa"
+            "description": "Pedido marcado como listo para envío"
           }
         },
         "security": [
@@ -6574,7 +6628,7 @@
             "bearerAuth": []
           }
         ],
-        "summary": "updateOrderShipping",
+        "summary": "Marcar pedido como enviado y listo para tránsito (Vendedor)",
         "tags": [
           "Orders"
         ],
@@ -6631,6 +6685,49 @@
           }
         ],
         "summary": "updateOrderStatus",
+        "tags": [
+          "Orders"
+        ],
+        "x-role-group": "vendedor",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+      }
+    },
+    "/api/v1/vendedor/pedidos/{id}/rechazar": {
+      "post": {
+        "operationId": "backend_post_api_v1_vendedor_pedidos_id_rechazar",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Operacion exitosa",
+                  "ok": true
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Pedido rechazado"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Rechazar un pedido y liberar el stock reservado (Vendedor)",
         "tags": [
           "Orders"
         ],
@@ -6814,11 +6911,11 @@
         ],
         "summary": "Inactivar un producto del catálogo (Vendedor/Admin/Root)",
         "tags": [
-          "Orders"
+          "Products"
         ],
         "x-role-group": "vendedor",
         "x-service": "backend",
-        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+        "x-source": "Importal-backend/src/modules/products/controllers/products.controller.ts"
       },
       "put": {
         "operationId": "backend_put_api_v1_vendedor_productos_id",

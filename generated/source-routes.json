@@ -1976,6 +1976,24 @@
   {
     "service": "backend",
     "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "post",
+    "path": "/api/v1/vendedor/pedidos/{id}/rechazar",
+    "operationId": "backend_post_api_v1_vendedor_pedidos_id_rechazar",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "vendor"
+    ],
+    "security": "bearerAuth",
+    "methodName": "rejectOrder",
+    "parameters": [],
+    "roleGroup": "vendedor"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
     "method": "put",
     "path": "/api/v1/vendedor/pedidos/{id}/estado",
     "operationId": "backend_put_api_v1_vendedor_pedidos_id_estado",
@@ -2182,26 +2200,6 @@
     "methodName": "getArmarPedidos",
     "parameters": [],
     "roleGroup": "bodeguero"
-  },
-  {
-    "service": "backend",
-    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
-    "method": "delete",
-    "path": "/api/v1/vendedor/productos/{id}",
-    "operationId": "backend_delete_api_v1_vendedor_productos_id",
-    "tag": "Orders",
-    "tags": [
-      "Orders"
-    ],
-    "roles": [
-      "vendor",
-      "admin",
-      "root"
-    ],
-    "security": "bearerAuth",
-    "methodName": "deleteProduct",
-    "parameters": [],
-    "roleGroup": "vendedor"
   },
   {
     "service": "backend",

@@ -244,6 +244,11 @@ export type RegistrationApproveRequest = {
   role?: string
 }
 
+export type RegistrationCheckExistsResponse = {
+  exists: boolean
+  field?: "email" | "rut"
+}
+
 export type RegistrationComprobanteResponse = {
   comprobante: string
   email: string
@@ -570,7 +575,7 @@ export interface Operations {
     path: "/api/v1/admin/cobros/{id}/comprobantes"
     requestBody: undefined
     responses: {
-      "200": GenericObject
+      "200": GenericObjectArray
     }
   }
   "backend_post_api_v1_admin_cobros_id_confirmar": {
@@ -946,7 +951,7 @@ export interface Operations {
     path: "/api/v1/bodeguero/cargas/{cargaId}/armar-pedidos"
     requestBody: undefined
     responses: {
-      "200": GenericObject
+      "200": GenericObjectArray
     }
   }
   "backend_get_api_v1_bodeguero_cargas_cargaId_pedidos": {
@@ -1164,7 +1169,7 @@ export interface Operations {
     path: "/api/v1/registration-requests/check-exists"
     requestBody: undefined
     responses: {
-      "200": GenericObject
+      "200": RegistrationCheckExistsResponse
     }
   }
   "backend_post_api_v1_registration_requests_email_approve": {
@@ -1347,6 +1352,14 @@ export interface Operations {
     method: "PUT"
     path: "/api/v1/vendedor/pedidos/{id}/estado"
     requestBody: UpdateOrderStatusRequest
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_post_api_v1_vendedor_pedidos_id_rechazar": {
+    method: "POST"
+    path: "/api/v1/vendedor/pedidos/{id}/rechazar"
+    requestBody: undefined
     responses: {
       "200": GenericObject
     }

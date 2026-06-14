@@ -653,6 +653,13 @@ export const schemas = {
     },
     ['email', 'comprobante'],
   ),
+  RegistrationCheckExistsResponse: objectSchema(
+    {
+      exists: { type: 'boolean', description: 'Si el usuario ya existe' },
+      field: { type: 'string', enum: ['email', 'rut'] },
+    },
+    ['exists'],
+  ),
   RegistrationVerifyRequest: objectSchema({
     code: { type: 'string' },
     channel: stringEnum(['email', 'phone']),
@@ -1202,6 +1209,16 @@ export const operationOverrides = {
     summary: 'Listar solicitudes pendientes para aprobacion',
     responses: Object.fromEntries([jsonResponse('200', 'Listado de solicitudes', 'RegistrationListResponse')]),
   },
+  'get /api/v1/registration-requests/check-exists': {
+    summary: 'Verificar si un email o RUT ya existe en el sistema',
+    parameters: [
+      { name: 'email', in: 'query', required: false, schema: { type: 'string' }, description: 'Correo a verificar' },
+      { name: 'rut', in: 'query', required: false, schema: { type: 'string' }, description: 'RUT a verificar' },
+    ],
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Resultado de la verificación', 'RegistrationCheckExistsResponse'),
+    ]),
+  },
   'post /api/v1/registration-requests/{email}/approve': {
     summary: 'Aprobar solicitud y crear usuario en auth',
     requestBody: jsonRequest('RegistrationApproveRequest'),
@@ -1284,10 +1301,13 @@ export const operationOverrides = {
     summary: 'Confirmar pedido y efectuar descuento final de stock (Vendedor)',
     responses: Object.fromEntries([jsonResponse('200', 'Pedido confirmado', 'GenericObject')]),
   },
-  'put /api/v1/vendedor/pedidos/{id}/envio': {
-    summary: 'Actualizar flag de envío y número de seguimiento del vendedor (Vendedor)',
-    requestBody: jsonRequest('UpdateOrderShippingRequest'),
-    responses: Object.fromEntries([jsonResponse('200', 'Datos de envío actualizados', 'GenericObject')]),
+  'post /api/v1/vendedor/pedidos/{id}/rechazar': {
+    summary: 'Rechazar un pedido y liberar el stock reservado (Vendedor)',
+    responses: Object.fromEntries([jsonResponse('200', 'Pedido rechazado', 'GenericObject')]),
+  },
+  'post /api/v1/vendedor/pedidos/{id}/envio': {
+    summary: 'Marcar pedido como enviado y listo para tránsito (Vendedor)',
+    responses: Object.fromEntries([jsonResponse('200', 'Pedido marcado como listo para envío', 'GenericObject')]),
   },
   'post /api/v1/admin/cargas': {
     requestBody: jsonRequest('CreateCargaRequest'),
@@ -1309,6 +1329,10 @@ export const operationOverrides = {
   'get /api/v1/admin/cobros/pendientes-validacion': {
     summary: 'Listar cobros que tienen un comprobante subido pendiente de revisión (Admin/Root)',
     responses: Object.fromEntries([jsonResponse('200', 'Listado de cobros pendientes de validación', 'GenericObjectArray')]),
+  },
+  'get /api/v1/admin/cobros/{id}/comprobantes': {
+    summary: 'Obtener los comprobantes de pago subidos para un cobro específico (Admin/Root)',
+    responses: Object.fromEntries([jsonResponse('200', 'Lista de comprobantes del cobro', 'GenericObjectArray')]),
   },
   'get /api/v1/admin/dashboard': {
     summary: 'Obtener métricas consolidadas del dashboard administrativo y últimos morosos (Admin/Root)',
@@ -1401,6 +1425,10 @@ export const operationOverrides = {
     },
     responses: Object.fromEntries([jsonResponse('200', 'Comprobante subido, cobro en revisión', 'GenericObject')]),
   },
+  'delete /api/v1/cliente/cobros/{id}/comprobante': {
+    summary: 'Eliminar el comprobante de pago subido de un cobro (Cliente)',
+    responses: Object.fromEntries([jsonResponse('200', 'Comprobante eliminado con éxito', 'GenericObject')]),
+  },
   'post /api/v1/admin/cobros/trigger': {
     summary: 'Gatillar manualmente generación de cobros del periodo y cálculo de intereses de mora (Admin/Root)',
     responses: Object.fromEntries([jsonResponse('200', 'Gatillado de facturación exitoso', 'GenericObject')]),
@@ -1481,6 +1509,13 @@ export const operationOverrides = {
     ],
     responses: Object.fromEntries([jsonResponse('200', 'Pedidos de la carga activa', 'GenericObjectArray')]),
   },
+  'get /api/v1/vendedor/pedidos-carga/status': {
+    summary: 'Obtener el estado consolidado de la asignación y cargas del vendedor (Vendedor)',
+    parameters: [
+      { name: 'tipo_carga', in: 'query', required: false, schema: { type: 'string', enum: ['AEREA', 'MARITIMA'] }, description: 'Filtrar por tipo de transporte' }
+    ],
+    responses: Object.fromEntries([jsonResponse('200', 'Estado de carga consolidado del vendedor', 'GenericObject')]),
+  },
   'post /api/v1/vendedor/pedidos/{id}/solicitar-transicion': {
     summary: 'Solicitar transición de un pedido individual a la siguiente carga abierta (Vendedor)',
     responses: Object.fromEntries([jsonResponse('201', 'Solicitud creada con éxito', 'GenericObject')]),
@@ -1500,6 +1535,10 @@ export const operationOverrides = {
   'get /api/v1/bodeguero/cargas/{id}/verificar-revision': {
     summary: 'Verificar si todos los pedidos de una carga han sido revisados',
     responses: Object.fromEntries([jsonResponse('200', 'Estado de revisión de la carga', 'GenericObject')]),
+  },
+  'get /api/v1/bodeguero/cargas/{cargaId}/armar-pedidos': {
+    summary: 'Obtener información consolidada de pedidos para armar una carga específica',
+    responses: Object.fromEntries([jsonResponse('200', 'Información de armado de pedidos', 'GenericObjectArray')]),
   },
   'get /api/v1/bodeguero/pedidos/{id}/auditoria': {
     summary: 'Consultar el historial de auditoría y transiciones de un pedido (Bodeguero/Admin/Root)',
