@@ -818,28 +818,12 @@ export interface Operations {
       "200": GenericObject
     }
   }
-  "backend_get_api_v1_admin_tarifas_comisiones": {
-    method: "GET"
-    path: "/api/v1/admin/tarifas/comisiones"
-    requestBody: undefined
-    responses: {
-      "200": GenericObjectArray
-    }
-  }
   "backend_put_api_v1_admin_tarifas_comisiones": {
     method: "PUT"
     path: "/api/v1/admin/tarifas/comisiones"
     requestBody: UpdateCommissionTierRequest
     responses: {
       "200": GenericObject
-    }
-  }
-  "backend_get_api_v1_admin_tarifas_logisticas": {
-    method: "GET"
-    path: "/api/v1/admin/tarifas/logisticas"
-    requestBody: undefined
-    responses: {
-      "200": GenericObjectArray
     }
   }
   "backend_post_api_v1_admin_tarifas_logisticas": {
@@ -933,6 +917,38 @@ export interface Operations {
   "backend_get_api_v1_billing_exchange_rate": {
     method: "GET"
     path: "/api/v1/billing/exchange-rate"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_get_api_v1_bodeguero_cajas": {
+    method: "GET"
+    path: "/api/v1/bodeguero/cajas"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_post_api_v1_bodeguero_cajas": {
+    method: "POST"
+    path: "/api/v1/bodeguero/cajas"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_delete_api_v1_bodeguero_cajas_id": {
+    method: "DELETE"
+    path: "/api/v1/bodeguero/cajas/{id}"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_get_api_v1_bodeguero_cajas_id": {
+    method: "GET"
+    path: "/api/v1/bodeguero/cajas/{id}"
     requestBody: undefined
     responses: {
       "200": GenericObject
@@ -1215,6 +1231,22 @@ export interface Operations {
     requestBody: undefined
     responses: {
       "200": SupportTicket
+    }
+  }
+  "backend_get_api_v1_tarifas_comisiones": {
+    method: "GET"
+    path: "/api/v1/tarifas/comisiones"
+    requestBody: undefined
+    responses: {
+      "200": GenericObjectArray
+    }
+  }
+  "backend_get_api_v1_tarifas_logisticas": {
+    method: "GET"
+    path: "/api/v1/tarifas/logisticas"
+    requestBody: undefined
+    responses: {
+      "200": GenericObjectArray
     }
   }
   "backend_get_api_v1_users": {

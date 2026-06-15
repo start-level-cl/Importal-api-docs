@@ -1349,8 +1349,8 @@ export const operationOverrides = {
     requestBody: jsonRequest('ConfirmCobroRequest'),
     responses: Object.fromEntries([jsonResponse('200', 'Cobro confirmado', 'GenericObject')]),
   },
-  'get /api/v1/admin/tarifas/comisiones': {
-    summary: 'Obtener lista de comisiones configuradas (Admin/Root)',
+  'get /api/v1/tarifas/comisiones': {
+    summary: 'Obtener lista de comisiones configuradas',
     responses: Object.fromEntries([jsonResponse('200', 'Comisiones configuradas', 'GenericObjectArray')]),
   },
   'put /api/v1/admin/tarifas/comisiones': {
@@ -1358,8 +1358,8 @@ export const operationOverrides = {
     requestBody: jsonRequest('UpdateCommissionTierRequest'),
     responses: Object.fromEntries([jsonResponse('200', 'Comision actualizada', 'GenericObject')]),
   },
-  'get /api/v1/admin/tarifas/logisticas': {
-    summary: 'Obtener lista de tarifas logísticas configuradas (Admin/Root)',
+  'get /api/v1/tarifas/logisticas': {
+    summary: 'Obtener lista de tarifas logísticas configuradas',
     responses: Object.fromEntries([jsonResponse('200', 'Tarifas logísticas configuradas', 'GenericObjectArray')]),
   },
   'post /api/v1/admin/tarifas/logisticas': {

@@ -1173,20 +1173,23 @@
     "service": "backend",
     "source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts",
     "method": "get",
-    "path": "/api/v1/admin/tarifas/comisiones",
-    "operationId": "backend_get_api_v1_admin_tarifas_comisiones",
+    "path": "/api/v1/tarifas/comisiones",
+    "operationId": "backend_get_api_v1_tarifas_comisiones",
     "tag": "Billing",
     "tags": [
       "Billing"
     ],
     "roles": [
       "admin",
-      "root"
+      "root",
+      "client",
+      "vendor",
+      "bodeguero"
     ],
     "security": "bearerAuth",
     "methodName": "getCommissions",
     "parameters": [],
-    "roleGroup": "admin"
+    "roleGroup": "comun"
   },
   {
     "service": "backend",
@@ -1211,20 +1214,23 @@
     "service": "backend",
     "source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts",
     "method": "get",
-    "path": "/api/v1/admin/tarifas/logisticas",
-    "operationId": "backend_get_api_v1_admin_tarifas_logisticas",
+    "path": "/api/v1/tarifas/logisticas",
+    "operationId": "backend_get_api_v1_tarifas_logisticas",
     "tag": "Billing",
     "tags": [
       "Billing"
     ],
     "roles": [
       "admin",
-      "root"
+      "root",
+      "client",
+      "vendor",
+      "bodeguero"
     ],
     "security": "bearerAuth",
     "methodName": "getLogisticsRates",
     "parameters": [],
-    "roleGroup": "admin"
+    "roleGroup": "comun"
   },
   {
     "service": "backend",
@@ -2180,6 +2186,86 @@
     ],
     "security": "bearerAuth",
     "methodName": "getArmarPedidos",
+    "parameters": [],
+    "roleGroup": "bodeguero"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "post",
+    "path": "/api/v1/bodeguero/cajas",
+    "operationId": "backend_post_api_v1_bodeguero_cajas",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "bodeguero",
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "createCaja",
+    "parameters": [],
+    "roleGroup": "bodeguero"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "get",
+    "path": "/api/v1/bodeguero/cajas",
+    "operationId": "backend_get_api_v1_bodeguero_cajas",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "bodeguero",
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "getCajas",
+    "parameters": [],
+    "roleGroup": "bodeguero"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "get",
+    "path": "/api/v1/bodeguero/cajas/{id}",
+    "operationId": "backend_get_api_v1_bodeguero_cajas_id",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "bodeguero",
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "getCajaById",
+    "parameters": [],
+    "roleGroup": "bodeguero"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "delete",
+    "path": "/api/v1/bodeguero/cajas/{id}",
+    "operationId": "backend_delete_api_v1_bodeguero_cajas_id",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "bodeguero",
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "deleteCaja",
     "parameters": [],
     "roleGroup": "bodeguero"
   },

@@ -3635,40 +3635,6 @@
       }
     },
     "/api/v1/admin/tarifas/comisiones": {
-      "get": {
-        "operationId": "backend_get_api_v1_admin_tarifas_comisiones",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "example": [
-                  {
-                    "id": 1,
-                    "message": "Ejemplo de elemento retornado"
-                  }
-                ],
-                "schema": {
-                  "$ref": "#/components/schemas/GenericObjectArray"
-                }
-              }
-            },
-            "description": "Comisiones configuradas"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "summary": "Obtener lista de comisiones configuradas (Admin/Root)",
-        "tags": [
-          "Billing"
-        ],
-        "x-role-group": "admin",
-        "x-service": "backend",
-        "x-source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts"
-      },
       "put": {
         "operationId": "backend_put_api_v1_admin_tarifas_comisiones",
         "parameters": [],
@@ -3717,40 +3683,6 @@
       }
     },
     "/api/v1/admin/tarifas/logisticas": {
-      "get": {
-        "operationId": "backend_get_api_v1_admin_tarifas_logisticas",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "example": [
-                  {
-                    "id": 1,
-                    "message": "Ejemplo de elemento retornado"
-                  }
-                ],
-                "schema": {
-                  "$ref": "#/components/schemas/GenericObjectArray"
-                }
-              }
-            },
-            "description": "Tarifas logísticas configuradas"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "summary": "Obtener lista de tarifas logísticas configuradas (Admin/Root)",
-        "tags": [
-          "Billing"
-        ],
-        "x-role-group": "admin",
-        "x-service": "backend",
-        "x-source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts"
-      },
       "post": {
         "operationId": "backend_post_api_v1_admin_tarifas_logisticas",
         "parameters": [],
@@ -4260,6 +4192,140 @@
         "x-role-group": "comun",
         "x-service": "backend",
         "x-source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts"
+      }
+    },
+    "/api/v1/bodeguero/cajas": {
+      "get": {
+        "operationId": "backend_get_api_v1_bodeguero_cajas",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "getCajas",
+        "tags": [
+          "Orders"
+        ],
+        "x-role-group": "bodeguero",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+      },
+      "post": {
+        "operationId": "backend_post_api_v1_bodeguero_cajas",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "createCaja",
+        "tags": [
+          "Orders"
+        ],
+        "x-role-group": "bodeguero",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+      }
+    },
+    "/api/v1/bodeguero/cajas/{id}": {
+      "delete": {
+        "operationId": "backend_delete_api_v1_bodeguero_cajas_id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "deleteCaja",
+        "tags": [
+          "Orders"
+        ],
+        "x-role-group": "bodeguero",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+      },
+      "get": {
+        "operationId": "backend_get_api_v1_bodeguero_cajas_id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "getCajaById",
+        "tags": [
+          "Orders"
+        ],
+        "x-role-group": "bodeguero",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
       }
     },
     "/api/v1/bodeguero/cargas": {
@@ -5932,6 +5998,78 @@
         "x-role-group": "comun",
         "x-service": "backend",
         "x-source": "Importal-backend/src/modules/support/controllers/support.controller.ts"
+      }
+    },
+    "/api/v1/tarifas/comisiones": {
+      "get": {
+        "operationId": "backend_get_api_v1_tarifas_comisiones",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": [
+                  {
+                    "id": 1,
+                    "message": "Ejemplo de elemento retornado"
+                  }
+                ],
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObjectArray"
+                }
+              }
+            },
+            "description": "Comisiones configuradas"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Obtener lista de comisiones configuradas",
+        "tags": [
+          "Billing"
+        ],
+        "x-role-group": "comun",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts"
+      }
+    },
+    "/api/v1/tarifas/logisticas": {
+      "get": {
+        "operationId": "backend_get_api_v1_tarifas_logisticas",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": [
+                  {
+                    "id": 1,
+                    "message": "Ejemplo de elemento retornado"
+                  }
+                ],
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObjectArray"
+                }
+              }
+            },
+            "description": "Tarifas logísticas configuradas"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Obtener lista de tarifas logísticas configuradas",
+        "tags": [
+          "Billing"
+        ],
+        "x-role-group": "comun",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts"
       }
     },
     "/api/v1/users": {
