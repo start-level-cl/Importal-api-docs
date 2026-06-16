@@ -1064,11 +1064,16 @@ const spec = sortObjectKeys({
 ensureDir(generatedDir)
 ensureDir(docsDir)
 
+const docsSrcPublicDir = path.join(docsRoot, 'docs-src', 'public')
+ensureDir(docsSrcPublicDir)
+
 fs.writeFileSync(sourceRoutesPath, JSON.stringify(routes, null, 2))
 fs.writeFileSync(path.join(generatedDir, 'duplicate-routes.json'), JSON.stringify(duplicates, null, 2))
 fs.writeFileSync(path.join(generatedDir, 'openapi.json'), `${JSON.stringify(spec, null, 2)}\n`)
 fs.writeFileSync(path.join(generatedDir, 'openapi.yaml'), `${toYaml(spec)}\n`)
 fs.writeFileSync(path.join(generatedDir, 'api-types.d.ts'), `${generateTypeDeclarations(spec)}\n`)
+fs.writeFileSync(path.join(docsSrcPublicDir, 'openapi.json'), `${JSON.stringify(spec, null, 2)}\n`)
+fs.writeFileSync(path.join(docsSrcPublicDir, 'openapi.yaml'), `${toYaml(spec)}\n`)
 fs.writeFileSync(path.join(docsDir, 'index.html'), createHtml(spec))
 
 console.log(`OpenAPI generado con ${routes.length} rutas fuente y ${duplicates.length} duplicadas`)

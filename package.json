@@ -4,10 +4,16 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "build": "node scripts/build-openapi.mjs",
+    "build": "node scripts/build-openapi.mjs && vitepress build docs-src",
+    "docs:dev": "vitepress dev docs-src",
+    "docs:build": "node scripts/build-openapi.mjs && vitepress build docs-src",
+    "docs:preview": "vitepress preview docs-src",
     "generate:types": "node scripts/generate-types.mjs",
     "validate": "node scripts/validate-openapi.mjs",
     "serve": "node scripts/serve-docs.mjs",
     "split:routes": "node scripts/split-routes.mjs"
+  },
+  "devDependencies": {
+    "vitepress": "^1.2.0"
   }
 }
