@@ -1,5 +1,67 @@
 components:
   schemas:
+    Carga:
+      additionalProperties: false
+      properties:
+        closes_at:
+          format: "date-time"
+          nullable: true
+          type: string
+        created_at:
+          format: "date-time"
+          type: string
+        id:
+          type: integer
+        opens_at:
+          format: "date-time"
+          nullable: true
+          type: string
+        status:
+          enum:
+            - OPEN
+            - IN_TRANSIT
+            - ARRIVED
+            - CLOSED
+          type: string
+        tipo_carga:
+          enum:
+            - AEREA
+            - MARITIMA
+          type: string
+      required:
+        - id
+        - tipo_carga
+        - status
+        - created_at
+      type: object
+    CargasPaginatedResponse:
+      additionalProperties: false
+      properties:
+        data:
+          items:
+            $ref: "#/components/schemas/Carga"
+          type: array
+        meta:
+          additionalProperties: false
+          properties:
+            last_page:
+              type: integer
+            limit:
+              type: integer
+            page:
+              type: integer
+            total:
+              type: integer
+          required:
+            - total
+            - page
+            - limit
+            - last_page
+          type: object
+      required:
+        - data
+        - meta
+      type: object
     ChangePasswordRequest:
       additionalProperties: false
       properties:
@@ -3247,18 +3309,50 @@ paths:
     get:
       operationId: backend_get_api_v1_cargas
       parameters:
-[]
+        -           description: Número de página
+          in: query
+          name: page
+          required: false
+          schema:
+            default: 1
+            type: integer
+        -           description: Límite de resultados por página (máx 50)
+          in: query
+          name: limit
+          required: false
+          schema:
+            default: 10
+            type: integer
+        -           description: "Filtrar por estado (ej: OPEN, CLOSED, IN_TRANSIT, ARRIVED o lista separada por comas)"
+          in: query
+          name: status
+          required: false
+          schema:
+            type: string
       responses:
         200:
           content:
             application/json:
+              example:
+                data:
+                  -                     closes_at: null
+                    created_at: "2026-05-25T12:00:00.000Z"
+                    id: 4
+                    opens_at: "2026-05-25T12:00:00.000Z"
+                    status: IN_TRANSIT
+                    tipo_carga: AEREA
+                meta:
+                  last_page: 1
+                  limit: 10
+                  page: 1
+                  total: 1
               schema:
-                $ref: "#/components/schemas/GenericObject"
-          description: Operacion exitosa
+                $ref: "#/components/schemas/CargasPaginatedResponse"
+          description: Listado de cargas paginado
       security:
         -           bearerAuth:
 []
-      summary: getCargas
+      summary: Listar cargas con paginación y filtro de estado (Admin/Root/Client/Vendor/Bodeguero)
       tags:
         - Orders
       x-role-group: comun

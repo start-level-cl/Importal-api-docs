@@ -343,6 +343,32 @@ const schemaExamples = {
     rate_value: 8.5,
     rate_unit: 'KG',
   },
+  Carga: {
+    id: 4,
+    tipo_carga: 'AEREA',
+    status: 'IN_TRANSIT',
+    created_at: '2026-05-25T12:00:00.000Z',
+    opens_at: '2026-05-25T12:00:00.000Z',
+    closes_at: null,
+  },
+  CargasPaginatedResponse: {
+    data: [
+      {
+        id: 4,
+        tipo_carga: 'AEREA',
+        status: 'IN_TRANSIT',
+        created_at: '2026-05-25T12:00:00.000Z',
+        opens_at: '2026-05-25T12:00:00.000Z',
+        closes_at: null,
+      }
+    ],
+    meta: {
+      total: 1,
+      page: 1,
+      limit: 10,
+      last_page: 1,
+    },
+  },
 }
 
 function getSchemaExample(schemaRef) {
@@ -1034,6 +1060,32 @@ export const schemas = {
     },
     ['data', 'total', 'page', 'limit'],
   ),
+  Carga: objectSchema(
+    {
+      id: { type: 'integer' },
+      tipo_carga: stringEnum(['AEREA', 'MARITIMA']),
+      status: stringEnum(['OPEN', 'IN_TRANSIT', 'ARRIVED', 'CLOSED']),
+      created_at: { type: 'string', format: 'date-time' },
+      opens_at: { type: 'string', format: 'date-time', nullable: true },
+      closes_at: { type: 'string', format: 'date-time', nullable: true },
+    },
+    ['id', 'tipo_carga', 'status', 'created_at'],
+  ),
+  CargasPaginatedResponse: objectSchema(
+    {
+      data: { type: 'array', items: { $ref: '#/components/schemas/Carga' } },
+      meta: objectSchema(
+        {
+          total: { type: 'integer' },
+          page: { type: 'integer' },
+          limit: { type: 'integer' },
+          last_page: { type: 'integer' },
+        },
+        ['total', 'page', 'limit', 'last_page'],
+      ),
+    },
+    ['data', 'meta'],
+  ),
 }
 
 function jsonRequest(schemaRef, required = true) {
@@ -1310,6 +1362,17 @@ export const operationOverrides = {
   'post /api/v1/vendedor/pedidos/{id}/envio': {
     summary: 'Marcar pedido como enviado y listo para tránsito (Vendedor)',
     responses: Object.fromEntries([jsonResponse('200', 'Pedido marcado como listo para envío', 'GenericObject')]),
+  },
+  'get /api/v1/cargas': {
+    summary: 'Listar cargas con paginación y filtro de estado (Admin/Root/Client/Vendor/Bodeguero)',
+    parameters: [
+      { name: 'page', in: 'query', required: false, schema: { type: 'integer', default: 1 }, description: 'Número de página' },
+      { name: 'limit', in: 'query', required: false, schema: { type: 'integer', default: 10 }, description: 'Límite de resultados por página (máx 50)' },
+      { name: 'status', in: 'query', required: false, schema: { type: 'string' }, description: 'Filtrar por estado (ej: OPEN, CLOSED, IN_TRANSIT, ARRIVED o lista separada por comas)' }
+    ],
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Listado de cargas paginado', 'CargasPaginatedResponse'),
+    ]),
   },
   'post /api/v1/admin/cargas': {
     requestBody: jsonRequest('CreateCargaRequest'),
