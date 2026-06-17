@@ -14,7 +14,7 @@ export default defineConfig({
         { text: 'Lambdas y Registro', link: '/lambdas' },
         { text: 'Trabajos Internos (Jobs)', link: '/internal-jobs' }
       ]},
-      { text: 'Referencia API ↗', link: '/reference.html', target: '_self' }
+      { text: 'Referencia API ↗', link: '/reference.html', target: '_blank' }
     ],
     sidebar: [
       {
