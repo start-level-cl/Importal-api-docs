@@ -375,6 +375,18 @@
         },
         "type": "object"
       },
+      "ConfirmDeliveryRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "proof_url": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "proof_url"
+        ],
+        "type": "object"
+      },
       "ConfirmTransbankRequest": {
         "additionalProperties": false,
         "properties": {
@@ -539,6 +551,26 @@
         ],
         "type": "object"
       },
+      "CreateReturnRequestRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "delivery_id": {
+            "type": "integer"
+          },
+          "order_id": {
+            "type": "integer"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "delivery_id",
+          "order_id",
+          "reason"
+        ],
+        "type": "object"
+      },
       "CreateSupportTicketRequest": {
         "additionalProperties": false,
         "properties": {
@@ -643,6 +675,64 @@
           "ultimos_morosos"
         ],
         "type": "object"
+      },
+      "Delivery": {
+        "additionalProperties": false,
+        "properties": {
+          "carga_id": {
+            "type": "integer"
+          },
+          "client_id": {
+            "type": "integer"
+          },
+          "created_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "delivered_at": {
+            "format": "date-time",
+            "nullable": true,
+            "type": "string"
+          },
+          "delivered_by": {
+            "enum": [
+              "CLIENT",
+              "ADMIN"
+            ],
+            "nullable": true,
+            "type": "string"
+          },
+          "id": {
+            "type": "integer"
+          },
+          "proof_url": {
+            "nullable": true,
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "PENDING",
+              "READY_TO_SHIP",
+              "SHIPPED",
+              "DELIVERED"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "client_id",
+          "carga_id",
+          "status",
+          "created_at"
+        ],
+        "type": "object"
+      },
+      "DeliveryArray": {
+        "items": {
+          "$ref": "#/components/schemas/Delivery"
+        },
+        "type": "array"
       },
       "ErrorResponse": {
         "additionalProperties": false,
@@ -1517,6 +1607,30 @@
         ],
         "type": "object"
       },
+      "ResolveReturnRequestRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "option": {
+            "nullable": true,
+            "type": "string"
+          },
+          "reject_proof_url": {
+            "nullable": true,
+            "type": "string"
+          },
+          "reject_reason": {
+            "nullable": true,
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "type": "object"
+      },
       "ResolveSupportTicketRequest": {
         "additionalProperties": false,
         "properties": {
@@ -1538,6 +1652,79 @@
           "resolution"
         ],
         "type": "object"
+      },
+      "ReturnRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "admin_option": {
+            "enum": [
+              "CREDIT_NEXT_BILL",
+              "FULL_REFUND"
+            ],
+            "nullable": true,
+            "type": "string"
+          },
+          "client_id": {
+            "type": "integer"
+          },
+          "created_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "delivery_id": {
+            "type": "integer"
+          },
+          "id": {
+            "type": "integer"
+          },
+          "order_id": {
+            "type": "integer"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "reject_proof_url": {
+            "nullable": true,
+            "type": "string"
+          },
+          "reject_reason": {
+            "nullable": true,
+            "type": "string"
+          },
+          "resolved_at": {
+            "format": "date-time",
+            "nullable": true,
+            "type": "string"
+          },
+          "resolved_by": {
+            "nullable": true,
+            "type": "integer"
+          },
+          "status": {
+            "enum": [
+              "PENDING",
+              "APPROVED",
+              "REJECTED"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "delivery_id",
+          "order_id",
+          "client_id",
+          "reason",
+          "status",
+          "created_at"
+        ],
+        "type": "object"
+      },
+      "ReturnRequestArray": {
+        "items": {
+          "$ref": "#/components/schemas/ReturnRequest"
+        },
+        "type": "array"
       },
       "ReviewOrderRequest": {
         "additionalProperties": false,
@@ -1681,6 +1868,19 @@
           "total",
           "page",
           "limit"
+        ],
+        "type": "object"
+      },
+      "UpdateCargaLlegadaRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "arrived_at": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "arrived_at"
         ],
         "type": "object"
       },
@@ -2049,6 +2249,45 @@
         "x-source": "Importal-backend/src/modules/app/controllers/app.controller.ts"
       }
     },
+    "/api/v1/admin/ajustes/{id}/completar-reembolso": {
+      "post": {
+        "operationId": "backend_post_api_v1_admin_ajustes_id_completar_reembolso",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "completeRefund",
+        "tags": [
+          "Orders"
+        ],
+        "x-role-group": "admin",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+      }
+    },
     "/api/v1/admin/audit/trail": {
       "get": {
         "operationId": "backend_get_api_v1_admin_audit_trail",
@@ -2249,6 +2488,62 @@
           }
         ],
         "summary": "Cerrar una carga específica, desactivar productos de vendedores asignados y generar cobros de comisión (Admin/Root)",
+        "tags": [
+          "Orders"
+        ],
+        "x-role-group": "admin",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+      }
+    },
+    "/api/v1/admin/cargas/{id}/llegada": {
+      "put": {
+        "operationId": "backend_put_api_v1_admin_cargas_id_llegada",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "arrived_at": "2026-06-18T10:00:00.000Z"
+              },
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCargaLlegadaRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Operacion exitosa",
+                  "ok": true
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Llegada de carga registrada con éxito"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Registrar la fecha de llegada de una carga en destino (Admin/Root)",
         "tags": [
           "Orders"
         ],
@@ -2534,6 +2829,243 @@
         "x-role-group": "admin",
         "x-service": "backend",
         "x-source": "Importal-backend/src/modules/app/controllers/admin.controller.ts"
+      }
+    },
+    "/api/v1/admin/deliveries": {
+      "get": {
+        "operationId": "backend_get_api_v1_admin_deliveries",
+        "parameters": [
+          {
+            "description": "Filtrar por carga",
+            "in": "query",
+            "name": "cargaId",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Filtrar por cliente",
+            "in": "query",
+            "name": "clientId",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Filtrar por estado de entrega",
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": [
+                  {
+                    "carga_id": 4,
+                    "client_id": 12,
+                    "created_at": "2026-06-18T08:00:00.000Z",
+                    "delivered_at": "2026-06-18T12:00:00.000Z",
+                    "delivered_by": "CLIENT",
+                    "id": 1,
+                    "proof_url": "https://cdn.importal.cl/proofs/delivery_123.jpg",
+                    "status": "DELIVERED"
+                  }
+                ],
+                "schema": {
+                  "$ref": "#/components/schemas/DeliveryArray"
+                }
+              }
+            },
+            "description": "Listado de entregas del sistema"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Listar todas las entregas/despachos en el sistema (Admin/Root)",
+        "tags": [
+          "Orders"
+        ],
+        "x-role-group": "admin",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+      }
+    },
+    "/api/v1/admin/deliveries/{id}/confirmar-entrega": {
+      "post": {
+        "operationId": "backend_post_api_v1_admin_deliveries_id_confirmar_entrega",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "proof_url": "https://cdn.importal.cl/proofs/delivery_123.jpg"
+              },
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmDeliveryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Operacion exitosa",
+                  "ok": true
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Entrega confirmada con éxito"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Confirmar entrega de un paquete a un cliente con comprobante (Admin/Root)",
+        "tags": [
+          "Orders"
+        ],
+        "x-role-group": "admin",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+      }
+    },
+    "/api/v1/admin/devoluciones": {
+      "get": {
+        "operationId": "backend_get_api_v1_admin_devoluciones",
+        "parameters": [
+          {
+            "description": "Filtrar por estado de devolución",
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": [
+                  {
+                    "admin_option": "FULL_REFUND",
+                    "client_id": 12,
+                    "created_at": "2026-06-18T08:00:00.000Z",
+                    "delivery_id": 1,
+                    "id": 1,
+                    "order_id": 5,
+                    "reason": "Producto dañado al recibir",
+                    "resolved_at": "2026-06-18T10:00:00.000Z",
+                    "resolved_by": 1,
+                    "status": "APPROVED"
+                  }
+                ],
+                "schema": {
+                  "$ref": "#/components/schemas/ReturnRequestArray"
+                }
+              }
+            },
+            "description": "Listado de devoluciones del sistema"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Listar todas las solicitudes de devolución en el sistema (Admin/Root)",
+        "tags": [
+          "Orders"
+        ],
+        "x-role-group": "admin",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+      }
+    },
+    "/api/v1/admin/devoluciones/{id}/resolver": {
+      "post": {
+        "operationId": "backend_post_api_v1_admin_devoluciones_id_resolver",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "option": "FULL_REFUND",
+                "status": "APPROVED"
+              },
+              "schema": {
+                "$ref": "#/components/schemas/ResolveReturnRequestRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Operacion exitosa",
+                  "ok": true
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Solicitud de devolución resuelta con éxito"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Resolver una solicitud de devolución aprobándola o rechazándola (Admin/Root)",
+        "tags": [
+          "Orders"
+        ],
+        "x-role-group": "admin",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
       }
     },
     "/api/v1/admin/exceptions": {
@@ -3217,6 +3749,36 @@
           }
         ],
         "summary": "Rechazar la transición de un pedido (Admin/Root)",
+        "tags": [
+          "Orders"
+        ],
+        "x-role-group": "admin",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+      }
+    },
+    "/api/v1/admin/reembolsos/pendientes": {
+      "get": {
+        "operationId": "backend_get_api_v1_admin_reembolsos_pendientes",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "getPendingRefundsForAdmin",
         "tags": [
           "Orders"
         ],
@@ -5087,6 +5649,75 @@
         "x-source": "Importal-backend/src/modules/messaging/controllers/messaging.controller.ts"
       }
     },
+    "/api/v1/cliente/ajustes/pendientes": {
+      "get": {
+        "operationId": "backend_get_api_v1_cliente_ajustes_pendientes",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "getClientPendingAdjustments",
+        "tags": [
+          "Orders"
+        ],
+        "x-role-group": "cliente",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+      }
+    },
+    "/api/v1/cliente/ajustes/{id}/resolver": {
+      "post": {
+        "operationId": "backend_post_api_v1_cliente_ajustes_id_resolver",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "resolveAdjustment",
+        "tags": [
+          "Orders"
+        ],
+        "x-role-group": "cliente",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+      }
+    },
     "/api/v1/cliente/cobros": {
       "get": {
         "operationId": "backend_get_api_v1_cliente_cobros",
@@ -5335,6 +5966,36 @@
         "x-source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts"
       }
     },
+    "/api/v1/cliente/creditos": {
+      "get": {
+        "operationId": "backend_get_api_v1_cliente_creditos",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "getClientCredits",
+        "tags": [
+          "Orders"
+        ],
+        "x-role-group": "cliente",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+      }
+    },
     "/api/v1/cliente/dashboard": {
       "get": {
         "operationId": "backend_get_api_v1_cliente_dashboard",
@@ -5363,6 +6024,243 @@
         "x-role-group": "cliente",
         "x-service": "backend",
         "x-source": "Importal-backend/src/modules/app/controllers/admin.controller.ts"
+      }
+    },
+    "/api/v1/cliente/deliveries": {
+      "get": {
+        "operationId": "backend_get_api_v1_cliente_deliveries",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": [
+                  {
+                    "carga_id": 4,
+                    "client_id": 12,
+                    "created_at": "2026-06-18T08:00:00.000Z",
+                    "delivered_at": "2026-06-18T12:00:00.000Z",
+                    "delivered_by": "CLIENT",
+                    "id": 1,
+                    "proof_url": "https://cdn.importal.cl/proofs/delivery_123.jpg",
+                    "status": "DELIVERED"
+                  }
+                ],
+                "schema": {
+                  "$ref": "#/components/schemas/DeliveryArray"
+                }
+              }
+            },
+            "description": "Listado de entregas del cliente"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Listar entregas/despachos del cliente autenticado (Cliente)",
+        "tags": [
+          "Orders"
+        ],
+        "x-role-group": "cliente",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+      }
+    },
+    "/api/v1/cliente/deliveries/{id}/confirmar-entrega": {
+      "post": {
+        "operationId": "backend_post_api_v1_cliente_deliveries_id_confirmar_entrega",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Operacion exitosa",
+                  "ok": true
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Entrega confirmada por el cliente"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Confirmar recepción conforme de una entrega por parte del cliente (Cliente)",
+        "tags": [
+          "Orders"
+        ],
+        "x-role-group": "cliente",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+      }
+    },
+    "/api/v1/cliente/deliveries/{id}/solicitar-envio": {
+      "post": {
+        "operationId": "backend_post_api_v1_cliente_deliveries_id_solicitar_envio",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Operacion exitosa",
+                  "ok": true
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Solicitud de despacho registrada"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Solicitar envío a domicilio para una entrega lista (Cliente)",
+        "tags": [
+          "Orders"
+        ],
+        "x-role-group": "cliente",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+      }
+    },
+    "/api/v1/cliente/devoluciones": {
+      "get": {
+        "operationId": "backend_get_api_v1_cliente_devoluciones",
+        "parameters": [
+          {
+            "description": "Filtrar por estado de devolución",
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": [
+                  {
+                    "admin_option": "FULL_REFUND",
+                    "client_id": 12,
+                    "created_at": "2026-06-18T08:00:00.000Z",
+                    "delivery_id": 1,
+                    "id": 1,
+                    "order_id": 5,
+                    "reason": "Producto dañado al recibir",
+                    "resolved_at": "2026-06-18T10:00:00.000Z",
+                    "resolved_by": 1,
+                    "status": "APPROVED"
+                  }
+                ],
+                "schema": {
+                  "$ref": "#/components/schemas/ReturnRequestArray"
+                }
+              }
+            },
+            "description": "Listado de devoluciones del cliente"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Listar solicitudes de devolución del cliente autenticado (Cliente)",
+        "tags": [
+          "Orders"
+        ],
+        "x-role-group": "cliente",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+      },
+      "post": {
+        "operationId": "backend_post_api_v1_cliente_devoluciones",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "delivery_id": 1,
+                "order_id": 5,
+                "reason": "Producto dañado al recibir"
+              },
+              "schema": {
+                "$ref": "#/components/schemas/CreateReturnRequestRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "admin_option": "FULL_REFUND",
+                  "client_id": 12,
+                  "created_at": "2026-06-18T08:00:00.000Z",
+                  "delivery_id": 1,
+                  "id": 1,
+                  "order_id": 5,
+                  "reason": "Producto dañado al recibir",
+                  "resolved_at": "2026-06-18T10:00:00.000Z",
+                  "resolved_by": 1,
+                  "status": "APPROVED"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ReturnRequest"
+                }
+              }
+            },
+            "description": "Solicitud de devolución creada con éxito"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Crear una solicitud de devolución para un producto entregado (Cliente)",
+        "tags": [
+          "Orders"
+        ],
+        "x-role-group": "cliente",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
       }
     },
     "/api/v1/cliente/estado-mora": {
@@ -6786,6 +7684,45 @@
           }
         ],
         "summary": "Obtener el estado consolidado de la asignación y cargas del vendedor (Vendedor)",
+        "tags": [
+          "Orders"
+        ],
+        "x-role-group": "vendedor",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+      }
+    },
+    "/api/v1/vendedor/pedidos/{id}/ajustar": {
+      "put": {
+        "operationId": "backend_put_api_v1_vendedor_pedidos_id_ajustar",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "adjustOrder",
         "tags": [
           "Orders"
         ],

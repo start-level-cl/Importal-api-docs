@@ -369,6 +369,69 @@ const schemaExamples = {
       last_page: 1,
     },
   },
+  UpdateCargaLlegadaRequest: {
+    arrived_at: '2026-06-18T10:00:00.000Z',
+  },
+  ConfirmDeliveryRequest: {
+    proof_url: 'https://cdn.importal.cl/proofs/delivery_123.jpg',
+  },
+  ResolveReturnRequestRequest: {
+    status: 'APPROVED',
+    option: 'FULL_REFUND',
+  },
+  CreateReturnRequestRequest: {
+    delivery_id: 1,
+    order_id: 5,
+    reason: 'Producto dañado al recibir',
+  },
+  Delivery: {
+    id: 1,
+    client_id: 12,
+    carga_id: 4,
+    status: 'DELIVERED',
+    delivered_at: '2026-06-18T12:00:00.000Z',
+    delivered_by: 'CLIENT',
+    proof_url: 'https://cdn.importal.cl/proofs/delivery_123.jpg',
+    created_at: '2026-06-18T08:00:00.000Z',
+  },
+  DeliveryArray: [
+    {
+      id: 1,
+      client_id: 12,
+      carga_id: 4,
+      status: 'DELIVERED',
+      delivered_at: '2026-06-18T12:00:00.000Z',
+      delivered_by: 'CLIENT',
+      proof_url: 'https://cdn.importal.cl/proofs/delivery_123.jpg',
+      created_at: '2026-06-18T08:00:00.000Z',
+    }
+  ],
+  ReturnRequest: {
+    id: 1,
+    delivery_id: 1,
+    order_id: 5,
+    client_id: 12,
+    reason: 'Producto dañado al recibir',
+    status: 'APPROVED',
+    admin_option: 'FULL_REFUND',
+    resolved_by: 1,
+    created_at: '2026-06-18T08:00:00.000Z',
+    resolved_at: '2026-06-18T10:00:00.000Z',
+  },
+  ReturnRequestArray: [
+    {
+      id: 1,
+      delivery_id: 1,
+      order_id: 5,
+      client_id: 12,
+      reason: 'Producto dañado al recibir',
+      status: 'APPROVED',
+      admin_option: 'FULL_REFUND',
+      resolved_by: 1,
+      created_at: '2026-06-18T08:00:00.000Z',
+      resolved_at: '2026-06-18T10:00:00.000Z',
+    }
+  ],
 }
 
 function getSchemaExample(schemaRef) {
@@ -1086,6 +1149,67 @@ export const schemas = {
     },
     ['data', 'meta'],
   ),
+  UpdateCargaLlegadaRequest: objectSchema(
+    {
+      arrived_at: { type: 'string', format: 'date-time' },
+    },
+    ['arrived_at'],
+  ),
+  ConfirmDeliveryRequest: objectSchema(
+    {
+      proof_url: { type: 'string' },
+    },
+    ['proof_url'],
+  ),
+  ResolveReturnRequestRequest: objectSchema(
+    {
+      status: { type: 'string' },
+      option: { type: 'string', nullable: true },
+      reject_reason: { type: 'string', nullable: true },
+      reject_proof_url: { type: 'string', nullable: true },
+    },
+    ['status'],
+  ),
+  CreateReturnRequestRequest: objectSchema(
+    {
+      delivery_id: { type: 'integer' },
+      order_id: { type: 'integer' },
+      reason: { type: 'string' },
+    },
+    ['delivery_id', 'order_id', 'reason'],
+  ),
+  Delivery: objectSchema(
+    {
+      id: { type: 'integer' },
+      client_id: { type: 'integer' },
+      carga_id: { type: 'integer' },
+      status: stringEnum(['PENDING', 'READY_TO_SHIP', 'SHIPPED', 'DELIVERED']),
+      delivered_at: { type: 'string', format: 'date-time', nullable: true },
+      delivered_by: { type: 'string', enum: ['CLIENT', 'ADMIN'], nullable: true },
+      proof_url: { type: 'string', nullable: true },
+      created_at: { type: 'string', format: 'date-time' },
+    },
+    ['id', 'client_id', 'carga_id', 'status', 'created_at'],
+  ),
+  DeliveryArray: { type: 'array', items: { $ref: '#/components/schemas/Delivery' } },
+  ReturnRequest: objectSchema(
+    {
+      id: { type: 'integer' },
+      delivery_id: { type: 'integer' },
+      order_id: { type: 'integer' },
+      client_id: { type: 'integer' },
+      reason: { type: 'string' },
+      status: stringEnum(['PENDING', 'APPROVED', 'REJECTED']),
+      admin_option: { type: 'string', enum: ['CREDIT_NEXT_BILL', 'FULL_REFUND'], nullable: true },
+      reject_reason: { type: 'string', nullable: true },
+      reject_proof_url: { type: 'string', nullable: true },
+      resolved_by: { type: 'integer', nullable: true },
+      created_at: { type: 'string', format: 'date-time' },
+      resolved_at: { type: 'string', format: 'date-time', nullable: true },
+    },
+    ['id', 'delivery_id', 'order_id', 'client_id', 'reason', 'status', 'created_at'],
+  ),
+  ReturnRequestArray: { type: 'array', items: { $ref: '#/components/schemas/ReturnRequest' } },
 }
 
 function jsonRequest(schemaRef, required = true) {
@@ -1674,6 +1798,81 @@ export const operationOverrides = {
     requestBody: jsonRequest('ResolveSupportTicketRequest'),
     responses: Object.fromEntries([
       jsonResponse('200', 'Ticket de soporte resuelto con éxito', 'SupportTicket'),
+    ]),
+  },
+  'put /api/v1/admin/cargas/{id}/llegada': {
+    summary: 'Registrar la fecha de llegada de una carga en destino (Admin/Root)',
+    requestBody: jsonRequest('UpdateCargaLlegadaRequest'),
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Llegada de carga registrada con éxito', 'GenericObject'),
+    ]),
+  },
+  'post /api/v1/admin/deliveries/{id}/confirmar-entrega': {
+    summary: 'Confirmar entrega de un paquete a un cliente con comprobante (Admin/Root)',
+    requestBody: jsonRequest('ConfirmDeliveryRequest'),
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Entrega confirmada con éxito', 'GenericObject'),
+    ]),
+  },
+  'post /api/v1/admin/devoluciones/{id}/resolver': {
+    summary: 'Resolver una solicitud de devolución aprobándola o rechazándola (Admin/Root)',
+    requestBody: jsonRequest('ResolveReturnRequestRequest'),
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Solicitud de devolución resuelta con éxito', 'GenericObject'),
+    ]),
+  },
+  'get /api/v1/admin/deliveries': {
+    summary: 'Listar todas las entregas/despachos en el sistema (Admin/Root)',
+    parameters: [
+      { name: 'cargaId', in: 'query', required: false, schema: { type: 'integer' }, description: 'Filtrar por carga' },
+      { name: 'clientId', in: 'query', required: false, schema: { type: 'integer' }, description: 'Filtrar por cliente' },
+      { name: 'status', in: 'query', required: false, schema: { type: 'string' }, description: 'Filtrar por estado de entrega' },
+    ],
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Listado de entregas del sistema', 'DeliveryArray'),
+    ]),
+  },
+  'get /api/v1/admin/devoluciones': {
+    summary: 'Listar todas las solicitudes de devolución en el sistema (Admin/Root)',
+    parameters: [
+      { name: 'status', in: 'query', required: false, schema: { type: 'string' }, description: 'Filtrar por estado de devolución' },
+    ],
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Listado de devoluciones del sistema', 'ReturnRequestArray'),
+    ]),
+  },
+  'post /api/v1/cliente/deliveries/{id}/confirmar-entrega': {
+    summary: 'Confirmar recepción conforme de una entrega por parte del cliente (Cliente)',
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Entrega confirmada por el cliente', 'GenericObject'),
+    ]),
+  },
+  'post /api/v1/cliente/deliveries/{id}/solicitar-envio': {
+    summary: 'Solicitar envío a domicilio para una entrega lista (Cliente)',
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Solicitud de despacho registrada', 'GenericObject'),
+    ]),
+  },
+  'post /api/v1/cliente/devoluciones': {
+    summary: 'Crear una solicitud de devolución para un producto entregado (Cliente)',
+    requestBody: jsonRequest('CreateReturnRequestRequest'),
+    responses: Object.fromEntries([
+      jsonResponse('201', 'Solicitud de devolución creada con éxito', 'ReturnRequest'),
+    ]),
+  },
+  'get /api/v1/cliente/deliveries': {
+    summary: 'Listar entregas/despachos del cliente autenticado (Cliente)',
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Listado de entregas del cliente', 'DeliveryArray'),
+    ]),
+  },
+  'get /api/v1/cliente/devoluciones': {
+    summary: 'Listar solicitudes de devolución del cliente autenticado (Cliente)',
+    parameters: [
+      { name: 'status', in: 'query', required: false, schema: { type: 'string' }, description: 'Filtrar por estado de devolución' },
+    ],
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Listado de devoluciones del cliente', 'ReturnRequestArray'),
     ]),
   },
 }

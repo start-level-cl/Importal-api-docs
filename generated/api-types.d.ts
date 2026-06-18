@@ -100,6 +100,10 @@ export type ConfirmCobroRequest = {
   approved?: boolean
 }
 
+export type ConfirmDeliveryRequest = {
+  proof_url: string
+}
+
 export type ConfirmTransbankRequest = {
   token: string
   transaction_id: string
@@ -143,6 +147,12 @@ export type CreateProductRequest = {
   status?: string
 }
 
+export type CreateReturnRequestRequest = {
+  delivery_id: number
+  order_id: number
+  reason: string
+}
+
 export type CreateSupportTicketRequest = {
   description: string
   title: string
@@ -166,6 +176,19 @@ export type DashboardSummary = {
     due_date: string
   })[]
 }
+
+export type Delivery = {
+  carga_id: number
+  client_id: number
+  created_at: string
+  delivered_at?: string
+  delivered_by?: "CLIENT" | "ADMIN"
+  id: number
+  proof_url?: string
+  status: "PENDING" | "READY_TO_SHIP" | "SHIPPED" | "DELIVERED"
+}
+
+export type DeliveryArray = (Delivery)[]
 
 export type ErrorResponse = {
   error?: string
@@ -387,10 +410,34 @@ export type RequestContactChangeRequest = {
   type: "email" | "phone"
 }
 
+export type ResolveReturnRequestRequest = {
+  option?: string
+  reject_proof_url?: string
+  reject_reason?: string
+  status: string
+}
+
 export type ResolveSupportTicketRequest = {
   resolution: string
   status: "RESOLVED" | "REJECTED"
 }
+
+export type ReturnRequest = {
+  admin_option?: "CREDIT_NEXT_BILL" | "FULL_REFUND"
+  client_id: number
+  created_at: string
+  delivery_id: number
+  id: number
+  order_id: number
+  reason: string
+  reject_proof_url?: string
+  reject_reason?: string
+  resolved_at?: string
+  resolved_by?: number
+  status: "PENDING" | "APPROVED" | "REJECTED"
+}
+
+export type ReturnRequestArray = (ReturnRequest)[]
 
 export type ReviewOrderRequest = {
   caja_size?: string
@@ -429,6 +476,10 @@ export type SupportTicketPaginated = {
   limit: number
   page: number
   total: number
+}
+
+export type UpdateCargaLlegadaRequest = {
+  arrived_at: string
 }
 
 export type UpdateCargaStatusRequest = {
@@ -533,6 +584,14 @@ export interface Operations {
       "200": GenericObject
     }
   }
+  "backend_post_api_v1_admin_ajustes_id_completar_reembolso": {
+    method: "POST"
+    path: "/api/v1/admin/ajustes/{id}/completar-reembolso"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
   "backend_get_api_v1_admin_audit_trail": {
     method: "GET"
     path: "/api/v1/admin/audit/trail"
@@ -561,6 +620,14 @@ export interface Operations {
     method: "POST"
     path: "/api/v1/admin/cargas/{id}/close"
     requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_put_api_v1_admin_cargas_id_llegada": {
+    method: "PUT"
+    path: "/api/v1/admin/cargas/{id}/llegada"
+    requestBody: UpdateCargaLlegadaRequest
     responses: {
       "200": GenericObject
     }
@@ -611,6 +678,38 @@ export interface Operations {
     requestBody: undefined
     responses: {
       "200": DashboardSummary
+    }
+  }
+  "backend_get_api_v1_admin_deliveries": {
+    method: "GET"
+    path: "/api/v1/admin/deliveries"
+    requestBody: undefined
+    responses: {
+      "200": DeliveryArray
+    }
+  }
+  "backend_post_api_v1_admin_deliveries_id_confirmar_entrega": {
+    method: "POST"
+    path: "/api/v1/admin/deliveries/{id}/confirmar-entrega"
+    requestBody: ConfirmDeliveryRequest
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_get_api_v1_admin_devoluciones": {
+    method: "GET"
+    path: "/api/v1/admin/devoluciones"
+    requestBody: undefined
+    responses: {
+      "200": ReturnRequestArray
+    }
+  }
+  "backend_post_api_v1_admin_devoluciones_id_resolver": {
+    method: "POST"
+    path: "/api/v1/admin/devoluciones/{id}/resolver"
+    requestBody: ResolveReturnRequestRequest
+    responses: {
+      "200": GenericObject
     }
   }
   "backend_get_api_v1_admin_exceptions": {
@@ -736,6 +835,14 @@ export interface Operations {
   "backend_post_api_v1_admin_pedidos_transicion_id_rechazar": {
     method: "POST"
     path: "/api/v1/admin/pedidos-transicion/{id}/rechazar"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_get_api_v1_admin_reembolsos_pendientes": {
+    method: "GET"
+    path: "/api/v1/admin/reembolsos/pendientes"
     requestBody: undefined
     responses: {
       "200": GenericObject
@@ -1077,6 +1184,22 @@ export interface Operations {
       "201": ChatMessage
     }
   }
+  "backend_get_api_v1_cliente_ajustes_pendientes": {
+    method: "GET"
+    path: "/api/v1/cliente/ajustes/pendientes"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_post_api_v1_cliente_ajustes_id_resolver": {
+    method: "POST"
+    path: "/api/v1/cliente/ajustes/{id}/resolver"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
   "backend_get_api_v1_cliente_cobros": {
     method: "GET"
     path: "/api/v1/cliente/cobros"
@@ -1119,12 +1242,60 @@ export interface Operations {
       "200": GenericObject
     }
   }
+  "backend_get_api_v1_cliente_creditos": {
+    method: "GET"
+    path: "/api/v1/cliente/creditos"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
   "backend_get_api_v1_cliente_dashboard": {
     method: "GET"
     path: "/api/v1/cliente/dashboard"
     requestBody: undefined
     responses: {
       "200": GenericObject
+    }
+  }
+  "backend_get_api_v1_cliente_deliveries": {
+    method: "GET"
+    path: "/api/v1/cliente/deliveries"
+    requestBody: undefined
+    responses: {
+      "200": DeliveryArray
+    }
+  }
+  "backend_post_api_v1_cliente_deliveries_id_confirmar_entrega": {
+    method: "POST"
+    path: "/api/v1/cliente/deliveries/{id}/confirmar-entrega"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_post_api_v1_cliente_deliveries_id_solicitar_envio": {
+    method: "POST"
+    path: "/api/v1/cliente/deliveries/{id}/solicitar-envio"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_get_api_v1_cliente_devoluciones": {
+    method: "GET"
+    path: "/api/v1/cliente/devoluciones"
+    requestBody: undefined
+    responses: {
+      "200": ReturnRequestArray
+    }
+  }
+  "backend_post_api_v1_cliente_devoluciones": {
+    method: "POST"
+    path: "/api/v1/cliente/devoluciones"
+    requestBody: CreateReturnRequestRequest
+    responses: {
+      "201": ReturnRequest
     }
   }
   "backend_get_api_v1_cliente_estado_mora": {
@@ -1370,6 +1541,14 @@ export interface Operations {
   "backend_get_api_v1_vendedor_pedidos_carga_status": {
     method: "GET"
     path: "/api/v1/vendedor/pedidos-carga/status"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_put_api_v1_vendedor_pedidos_id_ajustar": {
+    method: "PUT"
+    path: "/api/v1/vendedor/pedidos/{id}/ajustar"
     requestBody: undefined
     responses: {
       "200": GenericObject

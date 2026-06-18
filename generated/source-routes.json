@@ -2271,6 +2271,301 @@
   },
   {
     "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "put",
+    "path": "/api/v1/vendedor/pedidos/{id}/ajustar",
+    "operationId": "backend_put_api_v1_vendedor_pedidos_id_ajustar",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "vendor"
+    ],
+    "security": "bearerAuth",
+    "methodName": "adjustOrder",
+    "parameters": [],
+    "roleGroup": "vendedor"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "get",
+    "path": "/api/v1/cliente/ajustes/pendientes",
+    "operationId": "backend_get_api_v1_cliente_ajustes_pendientes",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "client"
+    ],
+    "security": "bearerAuth",
+    "methodName": "getClientPendingAdjustments",
+    "parameters": [],
+    "roleGroup": "cliente"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "post",
+    "path": "/api/v1/cliente/ajustes/{id}/resolver",
+    "operationId": "backend_post_api_v1_cliente_ajustes_id_resolver",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "client"
+    ],
+    "security": "bearerAuth",
+    "methodName": "resolveAdjustment",
+    "parameters": [],
+    "roleGroup": "cliente"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "get",
+    "path": "/api/v1/cliente/creditos",
+    "operationId": "backend_get_api_v1_cliente_creditos",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "client"
+    ],
+    "security": "bearerAuth",
+    "methodName": "getClientCredits",
+    "parameters": [],
+    "roleGroup": "cliente"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/reembolsos/pendientes",
+    "operationId": "backend_get_api_v1_admin_reembolsos_pendientes",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "getPendingRefundsForAdmin",
+    "parameters": [],
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "post",
+    "path": "/api/v1/admin/ajustes/{id}/completar-reembolso",
+    "operationId": "backend_post_api_v1_admin_ajustes_id_completar_reembolso",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "completeRefund",
+    "parameters": [],
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "put",
+    "path": "/api/v1/admin/cargas/{id}/llegada",
+    "operationId": "backend_put_api_v1_admin_cargas_id_llegada",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "registerCargaLlegada",
+    "parameters": [],
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "post",
+    "path": "/api/v1/admin/deliveries/{id}/confirmar-entrega",
+    "operationId": "backend_post_api_v1_admin_deliveries_id_confirmar_entrega",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "confirmDeliveryAdmin",
+    "parameters": [],
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "post",
+    "path": "/api/v1/admin/devoluciones/{id}/resolver",
+    "operationId": "backend_post_api_v1_admin_devoluciones_id_resolver",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "resolveReturnRequest",
+    "parameters": [],
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/deliveries",
+    "operationId": "backend_get_api_v1_admin_deliveries",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "getAdminDeliveries",
+    "parameters": [],
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/devoluciones",
+    "operationId": "backend_get_api_v1_admin_devoluciones",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "getAdminReturnRequests",
+    "parameters": [],
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "post",
+    "path": "/api/v1/cliente/deliveries/{id}/confirmar-entrega",
+    "operationId": "backend_post_api_v1_cliente_deliveries_id_confirmar_entrega",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "client"
+    ],
+    "security": "bearerAuth",
+    "methodName": "confirmDeliveryClient",
+    "parameters": [],
+    "roleGroup": "cliente"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "post",
+    "path": "/api/v1/cliente/deliveries/{id}/solicitar-envio",
+    "operationId": "backend_post_api_v1_cliente_deliveries_id_solicitar_envio",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "client"
+    ],
+    "security": "bearerAuth",
+    "methodName": "requestDeliveryShipping",
+    "parameters": [],
+    "roleGroup": "cliente"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "post",
+    "path": "/api/v1/cliente/devoluciones",
+    "operationId": "backend_post_api_v1_cliente_devoluciones",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "client"
+    ],
+    "security": "bearerAuth",
+    "methodName": "createReturnRequest",
+    "parameters": [],
+    "roleGroup": "cliente"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "get",
+    "path": "/api/v1/cliente/deliveries",
+    "operationId": "backend_get_api_v1_cliente_deliveries",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "client"
+    ],
+    "security": "bearerAuth",
+    "methodName": "getClientDeliveries",
+    "parameters": [],
+    "roleGroup": "cliente"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "get",
+    "path": "/api/v1/cliente/devoluciones",
+    "operationId": "backend_get_api_v1_cliente_devoluciones",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "client"
+    ],
+    "security": "bearerAuth",
+    "methodName": "getClientReturnRequests",
+    "parameters": [],
+    "roleGroup": "cliente"
+  },
+  {
+    "service": "backend",
     "source": "Importal-backend/src/modules/products/controllers/products.controller.ts",
     "method": "get",
     "path": "/api/v1/cliente/productos",

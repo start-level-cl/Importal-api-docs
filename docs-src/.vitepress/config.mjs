@@ -12,7 +12,8 @@ export default defineConfig({
       { text: 'Guías', items: [
         { text: 'Autenticación (Auth)', link: '/auth' },
         { text: 'Lambdas y Registro', link: '/lambdas' },
-        { text: 'Trabajos Internos (Jobs)', link: '/internal-jobs' }
+        { text: 'Trabajos Internos (Jobs)', link: '/internal-jobs' },
+        { text: 'Ajustes y Reembolsos', link: '/adjustments-refunds' }
       ]},
       { text: 'Referencia API ↗', link: '/reference.html', target: '_blank' }
     ],
@@ -29,7 +30,8 @@ export default defineConfig({
         items: [
           { text: 'Autenticación y Sesiones', link: '/auth' },
           { text: 'Registro y Lambdas', link: '/lambdas' },
-          { text: 'Trabajos y Cron Jobs', link: '/internal-jobs' }
+          { text: 'Trabajos y Cron Jobs', link: '/internal-jobs' },
+          { text: 'Ajustes y Reembolsos', link: '/adjustments-refunds' }
         ]
       }
     ],
