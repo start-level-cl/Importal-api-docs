@@ -46,6 +46,63 @@
         ],
         "type": "object"
       },
+      "CargaClientesStatusItem": {
+        "additionalProperties": false,
+        "properties": {
+          "client_id": {
+            "type": "integer"
+          },
+          "client_name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "is_free": {
+            "type": "boolean"
+          },
+          "unpaid_cobros": {
+            "items": {
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "tipo_cobro": {
+                  "type": "string"
+                },
+                "total_clp": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "id",
+                "tipo_cobro",
+                "total_clp",
+                "status"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "client_id",
+          "client_name",
+          "email",
+          "is_free",
+          "unpaid_cobros"
+        ],
+        "type": "object"
+      },
+      "CargaClientesStatusResponse": {
+        "items": {
+          "$ref": "#/components/schemas/CargaClientesStatusItem"
+        },
+        "type": "array"
+      },
       "CargasPaginatedResponse": {
         "additionalProperties": false,
         "properties": {
@@ -385,6 +442,49 @@
         "required": [
           "proof_url"
         ],
+        "type": "object"
+      },
+      "ConfirmDespachoRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "bultos": {
+            "items": {
+              "properties": {
+                "bulto_number": {
+                  "type": "integer"
+                },
+                "photos": {
+                  "items": {
+                    "format": "binary",
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "weight_kg": {
+                  "nullable": true,
+                  "type": "number"
+                }
+              },
+              "required": [
+                "bulto_number"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "camera_id": {
+            "nullable": true,
+            "type": "string"
+          },
+          "carrier_proof_url": {
+            "nullable": true,
+            "type": "string"
+          },
+          "video_ref_info": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
         "type": "object"
       },
       "ConfirmTransbankRequest": {
@@ -1607,6 +1707,27 @@
         ],
         "type": "object"
       },
+      "RequestDeliveryShippingRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "shipping_address": {
+            "nullable": true,
+            "type": "string"
+          },
+          "shipping_method": {
+            "enum": [
+              "SANTIAGO_LOCAL",
+              "SANTIAGO_COURIER",
+              "REGIONES_STARKEN"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "shipping_method"
+        ],
+        "type": "object"
+      },
       "ResolveReturnRequestRequest": {
         "additionalProperties": false,
         "properties": {
@@ -1729,22 +1850,37 @@
       "ReviewOrderRequest": {
         "additionalProperties": false,
         "properties": {
-          "caja_size": {
+          "caja_id": {
             "nullable": true,
-            "type": "string"
+            "type": "integer"
           },
           "dañados": {
+            "nullable": true,
             "type": "integer"
           },
           "faltaron": {
+            "nullable": true,
             "type": "integer"
           },
           "llegaron": {
+            "nullable": true,
             "type": "integer"
           },
           "peso_cobrado_kg": {
             "nullable": true,
             "type": "number"
+          },
+          "revisado": {
+            "nullable": true,
+            "type": "boolean"
+          },
+          "status": {
+            "nullable": true,
+            "type": "string"
+          },
+          "video_ref_info": {
+            "nullable": true,
+            "type": "string"
           }
         },
         "type": "object"
@@ -5101,6 +5237,61 @@
         "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
       }
     },
+    "/api/v1/bodeguero/cargas/{id}/clientes-status": {
+      "get": {
+        "operationId": "backend_get_api_v1_bodeguero_cargas_id_clientes_status",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": [
+                  {
+                    "client_id": 12,
+                    "client_name": "Juan Perez",
+                    "email": "juan.perez@ejemplo.com",
+                    "is_free": false,
+                    "unpaid_cobros": [
+                      {
+                        "id": 501,
+                        "status": "PENDING",
+                        "tipo_cobro": "FLETE_SEGURO_ADUANA",
+                        "total_clp": 45000
+                      }
+                    ]
+                  }
+                ],
+                "schema": {
+                  "$ref": "#/components/schemas/CargaClientesStatusResponse"
+                }
+              }
+            },
+            "description": "Estado de pago de clientes en la carga"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Obtener estado de pago de clientes en una carga (Bodeguero/Admin/Root)",
+        "tags": [
+          "Orders"
+        ],
+        "x-role-group": "bodeguero",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+      }
+    },
     "/api/v1/bodeguero/cargas/{id}/status": {
       "put": {
         "operationId": "backend_put_api_v1_bodeguero_cargas_id_status",
@@ -5193,6 +5384,65 @@
           }
         ],
         "summary": "Verificar si todos los pedidos de una carga han sido revisados",
+        "tags": [
+          "Orders"
+        ],
+        "x-role-group": "bodeguero",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+      }
+    },
+    "/api/v1/bodeguero/deliveries/{id}/despachar": {
+      "post": {
+        "operationId": "backend_post_api_v1_bodeguero_deliveries_id_despachar",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmDespachoRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "carga_id": 4,
+                  "client_id": 12,
+                  "created_at": "2026-06-18T08:00:00.000Z",
+                  "delivered_at": "2026-06-18T12:00:00.000Z",
+                  "delivered_by": "CLIENT",
+                  "id": 1,
+                  "proof_url": "https://cdn.importal.cl/proofs/delivery_123.jpg",
+                  "status": "DELIVERED"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Delivery"
+                }
+              }
+            },
+            "description": "Despacho confirmado con éxito"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Confirmar despacho físico e ingreso de bultos (Bodeguero/Admin/Root)",
         "tags": [
           "Orders"
         ],
@@ -5318,11 +5568,14 @@
           "content": {
             "application/json": {
               "example": {
-                "caja_size": "M",
+                "caja_id": 14,
                 "dañados": 0,
                 "faltaron": 0,
                 "llegaron": 2,
-                "peso_cobrado_kg": 1.2
+                "peso_cobrado_kg": 1.2,
+                "revisado": true,
+                "status": "CONFIRMED",
+                "video_ref_info": "Cámara 02, Grabación 10:15 - 10:20, S3 Key: video_120.mp4"
               },
               "schema": {
                 "$ref": "#/components/schemas/ReviewOrderRequest"
@@ -6124,6 +6377,20 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "shipping_address": "Calle Limite 456, Santiago",
+                "shipping_method": "SANTIAGO_LOCAL"
+              },
+              "schema": {
+                "$ref": "#/components/schemas/RequestDeliveryShippingRequest"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "content": {

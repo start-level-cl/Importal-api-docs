@@ -10,6 +10,21 @@ export type Carga = {
   tipo_carga: "AEREA" | "MARITIMA"
 }
 
+export type CargaClientesStatusItem = {
+  client_id: number
+  client_name: string
+  email: string
+  is_free: boolean
+  unpaid_cobros: ({
+    id: number
+    status: string
+    tipo_cobro: string
+    total_clp: number
+  })[]
+}
+
+export type CargaClientesStatusResponse = (CargaClientesStatusItem)[]
+
 export type CargasPaginatedResponse = {
   data: (Carga)[]
   meta: {
@@ -102,6 +117,17 @@ export type ConfirmCobroRequest = {
 
 export type ConfirmDeliveryRequest = {
   proof_url: string
+}
+
+export type ConfirmDespachoRequest = {
+  bultos?: ({
+    bulto_number: number
+    photos?: (string)[]
+    weight_kg?: number
+  })[]
+  camera_id?: string
+  carrier_proof_url?: string
+  video_ref_info?: string
 }
 
 export type ConfirmTransbankRequest = {
@@ -410,6 +436,11 @@ export type RequestContactChangeRequest = {
   type: "email" | "phone"
 }
 
+export type RequestDeliveryShippingRequest = {
+  shipping_address?: string
+  shipping_method: "SANTIAGO_LOCAL" | "SANTIAGO_COURIER" | "REGIONES_STARKEN"
+}
+
 export type ResolveReturnRequestRequest = {
   option?: string
   reject_proof_url?: string
@@ -440,11 +471,14 @@ export type ReturnRequest = {
 export type ReturnRequestArray = (ReturnRequest)[]
 
 export type ReviewOrderRequest = {
-  caja_size?: string
+  caja_id?: number
   dañados?: number
   faltaron?: number
   llegaron?: number
   peso_cobrado_kg?: number
+  revisado?: boolean
+  status?: string
+  video_ref_info?: string
 }
 
 export type SendCodeRequest = {
@@ -1104,6 +1138,14 @@ export interface Operations {
       "200": GenericObjectArray
     }
   }
+  "backend_get_api_v1_bodeguero_cargas_id_clientes_status": {
+    method: "GET"
+    path: "/api/v1/bodeguero/cargas/{id}/clientes-status"
+    requestBody: undefined
+    responses: {
+      "200": CargaClientesStatusResponse
+    }
+  }
   "backend_put_api_v1_bodeguero_cargas_id_status": {
     method: "PUT"
     path: "/api/v1/bodeguero/cargas/{id}/status"
@@ -1118,6 +1160,14 @@ export interface Operations {
     requestBody: undefined
     responses: {
       "200": GenericObject
+    }
+  }
+  "backend_post_api_v1_bodeguero_deliveries_id_despachar": {
+    method: "POST"
+    path: "/api/v1/bodeguero/deliveries/{id}/despachar"
+    requestBody: ConfirmDespachoRequest
+    responses: {
+      "200": Delivery
     }
   }
   "backend_get_api_v1_bodeguero_pedidos": {
@@ -1277,7 +1327,7 @@ export interface Operations {
   "backend_post_api_v1_cliente_deliveries_id_solicitar_envio": {
     method: "POST"
     path: "/api/v1/cliente/deliveries/{id}/solicitar-envio"
-    requestBody: undefined
+    requestBody: RequestDeliveryShippingRequest
     responses: {
       "200": GenericObject
     }

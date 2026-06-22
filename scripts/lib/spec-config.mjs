@@ -315,12 +315,52 @@ const schemaExamples = {
   },
   UpdateOrderStatusRequest: { status: 'CONFIRMED' },
   ReviewOrderRequest: {
+    revisado: true,
+    status: 'CONFIRMED',
     llegaron: 2,
     faltaron: 0,
     dañados: 0,
     peso_cobrado_kg: 1.2,
-    caja_size: 'M',
+    caja_id: 14,
+    video_ref_info: 'Cámara 02, Grabación 10:15 - 10:20, S3 Key: video_120.mp4',
   },
+  RequestDeliveryShippingRequest: {
+    shipping_address: 'Calle Limite 456, Santiago',
+    shipping_method: 'SANTIAGO_LOCAL',
+  },
+  ConfirmDespachoRequest: {
+    video_ref_info: 'Cámara 04, Grabación 15:30 - 15:35',
+    camera_id: 'CAM-04',
+    bultos: [
+      {
+        bulto_number: 1,
+        weight_kg: 12.5,
+        photos: ['(binary file)', '(binary file)']
+      },
+      {
+        bulto_number: 2,
+        weight_kg: 8.1,
+        photos: ['(binary file)']
+      }
+    ],
+    carrier_proof_url: 'https://s3.amazonaws.com/bucket/comprobante.jpg',
+  },
+  CargaClientesStatusResponse: [
+    {
+      client_id: 12,
+      client_name: 'Juan Perez',
+      email: 'juan.perez@ejemplo.com',
+      is_free: false,
+      unpaid_cobros: [
+        {
+          id: 501,
+          tipo_cobro: 'FLETE_SEGURO_ADUANA',
+          total_clp: 45000,
+          status: 'PENDING'
+        }
+      ]
+    }
+  ],
   UpdateOrderShippingRequest: { can_ship: true, seller_order_number: 'SO-12345' },
   CreateCargaRequest: { tipo_carga: 'AEREA' },
   UpdateCargaStatusRequest: { status: 'ARRIVED', notes: 'Carga recibida en bodega' },
@@ -967,11 +1007,14 @@ export const schemas = {
   UpdateOrderStatusRequest: objectSchema({ status: { type: 'string' } }, ['status']),
   ReviewOrderRequest: objectSchema(
     {
-      llegaron: { type: 'integer' },
-      faltaron: { type: 'integer' },
-      dañados: { type: 'integer' },
+      revisado: { type: 'boolean', nullable: true },
+      status: { type: 'string', nullable: true },
+      llegaron: { type: 'integer', nullable: true },
+      faltaron: { type: 'integer', nullable: true },
+      dañados: { type: 'integer', nullable: true },
       peso_cobrado_kg: { type: 'number', nullable: true },
-      caja_size: { type: 'string', nullable: true },
+      caja_id: { type: 'integer', nullable: true },
+      video_ref_info: { type: 'string', nullable: true },
     },
     [],
   ),
@@ -1028,6 +1071,62 @@ export const schemas = {
     },
     ['rate'],
   ),
+  RequestDeliveryShippingRequest: objectSchema(
+    {
+      shipping_address: { type: 'string', nullable: true },
+      shipping_method: stringEnum(['SANTIAGO_LOCAL', 'SANTIAGO_COURIER', 'REGIONES_STARKEN']),
+    },
+    ['shipping_method'],
+  ),
+  ConfirmDespachoRequest: objectSchema(
+    {
+      video_ref_info: { type: 'string', nullable: true },
+      camera_id: { type: 'string', nullable: true },
+      carrier_proof_url: { type: 'string', nullable: true },
+      bultos: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            bulto_number: { type: 'integer' },
+            weight_kg: { type: 'number', nullable: true },
+            photos: {
+              type: 'array',
+              items: { type: 'string', format: 'binary' },
+            },
+          },
+          required: ['bulto_number'],
+        },
+      },
+    },
+    [],
+  ),
+  CargaClientesStatusItem: objectSchema(
+    {
+      client_id: { type: 'integer' },
+      client_name: { type: 'string' },
+      email: { type: 'string' },
+      is_free: { type: 'boolean' },
+      unpaid_cobros: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            id: { type: 'integer' },
+            tipo_cobro: { type: 'string' },
+            total_clp: { type: 'number' },
+            status: { type: 'string' },
+          },
+          required: ['id', 'tipo_cobro', 'total_clp', 'status'],
+        },
+      },
+    },
+    ['client_id', 'client_name', 'email', 'is_free', 'unpaid_cobros'],
+  ),
+  CargaClientesStatusResponse: {
+    type: 'array',
+    items: { '$ref': '#/components/schemas/CargaClientesStatusItem' },
+  },
   CreateMessageRequest: objectSchema(
     {
       message: { type: 'string', description: 'Contenido del mensaje' },
@@ -1727,6 +1826,28 @@ export const operationOverrides = {
     summary: 'Consultar el historial de auditoría y transiciones de un pedido (Bodeguero/Admin/Root)',
     responses: Object.fromEntries([jsonResponse('200', 'Historial de auditoría', 'GenericObjectArray')]),
   },
+  'get /api/v1/bodeguero/cargas/{id}/clientes-status': {
+    summary: 'Obtener estado de pago de clientes en una carga (Bodeguero/Admin/Root)',
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Estado de pago de clientes en la carga', 'CargaClientesStatusResponse'),
+    ]),
+  },
+  'post /api/v1/bodeguero/deliveries/{id}/despachar': {
+    summary: 'Confirmar despacho físico e ingreso de bultos (Bodeguero/Admin/Root)',
+    requestBody: {
+      required: true,
+      content: {
+        'multipart/form-data': {
+          schema: {
+            '$ref': '#/components/schemas/ConfirmDespachoRequest',
+          },
+        },
+      },
+    },
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Despacho confirmado con éxito', 'Delivery'),
+    ]),
+  },
   'post /api/v1/cliente/pagos/transbank/iniciar': {
     requestBody: jsonRequest('InitiateTransbankRequest'),
     responses: Object.fromEntries([jsonResponse('201', 'Pago iniciado', 'GenericObject')]),
@@ -1849,6 +1970,7 @@ export const operationOverrides = {
   },
   'post /api/v1/cliente/deliveries/{id}/solicitar-envio': {
     summary: 'Solicitar envío a domicilio para una entrega lista (Cliente)',
+    requestBody: jsonRequest('RequestDeliveryShippingRequest'),
     responses: Object.fromEntries([
       jsonResponse('200', 'Solicitud de despacho registrada', 'GenericObject'),
     ]),

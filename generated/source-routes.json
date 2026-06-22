@@ -2272,6 +2272,46 @@
   {
     "service": "backend",
     "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "get",
+    "path": "/api/v1/bodeguero/cargas/{id}/clientes-status",
+    "operationId": "backend_get_api_v1_bodeguero_cargas_id_clientes_status",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "bodeguero",
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "getCargaClientesStatus",
+    "parameters": [],
+    "roleGroup": "bodeguero"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "post",
+    "path": "/api/v1/bodeguero/deliveries/{id}/despachar",
+    "operationId": "backend_post_api_v1_bodeguero_deliveries_id_despachar",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "bodeguero",
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "confirmDespacho",
+    "parameters": [],
+    "roleGroup": "bodeguero"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
     "method": "put",
     "path": "/api/v1/vendedor/pedidos/{id}/ajustar",
     "operationId": "backend_put_api_v1_vendedor_pedidos_id_ajustar",
