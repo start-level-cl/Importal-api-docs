@@ -7,6 +7,9 @@ export default withMermaid(
     description: 'Documentación técnica de la plataforma Importal - Backend, Lambdas, Auth y Arquitectura',
     outDir: '../docs',
     cleanUrls: true,
+    markdown: {
+      math: true
+    },
     themeConfig: {
       nav: [
         { text: 'Inicio', link: '/' },
