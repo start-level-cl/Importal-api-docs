@@ -307,6 +307,83 @@ const schemaExamples = {
     page: 1,
     limit: 10,
   },
+  ProponerTruequeRequest: {
+    proposed_product_id: 45,
+    proposed_quantity: 2,
+    negotiation_notes: 'Ofrecido buzo Nike en reemplazo',
+  },
+  Ticket: {
+    id: 102,
+    user_id: 12,
+    type: 'BARTER_NEGOTIATION',
+    status: 'PENDING',
+    title: 'Solicitud de Trueque por Ajuste de Pedido',
+    description: 'El cliente solicita trueque para compensación de orden #120.',
+    metadata: {
+      source_adjustment_id: 10,
+      proposed_product_id: 45,
+      proposed_quantity: 2,
+      negotiation_notes: 'Ofrecido buzo Nike en reemplazo',
+      client_acceptance: 'PENDING',
+    },
+    related_id: 10,
+    related_type: 'OrderAdjustment',
+    resolved_by: null,
+    resolved_at: null,
+    created_at: '2026-06-24T04:50:00.000Z',
+    updated_at: '2026-06-24T04:50:00.000Z',
+  },
+  TicketArray: [
+    {
+      id: 102,
+      user_id: 12,
+      type: 'BARTER_NEGOTIATION',
+      status: 'PENDING',
+      title: 'Solicitud de Trueque por Ajuste de Pedido',
+      description: 'El cliente solicita trueque para compensación de orden #120.',
+      metadata: {
+        source_adjustment_id: 10,
+        proposed_product_id: 45,
+        proposed_quantity: 2,
+        negotiation_notes: 'Ofrecido buzo Nike en reemplazo',
+        client_acceptance: 'PENDING',
+      },
+      related_id: 10,
+      related_type: 'OrderAdjustment',
+      resolved_by: null,
+      resolved_at: null,
+      created_at: '2026-06-24T04:50:00.000Z',
+      updated_at: '2026-06-24T04:50:00.000Z',
+    },
+  ],
+  TicketPaginated: {
+    data: [
+      {
+        id: 102,
+        user_id: 12,
+        type: 'BARTER_NEGOTIATION',
+        status: 'PENDING',
+        title: 'Solicitud de Trueque por Ajuste de Pedido',
+        description: 'El cliente solicita trueque para compensación de orden #120.',
+        metadata: {
+          source_adjustment_id: 10,
+          proposed_product_id: 45,
+          proposed_quantity: 2,
+          negotiation_notes: 'Ofrecido buzo Nike en reemplazo',
+          client_acceptance: 'PENDING',
+        },
+        related_id: 10,
+        related_type: 'OrderAdjustment',
+        resolved_by: null,
+        resolved_at: null,
+        created_at: '2026-06-24T04:50:00.000Z',
+        updated_at: '2026-06-24T04:50:00.000Z',
+      },
+    ],
+    total: 1,
+    page: 1,
+    limit: 10,
+  },
   CreateOrderRequest: {
     productId: 2,
     quantity: 1,
@@ -1222,6 +1299,45 @@ export const schemas = {
     },
     ['data', 'total', 'page', 'limit'],
   ),
+  ProponerTruequeRequest: objectSchema(
+    {
+      proposed_product_id: { type: 'integer', description: 'ID del producto ofrecido' },
+      proposed_quantity: { type: 'integer', description: 'Cantidad del producto ofrecido' },
+      negotiation_notes: { type: 'string', description: 'Notas explicativas o de negociación', nullable: true },
+    },
+    ['proposed_product_id', 'proposed_quantity'],
+  ),
+  Ticket: objectSchema(
+    {
+      id: { type: 'integer' },
+      user_id: { type: 'integer' },
+      type: stringEnum(['SUPPORT', 'RETURN_WARRANTY', 'BARTER_NEGOTIATION', 'REFUND_TRANSFER']),
+      status: stringEnum(['PENDING', 'IN_PROGRESS', 'RESOLVED', 'REJECTED']),
+      title: { type: 'string' },
+      description: { type: 'string' },
+      metadata: { type: 'object', description: 'Campos y variables específicas del tipo', nullable: true },
+      related_id: { type: 'integer', nullable: true },
+      related_type: { type: 'string', nullable: true },
+      resolved_by: { type: 'integer', nullable: true },
+      resolved_at: { type: 'string', format: 'date-time', nullable: true },
+      created_at: { type: 'string', format: 'date-time' },
+      updated_at: { type: 'string', format: 'date-time' },
+    },
+    ['id', 'user_id', 'type', 'status', 'title', 'description', 'created_at', 'updated_at'],
+  ),
+  TicketArray: {
+    type: 'array',
+    items: { $ref: '#/components/schemas/Ticket' },
+  },
+  TicketPaginated: objectSchema(
+    {
+      data: { type: 'array', items: { $ref: '#/components/schemas/Ticket' } },
+      total: { type: 'integer' },
+      page: { type: 'integer' },
+      limit: { type: 'integer' },
+    },
+    ['data', 'total', 'page', 'limit'],
+  ),
   Carga: objectSchema(
     {
       id: { type: 'integer' },
@@ -1919,6 +2035,63 @@ export const operationOverrides = {
     requestBody: jsonRequest('ResolveSupportTicketRequest'),
     responses: Object.fromEntries([
       jsonResponse('200', 'Ticket de soporte resuelto con éxito', 'SupportTicket'),
+    ]),
+  },
+  'get /api/v1/cliente/tickets': {
+    summary: 'Listar y filtrar bandeja de tickets/solicitudes del cliente (Cliente)',
+    parameters: [
+      { name: 'type', in: 'query', required: false, schema: { type: 'string', enum: ['SUPPORT', 'RETURN_WARRANTY', 'BARTER_NEGOTIATION', 'REFUND_TRANSFER'] }, description: 'Filtrar por tipo de ticket. Si se omite, por defecto es SUPPORT' },
+      { name: 'status', in: 'query', required: false, schema: { type: 'string', enum: ['PENDING', 'IN_PROGRESS', 'RESOLVED', 'REJECTED'] }, description: 'Filtrar por estado' },
+    ],
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Bandeja de tickets filtrada', 'TicketArray'),
+    ]),
+  },
+  'post /api/v1/cliente/tickets/{id}/aceptar-trueque': {
+    summary: 'Aceptar una propuesta de trueque enviada por el administrador (Cliente)',
+    parameters: [
+      { name: 'id', in: 'path', required: true, schema: { type: 'integer' }, description: 'ID del ticket' },
+    ],
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Propuesta de trueque aceptada y procesada con éxito', 'Ticket'),
+    ]),
+  },
+  'post /api/v1/cliente/tickets/{id}/rechazar-trueque': {
+    summary: 'Rechazar una propuesta de trueque enviada por el administrador (Cliente)',
+    parameters: [
+      { name: 'id', in: 'path', required: true, schema: { type: 'integer' }, description: 'ID del ticket' },
+    ],
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Propuesta de trueque rechazada y ajuste revertido con éxito', 'Ticket'),
+    ]),
+  },
+  'get /api/v1/admin/tickets': {
+    summary: 'Listar solicitudes unificadas de tickets dirigidas al administrador con filtros (Admin / Root)',
+    parameters: [
+      { name: 'type', in: 'query', required: false, schema: { type: 'string', enum: ['SUPPORT', 'RETURN_WARRANTY', 'BARTER_NEGOTIATION', 'REFUND_TRANSFER'] }, description: 'Filtrar por tipo de ticket' },
+      { name: 'status', in: 'query', required: false, schema: { type: 'string', enum: ['PENDING', 'IN_PROGRESS', 'RESOLVED', 'REJECTED'] }, description: 'Filtrar por estado' },
+    ],
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Bandeja de solicitudes filtrada', 'TicketArray'),
+    ]),
+  },
+  'post /api/v1/admin/tickets/{id}/proponer-trueque': {
+    summary: 'Enviar una propuesta formal de trueque con producto y cantidad al cliente (Admin / Root)',
+    parameters: [
+      { name: 'id', in: 'path', required: true, schema: { type: 'integer' }, description: 'ID del ticket' },
+    ],
+    requestBody: jsonRequest('ProponerTruequeRequest'),
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Propuesta de trueque registrada y enviada al cliente con éxito', 'Ticket'),
+    ]),
+  },
+  'post /api/v1/admin/tickets/{id}/cancelar-trueque': {
+    summary: 'Cancelar la negociación del trueque y revertir el ajuste (Admin / Root)',
+    parameters: [
+      { name: 'id', in: 'path', required: true, schema: { type: 'integer' }, description: 'ID del ticket' },
+    ],
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Trueque cancelado y negociación cerrada con éxito', 'Ticket'),
     ]),
   },
   'put /api/v1/admin/cargas/{id}/llegada': {

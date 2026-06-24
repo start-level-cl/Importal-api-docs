@@ -19,9 +19,14 @@ stateDiagram-v2
     
     Acepta_Parcial --> COMPLETED : Si elige CREDIT_NEXT_BILL o PARTIAL_DEDUCTION
     Acepta_Parcial --> RESOLVED : Si elige FULL_REFUND
+    Acepta_Parcial --> BARTER_WAITING : Si elige BARTER_NEGOTIATION
     
     Rechaza_Parcial --> COMPLETED : Si elige CREDIT_NEXT_BILL o PARTIAL_DEDUCTION
     Rechaza_Parcial --> RESOLVED : Si elige FULL_REFUND
+    Rechaza_Parcial --> BARTER_WAITING : Si elige BARTER_NEGOTIATION
+    
+    BARTER_WAITING --> COMPLETED : Acepta propuesta trueque (cliente)
+    BARTER_WAITING --> PENDING_CLIENT : Rechaza o cancela trueque (cliente/admin)
     
     RESOLVED --> COMPLETED : Administrador procesa (completeRefund)
     COMPLETED --> [*]
@@ -49,6 +54,7 @@ El cliente visualiza sus ajustes pendientes y decide cómo resolverlos:
   * `CREDIT_NEXT_BILL`: Genera un abono o nota de crédito (`ClientCredit`) aplicable al siguiente cobro del cliente. El ajuste pasa a `COMPLETED`.
   * `PARTIAL_DEDUCTION`: Deduce el dinero directamente de la factura (Cobro) actual si esta se encuentra pendiente (`PENDING`, `OVERDUE`, `RETRY`, `IN_REVIEW`), regenerando su PDF de cobro. El ajuste pasa a `COMPLETED`.
   * `FULL_REFUND`: Solicita una transferencia bancaria de devolución. El ajuste pasa a `RESOLVED` (en espera de pago administrativo).
+  * `BARTER_NEGOTIATION`: Solicita un trueque (cambio por producto de igual valor). Genera automáticamente un ticket `BARTER_NEGOTIATION` para el admin, bloqueando el ajuste original hasta que el cliente acepte (completa el ajuste) o rechace/cancele (reconvierte a `PENDING_CLIENT`).
 
 > [!IMPORTANT]
 > En todos los casos resueltos, el sistema genera y sube un comprobante en PDF del reembolso a un bucket de S3.

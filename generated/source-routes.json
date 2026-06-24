@@ -2896,6 +2896,42 @@
   {
     "service": "backend",
     "source": "Importal-backend/src/modules/support/controllers/support.controller.ts",
+    "method": "post",
+    "path": "/api/v1/cliente/tickets/{id}/aceptar-trueque",
+    "operationId": "backend_post_api_v1_cliente_tickets_id_aceptar_trueque",
+    "tag": "Support",
+    "tags": [
+      "Support"
+    ],
+    "roles": [
+      "client"
+    ],
+    "security": "bearerAuth",
+    "methodName": "aceptarTrueque",
+    "parameters": [],
+    "roleGroup": "cliente"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/support/controllers/support.controller.ts",
+    "method": "post",
+    "path": "/api/v1/cliente/tickets/{id}/rechazar-trueque",
+    "operationId": "backend_post_api_v1_cliente_tickets_id_rechazar_trueque",
+    "tag": "Support",
+    "tags": [
+      "Support"
+    ],
+    "roles": [
+      "client"
+    ],
+    "security": "bearerAuth",
+    "methodName": "rechazarTrueque",
+    "parameters": [],
+    "roleGroup": "cliente"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/support/controllers/support.controller.ts",
     "method": "get",
     "path": "/api/v1/admin/soporte/tickets",
     "operationId": "backend_get_api_v1_admin_soporte_tickets",
@@ -2928,6 +2964,44 @@
     ],
     "security": "bearerAuth",
     "methodName": "resolveTicket",
+    "parameters": [],
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/support/controllers/support.controller.ts",
+    "method": "post",
+    "path": "/api/v1/admin/tickets/{id}/proponer-trueque",
+    "operationId": "backend_post_api_v1_admin_tickets_id_proponer_trueque",
+    "tag": "Support",
+    "tags": [
+      "Support"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "proponerTrueque",
+    "parameters": [],
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/support/controllers/support.controller.ts",
+    "method": "post",
+    "path": "/api/v1/admin/tickets/{id}/cancelar-trueque",
+    "operationId": "backend_post_api_v1_admin_tickets_id_cancelar_trueque",
+    "tag": "Support",
+    "tags": [
+      "Support"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "cancelarTrueque",
     "parameters": [],
     "roleGroup": "admin"
   },

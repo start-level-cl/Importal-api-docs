@@ -721,6 +721,23 @@ components:
       items:
         $ref: "#/components/schemas/Product"
       type: array
+    ProponerTruequeRequest:
+      additionalProperties: false
+      properties:
+        negotiation_notes:
+          description: Notas explicativas o de negociación
+          nullable: true
+          type: string
+        proposed_product_id:
+          description: ID del producto ofrecido
+          type: integer
+        proposed_quantity:
+          description: Cantidad del producto ofrecido
+          type: integer
+      required:
+        - proposed_product_id
+        - proposed_quantity
+      type: object
     RefreshRequest:
       additionalProperties: false
       properties:
@@ -1415,6 +1432,87 @@ components:
         data:
           items:
             $ref: "#/components/schemas/SupportTicket"
+          type: array
+        limit:
+          type: integer
+        page:
+          type: integer
+        total:
+          type: integer
+      required:
+        - data
+        - total
+        - page
+        - limit
+      type: object
+    Ticket:
+      additionalProperties: false
+      properties:
+        created_at:
+          format: "date-time"
+          type: string
+        description:
+          type: string
+        id:
+          type: integer
+        metadata:
+          description: Campos y variables específicas del tipo
+          nullable: true
+          type: object
+        related_id:
+          nullable: true
+          type: integer
+        related_type:
+          nullable: true
+          type: string
+        resolved_at:
+          format: "date-time"
+          nullable: true
+          type: string
+        resolved_by:
+          nullable: true
+          type: integer
+        status:
+          enum:
+            - PENDING
+            - IN_PROGRESS
+            - RESOLVED
+            - REJECTED
+          type: string
+        title:
+          type: string
+        type:
+          enum:
+            - SUPPORT
+            - RETURN_WARRANTY
+            - BARTER_NEGOTIATION
+            - REFUND_TRANSFER
+          type: string
+        updated_at:
+          format: "date-time"
+          type: string
+        user_id:
+          type: integer
+      required:
+        - id
+        - user_id
+        - type
+        - status
+        - title
+        - description
+        - created_at
+        - updated_at
+      type: object
+    TicketArray:
+      items:
+        $ref: "#/components/schemas/Ticket"
+      type: array
+    TicketPaginated:
+      additionalProperties: false
+      properties:
+        data:
+          items:
+            $ref: "#/components/schemas/Ticket"
           type: array
         limit:
           type: integer
@@ -3166,6 +3264,106 @@ paths:
       x-role-group: admin
       x-service: backend
       x-source: "Importal-backend/src/modules/billing/controllers/billing.controller.ts"
+  /api/v1/admin/tickets/{id}/cancelar-trueque:
+    post:
+      operationId: backend_post_api_v1_admin_tickets_id_cancelar_trueque
+      parameters:
+        -           description: ID del ticket
+          in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                created_at: "2026-06-24T04:50:00.000Z"
+                description: "El cliente solicita trueque para compensación de orden #120."
+                id: 102
+                metadata:
+                  client_acceptance: PENDING
+                  negotiation_notes: Ofrecido buzo Nike en reemplazo
+                  proposed_product_id: 45
+                  proposed_quantity: 2
+                  source_adjustment_id: 10
+                related_id: 10
+                related_type: OrderAdjustment
+                resolved_at: null
+                resolved_by: null
+                status: PENDING
+                title: Solicitud de Trueque por Ajuste de Pedido
+                type: BARTER_NEGOTIATION
+                updated_at: "2026-06-24T04:50:00.000Z"
+                user_id: 12
+              schema:
+                $ref: "#/components/schemas/Ticket"
+          description: Trueque cancelado y negociación cerrada con éxito
+      security:
+        -           bearerAuth:
+[]
+      summary: Cancelar la negociación del trueque y revertir el ajuste (Admin / Root)
+      tags:
+        - Support
+      x-role-group: admin
+      x-service: backend
+      x-source: "Importal-backend/src/modules/support/controllers/support.controller.ts"
+  /api/v1/admin/tickets/{id}/proponer-trueque:
+    post:
+      operationId: backend_post_api_v1_admin_tickets_id_proponer_trueque
+      parameters:
+        -           description: ID del ticket
+          in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            example:
+              negotiation_notes: Ofrecido buzo Nike en reemplazo
+              proposed_product_id: 45
+              proposed_quantity: 2
+            schema:
+              $ref: "#/components/schemas/ProponerTruequeRequest"
+        required: true
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                created_at: "2026-06-24T04:50:00.000Z"
+                description: "El cliente solicita trueque para compensación de orden #120."
+                id: 102
+                metadata:
+                  client_acceptance: PENDING
+                  negotiation_notes: Ofrecido buzo Nike en reemplazo
+                  proposed_product_id: 45
+                  proposed_quantity: 2
+                  source_adjustment_id: 10
+                related_id: 10
+                related_type: OrderAdjustment
+                resolved_at: null
+                resolved_by: null
+                status: PENDING
+                title: Solicitud de Trueque por Ajuste de Pedido
+                type: BARTER_NEGOTIATION
+                updated_at: "2026-06-24T04:50:00.000Z"
+                user_id: 12
+              schema:
+                $ref: "#/components/schemas/Ticket"
+          description: Propuesta de trueque registrada y enviada al cliente con éxito
+      security:
+        -           bearerAuth:
+[]
+      summary: Enviar una propuesta formal de trueque con producto y cantidad al cliente (Admin / Root)
+      tags:
+        - Support
+      x-role-group: admin
+      x-service: backend
+      x-source: "Importal-backend/src/modules/support/controllers/support.controller.ts"
   /api/v1/admin/traces:
     get:
       operationId: backend_get_api_v1_admin_traces
@@ -4591,6 +4789,96 @@ paths:
       x-role-group: cliente
       x-service: backend
       x-source: "Importal-backend/src/modules/products/controllers/products.controller.ts"
+  /api/v1/cliente/tickets/{id}/aceptar-trueque:
+    post:
+      operationId: backend_post_api_v1_cliente_tickets_id_aceptar_trueque
+      parameters:
+        -           description: ID del ticket
+          in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                created_at: "2026-06-24T04:50:00.000Z"
+                description: "El cliente solicita trueque para compensación de orden #120."
+                id: 102
+                metadata:
+                  client_acceptance: PENDING
+                  negotiation_notes: Ofrecido buzo Nike en reemplazo
+                  proposed_product_id: 45
+                  proposed_quantity: 2
+                  source_adjustment_id: 10
+                related_id: 10
+                related_type: OrderAdjustment
+                resolved_at: null
+                resolved_by: null
+                status: PENDING
+                title: Solicitud de Trueque por Ajuste de Pedido
+                type: BARTER_NEGOTIATION
+                updated_at: "2026-06-24T04:50:00.000Z"
+                user_id: 12
+              schema:
+                $ref: "#/components/schemas/Ticket"
+          description: Propuesta de trueque aceptada y procesada con éxito
+      security:
+        -           bearerAuth:
+[]
+      summary: Aceptar una propuesta de trueque enviada por el administrador (Cliente)
+      tags:
+        - Support
+      x-role-group: cliente
+      x-service: backend
+      x-source: "Importal-backend/src/modules/support/controllers/support.controller.ts"
+  /api/v1/cliente/tickets/{id}/rechazar-trueque:
+    post:
+      operationId: backend_post_api_v1_cliente_tickets_id_rechazar_trueque
+      parameters:
+        -           description: ID del ticket
+          in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                created_at: "2026-06-24T04:50:00.000Z"
+                description: "El cliente solicita trueque para compensación de orden #120."
+                id: 102
+                metadata:
+                  client_acceptance: PENDING
+                  negotiation_notes: Ofrecido buzo Nike en reemplazo
+                  proposed_product_id: 45
+                  proposed_quantity: 2
+                  source_adjustment_id: 10
+                related_id: 10
+                related_type: OrderAdjustment
+                resolved_at: null
+                resolved_by: null
+                status: PENDING
+                title: Solicitud de Trueque por Ajuste de Pedido
+                type: BARTER_NEGOTIATION
+                updated_at: "2026-06-24T04:50:00.000Z"
+                user_id: 12
+              schema:
+                $ref: "#/components/schemas/Ticket"
+          description: Propuesta de trueque rechazada y ajuste revertido con éxito
+      security:
+        -           bearerAuth:
+[]
+      summary: Rechazar una propuesta de trueque enviada por el administrador (Cliente)
+      tags:
+        - Support
+      x-role-group: cliente
+      x-service: backend
+      x-source: "Importal-backend/src/modules/support/controllers/support.controller.ts"
   /api/v1/notificaciones:
     get:
       operationId: backend_get_api_v1_notificaciones

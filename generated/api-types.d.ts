@@ -275,6 +275,12 @@ export type Product = {
 
 export type ProductArray = (Product)[]
 
+export type ProponerTruequeRequest = {
+  negotiation_notes?: string
+  proposed_product_id: number
+  proposed_quantity: number
+}
+
 export type RefreshRequest = {
   refreshToken?: string
 }
@@ -507,6 +513,31 @@ export type SupportTicketArray = (SupportTicket)[]
 
 export type SupportTicketPaginated = {
   data: (SupportTicket)[]
+  limit: number
+  page: number
+  total: number
+}
+
+export type Ticket = {
+  created_at: string
+  description: string
+  id: number
+  metadata?: Record<string, unknown>
+  related_id?: number
+  related_type?: string
+  resolved_at?: string
+  resolved_by?: number
+  status: "PENDING" | "IN_PROGRESS" | "RESOLVED" | "REJECTED"
+  title: string
+  type: "SUPPORT" | "RETURN_WARRANTY" | "BARTER_NEGOTIATION" | "REFUND_TRANSFER"
+  updated_at: string
+  user_id: number
+}
+
+export type TicketArray = (Ticket)[]
+
+export type TicketPaginated = {
+  data: (Ticket)[]
   limit: number
   page: number
   total: number
@@ -1002,6 +1033,22 @@ export interface Operations {
       "200": GenericObject
     }
   }
+  "backend_post_api_v1_admin_tickets_id_cancelar_trueque": {
+    method: "POST"
+    path: "/api/v1/admin/tickets/{id}/cancelar-trueque"
+    requestBody: undefined
+    responses: {
+      "200": Ticket
+    }
+  }
+  "backend_post_api_v1_admin_tickets_id_proponer_trueque": {
+    method: "POST"
+    path: "/api/v1/admin/tickets/{id}/proponer-trueque"
+    requestBody: ProponerTruequeRequest
+    responses: {
+      "200": Ticket
+    }
+  }
   "backend_get_api_v1_admin_traces": {
     method: "GET"
     path: "/api/v1/admin/traces"
@@ -1378,6 +1425,22 @@ export interface Operations {
     requestBody: undefined
     responses: {
       "200": ProductArray
+    }
+  }
+  "backend_post_api_v1_cliente_tickets_id_aceptar_trueque": {
+    method: "POST"
+    path: "/api/v1/cliente/tickets/{id}/aceptar-trueque"
+    requestBody: undefined
+    responses: {
+      "200": Ticket
+    }
+  }
+  "backend_post_api_v1_cliente_tickets_id_rechazar_trueque": {
+    method: "POST"
+    path: "/api/v1/cliente/tickets/{id}/rechazar-trueque"
+    requestBody: undefined
+    responses: {
+      "200": Ticket
     }
   }
   "backend_get_api_v1_notificaciones": {
