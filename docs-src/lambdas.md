@@ -14,6 +14,7 @@ sequenceDiagram
     participant SQS as SQS Queue
     participant Notif as Importal-notification-lambda
     participant Admin as Panel Admin NestJS
+    participant Backend as Backend NestJS
 
     Usuario->>Lambda: POST /registration-requests (Datos + Comprobante)
     Note over Lambda: Valida campos y genera OTPs
@@ -26,9 +27,10 @@ sequenceDiagram
     Note over Lambda: Compara OTP contra DynamoDB
     Lambda->>Dynamo: Actualiza is_verified = true
     
-    Admin->>Admin: Revisa y Aprueba Solicitud
-    Note over Admin: Crea usuario en Postgres y Cognito/Auth
-    Note over Admin: Marca en DynamoDB (Status: APPROVED)
+    Admin->>Backend: POST /registration-requests/{email}/approve
+    Note over Backend: Crea usuario en Postgres y Cognito/Auth
+    Note over Backend: Genera ClientCredit (Inversión Inicial) si rol es CLIENT
+    Backend->>Dynamo: Marca en DynamoDB (Status: APPROVED)
 ```
 
 ---
@@ -51,6 +53,24 @@ sequenceDiagram
   * **Email:** Envío de correos transaccionales (OTP, confirmación de pagos, facturas en PDF).
   * **SMS:** Códigos rápidos de autenticación móvil.
   * **WhatsApp:** Alertas de estado logístico ("Tu carga ha arribado a Santiago").
+
+---
+
+## Crédito de Inversión Inicial al Registro
+
+Al momento de que un administrador aprueba una solicitud de registro (`POST /registration-requests/{email}/approve`), si el rol asignado al usuario es `CLIENT`, el backend de Importal genera automáticamente un crédito de inversión inicial.
+
+### Reglas de Negocio
+* **1 sala (tipo de transporte):** Si el cliente seleccionó solo 1 tipo de transporte (aéreo o marítimo), se le otorga un crédito de **$50.000 CLP**.
+* **2 salas (tipos de transporte):** Si el cliente seleccionó ambos tipos de transporte (aéreo y marítimo), se le otorga un crédito de **$100.000 CLP**.
+
+### Registro en Base de Datos
+Este crédito se persiste en la tabla `client_credits` mapeado bajo la entidad `ClientCredit` con la siguiente lógica:
+* **`client_id`**: Referencia al ID único del cliente aprobado en la tabla `users` (`saved.id`).
+* **`amount_clp`**: Monto asignado ($50.000 o $100.000 CLP según la cantidad de salas).
+* **`remaining_amount_clp`**: Inicializado con el mismo valor que `amount_clp`.
+* **`notes`**: Texto descriptivo que indica la inversión inicial y el número de salas seleccionadas (ej. `Inversión inicial - Registro de cliente (X salas)`).
+* **`order_adjustment_id`**: Se inicializa en `null`.
 
 ---
 
