@@ -1197,8 +1197,25 @@ export const schemas = {
           required: ['id', 'tipo_cobro', 'total_clp', 'status'],
         },
       },
+      delivery_id: { type: 'integer', nullable: true },
+      orders_total: { type: 'integer' },
+      orders_reviewed: { type: 'integer' },
+      all_orders_reviewed: { type: 'boolean' },
+      blocking_cobros_summary: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            cobro_id: { type: 'integer' },
+            tipo_cobro: { type: 'string' },
+            total_clp: { type: 'number' },
+            status: { type: 'string' },
+          },
+          required: ['cobro_id', 'tipo_cobro', 'total_clp', 'status'],
+        },
+      },
     },
-    ['client_id', 'client_name', 'email', 'is_free', 'unpaid_cobros'],
+    ['client_id', 'client_name', 'email', 'is_free', 'unpaid_cobros', 'orders_total', 'orders_reviewed', 'all_orders_reviewed', 'blocking_cobros_summary'],
   ),
   CargaClientesStatusResponse: {
     type: 'array',
@@ -1712,6 +1729,10 @@ export const operationOverrides = {
     responses: Object.fromEntries([
       jsonResponse('200', 'Listado de cargas paginado', 'CargasPaginatedResponse'),
     ]),
+  },
+  'get /api/v1/cargas/{id}': {
+    summary: 'Obtener detalle de una carga específica (Admin/Root/Client/Vendor/Bodeguero)',
+    responses: Object.fromEntries([jsonResponse('200', 'Detalle de la carga', 'Carga')]),
   },
   'post /api/v1/admin/cargas': {
     requestBody: jsonRequest('CreateCargaRequest'),

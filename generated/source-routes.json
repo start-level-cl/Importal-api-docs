@@ -1650,6 +1650,28 @@
   {
     "service": "backend",
     "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "get",
+    "path": "/api/v1/cargas/{id}",
+    "operationId": "backend_get_api_v1_cargas_id",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "admin",
+      "root",
+      "client",
+      "vendor",
+      "bodeguero"
+    ],
+    "security": "bearerAuth",
+    "methodName": "getCargaById",
+    "parameters": [],
+    "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
     "method": "post",
     "path": "/api/v1/admin/cargas",
     "operationId": "backend_post_api_v1_admin_cargas",

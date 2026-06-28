@@ -37,14 +37,41 @@ components:
     CargaClientesStatusItem:
       additionalProperties: false
       properties:
+        all_orders_reviewed:
+          type: boolean
+        blocking_cobros_summary:
+          items:
+            properties:
+              cobro_id:
+                type: integer
+              status:
+                type: string
+              tipo_cobro:
+                type: string
+              total_clp:
+                type: number
+            required:
+              - cobro_id
+              - tipo_cobro
+              - total_clp
+              - status
+            type: object
+          type: array
         client_id:
           type: integer
         client_name:
           type: string
+        delivery_id:
+          nullable: true
+          type: integer
         email:
           type: string
         is_free:
           type: boolean
+        orders_reviewed:
+          type: integer
+        orders_total:
+          type: integer
         unpaid_cobros:
           items:
             properties:
@@ -69,6 +96,10 @@ components:
         - email
         - is_free
         - unpaid_cobros
+        - orders_total
+        - orders_reviewed
+        - all_orders_reviewed
+        - blocking_cobros_summary
       type: object
     CargaClientesStatusResponse:
       items:
@@ -4110,6 +4141,38 @@ paths:
         -           bearerAuth:
 []
       summary: Listar cargas con paginación y filtro de estado (Admin/Root/Client/Vendor/Bodeguero)
+      tags:
+        - Orders
+      x-role-group: comun
+      x-service: backend
+      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+  /api/v1/cargas/{id}:
+    get:
+      operationId: backend_get_api_v1_cargas_id
+      parameters:
+        -           in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                closes_at: null
+                created_at: "2026-05-25T12:00:00.000Z"
+                id: 4
+                opens_at: "2026-05-25T12:00:00.000Z"
+                status: IN_TRANSIT
+                tipo_carga: AEREA
+              schema:
+                $ref: "#/components/schemas/Carga"
+          description: Detalle de la carga
+      security:
+        -           bearerAuth:
+[]
+      summary: Obtener detalle de una carga específica (Admin/Root/Client/Vendor/Bodeguero)
       tags:
         - Orders
       x-role-group: comun

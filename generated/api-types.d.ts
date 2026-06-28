@@ -11,10 +11,20 @@ export type Carga = {
 }
 
 export type CargaClientesStatusItem = {
+  all_orders_reviewed: boolean
+  blocking_cobros_summary: ({
+    cobro_id: number
+    status: string
+    tipo_cobro: string
+    total_clp: number
+  })[]
   client_id: number
   client_name: string
+  delivery_id?: number
   email: string
   is_free: boolean
+  orders_reviewed: number
+  orders_total: number
   unpaid_cobros: ({
     id: number
     status: string
@@ -1247,6 +1257,14 @@ export interface Operations {
     requestBody: undefined
     responses: {
       "200": CargasPaginatedResponse
+    }
+  }
+  "backend_get_api_v1_cargas_id": {
+    method: "GET"
+    path: "/api/v1/cargas/{id}"
+    requestBody: undefined
+    responses: {
+      "200": Carga
     }
   }
   "backend_get_api_v1_chats": {
