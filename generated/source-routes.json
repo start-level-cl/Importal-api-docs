@@ -478,6 +478,7 @@
       "Audit"
     ],
     "roles": [
+      "admin",
       "root"
     ],
     "security": "bearerAuth",
@@ -544,6 +545,7 @@
       "Audit"
     ],
     "roles": [
+      "admin",
       "root"
     ],
     "security": "bearerAuth",
@@ -579,6 +581,7 @@
       "Audit"
     ],
     "roles": [
+      "admin",
       "root"
     ],
     "security": "bearerAuth",
@@ -646,6 +649,7 @@
       "Audit"
     ],
     "roles": [
+      "admin",
       "root"
     ],
     "security": "bearerAuth",
@@ -664,6 +668,7 @@
       "Audit"
     ],
     "roles": [
+      "admin",
       "root"
     ],
     "security": "bearerAuth",
@@ -699,6 +704,7 @@
       "Audit"
     ],
     "roles": [
+      "admin",
       "root"
     ],
     "security": "bearerAuth",
@@ -726,6 +732,7 @@
       "Audit"
     ],
     "roles": [
+      "admin",
       "root"
     ],
     "security": "bearerAuth",
@@ -753,6 +760,7 @@
       "Audit"
     ],
     "roles": [
+      "admin",
       "root"
     ],
     "security": "bearerAuth",
@@ -793,6 +801,7 @@
       "Audit"
     ],
     "roles": [
+      "admin",
       "root"
     ],
     "security": "bearerAuth",
@@ -811,6 +820,7 @@
       "Audit"
     ],
     "roles": [
+      "admin",
       "root"
     ],
     "security": "bearerAuth",
@@ -851,6 +861,7 @@
       "Audit"
     ],
     "roles": [
+      "admin",
       "root"
     ],
     "security": "bearerAuth",
@@ -869,6 +880,7 @@
       "Audit"
     ],
     "roles": [
+      "admin",
       "root"
     ],
     "security": "bearerAuth",
@@ -887,6 +899,7 @@
       "Audit"
     ],
     "roles": [
+      "admin",
       "root"
     ],
     "security": "bearerAuth",
@@ -914,6 +927,7 @@
       "Audit"
     ],
     "roles": [
+      "admin",
       "root"
     ],
     "security": "bearerAuth",
@@ -932,6 +946,7 @@
       "Audit"
     ],
     "roles": [
+      "admin",
       "root"
     ],
     "security": "bearerAuth",
@@ -955,6 +970,20 @@
   },
   {
     "service": "backend",
+    "source": "Importal-backend/src/modules/app/controllers/health.controller.ts",
+    "method": "get",
+    "path": "/api/health/error",
+    "operationId": "backend_get_api_health_error",
+    "tag": "backend",
+    "tags": [],
+    "roles": [],
+    "security": false,
+    "methodName": "triggerError",
+    "parameters": [],
+    "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
     "source": "Importal-backend/src/modules/app/controllers/system.controller.ts",
     "method": "get",
     "path": "/api/v1/admin/system/health",
@@ -964,6 +993,7 @@
       "System"
     ],
     "roles": [
+      "admin",
       "root"
     ],
     "security": "bearerAuth",
@@ -982,6 +1012,7 @@
       "System"
     ],
     "roles": [
+      "admin",
       "root"
     ],
     "security": "bearerAuth",
@@ -1000,6 +1031,7 @@
       "System"
     ],
     "roles": [
+      "admin",
       "root"
     ],
     "security": "bearerAuth",
@@ -1018,6 +1050,7 @@
       "System"
     ],
     "roles": [
+      "admin",
       "root"
     ],
     "security": "bearerAuth",
@@ -1036,6 +1069,7 @@
       "System"
     ],
     "roles": [
+      "admin",
       "root"
     ],
     "security": "bearerAuth",
@@ -1054,6 +1088,7 @@
       "System"
     ],
     "roles": [
+      "admin",
       "root"
     ],
     "security": "bearerAuth",
@@ -1072,6 +1107,7 @@
       "System"
     ],
     "roles": [
+      "admin",
       "root"
     ],
     "security": "bearerAuth",
@@ -1761,63 +1797,6 @@
     ],
     "security": "bearerAuth",
     "methodName": "rejectTransitionRequest",
-    "parameters": [],
-    "roleGroup": "admin"
-  },
-  {
-    "service": "backend",
-    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
-    "method": "get",
-    "path": "/api/v1/admin/pedidos-transicion",
-    "operationId": "backend_get_api_v1_admin_pedidos_transicion",
-    "tag": "Orders",
-    "tags": [
-      "Orders"
-    ],
-    "roles": [
-      "admin",
-      "root"
-    ],
-    "security": "bearerAuth",
-    "methodName": "getAdminOrderTransitionRequests",
-    "parameters": [],
-    "roleGroup": "admin"
-  },
-  {
-    "service": "backend",
-    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
-    "method": "post",
-    "path": "/api/v1/admin/pedidos-transicion/{id}/aprobar",
-    "operationId": "backend_post_api_v1_admin_pedidos_transicion_id_aprobar",
-    "tag": "Orders",
-    "tags": [
-      "Orders"
-    ],
-    "roles": [
-      "admin",
-      "root"
-    ],
-    "security": "bearerAuth",
-    "methodName": "approveOrderTransitionRequest",
-    "parameters": [],
-    "roleGroup": "admin"
-  },
-  {
-    "service": "backend",
-    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
-    "method": "post",
-    "path": "/api/v1/admin/pedidos-transicion/{id}/rechazar",
-    "operationId": "backend_post_api_v1_admin_pedidos_transicion_id_rechazar",
-    "tag": "Orders",
-    "tags": [
-      "Orders"
-    ],
-    "roles": [
-      "admin",
-      "root"
-    ],
-    "security": "bearerAuth",
-    "methodName": "rejectOrderTransitionRequest",
     "parameters": [],
     "roleGroup": "admin"
   },
@@ -2954,25 +2933,6 @@
   {
     "service": "backend",
     "source": "Importal-backend/src/modules/support/controllers/support.controller.ts",
-    "method": "get",
-    "path": "/api/v1/admin/soporte/tickets",
-    "operationId": "backend_get_api_v1_admin_soporte_tickets",
-    "tag": "Support",
-    "tags": [
-      "Support"
-    ],
-    "roles": [
-      "admin",
-      "root"
-    ],
-    "security": "bearerAuth",
-    "methodName": "getAllTicketsForAdmin",
-    "parameters": [],
-    "roleGroup": "admin"
-  },
-  {
-    "service": "backend",
-    "source": "Importal-backend/src/modules/support/controllers/support.controller.ts",
     "method": "put",
     "path": "/api/v1/admin/soporte/tickets/{id}/resolucion",
     "operationId": "backend_put_api_v1_admin_soporte_tickets_id_resolucion",
@@ -2986,6 +2946,25 @@
     ],
     "security": "bearerAuth",
     "methodName": "resolveTicket",
+    "parameters": [],
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/support/controllers/support.controller.ts",
+    "method": "post",
+    "path": "/api/v1/admin/tickets/{id}/resolver",
+    "operationId": "backend_post_api_v1_admin_tickets_id_resolver",
+    "tag": "Support",
+    "tags": [
+      "Support"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "resolveTicketAlias",
     "parameters": [],
     "roleGroup": "admin"
   },
@@ -3045,6 +3024,25 @@
     "methodName": "getUsers",
     "parameters": [],
     "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/users/controllers/users.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/users",
+    "operationId": "backend_get_api_v1_admin_users",
+    "tag": "Users",
+    "tags": [
+      "Users"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "getAdminUsers",
+    "parameters": [],
+    "roleGroup": "admin"
   },
   {
     "service": "backend",

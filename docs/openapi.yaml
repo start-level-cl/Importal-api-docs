@@ -1805,6 +1805,24 @@ paths:
       x-role-group: comun
       x-service: backend
       x-source: "Importal-backend/src/modules/app/controllers/health.controller.ts"
+  /api/health/error:
+    get:
+      operationId: backend_get_api_health_error
+      parameters:
+[]
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Operacion exitosa
+      summary: triggerError
+      tags:
+        - backend
+      x-role-group: comun
+      x-service: backend
+      x-source: "Importal-backend/src/modules/app/controllers/health.controller.ts"
   /api/v1:
     get:
       operationId: backend_get_api_v1
@@ -2754,86 +2772,6 @@ paths:
       x-role-group: admin
       x-service: backend
       x-source: "Importal-backend/src/modules/app/controllers/admin-metrics.controller.ts"
-  /api/v1/admin/pedidos-transicion:
-    get:
-      operationId: backend_get_api_v1_admin_pedidos_transicion
-      parameters:
-[]
-      responses:
-        200:
-          content:
-            application/json:
-              example:
-                -                   id: 1
-                  message: Ejemplo de elemento retornado
-              schema:
-                $ref: "#/components/schemas/GenericObjectArray"
-          description: Lista de solicitudes
-      security:
-        -           bearerAuth:
-[]
-      summary: Listar todas las solicitudes de transición de pedidos individuales de vendedores (Admin/Root)
-      tags:
-        - Orders
-      x-role-group: admin
-      x-service: backend
-      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
-  /api/v1/admin/pedidos-transicion/{id}/aprobar:
-    post:
-      operationId: backend_post_api_v1_admin_pedidos_transicion_id_aprobar
-      parameters:
-        -           in: path
-          name: id
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          content:
-            application/json:
-              example:
-                message: Operacion exitosa
-                ok: true
-              schema:
-                $ref: "#/components/schemas/GenericObject"
-          description: Transición aprobada con éxito
-      security:
-        -           bearerAuth:
-[]
-      summary: Aprobar la transición de un pedido a la siguiente carga abierta (Admin/Root)
-      tags:
-        - Orders
-      x-role-group: admin
-      x-service: backend
-      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
-  /api/v1/admin/pedidos-transicion/{id}/rechazar:
-    post:
-      operationId: backend_post_api_v1_admin_pedidos_transicion_id_rechazar
-      parameters:
-        -           in: path
-          name: id
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          content:
-            application/json:
-              example:
-                message: Operacion exitosa
-                ok: true
-              schema:
-                $ref: "#/components/schemas/GenericObject"
-          description: Transición rechazada con éxito
-      security:
-        -           bearerAuth:
-[]
-      summary: Rechazar la transición de un pedido (Admin/Root)
-      tags:
-        - Orders
-      x-role-group: admin
-      x-service: backend
-      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
   /api/v1/admin/reembolsos/pendientes:
     get:
       operationId: backend_get_api_v1_admin_reembolsos_pendientes
@@ -2935,64 +2873,6 @@ paths:
       x-role-group: admin
       x-service: backend
       x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
-  /api/v1/admin/soporte/tickets:
-    get:
-      operationId: backend_get_api_v1_admin_soporte_tickets
-      parameters:
-        -           description: Filtrar por estado
-          in: query
-          name: status
-          required: false
-          schema:
-            enum:
-              - PENDING
-              - IN_PROGRESS
-              - RESOLVED
-              - REJECTED
-            type: string
-        -           description: Número de página
-          in: query
-          name: page
-          required: false
-          schema:
-            type: integer
-        -           description: Cantidad por página
-          in: query
-          name: limit
-          required: false
-          schema:
-            type: integer
-      responses:
-        200:
-          content:
-            application/json:
-              example:
-                data:
-                  -                     created_at: "2026-06-04T15:40:00.000Z"
-                    description: La plataforma arroja error 500 al intentar subir imágenes de 2MB.
-                    id: 101
-                    resolution: Se corrigió la cuota y almacenamiento en el bucket S3. Ya puedes volver a subir tus imágenes.
-                    resolved_at: "2026-06-04T15:45:00.000Z"
-                    resolved_by: 1
-                    status: RESOLVED
-                    title: Error al subir foto del producto
-                    updated_at: "2026-06-04T15:45:00.000Z"
-                    user_id: 12
-                limit: 10
-                page: 1
-                total: 1
-              schema:
-                $ref: "#/components/schemas/SupportTicketPaginated"
-          description: Bandeja de tickets de soporte paginada
-      security:
-        -           bearerAuth:
-[]
-      summary: Listar todos los tickets de soporte del sistema con filtros y paginación (Admin / Root)
-      tags:
-        - Support
-      x-role-group: admin
-      x-service: backend
-      x-source: "Importal-backend/src/modules/support/controllers/support.controller.ts"
   /api/v1/admin/soporte/tickets/{id}/resolucion:
     put:
       operationId: backend_put_api_v1_admin_soporte_tickets_id_resolucion
@@ -3395,6 +3275,31 @@ paths:
       x-role-group: admin
       x-service: backend
       x-source: "Importal-backend/src/modules/support/controllers/support.controller.ts"
+  /api/v1/admin/tickets/{id}/resolver:
+    post:
+      operationId: backend_post_api_v1_admin_tickets_id_resolver
+      parameters:
+        -           in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Operacion exitosa
+      security:
+        -           bearerAuth:
+[]
+      summary: resolveTicketAlias
+      tags:
+        - Support
+      x-role-group: admin
+      x-service: backend
+      x-source: "Importal-backend/src/modules/support/controllers/support.controller.ts"
   /api/v1/admin/traces:
     get:
       operationId: backend_get_api_v1_admin_traces
@@ -3467,6 +3372,27 @@ paths:
       x-role-group: admin
       x-service: backend
       x-source: "Importal-backend/src/modules/app/controllers/audit.controller.ts"
+  /api/v1/admin/users:
+    get:
+      operationId: backend_get_api_v1_admin_users
+      parameters:
+[]
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Operacion exitosa
+      security:
+        -           bearerAuth:
+[]
+      summary: getAdminUsers
+      tags:
+        - Users
+      x-role-group: admin
+      x-service: backend
+      x-source: "Importal-backend/src/modules/users/controllers/users.controller.ts"
   /api/v1/admin/users/activity:
     get:
       operationId: backend_get_api_v1_admin_users_activity

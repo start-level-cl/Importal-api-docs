@@ -651,6 +651,14 @@ export interface Operations {
       "200": GenericObject
     }
   }
+  "backend_get_api_health_error": {
+    method: "GET"
+    path: "/api/health/error"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
   "backend_get_api_v1": {
     method: "GET"
     path: "/api/v1"
@@ -891,30 +899,6 @@ export interface Operations {
       "200": GenericObject
     }
   }
-  "backend_get_api_v1_admin_pedidos_transicion": {
-    method: "GET"
-    path: "/api/v1/admin/pedidos-transicion"
-    requestBody: undefined
-    responses: {
-      "200": GenericObjectArray
-    }
-  }
-  "backend_post_api_v1_admin_pedidos_transicion_id_aprobar": {
-    method: "POST"
-    path: "/api/v1/admin/pedidos-transicion/{id}/aprobar"
-    requestBody: undefined
-    responses: {
-      "200": GenericObject
-    }
-  }
-  "backend_post_api_v1_admin_pedidos_transicion_id_rechazar": {
-    method: "POST"
-    path: "/api/v1/admin/pedidos-transicion/{id}/rechazar"
-    requestBody: undefined
-    responses: {
-      "200": GenericObject
-    }
-  }
   "backend_get_api_v1_admin_reembolsos_pendientes": {
     method: "GET"
     path: "/api/v1/admin/reembolsos/pendientes"
@@ -945,14 +929,6 @@ export interface Operations {
     requestBody: undefined
     responses: {
       "200": GenericObject
-    }
-  }
-  "backend_get_api_v1_admin_soporte_tickets": {
-    method: "GET"
-    path: "/api/v1/admin/soporte/tickets"
-    requestBody: undefined
-    responses: {
-      "200": SupportTicketPaginated
     }
   }
   "backend_put_api_v1_admin_soporte_tickets_id_resolucion": {
@@ -1059,6 +1035,14 @@ export interface Operations {
       "200": Ticket
     }
   }
+  "backend_post_api_v1_admin_tickets_id_resolver": {
+    method: "POST"
+    path: "/api/v1/admin/tickets/{id}/resolver"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
   "backend_get_api_v1_admin_traces": {
     method: "GET"
     path: "/api/v1/admin/traces"
@@ -1078,6 +1062,14 @@ export interface Operations {
   "backend_get_api_v1_admin_traces_traceId": {
     method: "GET"
     path: "/api/v1/admin/traces/{traceId}"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_get_api_v1_admin_users": {
+    method: "GET"
+    path: "/api/v1/admin/users"
     requestBody: undefined
     responses: {
       "200": GenericObject
