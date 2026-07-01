@@ -185,6 +185,22 @@
   {
     "service": "auth",
     "source": "Importal-auth/src/modules/auth/controllers/auth.controller.ts",
+    "method": "get",
+    "path": "/auth/api/v1/users/{userId}",
+    "operationId": "auth_get_auth_api_v1_users_userId",
+    "tag": "Auth",
+    "tags": [
+      "Auth"
+    ],
+    "roles": [],
+    "security": "bearerAuth",
+    "methodName": "getUser",
+    "parameters": [],
+    "roleGroup": "interno"
+  },
+  {
+    "service": "auth",
+    "source": "Importal-auth/src/modules/auth/controllers/auth.controller.ts",
     "method": "post",
     "path": "/auth/api/v1/send-code",
     "operationId": "auth_post_auth_api_v1_send_code",
@@ -2933,6 +2949,42 @@
   {
     "service": "backend",
     "source": "Importal-backend/src/modules/support/controllers/support.controller.ts",
+    "method": "post",
+    "path": "/api/v1/vendedor/solicitud-transporte",
+    "operationId": "backend_post_api_v1_vendedor_solicitud_transporte",
+    "tag": "Support",
+    "tags": [
+      "Support"
+    ],
+    "roles": [
+      "vendor"
+    ],
+    "security": "bearerAuth",
+    "methodName": "createVendedorTransportRequest",
+    "parameters": [],
+    "roleGroup": "vendedor"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/support/controllers/support.controller.ts",
+    "method": "post",
+    "path": "/api/v1/cliente/solicitud-transporte",
+    "operationId": "backend_post_api_v1_cliente_solicitud_transporte",
+    "tag": "Support",
+    "tags": [
+      "Support"
+    ],
+    "roles": [
+      "client"
+    ],
+    "security": "bearerAuth",
+    "methodName": "createClienteTransportRequest",
+    "parameters": [],
+    "roleGroup": "cliente"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/support/controllers/support.controller.ts",
     "method": "put",
     "path": "/api/v1/admin/soporte/tickets/{id}/resolucion",
     "operationId": "backend_put_api_v1_admin_soporte_tickets_id_resolucion",
@@ -2965,6 +3017,25 @@
     ],
     "security": "bearerAuth",
     "methodName": "resolveTicketAlias",
+    "parameters": [],
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/support/controllers/support.controller.ts",
+    "method": "post",
+    "path": "/api/v1/admin/tickets/{id}/resolver-transporte",
+    "operationId": "backend_post_api_v1_admin_tickets_id_resolver_transporte",
+    "tag": "Support",
+    "tags": [
+      "Support"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "resolverTransporte",
     "parameters": [],
     "roleGroup": "admin"
   },

@@ -4733,6 +4733,45 @@
         "x-source": "Importal-backend/src/modules/support/controllers/support.controller.ts"
       }
     },
+    "/api/v1/admin/tickets/{id}/resolver-transporte": {
+      "post": {
+        "operationId": "backend_post_api_v1_admin_tickets_id_resolver_transporte",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "resolverTransporte",
+        "tags": [
+          "Support"
+        ],
+        "x-role-group": "admin",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/support/controllers/support.controller.ts"
+      }
+    },
     "/api/v1/admin/traces": {
       "get": {
         "operationId": "backend_get_api_v1_admin_traces",
@@ -6931,6 +6970,36 @@
         "x-source": "Importal-backend/src/modules/products/controllers/products.controller.ts"
       }
     },
+    "/api/v1/cliente/solicitud-transporte": {
+      "post": {
+        "operationId": "backend_post_api_v1_cliente_solicitud_transporte",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "createClienteTransportRequest",
+        "tags": [
+          "Support"
+        ],
+        "x-role-group": "cliente",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/support/controllers/support.controller.ts"
+      }
+    },
     "/api/v1/cliente/tickets/{id}/aceptar-trueque": {
       "post": {
         "operationId": "backend_post_api_v1_cliente_tickets_id_aceptar_trueque",
@@ -8799,6 +8868,36 @@
         "x-source": "Importal-backend/src/modules/products/controllers/products.controller.ts"
       }
     },
+    "/api/v1/vendedor/solicitud-transporte": {
+      "post": {
+        "operationId": "backend_post_api_v1_vendedor_solicitud_transporte",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "createVendedorTransportRequest",
+        "tags": [
+          "Support"
+        ],
+        "x-role-group": "vendedor",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/support/controllers/support.controller.ts"
+      }
+    },
     "/api/v1/vendedor/solicitudes-carga": {
       "get": {
         "operationId": "backend_get_api_v1_vendedor_solicitudes_carga",
@@ -9317,6 +9416,43 @@
           }
         ],
         "summary": "deleteUser",
+        "tags": [
+          "Auth"
+        ],
+        "x-role-group": "interno",
+        "x-service": "auth",
+        "x-source": "Importal-auth/src/modules/auth/controllers/auth.controller.ts"
+      },
+      "get": {
+        "operationId": "auth_get_auth_api_v1_users_userId",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "getUser",
         "tags": [
           "Auth"
         ],

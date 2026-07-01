@@ -1043,6 +1043,14 @@ export interface Operations {
       "200": GenericObject
     }
   }
+  "backend_post_api_v1_admin_tickets_id_resolver_transporte": {
+    method: "POST"
+    path: "/api/v1/admin/tickets/{id}/resolver-transporte"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
   "backend_get_api_v1_admin_traces": {
     method: "GET"
     path: "/api/v1/admin/traces"
@@ -1437,6 +1445,14 @@ export interface Operations {
       "200": ProductArray
     }
   }
+  "backend_post_api_v1_cliente_solicitud_transporte": {
+    method: "POST"
+    path: "/api/v1/cliente/solicitud-transporte"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
   "backend_post_api_v1_cliente_tickets_id_aceptar_trueque": {
     method: "POST"
     path: "/api/v1/cliente/tickets/{id}/aceptar-trueque"
@@ -1749,6 +1765,14 @@ export interface Operations {
       "200": Product
     }
   }
+  "backend_post_api_v1_vendedor_solicitud_transporte": {
+    method: "POST"
+    path: "/api/v1/vendedor/solicitud-transporte"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
   "backend_get_api_v1_vendedor_solicitudes_carga": {
     method: "GET"
     path: "/api/v1/vendedor/solicitudes-carga"
@@ -1837,6 +1861,14 @@ export interface Operations {
   }
   "auth_delete_auth_api_v1_users_userId": {
     method: "DELETE"
+    path: "/auth/api/v1/users/{userId}"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "auth_get_auth_api_v1_users_userId": {
+    method: "GET"
     path: "/auth/api/v1/users/{userId}"
     requestBody: undefined
     responses: {

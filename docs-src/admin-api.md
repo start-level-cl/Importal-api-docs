@@ -13,6 +13,7 @@ Esta tabla consolida los endpoints disponibles para roles de administración y g
 | **Soporte** | `GET` | `/api/v1/admin/tickets`<br> `/api/v1/admin/soporte/tickets` | `ADMIN`, `ROOT` | Listado y bandeja de entrada unificada de tickets de soporte. |
 | **Soporte** | `POST` | `/api/v1/admin/tickets/:id/resolver`<br> `/api/v1/admin/soporte/tickets/:id/resolver` | `ADMIN`, `ROOT` | Resuelve un ticket asignándole un estado, resolución y comprobante opcional. |
 | **Soporte** | `POST` | `/api/v1/admin/tickets/:id/proponer-trueque` | `ADMIN`, `ROOT` | Envía una propuesta de trueque para tickets de negociación. |
+| **Soporte** | `POST` | `/api/v1/admin/tickets/:id/resolver-transporte` | `ADMIN`, `ROOT` | Aprueba o rechaza una solicitud de acceso a sala de transporte (`ADD_TRANSPORT_REQUEST`). |
 | **Usuarios** | `GET` | `/api/v1/admin/users` | `ADMIN`, `ROOT` | Listado avanzado de usuarios con filtros de mora, deuda, salas y búsqueda. |
 | **Usuarios** | `GET` | `/api/v1/users` | `ADMIN`, `ROOT` | Obtención básica de usuarios con paginación general. |
 | **Usuarios** | `GET` | `/api/v1/users/:id` | `ADMIN`, `ROOT` | Resumen detallado del perfil y transacciones de un usuario. |
@@ -100,6 +101,18 @@ sequenceDiagram
     Service-->>API: Retorna Ticket modificado
     API-->>Admin: HTTP 200 OK (JSON del Ticket)
 ```
+
+### 1.3 Resolver Solicitud de Transporte
+* **Método:** `POST`
+* **Ruta:** `/api/v1/admin/tickets/:id/resolver-transporte`
+* **Roles Autorizados:** `ADMIN`, `ROOT`
+* **Cuerpo de la Petición (Payload):**
+  * `action` (requerido, string): La resolución aplicada a la solicitud (`APPROVE` o `REJECT`).
+  * `notes` (opcional, string): Comentarios o detalles del administrador explicando la resolución.
+
+> [!NOTE]
+> **Procesamiento de Solicitudes de Transporte (`ADD_TRANSPORT_REQUEST`):**
+> Al aprobar (`APPROVE`), el ticket cambia de estado a `RESOLVED` y el backend actualiza de manera transaccional el listado de salas de transporte del usuario en el Auth Service (añadiendo el transporte solicitado: `AEREA` o `MARITIMA`). Al rechazar (`REJECT`), el ticket cambia de estado a `REJECTED` y el motivo se guarda en `metadata.rejection_reason` y en `resolution`.
 
 ---
 
