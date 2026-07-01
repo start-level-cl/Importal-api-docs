@@ -549,6 +549,141 @@ const schemaExamples = {
       resolved_at: '2026-06-18T10:00:00.000Z',
     }
   ],
+  UpdateProfileRequest: {
+    name: 'Juan Pérez',
+  },
+  UpdateNotificationsRequest: {
+    email: true,
+    phone: false,
+  },
+  UserAddress: {
+    id: 1,
+    user_id: 12,
+    alias: 'Casa',
+    calle: 'Av. Vitacura',
+    numero: '3568',
+    depto_oficina: 'Of. 502',
+    comuna: 'Vitacura',
+    region: 'Región Metropolitana',
+    postal_code: '7630000',
+    is_default: true,
+    housing_type: 'departamento',
+    despacho_agency: 'FlowEx',
+    reference: 'Esquina Vitacura con Alonso de Córdova',
+    pickup_instructions: null,
+    created_at: '2026-07-01T18:00:00.000Z',
+  },
+  UserAddressArray: [
+    {
+      id: 1,
+      user_id: 12,
+      alias: 'Casa',
+      calle: 'Av. Vitacura',
+      numero: '3568',
+      depto_oficina: 'Of. 502',
+      comuna: 'Vitacura',
+      region: 'Región Metropolitana',
+      postal_code: '7630000',
+      is_default: true,
+      housing_type: 'departamento',
+      despacho_agency: 'FlowEx',
+      reference: 'Esquina Vitacura con Alonso de Córdova',
+      pickup_instructions: null,
+      created_at: '2026-07-01T18:00:00.000Z',
+    }
+  ],
+  CreateAddressRequest: {
+    alias: 'Casa',
+    calle: 'Av. Vitacura',
+    numero: '3568',
+    depto_oficina: 'Of. 502',
+    comuna: 'Vitacura',
+    region: 'Región Metropolitana',
+    postal_code: '7630000',
+    is_default: true,
+    housing_type: 'departamento',
+    despacho_agency: 'FlowEx',
+    reference: 'Esquina Vitacura con Alonso de Córdova',
+    pickup_instructions: null,
+  },
+  UpdateAddressRequest: {
+    alias: 'Casa',
+    calle: 'Av. Vitacura',
+    numero: '3568',
+    depto_oficina: 'Of. 503',
+    comuna: 'Vitacura',
+    region: 'Región Metropolitana',
+    postal_code: '7630000',
+    is_default: true,
+    housing_type: 'departamento',
+    despacho_agency: 'FlowEx',
+    reference: 'Esquina Vitacura con Alonso de Córdova',
+    pickup_instructions: null,
+  },
+  UserBilling: {
+    id: 1,
+    razon_social: 'Importaciones y Exportaciones SpA',
+    rut_empresa: '76.543.210-K',
+    giro: 'Venta al por mayor de artículos electrónicos',
+    direccion_facturacion: 'Av. Providencia 1234, Santiago',
+    correo: 'facturacion@empresa.cl',
+    user_id: 12,
+    created_at: '2026-07-01T18:00:00.000Z',
+    updated_at: '2026-07-01T18:00:00.000Z',
+  },
+  UpdateBillingRequest: {
+    razon_social: 'Importaciones y Exportaciones SpA',
+    rut_empresa: '76.543.210-K',
+    giro: 'Venta al por mayor de artículos electrónicos',
+    direccion_facturacion: 'Av. Providencia 1234, Santiago',
+    correo: 'facturacion@empresa.cl',
+  },
+  UserProfile: {
+    id: 12,
+    name: 'Juan Pérez',
+    external_id: 'auth0|123456',
+    email: true,
+    phone: false,
+    concentimiento: true,
+    email_address: 'juan.perez@ejemplo.com',
+    phone_number: '+56912345678',
+    rut: '12.345.678-9',
+    bloqueo: false,
+    role: 'client',
+    operacion_ciudad: null,
+    bodega_asignada: null,
+    status_mora: 'LIBRE',
+    addresses: [
+      {
+        id: 1,
+        user_id: 12,
+        alias: 'Casa',
+        calle: 'Av. Vitacura',
+        numero: '3568',
+        depto_oficina: 'Of. 502',
+        comuna: 'Vitacura',
+        region: 'Región Metropolitana',
+        postal_code: '7630000',
+        is_default: true,
+        housing_type: 'departamento',
+        despacho_agency: 'FlowEx',
+        reference: 'Esquina Vitacura con Alonso de Córdova',
+        pickup_instructions: null,
+        created_at: '2026-07-01T18:00:00.000Z',
+      }
+    ],
+    billing: {
+      id: 1,
+      razon_social: 'Importaciones y Exportaciones SpA',
+      rut_empresa: '76.543.210-K',
+      giro: 'Venta al por mayor de artículos electrónicos',
+      direccion_facturacion: 'Av. Providencia 1234, Santiago',
+      correo: 'facturacion@empresa.cl',
+      user_id: 12,
+      created_at: '2026-07-01T18:00:00.000Z',
+      updated_at: '2026-07-01T18:00:00.000Z',
+    },
+  },
 }
 
 function getSchemaExample(schemaRef) {
@@ -1442,6 +1577,98 @@ export const schemas = {
     ['id', 'delivery_id', 'order_id', 'client_id', 'reason', 'status', 'created_at'],
   ),
   ReturnRequestArray: { type: 'array', items: { $ref: '#/components/schemas/ReturnRequest' } },
+  UpdateProfileRequest: objectSchema({
+    name: { type: 'string', description: 'Nombre del usuario' }
+  }, ['name']),
+  UpdateNotificationsRequest: objectSchema({
+    email: { type: 'boolean', description: 'Preferencia de notificación por correo' },
+    phone: { type: 'boolean', description: 'Preferencia de notificación por teléfono' }
+  }, ['email', 'phone']),
+  UserAddress: objectSchema({
+    id: { type: 'integer' },
+    user_id: { type: 'integer' },
+    alias: { type: 'string', nullable: true },
+    calle: { type: 'string' },
+    numero: { type: 'string' },
+    depto_oficina: { type: 'string', nullable: true },
+    comuna: { type: 'string' },
+    region: { type: 'string' },
+    postal_code: { type: 'string', nullable: true },
+    is_default: { type: 'boolean' },
+    housing_type: { type: 'string', nullable: true },
+    despacho_agency: { type: 'string', nullable: true },
+    reference: { type: 'string', nullable: true },
+    pickup_instructions: { type: 'string', nullable: true },
+    created_at: { type: 'string', format: 'date-time' }
+  }, ['id', 'user_id', 'calle', 'numero', 'comuna', 'region', 'is_default']),
+  UserAddressArray: {
+    type: 'array',
+    items: { $ref: '#/components/schemas/UserAddress' }
+  },
+  CreateAddressRequest: objectSchema({
+    alias: { type: 'string' },
+    calle: { type: 'string' },
+    numero: { type: 'string' },
+    depto_oficina: { type: 'string' },
+    comuna: { type: 'string' },
+    region: { type: 'string' },
+    postal_code: { type: 'string' },
+    is_default: { type: 'boolean' },
+    housing_type: { type: 'string' },
+    despacho_agency: { type: 'string' },
+    reference: { type: 'string' },
+    pickup_instructions: { type: 'string' }
+  }, ['calle', 'numero', 'comuna', 'region']),
+  UpdateAddressRequest: objectSchema({
+    alias: { type: 'string' },
+    calle: { type: 'string' },
+    numero: { type: 'string' },
+    depto_oficina: { type: 'string' },
+    comuna: { type: 'string' },
+    region: { type: 'string' },
+    postal_code: { type: 'string' },
+    is_default: { type: 'boolean' },
+    housing_type: { type: 'string' },
+    despacho_agency: { type: 'string' },
+    reference: { type: 'string' },
+    pickup_instructions: { type: 'string' }
+  }),
+  UserBilling: objectSchema({
+    id: { type: 'integer' },
+    razon_social: { type: 'string' },
+    rut_empresa: { type: 'string' },
+    giro: { type: 'string' },
+    direccion_facturacion: { type: 'string' },
+    correo: { type: 'string', format: 'email' },
+    user_id: { type: 'integer' },
+    created_at: { type: 'string', format: 'date-time' },
+    updated_at: { type: 'string', format: 'date-time' }
+  }, ['id', 'razon_social', 'rut_empresa', 'giro', 'direccion_facturacion', 'correo', 'user_id']),
+  UpdateBillingRequest: objectSchema({
+    razon_social: { type: 'string' },
+    rut_empresa: { type: 'string' },
+    giro: { type: 'string' },
+    direccion_facturacion: { type: 'string' },
+    correo: { type: 'string', format: 'email' }
+  }, ['razon_social', 'rut_empresa', 'giro', 'direccion_facturacion', 'correo']),
+  UserProfile: objectSchema({
+    id: { type: 'integer' },
+    name: { type: 'string' },
+    external_id: { type: 'string' },
+    email: { type: 'boolean' },
+    phone: { type: 'boolean' },
+    concentimiento: { type: 'boolean' },
+    email_address: { type: 'string', format: 'email', nullable: true },
+    phone_number: { type: 'string', nullable: true },
+    rut: { type: 'string', nullable: true },
+    bloqueo: { type: 'boolean' },
+    role: { type: 'string' },
+    operacion_ciudad: { type: 'string', nullable: true },
+    bodega_asignada: { type: 'string', nullable: true },
+    status_mora: { type: 'string' },
+    addresses: { type: 'array', items: { $ref: '#/components/schemas/UserAddress' } },
+    billing: { $ref: '#/components/schemas/UserBilling', nullable: true }
+  }, ['id', 'name', 'external_id', 'email', 'phone', 'concentimiento', 'bloqueo', 'role', 'status_mora']),
 }
 
 function jsonRequest(schemaRef, required = true) {
@@ -2189,6 +2416,77 @@ export const operationOverrides = {
     ],
     responses: Object.fromEntries([
       jsonResponse('200', 'Listado de devoluciones del cliente', 'ReturnRequestArray'),
+    ]),
+  },
+  'get /api/v1/users/me': {
+    summary: 'Obtener el perfil del usuario autenticado (Común)',
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Perfil del usuario obtenido con éxito', 'UserProfile'),
+    ]),
+  },
+  'put /api/v1/users/me': {
+    summary: 'Actualizar el perfil del usuario autenticado (Común)',
+    requestBody: jsonRequest('UpdateProfileRequest'),
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Perfil del usuario actualizado con éxito', 'UserProfile'),
+    ]),
+  },
+  'put /api/v1/users/me/notificaciones': {
+    summary: 'Actualizar preferencias de notificaciones del usuario (Común)',
+    requestBody: jsonRequest('UpdateNotificationsRequest'),
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Preferencias de notificaciones actualizadas con éxito', 'UserProfile'),
+    ]),
+  },
+  'post /api/v1/users/me/revocar-consentimiento': {
+    summary: 'Revocar consentimiento de notificaciones del usuario (Común)',
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Consentimiento revocado con éxito', 'GenericMessage'),
+    ]),
+  },
+  'get /api/v1/cliente/direcciones': {
+    summary: 'Listar direcciones del cliente autenticado (Cliente)',
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Listado de direcciones obtenido con éxito', 'UserAddressArray'),
+    ]),
+  },
+  'post /api/v1/cliente/direcciones': {
+    summary: 'Crear una nueva dirección para el cliente (Cliente)',
+    requestBody: jsonRequest('CreateAddressRequest'),
+    responses: Object.fromEntries([
+      jsonResponse('201', 'Dirección creada con éxito', 'UserAddress'),
+    ]),
+  },
+  'put /api/v1/cliente/direcciones/{id}': {
+    summary: 'Actualizar una dirección existente del cliente (Cliente)',
+    parameters: [
+      { name: 'id', in: 'path', required: true, schema: { type: 'integer' }, description: 'ID de la dirección' },
+    ],
+    requestBody: jsonRequest('UpdateAddressRequest'),
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Dirección actualizada con éxito', 'UserAddress'),
+    ]),
+  },
+  'delete /api/v1/cliente/direcciones/{id}': {
+    summary: 'Eliminar una dirección del cliente (Cliente)',
+    parameters: [
+      { name: 'id', in: 'path', required: true, schema: { type: 'integer' }, description: 'ID de la dirección' },
+    ],
+    responses: Object.fromEntries([
+      noContentResponse('204', 'Dirección eliminada con éxito'),
+    ]),
+  },
+  'get /api/v1/cliente/facturacion': {
+    summary: 'Obtener datos de facturación del cliente (Cliente)',
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Datos de facturación obtenidos con éxito', 'UserBilling'),
+    ]),
+  },
+  'put /api/v1/cliente/facturacion': {
+    summary: 'Actualizar datos de facturación del cliente (Cliente)',
+    requestBody: jsonRequest('UpdateBillingRequest'),
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Datos de facturación actualizados con éxito', 'UserBilling'),
     ]),
   },
 }

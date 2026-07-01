@@ -20,7 +20,8 @@ export default withMermaid(
           { text: 'Trabajos Internos (Jobs)', link: '/internal-jobs' },
           { text: 'Ajustes y Reembolsos', link: '/adjustments-refunds' },
           { text: 'Flujo de Bodega', link: '/bodeguero-workflow' },
-          { text: 'Notificaciones', link: '/notifications' }
+          { text: 'Notificaciones', link: '/notifications' },
+          { text: 'Perfil, Direcciones y Facturación', link: '/user-settings' }
         ]},
         { text: 'Referencia API ↗', link: '/reference.html', target: '_blank' }
       ],
@@ -40,7 +41,8 @@ export default withMermaid(
             { text: 'Trabajos y Cron Jobs', link: '/internal-jobs' },
             { text: 'Ajustes y Reembolsos', link: '/adjustments-refunds' },
             { text: 'Flujo de Bodega', link: '/bodeguero-workflow' },
-            { text: 'Notificaciones', link: '/notifications' }
+            { text: 'Notificaciones', link: '/notifications' },
+            { text: 'Perfil, Direcciones y Facturación', link: '/user-settings' }
           ]
         }
       ],

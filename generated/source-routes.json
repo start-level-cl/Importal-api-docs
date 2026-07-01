@@ -3079,6 +3079,202 @@
   },
   {
     "service": "backend",
+    "source": "Importal-backend/src/modules/users/controllers/addresses.controller.ts",
+    "method": "get",
+    "path": "/api/v1/cliente/direcciones",
+    "operationId": "backend_get_api_v1_cliente_direcciones",
+    "tag": "Client Addresses",
+    "tags": [
+      "Client Addresses"
+    ],
+    "roles": [
+      "client"
+    ],
+    "security": "bearerAuth",
+    "methodName": "getAddresses",
+    "parameters": [],
+    "roleGroup": "cliente"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/users/controllers/addresses.controller.ts",
+    "method": "post",
+    "path": "/api/v1/cliente/direcciones",
+    "operationId": "backend_post_api_v1_cliente_direcciones",
+    "tag": "Client Addresses",
+    "tags": [
+      "Client Addresses"
+    ],
+    "roles": [
+      "client"
+    ],
+    "security": "bearerAuth",
+    "methodName": "createAddress",
+    "parameters": [],
+    "roleGroup": "cliente"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/users/controllers/addresses.controller.ts",
+    "method": "put",
+    "path": "/api/v1/cliente/direcciones/{id}",
+    "operationId": "backend_put_api_v1_cliente_direcciones_id",
+    "tag": "Client Addresses",
+    "tags": [
+      "Client Addresses"
+    ],
+    "roles": [
+      "client"
+    ],
+    "security": "bearerAuth",
+    "methodName": "updateAddress",
+    "parameters": [],
+    "roleGroup": "cliente"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/users/controllers/addresses.controller.ts",
+    "method": "delete",
+    "path": "/api/v1/cliente/direcciones/{id}",
+    "operationId": "backend_delete_api_v1_cliente_direcciones_id",
+    "tag": "Client Addresses",
+    "tags": [
+      "Client Addresses"
+    ],
+    "roles": [
+      "client"
+    ],
+    "security": "bearerAuth",
+    "methodName": "deleteAddress",
+    "parameters": [],
+    "roleGroup": "cliente"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/users/controllers/billing.controller.ts",
+    "method": "get",
+    "path": "/api/v1/cliente/facturacion",
+    "operationId": "backend_get_api_v1_cliente_facturacion",
+    "tag": "Client Billing",
+    "tags": [
+      "Client Billing"
+    ],
+    "roles": [
+      "client"
+    ],
+    "security": "bearerAuth",
+    "methodName": "getBilling",
+    "parameters": [],
+    "roleGroup": "cliente"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/users/controllers/billing.controller.ts",
+    "method": "put",
+    "path": "/api/v1/cliente/facturacion",
+    "operationId": "backend_put_api_v1_cliente_facturacion",
+    "tag": "Client Billing",
+    "tags": [
+      "Client Billing"
+    ],
+    "roles": [
+      "client"
+    ],
+    "security": "bearerAuth",
+    "methodName": "updateBilling",
+    "parameters": [],
+    "roleGroup": "cliente"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/users/controllers/users.controller.ts",
+    "method": "get",
+    "path": "/api/v1/users/me",
+    "operationId": "backend_get_api_v1_users_me",
+    "tag": "Users",
+    "tags": [
+      "Users"
+    ],
+    "roles": [
+      "root",
+      "admin",
+      "client",
+      "vendor",
+      "bodeguero"
+    ],
+    "security": "bearerAuth",
+    "methodName": "getProfile",
+    "parameters": [],
+    "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/users/controllers/users.controller.ts",
+    "method": "put",
+    "path": "/api/v1/users/me",
+    "operationId": "backend_put_api_v1_users_me",
+    "tag": "Users",
+    "tags": [
+      "Users"
+    ],
+    "roles": [
+      "root",
+      "admin",
+      "client",
+      "vendor",
+      "bodeguero"
+    ],
+    "security": "bearerAuth",
+    "methodName": "updateProfile",
+    "parameters": [],
+    "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/users/controllers/users.controller.ts",
+    "method": "put",
+    "path": "/api/v1/users/me/notificaciones",
+    "operationId": "backend_put_api_v1_users_me_notificaciones",
+    "tag": "Users",
+    "tags": [
+      "Users"
+    ],
+    "roles": [
+      "root",
+      "admin",
+      "client",
+      "vendor",
+      "bodeguero"
+    ],
+    "security": "bearerAuth",
+    "methodName": "updateNotifications",
+    "parameters": [],
+    "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/users/controllers/users.controller.ts",
+    "method": "post",
+    "path": "/api/v1/users/me/revocar-consentimiento",
+    "operationId": "backend_post_api_v1_users_me_revocar_consentimiento",
+    "tag": "Users",
+    "tags": [
+      "Users"
+    ],
+    "roles": [
+      "root",
+      "admin",
+      "client",
+      "vendor",
+      "bodeguero"
+    ],
+    "security": "bearerAuth",
+    "methodName": "revokeConsent",
+    "parameters": [],
+    "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
     "source": "Importal-backend/src/modules/users/controllers/users.controller.ts",
     "method": "get",
     "path": "/api/v1/users",

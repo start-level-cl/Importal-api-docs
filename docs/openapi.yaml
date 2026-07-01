@@ -388,6 +388,39 @@ components:
         - transaction_id
         - token
       type: object
+    CreateAddressRequest:
+      additionalProperties: false
+      properties:
+        alias:
+          type: string
+        calle:
+          type: string
+        comuna:
+          type: string
+        depto_oficina:
+          type: string
+        despacho_agency:
+          type: string
+        housing_type:
+          type: string
+        is_default:
+          type: boolean
+        numero:
+          type: string
+        pickup_instructions:
+          type: string
+        postal_code:
+          type: string
+        reference:
+          type: string
+        region:
+          type: string
+      required:
+        - calle
+        - numero
+        - comuna
+        - region
+      type: object
     CreateAdminRequest:
       additionalProperties: false
       properties:
@@ -1557,6 +1590,55 @@ components:
         - page
         - limit
       type: object
+    UpdateAddressRequest:
+      additionalProperties: false
+      properties:
+        alias:
+          type: string
+        calle:
+          type: string
+        comuna:
+          type: string
+        depto_oficina:
+          type: string
+        despacho_agency:
+          type: string
+        housing_type:
+          type: string
+        is_default:
+          type: boolean
+        numero:
+          type: string
+        pickup_instructions:
+          type: string
+        postal_code:
+          type: string
+        reference:
+          type: string
+        region:
+          type: string
+      type: object
+    UpdateBillingRequest:
+      additionalProperties: false
+      properties:
+        correo:
+          format: email
+          type: string
+        direccion_facturacion:
+          type: string
+        giro:
+          type: string
+        razon_social:
+          type: string
+        rut_empresa:
+          type: string
+      required:
+        - razon_social
+        - rut_empresa
+        - giro
+        - direccion_facturacion
+        - correo
+      type: object
     UpdateCargaLlegadaRequest:
       additionalProperties: false
       properties:
@@ -1606,6 +1688,19 @@ components:
         - id
         - rate_value
       type: object
+    UpdateNotificationsRequest:
+      additionalProperties: false
+      properties:
+        email:
+          description: Preferencia de notificación por correo
+          type: boolean
+        phone:
+          description: Preferencia de notificación por teléfono
+          type: boolean
+      required:
+        - email
+        - phone
+      type: object
     UpdateOrderShippingRequest:
       additionalProperties: false
       properties:
@@ -1638,6 +1733,15 @@ components:
         status:
           type: string
       type: object
+    UpdateProfileRequest:
+      additionalProperties: false
+      properties:
+        name:
+          description: Nombre del usuario
+          type: string
+      required:
+        - name
+      type: object
     UpdateUserRequest:
       additionalProperties: false
       properties:
@@ -1648,6 +1752,148 @@ components:
         phone:
           description: Nuevo número de teléfono
           type: string
+      type: object
+    UserAddress:
+      additionalProperties: false
+      properties:
+        alias:
+          nullable: true
+          type: string
+        calle:
+          type: string
+        comuna:
+          type: string
+        created_at:
+          format: "date-time"
+          type: string
+        depto_oficina:
+          nullable: true
+          type: string
+        despacho_agency:
+          nullable: true
+          type: string
+        housing_type:
+          nullable: true
+          type: string
+        id:
+          type: integer
+        is_default:
+          type: boolean
+        numero:
+          type: string
+        pickup_instructions:
+          nullable: true
+          type: string
+        postal_code:
+          nullable: true
+          type: string
+        reference:
+          nullable: true
+          type: string
+        region:
+          type: string
+        user_id:
+          type: integer
+      required:
+        - id
+        - user_id
+        - calle
+        - numero
+        - comuna
+        - region
+        - is_default
+      type: object
+    UserAddressArray:
+      items:
+        $ref: "#/components/schemas/UserAddress"
+      type: array
+    UserBilling:
+      additionalProperties: false
+      properties:
+        correo:
+          format: email
+          type: string
+        created_at:
+          format: "date-time"
+          type: string
+        direccion_facturacion:
+          type: string
+        giro:
+          type: string
+        id:
+          type: integer
+        razon_social:
+          type: string
+        rut_empresa:
+          type: string
+        updated_at:
+          format: "date-time"
+          type: string
+        user_id:
+          type: integer
+      required:
+        - id
+        - razon_social
+        - rut_empresa
+        - giro
+        - direccion_facturacion
+        - correo
+        - user_id
+      type: object
+    UserProfile:
+      additionalProperties: false
+      properties:
+        addresses:
+          items:
+            $ref: "#/components/schemas/UserAddress"
+          type: array
+        billing:
+          $ref: "#/components/schemas/UserBilling"
+          nullable: true
+        bloqueo:
+          type: boolean
+        bodega_asignada:
+          nullable: true
+          type: string
+        concentimiento:
+          type: boolean
+        email:
+          type: boolean
+        email_address:
+          format: email
+          nullable: true
+          type: string
+        external_id:
+          type: string
+        id:
+          type: integer
+        name:
+          type: string
+        operacion_ciudad:
+          nullable: true
+          type: string
+        phone:
+          type: boolean
+        phone_number:
+          nullable: true
+          type: string
+        role:
+          type: string
+        rut:
+          nullable: true
+          type: string
+        status_mora:
+          type: string
+      required:
+        - id
+        - name
+        - external_id
+        - email
+        - phone
+        - concentimiento
+        - bloqueo
+        - role
+        - status_mora
       type: object
     ValidateResponse:
       additionalProperties: false
@@ -4696,6 +4942,180 @@ paths:
       x-role-group: cliente
       x-service: backend
       x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+  /api/v1/cliente/direcciones:
+    get:
+      operationId: backend_get_api_v1_cliente_direcciones
+      parameters:
+[]
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                -                   alias: Casa
+                  calle: Av. Vitacura
+                  comuna: Vitacura
+                  created_at: "2026-07-01T18:00:00.000Z"
+                  depto_oficina: Of. 502
+                  despacho_agency: FlowEx
+                  housing_type: departamento
+                  id: 1
+                  is_default: true
+                  numero: 3568
+                  pickup_instructions: null
+                  postal_code: 7630000
+                  reference: Esquina Vitacura con Alonso de Córdova
+                  region: Región Metropolitana
+                  user_id: 12
+              schema:
+                $ref: "#/components/schemas/UserAddressArray"
+          description: Listado de direcciones obtenido con éxito
+      security:
+        -           bearerAuth:
+[]
+      summary: Listar direcciones del cliente autenticado (Cliente)
+      tags:
+        - Client Addresses
+      x-role-group: cliente
+      x-service: backend
+      x-source: "Importal-backend/src/modules/users/controllers/addresses.controller.ts"
+    post:
+      operationId: backend_post_api_v1_cliente_direcciones
+      parameters:
+[]
+      requestBody:
+        content:
+          application/json:
+            example:
+              alias: Casa
+              calle: Av. Vitacura
+              comuna: Vitacura
+              depto_oficina: Of. 502
+              despacho_agency: FlowEx
+              housing_type: departamento
+              is_default: true
+              numero: 3568
+              pickup_instructions: null
+              postal_code: 7630000
+              reference: Esquina Vitacura con Alonso de Córdova
+              region: Región Metropolitana
+            schema:
+              $ref: "#/components/schemas/CreateAddressRequest"
+        required: true
+      responses:
+        201:
+          content:
+            application/json:
+              example:
+                alias: Casa
+                calle: Av. Vitacura
+                comuna: Vitacura
+                created_at: "2026-07-01T18:00:00.000Z"
+                depto_oficina: Of. 502
+                despacho_agency: FlowEx
+                housing_type: departamento
+                id: 1
+                is_default: true
+                numero: 3568
+                pickup_instructions: null
+                postal_code: 7630000
+                reference: Esquina Vitacura con Alonso de Córdova
+                region: Región Metropolitana
+                user_id: 12
+              schema:
+                $ref: "#/components/schemas/UserAddress"
+          description: Dirección creada con éxito
+      security:
+        -           bearerAuth:
+[]
+      summary: Crear una nueva dirección para el cliente (Cliente)
+      tags:
+        - Client Addresses
+      x-role-group: cliente
+      x-service: backend
+      x-source: "Importal-backend/src/modules/users/controllers/addresses.controller.ts"
+  /api/v1/cliente/direcciones/{id}:
+    delete:
+      operationId: backend_delete_api_v1_cliente_direcciones_id
+      parameters:
+        -           description: ID de la dirección
+          in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        204:
+          description: Dirección eliminada con éxito
+      security:
+        -           bearerAuth:
+[]
+      summary: Eliminar una dirección del cliente (Cliente)
+      tags:
+        - Client Addresses
+      x-role-group: cliente
+      x-service: backend
+      x-source: "Importal-backend/src/modules/users/controllers/addresses.controller.ts"
+    put:
+      operationId: backend_put_api_v1_cliente_direcciones_id
+      parameters:
+        -           description: ID de la dirección
+          in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            example:
+              alias: Casa
+              calle: Av. Vitacura
+              comuna: Vitacura
+              depto_oficina: Of. 503
+              despacho_agency: FlowEx
+              housing_type: departamento
+              is_default: true
+              numero: 3568
+              pickup_instructions: null
+              postal_code: 7630000
+              reference: Esquina Vitacura con Alonso de Córdova
+              region: Región Metropolitana
+            schema:
+              $ref: "#/components/schemas/UpdateAddressRequest"
+        required: true
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                alias: Casa
+                calle: Av. Vitacura
+                comuna: Vitacura
+                created_at: "2026-07-01T18:00:00.000Z"
+                depto_oficina: Of. 502
+                despacho_agency: FlowEx
+                housing_type: departamento
+                id: 1
+                is_default: true
+                numero: 3568
+                pickup_instructions: null
+                postal_code: 7630000
+                reference: Esquina Vitacura con Alonso de Córdova
+                region: Región Metropolitana
+                user_id: 12
+              schema:
+                $ref: "#/components/schemas/UserAddress"
+          description: Dirección actualizada con éxito
+      security:
+        -           bearerAuth:
+[]
+      summary: Actualizar una dirección existente del cliente (Cliente)
+      tags:
+        - Client Addresses
+      x-role-group: cliente
+      x-service: backend
+      x-source: "Importal-backend/src/modules/users/controllers/addresses.controller.ts"
   /api/v1/cliente/estado-mora:
     get:
       operationId: backend_get_api_v1_cliente_estado_mora
@@ -4720,6 +5140,79 @@ paths:
       x-role-group: cliente
       x-service: backend
       x-source: "Importal-backend/src/modules/billing/controllers/billing.controller.ts"
+  /api/v1/cliente/facturacion:
+    get:
+      operationId: backend_get_api_v1_cliente_facturacion
+      parameters:
+[]
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                correo: "facturacion@empresa.cl"
+                created_at: "2026-07-01T18:00:00.000Z"
+                direccion_facturacion: "Av. Providencia 1234, Santiago"
+                giro: Venta al por mayor de artículos electrónicos
+                id: 1
+                razon_social: Importaciones y Exportaciones SpA
+                rut_empresa: "76.543.210-K"
+                updated_at: "2026-07-01T18:00:00.000Z"
+                user_id: 12
+              schema:
+                $ref: "#/components/schemas/UserBilling"
+          description: Datos de facturación obtenidos con éxito
+      security:
+        -           bearerAuth:
+[]
+      summary: Obtener datos de facturación del cliente (Cliente)
+      tags:
+        - Client Billing
+      x-role-group: cliente
+      x-service: backend
+      x-source: "Importal-backend/src/modules/users/controllers/billing.controller.ts"
+    put:
+      operationId: backend_put_api_v1_cliente_facturacion
+      parameters:
+[]
+      requestBody:
+        content:
+          application/json:
+            example:
+              correo: "facturacion@empresa.cl"
+              direccion_facturacion: "Av. Providencia 1234, Santiago"
+              giro: Venta al por mayor de artículos electrónicos
+              razon_social: Importaciones y Exportaciones SpA
+              rut_empresa: "76.543.210-K"
+            schema:
+              $ref: "#/components/schemas/UpdateBillingRequest"
+        required: true
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                correo: "facturacion@empresa.cl"
+                created_at: "2026-07-01T18:00:00.000Z"
+                direccion_facturacion: "Av. Providencia 1234, Santiago"
+                giro: Venta al por mayor de artículos electrónicos
+                id: 1
+                razon_social: Importaciones y Exportaciones SpA
+                rut_empresa: "76.543.210-K"
+                updated_at: "2026-07-01T18:00:00.000Z"
+                user_id: 12
+              schema:
+                $ref: "#/components/schemas/UserBilling"
+          description: Datos de facturación actualizados con éxito
+      security:
+        -           bearerAuth:
+[]
+      summary: Actualizar datos de facturación del cliente (Cliente)
+      tags:
+        - Client Billing
+      x-role-group: cliente
+      x-service: backend
+      x-source: "Importal-backend/src/modules/users/controllers/billing.controller.ts"
   /api/v1/cliente/pedidos:
     get:
       operationId: backend_get_api_v1_cliente_pedidos
@@ -5472,6 +5965,229 @@ paths:
         -           bearerAuth:
 []
       summary: Verificar código OTP y completar el cambio de contacto
+      tags:
+        - Users
+      x-role-group: comun
+      x-service: backend
+      x-source: "Importal-backend/src/modules/users/controllers/users.controller.ts"
+  /api/v1/users/me:
+    get:
+      operationId: backend_get_api_v1_users_me
+      parameters:
+[]
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                addresses:
+                  -                     alias: Casa
+                    calle: Av. Vitacura
+                    comuna: Vitacura
+                    created_at: "2026-07-01T18:00:00.000Z"
+                    depto_oficina: Of. 502
+                    despacho_agency: FlowEx
+                    housing_type: departamento
+                    id: 1
+                    is_default: true
+                    numero: 3568
+                    pickup_instructions: null
+                    postal_code: 7630000
+                    reference: Esquina Vitacura con Alonso de Córdova
+                    region: Región Metropolitana
+                    user_id: 12
+                billing:
+                  correo: "facturacion@empresa.cl"
+                  created_at: "2026-07-01T18:00:00.000Z"
+                  direccion_facturacion: "Av. Providencia 1234, Santiago"
+                  giro: Venta al por mayor de artículos electrónicos
+                  id: 1
+                  razon_social: Importaciones y Exportaciones SpA
+                  rut_empresa: "76.543.210-K"
+                  updated_at: "2026-07-01T18:00:00.000Z"
+                  user_id: 12
+                bloqueo: false
+                bodega_asignada: null
+                concentimiento: true
+                email: true
+                email_address: "juan.perez@ejemplo.com"
+                external_id: "auth0|123456"
+                id: 12
+                name: Juan Pérez
+                operacion_ciudad: null
+                phone: false
+                phone_number: +56912345678
+                role: client
+                rut: "12.345.678-9"
+                status_mora: LIBRE
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+          description: Perfil del usuario obtenido con éxito
+      security:
+        -           bearerAuth:
+[]
+      summary: Obtener el perfil del usuario autenticado (Común)
+      tags:
+        - Users
+      x-role-group: comun
+      x-service: backend
+      x-source: "Importal-backend/src/modules/users/controllers/users.controller.ts"
+    put:
+      operationId: backend_put_api_v1_users_me
+      parameters:
+[]
+      requestBody:
+        content:
+          application/json:
+            example:
+              name: Juan Pérez
+            schema:
+              $ref: "#/components/schemas/UpdateProfileRequest"
+        required: true
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                addresses:
+                  -                     alias: Casa
+                    calle: Av. Vitacura
+                    comuna: Vitacura
+                    created_at: "2026-07-01T18:00:00.000Z"
+                    depto_oficina: Of. 502
+                    despacho_agency: FlowEx
+                    housing_type: departamento
+                    id: 1
+                    is_default: true
+                    numero: 3568
+                    pickup_instructions: null
+                    postal_code: 7630000
+                    reference: Esquina Vitacura con Alonso de Córdova
+                    region: Región Metropolitana
+                    user_id: 12
+                billing:
+                  correo: "facturacion@empresa.cl"
+                  created_at: "2026-07-01T18:00:00.000Z"
+                  direccion_facturacion: "Av. Providencia 1234, Santiago"
+                  giro: Venta al por mayor de artículos electrónicos
+                  id: 1
+                  razon_social: Importaciones y Exportaciones SpA
+                  rut_empresa: "76.543.210-K"
+                  updated_at: "2026-07-01T18:00:00.000Z"
+                  user_id: 12
+                bloqueo: false
+                bodega_asignada: null
+                concentimiento: true
+                email: true
+                email_address: "juan.perez@ejemplo.com"
+                external_id: "auth0|123456"
+                id: 12
+                name: Juan Pérez
+                operacion_ciudad: null
+                phone: false
+                phone_number: +56912345678
+                role: client
+                rut: "12.345.678-9"
+                status_mora: LIBRE
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+          description: Perfil del usuario actualizado con éxito
+      security:
+        -           bearerAuth:
+[]
+      summary: Actualizar el perfil del usuario autenticado (Común)
+      tags:
+        - Users
+      x-role-group: comun
+      x-service: backend
+      x-source: "Importal-backend/src/modules/users/controllers/users.controller.ts"
+  /api/v1/users/me/notificaciones:
+    put:
+      operationId: backend_put_api_v1_users_me_notificaciones
+      parameters:
+[]
+      requestBody:
+        content:
+          application/json:
+            example:
+              email: true
+              phone: false
+            schema:
+              $ref: "#/components/schemas/UpdateNotificationsRequest"
+        required: true
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                addresses:
+                  -                     alias: Casa
+                    calle: Av. Vitacura
+                    comuna: Vitacura
+                    created_at: "2026-07-01T18:00:00.000Z"
+                    depto_oficina: Of. 502
+                    despacho_agency: FlowEx
+                    housing_type: departamento
+                    id: 1
+                    is_default: true
+                    numero: 3568
+                    pickup_instructions: null
+                    postal_code: 7630000
+                    reference: Esquina Vitacura con Alonso de Córdova
+                    region: Región Metropolitana
+                    user_id: 12
+                billing:
+                  correo: "facturacion@empresa.cl"
+                  created_at: "2026-07-01T18:00:00.000Z"
+                  direccion_facturacion: "Av. Providencia 1234, Santiago"
+                  giro: Venta al por mayor de artículos electrónicos
+                  id: 1
+                  razon_social: Importaciones y Exportaciones SpA
+                  rut_empresa: "76.543.210-K"
+                  updated_at: "2026-07-01T18:00:00.000Z"
+                  user_id: 12
+                bloqueo: false
+                bodega_asignada: null
+                concentimiento: true
+                email: true
+                email_address: "juan.perez@ejemplo.com"
+                external_id: "auth0|123456"
+                id: 12
+                name: Juan Pérez
+                operacion_ciudad: null
+                phone: false
+                phone_number: +56912345678
+                role: client
+                rut: "12.345.678-9"
+                status_mora: LIBRE
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+          description: Preferencias de notificaciones actualizadas con éxito
+      security:
+        -           bearerAuth:
+[]
+      summary: Actualizar preferencias de notificaciones del usuario (Común)
+      tags:
+        - Users
+      x-role-group: comun
+      x-service: backend
+      x-source: "Importal-backend/src/modules/users/controllers/users.controller.ts"
+  /api/v1/users/me/revocar-consentimiento:
+    post:
+      operationId: backend_post_api_v1_users_me_revocar_consentimiento
+      parameters:
+[]
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericMessage"
+          description: Consentimiento revocado con éxito
+      security:
+        -           bearerAuth:
+[]
+      summary: Revocar consentimiento de notificaciones del usuario (Común)
       tags:
         - Users
       x-role-group: comun

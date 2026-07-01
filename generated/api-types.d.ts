@@ -145,6 +145,21 @@ export type ConfirmTransbankRequest = {
   transaction_id: string
 }
 
+export type CreateAddressRequest = {
+  alias?: string
+  calle: string
+  comuna: string
+  depto_oficina?: string
+  despacho_agency?: string
+  housing_type?: string
+  is_default?: boolean
+  numero: string
+  pickup_instructions?: string
+  postal_code?: string
+  reference?: string
+  region: string
+}
+
 export type CreateAdminRequest = {
   email: string
   name: string
@@ -553,6 +568,29 @@ export type TicketPaginated = {
   total: number
 }
 
+export type UpdateAddressRequest = {
+  alias?: string
+  calle?: string
+  comuna?: string
+  depto_oficina?: string
+  despacho_agency?: string
+  housing_type?: string
+  is_default?: boolean
+  numero?: string
+  pickup_instructions?: string
+  postal_code?: string
+  reference?: string
+  region?: string
+}
+
+export type UpdateBillingRequest = {
+  correo: string
+  direccion_facturacion: string
+  giro: string
+  razon_social: string
+  rut_empresa: string
+}
+
 export type UpdateCargaLlegadaRequest = {
   arrived_at: string
 }
@@ -576,6 +614,11 @@ export type UpdateLogisticsRateRequest = {
   rate_value: number
 }
 
+export type UpdateNotificationsRequest = {
+  email: boolean
+  phone: boolean
+}
+
 export type UpdateOrderShippingRequest = {
   can_ship: boolean
   seller_order_number?: string
@@ -592,9 +635,64 @@ export type UpdateProductRequest = {
   status?: string
 }
 
+export type UpdateProfileRequest = {
+  name: string
+}
+
 export type UpdateUserRequest = {
   email?: string
   phone?: string
+}
+
+export type UserAddress = {
+  alias?: string
+  calle: string
+  comuna: string
+  created_at?: string
+  depto_oficina?: string
+  despacho_agency?: string
+  housing_type?: string
+  id: number
+  is_default: boolean
+  numero: string
+  pickup_instructions?: string
+  postal_code?: string
+  reference?: string
+  region: string
+  user_id: number
+}
+
+export type UserAddressArray = (UserAddress)[]
+
+export type UserBilling = {
+  correo: string
+  created_at?: string
+  direccion_facturacion: string
+  giro: string
+  id: number
+  razon_social: string
+  rut_empresa: string
+  updated_at?: string
+  user_id: number
+}
+
+export type UserProfile = {
+  addresses?: (UserAddress)[]
+  billing?: UserBilling
+  bloqueo: boolean
+  bodega_asignada?: string
+  concentimiento: boolean
+  email: boolean
+  email_address?: string
+  external_id: string
+  id: number
+  name: string
+  operacion_ciudad?: string
+  phone: boolean
+  phone_number?: string
+  role: string
+  rut?: string
+  status_mora: string
 }
 
 export type ValidateResponse = {
@@ -1413,12 +1511,60 @@ export interface Operations {
       "201": ReturnRequest
     }
   }
+  "backend_get_api_v1_cliente_direcciones": {
+    method: "GET"
+    path: "/api/v1/cliente/direcciones"
+    requestBody: undefined
+    responses: {
+      "200": UserAddressArray
+    }
+  }
+  "backend_post_api_v1_cliente_direcciones": {
+    method: "POST"
+    path: "/api/v1/cliente/direcciones"
+    requestBody: CreateAddressRequest
+    responses: {
+      "201": UserAddress
+    }
+  }
+  "backend_delete_api_v1_cliente_direcciones_id": {
+    method: "DELETE"
+    path: "/api/v1/cliente/direcciones/{id}"
+    requestBody: undefined
+    responses: {
+      "204": undefined
+    }
+  }
+  "backend_put_api_v1_cliente_direcciones_id": {
+    method: "PUT"
+    path: "/api/v1/cliente/direcciones/{id}"
+    requestBody: UpdateAddressRequest
+    responses: {
+      "200": UserAddress
+    }
+  }
   "backend_get_api_v1_cliente_estado_mora": {
     method: "GET"
     path: "/api/v1/cliente/estado-mora"
     requestBody: undefined
     responses: {
       "200": GenericObject
+    }
+  }
+  "backend_get_api_v1_cliente_facturacion": {
+    method: "GET"
+    path: "/api/v1/cliente/facturacion"
+    requestBody: undefined
+    responses: {
+      "200": UserBilling
+    }
+  }
+  "backend_put_api_v1_cliente_facturacion": {
+    method: "PUT"
+    path: "/api/v1/cliente/facturacion"
+    requestBody: UpdateBillingRequest
+    responses: {
+      "200": UserBilling
     }
   }
   "backend_get_api_v1_cliente_pedidos": {
@@ -1600,6 +1746,38 @@ export interface Operations {
     requestBody: VerifyContactChangeRequest
     responses: {
       "200": GenericObject
+    }
+  }
+  "backend_get_api_v1_users_me": {
+    method: "GET"
+    path: "/api/v1/users/me"
+    requestBody: undefined
+    responses: {
+      "200": UserProfile
+    }
+  }
+  "backend_put_api_v1_users_me": {
+    method: "PUT"
+    path: "/api/v1/users/me"
+    requestBody: UpdateProfileRequest
+    responses: {
+      "200": UserProfile
+    }
+  }
+  "backend_put_api_v1_users_me_notificaciones": {
+    method: "PUT"
+    path: "/api/v1/users/me/notificaciones"
+    requestBody: UpdateNotificationsRequest
+    responses: {
+      "200": UserProfile
+    }
+  }
+  "backend_post_api_v1_users_me_revocar_consentimiento": {
+    method: "POST"
+    path: "/api/v1/users/me/revocar-consentimiento"
+    requestBody: undefined
+    responses: {
+      "200": GenericMessage
     }
   }
   "backend_delete_api_v1_users_id": {
