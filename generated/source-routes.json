@@ -241,6 +241,7 @@
       "Admin Metrics"
     ],
     "roles": [
+      "admin",
       "root"
     ],
     "security": "bearerAuth",
@@ -269,6 +270,7 @@
       "Admin Metrics"
     ],
     "roles": [
+      "admin",
       "root"
     ],
     "security": "bearerAuth",
@@ -308,6 +310,7 @@
       "Admin Metrics"
     ],
     "roles": [
+      "admin",
       "root"
     ],
     "security": "bearerAuth",
@@ -335,6 +338,7 @@
       "Admin Metrics"
     ],
     "roles": [
+      "admin",
       "root"
     ],
     "security": "bearerAuth",
@@ -362,6 +366,7 @@
       "Admin Metrics"
     ],
     "roles": [
+      "admin",
       "root"
     ],
     "security": "bearerAuth",
@@ -389,6 +394,7 @@
       "Admin Metrics"
     ],
     "roles": [
+      "admin",
       "root"
     ],
     "security": "bearerAuth",
@@ -650,6 +656,14 @@
         "schema": {
           "type": "number"
         }
+      },
+      {
+        "name": "page",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "number"
+        }
       }
     ],
     "roleGroup": "admin"
@@ -733,6 +747,14 @@
         "schema": {
           "type": "number"
         }
+      },
+      {
+        "name": "page",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "number"
+        }
       }
     ],
     "roleGroup": "admin"
@@ -756,6 +778,14 @@
     "parameters": [
       {
         "name": "limit",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "number"
+        }
+      },
+      {
+        "name": "page",
         "in": "query",
         "required": false,
         "schema": {
@@ -857,6 +887,14 @@
       },
       {
         "name": "limit",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "number"
+        }
+      },
+      {
+        "name": "page",
         "in": "query",
         "required": false,
         "schema": {
@@ -969,6 +1007,41 @@
     "methodName": "getSlowQueries",
     "parameters": [],
     "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/app/controllers/dev-seeding.controller.ts",
+    "method": "post",
+    "path": "/api/v1/dev/seed-test-data",
+    "operationId": "backend_post_api_v1_dev_seed_test_data",
+    "tag": "Dev Seeding",
+    "tags": [
+      "Dev Seeding"
+    ],
+    "summary": "Seed test data for all main staging views (Staging/Local only)",
+    "roles": [],
+    "security": false,
+    "responseStatus": 200,
+    "responseDescription": "Seeded successfully",
+    "methodName": "seedTestData",
+    "parameters": [],
+    "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/app/controllers/dev-seeding.controller.ts",
+    "method": "post",
+    "path": "/api/v1/dev/inspect",
+    "operationId": "backend_post_api_v1_dev_inspect",
+    "tag": "Dev Seeding",
+    "tags": [
+      "Dev Seeding"
+    ],
+    "roles": [],
+    "security": false,
+    "methodName": "inspectDatabase",
+    "parameters": [],
+    "roleGroup": "comun"
   },
   {
     "service": "backend",
@@ -1199,7 +1272,24 @@
     ],
     "security": "bearerAuth",
     "methodName": "getPendingValidationCobros",
-    "parameters": [],
+    "parameters": [
+      {
+        "name": "page",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "number"
+        }
+      },
+      {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "number"
+        }
+      }
+    ],
     "roleGroup": "admin"
   },
   {
@@ -1357,7 +1447,24 @@
     ],
     "security": "bearerAuth",
     "methodName": "getExchangeRateHistory",
-    "parameters": [],
+    "parameters": [
+      {
+        "name": "page",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "number"
+        }
+      },
+      {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "number"
+        }
+      }
+    ],
     "roleGroup": "admin"
   },
   {
@@ -2329,6 +2436,26 @@
   {
     "service": "backend",
     "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "get",
+    "path": "/api/v1/bodeguero/deliveries/{id}/pdf-envio",
+    "operationId": "backend_get_api_v1_bodeguero_deliveries_id_pdf_envio",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "bodeguero",
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "getDeliveryPdfEnvio",
+    "parameters": [],
+    "roleGroup": "bodeguero"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
     "method": "put",
     "path": "/api/v1/vendedor/pedidos/{id}/ajustar",
     "operationId": "backend_put_api_v1_vendedor_pedidos_id_ajustar",
@@ -2786,7 +2913,7 @@
     ],
     "security": "bearerAuth",
     "responseStatus": 200,
-    "responseDescription": "Returns list of pending requests",
+    "responseDescription": "Returns paginated list of pending requests",
     "methodName": "listPendingRequests",
     "parameters": [],
     "roleGroup": "comun"

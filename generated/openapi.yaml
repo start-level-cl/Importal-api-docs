@@ -2153,6 +2153,12 @@ paths:
           required: false
           schema:
             type: number
+        -           description: undefined
+          in: query
+          name: page
+          required: false
+          schema:
+            type: number
       responses:
         200:
           content:
@@ -2318,7 +2324,18 @@ paths:
     get:
       operationId: backend_get_api_v1_admin_cobros_pendientes_validacion
       parameters:
-[]
+        -           description: undefined
+          in: query
+          name: page
+          required: false
+          schema:
+            type: number
+        -           description: undefined
+          in: query
+          name: limit
+          required: false
+          schema:
+            type: number
       responses:
         200:
           content:
@@ -2653,6 +2670,12 @@ paths:
           required: false
           schema:
             type: number
+        -           description: undefined
+          in: query
+          name: page
+          required: false
+          schema:
+            type: number
       responses:
         200:
           content:
@@ -2751,7 +2774,18 @@ paths:
     get:
       operationId: backend_get_api_v1_admin_exchange_rate_history
       parameters:
-[]
+        -           description: undefined
+          in: query
+          name: page
+          required: false
+          schema:
+            type: number
+        -           description: undefined
+          in: query
+          name: limit
+          required: false
+          schema:
+            type: number
       responses:
         200:
           content:
@@ -3803,6 +3837,12 @@ paths:
           required: false
           schema:
             type: number
+        -           description: undefined
+          in: query
+          name: page
+          required: false
+          schema:
+            type: number
       responses:
         200:
           content:
@@ -3831,6 +3871,12 @@ paths:
         -           description: undefined
           in: query
           name: limit
+          required: false
+          schema:
+            type: number
+        -           description: undefined
+          in: query
+          name: page
           required: false
           schema:
             type: number
@@ -4179,6 +4225,31 @@ paths:
         -           bearerAuth:
 []
       summary: Confirmar despacho físico e ingreso de bultos (Bodeguero/Admin/Root)
+      tags:
+        - Orders
+      x-role-group: bodeguero
+      x-service: backend
+      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+  /api/v1/bodeguero/deliveries/{id}/pdf-envio:
+    get:
+      operationId: backend_get_api_v1_bodeguero_deliveries_id_pdf_envio
+      parameters:
+        -           in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Operacion exitosa
+      security:
+        -           bearerAuth:
+[]
+      summary: getDeliveryPdfEnvio
       tags:
         - Orders
       x-role-group: bodeguero
@@ -5407,6 +5478,42 @@ paths:
       x-role-group: cliente
       x-service: backend
       x-source: "Importal-backend/src/modules/support/controllers/support.controller.ts"
+  /api/v1/dev/inspect:
+    post:
+      operationId: backend_post_api_v1_dev_inspect
+      parameters:
+[]
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Operacion exitosa
+      summary: inspectDatabase
+      tags:
+        - Dev Seeding
+      x-role-group: comun
+      x-service: backend
+      x-source: "Importal-backend/src/modules/app/controllers/dev-seeding.controller.ts"
+  /api/v1/dev/seed-test-data:
+    post:
+      operationId: backend_post_api_v1_dev_seed_test_data
+      parameters:
+[]
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Seeded successfully
+      summary: Seed test data for all main staging views (Staging/Local only)
+      tags:
+        - Dev Seeding
+      x-role-group: comun
+      x-service: backend
+      x-source: "Importal-backend/src/modules/app/controllers/dev-seeding.controller.ts"
   /api/v1/notificaciones:
     get:
       operationId: backend_get_api_v1_notificaciones

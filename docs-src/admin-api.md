@@ -23,6 +23,15 @@ Esta tabla consolida los endpoints disponibles para roles de administración y g
 | **Usuarios** | `DELETE`| `/api/v1/users/:id` | `ROOT` | Eliminación de un usuario del sistema. |
 | **Usuarios** | `POST` | `/api/v1/users/change-contact/request` | `ROOT`, `ADMIN`, `CLIENT`, `VENDOR`, `BODEGUERO` | Solicita código/token para cambio de teléfono o correo de contacto. |
 | **Usuarios** | `POST` | `/api/v1/users/change-contact/verify` | `ROOT`, `ADMIN`, `CLIENT`, `VENDOR`, `BODEGUERO` | Verifica el token enviado y confirma la actualización del contacto. |
+| **Usuarios** | `GET` | `/api/v1/registration-requests` | `ADMIN`, `ROOT` | Obtiene el listado de solicitudes de registro pendientes con paginación offset. |
+| **Usuarios** | `POST` | `/api/v1/registration-requests/:email/approve` | `ADMIN`, `ROOT` | Aprueba la solicitud de onboarding de un cliente e inyecta reviewedBy. |
+| **Usuarios** | `POST` | `/api/v1/registration-requests/:email/reject` | `ADMIN`, `ROOT` | Rechaza la solicitud de onboarding de un cliente e inyecta reviewedBy. |
+| **Cobros** | `GET` | `/api/v1/admin/cobros/pendientes-validacion` | `ADMIN`, `ROOT` | Obtiene cobros pendientes con soporte para paginación (`page`, `limit`). |
+| **Cobros** | `POST` | `/api/v1/admin/cobros/:id/confirmar` | `ADMIN`, `ROOT` | Confirma, rechaza o reintenta el pago de un cobro con parámetro `action`. |
+| **Exchange Rates**| `GET`| `/api/v1/admin/exchange-rate/history` | `ADMIN`, `ROOT` | Historial de tipo de cambio oficial con soporte para paginación (`page`, `limit`). |
+| **Entregas** | `GET` | `/api/v1/admin/deliveries` | `ADMIN`, `ROOT` | Listado y filtros de entregas asociadas a clientes con paginación (`page`, `limit`). |
+| **Devoluciones**| `GET`| `/api/v1/admin/devoluciones` | `ADMIN`, `ROOT` | Listado de solicitudes de devolución con paginación (`page`, `limit`). |
+| **Devoluciones**| `POST`| `/api/v1/admin/devoluciones/:id/resolver` | `ADMIN`, `ROOT` | Resuelve una solicitud de devolución (`APPROVED`, `REJECTED`) con opciones y justificación. |
 | **Auditoría**| `GET` | `/api/v1/admin/logs` | `ADMIN`, `ROOT` | Consulta y filtra los logs del servidor (según nivel o servicio). |
 | **Auditoría**| `GET` | `/api/v1/admin/logs/search` | `ADMIN`, `ROOT` | Realiza búsquedas de texto plano dentro del historial de logs. |
 | **Auditoría**| `GET` | `/api/v1/admin/audit/trail` | `ADMIN`, `ROOT` | Consulta la pista de auditoría del sistema (acciones sobre recursos). |
@@ -214,6 +223,54 @@ flowchart TD
      }
      ```
 
+### 2.3 Bandeja de Registro y Onboarding (`registration-requests`)
+
+El onboarding de nuevos clientes e integrantes se gestiona a través de solicitudes guardadas en DynamoDB, las cuales son expuestas con paginación offset tradicional.
+
+#### 2.3.1 Listado de Solicitudes Pendientes
+* **Método:** `GET`
+* **Ruta:** `/api/v1/registration-requests`
+* **Roles Autorizados:** `ADMIN`, `ROOT`
+* **Query Parameters:**
+  * `page` (opcional, default `1`): Página consultada.
+  * `limit` (opcional, default `10`): Elementos por página.
+* **Formato JSON de Respuesta:**
+  ```json
+  {
+    "data": [
+      {
+        "nombre": "Distribuidora Staging SpA",
+        "rut": "77.888.999-0",
+        "correo": "proveedor-request@example.com",
+        "transporte": ["MARITIMA", "AEREA"],
+        "status": "PENDING",
+        "comprobante": "https://presigned-url-from-s3...",
+        "rol": "proveedor",
+        "requestedAt": "2026-07-06T18:00:00.000Z"
+      }
+    ],
+    "total": 4,
+    "page": 1,
+    "limit": 10,
+    "pages": 1
+  }
+  ```
+
+#### 2.3.2 Aprobación y Rechazo de Onboarding
+* **Método:** `POST`
+* **Rutas:** 
+  * `/api/v1/registration-requests/:email/approve` (Aprobar)
+  * `/api/v1/registration-requests/:email/reject` (Rechazar)
+* **Roles Autorizados:** `ADMIN`, `ROOT`
+* **Request Body:**
+  ```json
+  {
+    "reviewedBy": "admin@pascalstore.com", // Opcional (se extrae automáticamente de la sesión JWT)
+    "notes": "Validación de antecedentes completada"
+  }
+  ```
+* **Lógica Interna:** El backend utiliza el middleware de autenticación para obtener el revisor real de la sesión. Si es aprobada, se crea de forma transaccional el registro del usuario en PostgreSQL y en el Auth Service.
+
 ---
 
 ## 3. Módulo de Auditoría y Sistema
@@ -274,7 +331,53 @@ Con el fin de equipar al rol `ADMIN` con capacidades de monitoreo y soporte de p
 
 ---
 
-## 4. Rutas Obsoletas (Deprecadas)
+## 4. Gestión Operativa de Cobros, Entregas y Devoluciones
+
+Esta sección describe el flujo administrativo y la paginación estandarizada para listados operativos y financieros.
+
+### 4.1 Paginación Estandarizada
+Todos los endpoints administrativos de listado aceptan los siguientes Query Parameters para control de volumen y rendimiento:
+* `page` (opcional, default `1`): Página consultada.
+* `limit` (opcional, default `20`): Cantidad máxima de registros por página.
+
+Endpoints paginados soportados:
+* `GET /api/v1/admin/cobros/pendientes-validacion`
+* `GET /api/v1/admin/exchange-rate/history`
+* `GET /api/v1/admin/deliveries`
+* `GET /api/v1/admin/devoluciones`
+* `GET /api/v1/admin/logs`
+* `GET /api/v1/admin/audit/trail`
+* `GET /api/v1/admin/exceptions`
+
+---
+
+### 4.2 Validación y Confirmación de Cobros (`confirmCobro`)
+* **Endpoint:** `POST /api/v1/admin/cobros/:id/confirmar`
+* **Roles Autorizados:** `ADMIN`, `ROOT`
+* **Cuerpo de la Petición (Payload):**
+  * `action` (opcional, string): Decisión administrativa. Valores permitidos:
+    * `approve`: Aprueba el comprobante de pago. Cambia el cobro a `CONFIRMED`.
+    * `reject`: Rechaza el comprobante. Cambia el cobro a `REJECTED`.
+    * `retry`: Pide al usuario volver a intentar. Cambia el cobro a `RETRY`.
+  * `approved` (opcional, booleano): Para retrocompatibilidad. Si `action` no se envía, un valor `false` se interpreta como `reject`.
+  * `admin_comment` (opcional, string): Comentario o motivo de la resolución.
+
+---
+
+### 4.3 Resolución de Devoluciones (`resolveReturnRequest`)
+* **Endpoint:** `POST /api/v1/admin/devoluciones/:id/resolver`
+* **Roles Autorizados:** `ADMIN`, `ROOT`
+* **Cuerpo de la Petición (Payload):**
+  * `status` (requerido, string): `APPROVED` o `REJECTED`.
+  * `option` (requerido si es `APPROVED`): Opción de compensación. Valores permitidos:
+    * `CREDIT_NEXT_BILL`: Otorga saldo a favor en el próximo cobro.
+    * `FULL_REFUND`: Registra una transferencia bancaria de devolución.
+  * `reject_reason` (requerido si es `REJECTED`): Causa del rechazo de la devolución.
+  * `reject_proof_url` (requerido si es `REJECTED`): Enlace al comprobante o foto que evidencia la justificación de rechazo.
+
+---
+
+## 5. Rutas Obsoletas (Deprecadas)
 
 > [!WARNING]
 > **Cambio en el Flujo Operacional de Órdenes:**
@@ -285,3 +388,4 @@ Debido a esto, los siguientes endpoints en `OrdersController` han sido marcados 
 * `GET /api/v1/orders/admin/pedidos-transicion`
 * `POST /api/v1/orders/admin/pedidos-transicion/:id/aprobar`
 * `POST /api/v1/orders/admin/pedidos-transicion/:id/rechazar`
+

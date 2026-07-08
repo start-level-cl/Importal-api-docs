@@ -1325,6 +1325,14 @@ export interface Operations {
       "200": Delivery
     }
   }
+  "backend_get_api_v1_bodeguero_deliveries_id_pdf_envio": {
+    method: "GET"
+    path: "/api/v1/bodeguero/deliveries/{id}/pdf-envio"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
   "backend_get_api_v1_bodeguero_pedidos": {
     method: "GET"
     path: "/api/v1/bodeguero/pedidos"
@@ -1613,6 +1621,22 @@ export interface Operations {
     requestBody: undefined
     responses: {
       "200": Ticket
+    }
+  }
+  "backend_post_api_v1_dev_inspect": {
+    method: "POST"
+    path: "/api/v1/dev/inspect"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_post_api_v1_dev_seed_test_data": {
+    method: "POST"
+    path: "/api/v1/dev/seed-test-data"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
     }
   }
   "backend_get_api_v1_notificaciones": {

@@ -3,8 +3,8 @@ import { withMermaid } from 'vitepress-plugin-mermaid'
 
 export default withMermaid(
   defineConfig({
-    title: 'Importal Docs',
-    description: 'Documentación técnica de la plataforma Importal - Backend, Lambdas, Auth y Arquitectura',
+    title: 'Pascal Store Docs',
+    description: 'Documentación técnica de la plataforma Pascal Store - Backend, Lambdas, Auth y Arquitectura',
     outDir: '../docs',
     cleanUrls: true,
     markdown: {
@@ -50,7 +50,7 @@ export default withMermaid(
         { icon: 'github', link: 'https://github.com/' }
       ],
       footer: {
-        message: 'Portal de Documentación Técnica - Importal',
+        message: 'Portal de Documentación Técnica - Pascal Store',
         copyright: 'Copyright © 2026'
       }
     }

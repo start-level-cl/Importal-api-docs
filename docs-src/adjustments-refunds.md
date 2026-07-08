@@ -67,6 +67,35 @@ Si el cliente opta por `FULL_REFUND` (transferencia), el administrador debe proc
 
 ---
 
+## Solicitudes de Devolución (Return Requests)
+
+El sistema permite a los clientes solicitar la devolución de un producto/pedido después de que haya sido entregado. Estas solicitudes son evaluadas y resueltas por el administrador.
+
+### 1. Creación de Solicitud (Cliente)
+El cliente inicia el proceso indicando la entrega, el pedido y la justificación.
+* **Endpoint:** `POST /api/v1/cliente/devoluciones`
+* **Body:** `CreateReturnRequestDto`
+  * `delivery_id` (numérico, requerido): ID de la entrega asociada.
+  * `order_id` (numérico, requerido): ID del pedido a devolver.
+  * `reason` (string, requerido): Motivo de la solicitud de devolución.
+
+### 2. Resolución de Devolución (Administrador)
+El administrador revisa la solicitud de devolución y la aprueba o la rechaza.
+* **Endpoint:** `POST /api/v1/admin/devoluciones/{id}/resolver`
+* **Body:** `ResolveReturnRequestDto`
+  * `status` (string, requerido): `APPROVED` o `REJECTED`.
+  * **Si es `APPROVED` (Aprobado):**
+    * Debe especificarse obligatoriamente la opción de compensación mediante el campo `option`.
+    * `option` (string, requerido):
+      * `CREDIT_NEXT_BILL`: Genera un abono/nota de crédito (`ClientCredit`) para el siguiente cobro. La devolución pasa a `COMPLETED`.
+      * `FULL_REFUND`: Solicita transferencia manual. La devolución pasa a `RESOLVED`.
+  * **Si es `REJECTED` (Rechazado):**
+    * Requiere obligatoriamente un motivo y una URL de prueba de la evidencia del rechazo.
+    * `reject_reason` (string, requerido): Motivo del rechazo.
+    * `reject_proof_url` (string, requerido): Enlace a la imagen o documento de evidencia del rechazo.
+
+---
+
 ## Referencia de Endpoints Relacionados
 
 ### Vendedor
@@ -78,8 +107,15 @@ Si el cliente opta por `FULL_REFUND` (transferencia), el administrador debe proc
 * **Resolver Ajuste:** `POST /api/v1/cliente/ajustes/{id}/resolver`
   * Body: `ResolveAdjustmentDto` (`accept_partial`, `compensation_method`)
 * **Listar Notas de Crédito:** `GET /api/v1/cliente/creditos`
+* **Crear Solicitud de Devolución:** `POST /api/v1/cliente/devoluciones`
+  * Body: `CreateReturnRequestDto` (`delivery_id`, `order_id`, `reason`)
+* **Listar Devoluciones Propias:** `GET /api/v1/cliente/devoluciones` (Soporta paginación con `page` y `limit`)
 
 ### Administrador
 * **Listar Reembolsos Pendientes:** `GET /api/v1/admin/reembolsos/pendientes`
 * **Completar Reembolso Manual:** `POST /api/v1/admin/ajustes/{id}/completar-reembolso`
   * Body: `CompleteRefundDto` (`comment`, `payment_proof_url`)
+* **Listar Solicitudes de Devolución:** `GET /api/v1/admin/devoluciones` (Soporta paginación con `page` y `limit`)
+* **Resolver Solicitud de Devolución:** `POST /api/v1/admin/devoluciones/{id}/resolver`
+  * Body: `ResolveReturnRequestDto` (`status`, `option`, `reject_reason`, `reject_proof_url`)
+
