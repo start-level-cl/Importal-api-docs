@@ -208,6 +208,7 @@ flowchart TD
          {
            "id": 8,
            "nombre": "Esteban Dido",
+           "email": "esteban.dido@example.com",
            "rut": "18492043-K",
            "salas": ["aereo"],
            "deuda": 45000,
