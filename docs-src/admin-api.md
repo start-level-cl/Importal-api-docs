@@ -28,6 +28,12 @@ Esta tabla consolida los endpoints disponibles para roles de administración y g
 | **Usuarios** | `POST` | `/api/v1/registration-requests/:email/reject` | `ADMIN`, `ROOT` | Rechaza la solicitud de onboarding de un cliente e inyecta reviewedBy. |
 | **Cobros** | `GET` | `/api/v1/admin/cobros/pendientes-validacion` | `ADMIN`, `ROOT` | Obtiene cobros pendientes con soporte para paginación (`page`, `limit`). |
 | **Cobros** | `POST` | `/api/v1/admin/cobros/:id/confirmar` | `ADMIN`, `ROOT` | Confirma, rechaza o reintenta el pago de un cobro con parámetro `action`. |
+| **Cobros** | `GET` | `/api/v1/admin/vendedor/pagos` | `ADMIN`, `ROOT` | Listar solicitudes de pago de los vendedores con filtros de estado. |
+| **Cobros** | `GET` | `/api/v1/admin/vendedor/pagos/:id` | `ADMIN`, `ROOT` | Obtener el detalle de una solicitud de cobro del vendedor y órdenes. |
+| **Cobros** | `POST` | `/api/v1/admin/vendedor/pagos/:id/procesar` | `ADMIN`, `ROOT` | Aprobar o rechazar la solicitud de cobro de un vendedor. |
+| **Métricas** | `GET` | `/api/v1/admin/metrics/carga/:id` | `ADMIN`, `ROOT` | Obtener métricas consolidadas de una carga de importación. |
+| **Métricas** | `GET` | `/api/v1/vendedor/metrics/carga/:id` | `VENDOR` | Obtener métricas de la carga correspondientes al vendedor. |
+| **Reembolsos** | `POST` | `/api/v1/admin/orders/adjustments/:id/authorize-full-refund` | `ADMIN`, `ROOT` | Forzar y autorizar de forma excepcional un reembolso del 100% de la orden. |
 | **Exchange Rates**| `GET`| `/api/v1/admin/exchange-rate/history` | `ADMIN`, `ROOT` | Historial de tipo de cambio oficial con soporte para paginación (`page`, `limit`). |
 | **Entregas** | `GET` | `/api/v1/admin/deliveries` | `ADMIN`, `ROOT` | Listado y filtros de entregas asociadas a clientes con paginación (`page`, `limit`). |
 | **Devoluciones**| `GET`| `/api/v1/admin/devoluciones` | `ADMIN`, `ROOT` | Listado de solicitudes de devolución con paginación (`page`, `limit`). |
@@ -378,7 +384,80 @@ Endpoints paginados soportados:
 
 ---
 
-## 5. Rutas Obsoletas (Deprecadas)
+## 5. Gestión de Cobros de Vendedores, Métricas de Cargas y Reembolsos 100%
+
+### 5.1 Gestión de Solicitudes de Cobro de Vendedor (Vendor Payouts)
+Para permitir que los vendedores retiren los fondos generados por sus ventas en la plataforma, el administrador cuenta con un panel para listar, detallar y procesar estas solicitudes.
+
+#### 5.1.1 Listar Solicitudes de Cobro
+* **Método:** `GET`
+* **Ruta:** `/api/v1/admin/vendedor/pagos`
+* **Roles Autorizados:** `ADMIN`, `ROOT`
+* **Query Parameters:**
+  * `status` (opcional, string): Filtrar por `'PENDING'`, `'APPROVED'` o `'REJECTED'`.
+  * `page` (opcional, default `1`)
+  * `limit` (opcional, default `20`)
+
+#### 5.1.2 Obtener Detalle de Solicitud de Cobro
+* **Método:** `GET`
+* **Ruta:** `/api/v1/admin/vendedor/pagos/:id`
+* **Roles Autorizados:** `ADMIN`, `ROOT`
+* **Response:** Devuelve el desglose de la solicitud con el monto, notas del vendedor, el listado de las URLs de comprobantes (máximo 4) y los pedidos específicos (`orders`) asociados.
+
+#### 5.1.3 Procesar Solicitud de Cobro
+* **Método:** `POST`
+* **Ruta:** `/api/v1/admin/vendedor/pagos/:id/procesar`
+* **Roles Autorizados:** `ADMIN`, `ROOT`
+* **Cuerpo de la Petición (Payload):**
+  ```json
+  {
+    "status": "APPROVED", // 'APPROVED' | 'REJECTED'
+    "note": "Comprobante bancario verificado e importe transferido." // Opcional
+  }
+  ```
+
+---
+
+### 5.2 Métricas por Carga de Importación
+Permite obtener informes consolidados de los flujos de peso, ingresos y cantidad de pedidos a nivel de Carga.
+
+#### 5.2.1 Métricas por Carga (Administración)
+* **Método:** `GET`
+* **Ruta:** `/api/v1/admin/metrics/carga/:id`
+* **Roles Autorizados:** `ADMIN`, `ROOT`
+* **Response:**
+  Devuelve las estadísticas agregadas financieras (ingresos en USD y CLP), peso acumulado cobrado, número de cajas armadas y el desglose de pedidos agrupados por su respectivo estado (`OrderStatus`) para la carga especificada.
+
+#### 5.2.2 Métricas por Carga (Vendedor)
+* **Método:** `GET`
+* **Ruta:** `/api/v1/vendedor/metrics/carga/:id`
+* **Roles Autorizados:** `VENDOR`
+* **Response:**
+  Retorna la porción de métricas correspondiente únicamente a las publicaciones y pedidos vendidos por el vendedor solicitante dentro de la carga indicada (sus ingresos USD/CLP, peso físico y cantidad de ítems).
+
+---
+
+### 5.3 Autorización Excepcional de Reembolso del 100%
+Cuando ocurren incidentes en bodega o diferencias físicas irreparables, el administrador tiene la potestad de anular por completo una orden y emitir el reembolso total del cobro al cliente, saltándose las restricciones habituales.
+
+* **Método:** `POST`
+* **Ruta:** `/api/v1/admin/orders/adjustments/:id/authorize-full-refund`
+* **Roles Autorizados:** `ADMIN`, `ROOT`
+* **Cuerpo de la Petición (Payload):**
+  ```json
+  {
+    "resolution_option": "FULL_REFUND", // 'CREDIT_NEXT_BILL' | 'PARTIAL_DEDUCTION' | 'FULL_REFUND'
+    "admin_notes": "Rotura de stock accidental en pasillo de bodega. Reembolso total autorizado." // Opcional
+  }
+  ```
+* **Lógica Interna:** 
+  1. Cambia el estado de la orden a `OrderStatus.CANCELLED`.
+  2. Calcula y autoriza el reembolso del 100% de la inversión y la comisión logística.
+  3. Crea el ajuste correspondiente en estado `COMPLETED` o `RESOLVED` y genera el PDF de reembolso.
+
+---
+
+## 6. Rutas Obsoletas (Deprecadas)
 
 > [!WARNING]
 > **Cambio en el Flujo Operacional de Órdenes:**

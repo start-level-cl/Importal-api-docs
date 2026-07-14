@@ -155,11 +155,12 @@ Antes de autorizar el empaque y preparación de cualquier pedido de bodega, el b
 
 ## 4. Empaque en Cajas (Carga Marítima)
 
-Para el transporte marítimo, es obligatorio el uso de cajas físicas que permitan consolidar el volumen de los clientes.
+Para el transporte marítimo, es obligatorio el uso de cajas físicas para consolidar la carga de los clientes. 
 
-*   **Creación de Cajas:** El bodeguero registra cajas en base de datos (`POST /api/v1/bodeguero/cajas`) especificando el cliente, la carga y la talla/tamaño de la caja (`caja_size`: S, M, L, XL).
-*   **Costos Logísticos:** El backend asocia automáticamente cada talla de caja con las tarifas vigentes de flete registradas en el sistema.
-*   **Auditoría de Cajas:** A través del endpoint `GET /api/v1/bodeguero/cajas/:id`, el bodeguero audita las órdenes asignadas a esa caja, su peso total y genera el empaque final.
+*   **Relación Flexibilizada (Many-to-Many):** Anteriormente, cada orden pertenecía de forma estricta a una sola caja (`caja_id`). En la versión actual, las órdenes se asocian a **múltiples cajas de forma simultánea** a través de la tabla pivot `order_cajas`. Esto permite distribuir físicamente piezas de un mismo pedido en distintos contenedores si la cubertura de espacio así lo requiere.
+*   **Creación de Cajas:** El bodeguero registra las cajas en la base de datos (`POST /api/v1/bodeguero/cajas`) asociándolas al cliente y la carga correspondiente, especificando el tamaño de la caja (`caja_size`: S, M, L, XL).
+*   **Costos Logísticos Proporcionales:** El flete no se cobra dos veces por estar el pedido en múltiples cajas; en su lugar, se prorratea el costo total de cada caja entre todos los pedidos asignados a ella. El flete final del pedido es la sumatoria de sus porciones prorrateadas (ver detalle de la fórmula en [Ajustes de Pedidos y Reembolsos](file:///C:/Users/joyta/OneDrive/Desktop/repos/startup/Importal/importal-api-docs/docs-src/adjustments-refunds.md)).
+*   **Auditoría de Cajas:** A través del endpoint `GET /api/v1/bodeguero/cajas/:id`, el bodeguero audita el contenido real, las órdenes asignadas y el peso de una caja específica para proceder con su sellado.
 
 ## 5. Registrar Auditoría y Empaque (`auditarEmpaque`)
 
@@ -237,3 +238,31 @@ Permite al bodeguero auditar individualmente a los clientes asociados a una carg
 Permite obtener la lista de entregas de bodega con opciones de paginación y filtros.
 *   **Endpoint:** `GET /api/v1/bodeguero/deliveries`
 *   **Filtro Automático de Dirección y Método de Envío:** Al solicitar entregas en estado `READY_TO_SHIP` (que es el valor predeterminado si el parámetro `status` no es enviado en la query), el backend filtra de forma automática las entregas omitiendo aquellas que no cuenten con datos de dirección (`shipping_address`) y método de envío (`shipping_method`) confirmados por el cliente. Esto previene que el bodeguero intente preparar o despachar bultos que carecen de destino final definido.
+
+### 6.4 Listado de Órdenes Físicas en Bodega (`/bodeguero/ordenes-fisicas`)
+Permite consultar en tiempo real qué pedidos se encuentran almacenados físicamente en la bodega de destino (Chile) y que aún no han sido despachados ni cancelados.
+*   **Endpoint:** `GET /api/v1/bodeguero/ordenes-fisicas`
+*   **Lógica de Selección:**
+    1. Filtra las órdenes cuya carga asociada se encuentra en estado `CargaStatus.ARRIVED`.
+    2. Excluye de forma estricta los estados finales de salida física (`OrderStatus.DELIVERED`, `OrderStatus.CANCELLED` y `OrderStatus.REJECTED`).
+    3. Retorna las órdenes con sus relaciones completas (`product`, `carga`, `cajas`, `client`) para auditar qué cajas tienen asignadas y si ya han sido marcadas como revisadas (`revisado: boolean`).
+
+---
+
+## 7. Inventario Operativo Interno de Bodega (No Ventas) y su Uso en Trueques
+
+Para optimizar la logística y ofrecer soluciones rápidas a incidencias de quiebre de stock, se habilitó el registro de inventario operativo interno.
+
+### 7.1 Registro de Ítems Operativos de Bodega
+*   **Endpoints:**
+    *   `POST /api/v1/bodeguero/inventario` (Registrar ítem)
+    *   `GET /api/v1/bodeguero/inventario` (Listar y buscar con filtros SKU y nombre)
+    *   `PUT /api/v1/bodeguero/inventario/:id` (Actualizar stock y ubicación)
+*   **Regla de Operación:** Estos productos se registran por el bodeguero indicando el nombre, SKU, marca, stock y su ubicación física (ej: "Pasillo 3, Estante B"). **No pertenecen al catálogo público de ventas** ni tienen precios al cliente, comisiones, ni asignaciones a vendedores.
+
+### 7.2 Flujo en Trueques y Regla de Costo $0
+1.  **Propuesta de Trueque:** Cuando ocurre una falta de stock, el administrador puede ingresar a los tickets de tipo `BARTER_NEGOTIATION` y proponer un cambio al cliente utilizando un ítem del catálogo o un ítem registrado en el inventario interno de bodega (`warehouse_inventory_id`).
+2.  **Validación y Decremento de Stock:** Al aceptar el trueque el cliente (`aceptarTrueque`), el backend decrementa el stock directamente de la tabla `warehouse_inventory` según la cantidad propuesta.
+3.  **Exclusión de Cobros de Comisión y Costo:**
+    *   La orden generada a partir del trueque de bodega se vincula mediante `warehouse_inventory_id`, fijando su precio en dólares a cero (`price_usd = 0`) y la bandera `is_barter = true`.
+    *   **Regla de Cobro:** En el proceso de facturación semanal, el motor de cobros en `BillingService` **excluye de forma estricta** a todas estas órdenes del cobro de comisiones logísticas e inversión de producto, asegurando un coste total de $0 para el cliente final y cero comisiones para el vendedor.

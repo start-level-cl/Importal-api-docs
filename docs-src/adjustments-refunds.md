@@ -49,7 +49,12 @@ El cliente visualiza sus ajustes pendientes y decide cómo resolverlos:
 * **Endpoint:** `POST /api/v1/cliente/ajustes/{id}/resolver`
 * **Opciones del Cliente:**
   * **Aceptar Parcial (`accept_partial: true`):** El pedido continúa pero con la cantidad ajustada.
-  * **Rechazar Parcial (`accept_partial: false`):** Se anula el pedido por completo y se reembolsa el 100% cobrado.
+  * **Rechazar Parcial (`accept_partial: false` - Opción B):** 
+    > [!IMPORTANT]
+    > **Restricción de Cancelación Total:**
+    > El cliente **ya no tiene permitido** cancelar la orden por completo (rechazar la recepción parcial) cuando se trate de un ajuste derivado de diferencias físicas tras la revisión en bodega. El backend arrojará una excepción `BadRequestException` indicando: *"No se permite la cancelación total del pedido. Debe aceptar el despacho de las unidades físicas disponibles y procesar la compensación de las diferencias."*
+    > 
+    > La cancelación total (`accept_partial: false`) **únicamente** queda habilitada cuando se trate de un ajuste derivado de una transición de carga solicitada por el vendedor (`is_transition_request: true`).
 * **Métodos de Compensación (`compensation_method`):**
   * `CREDIT_NEXT_BILL`: Genera un abono o nota de crédito (`ClientCredit`) aplicable al siguiente cobro del cliente. El ajuste pasa a `COMPLETED`.
   * `PARTIAL_DEDUCTION`: Deduce el dinero directamente de la factura (Cobro) actual si esta se encuentra pendiente (`PENDING`, `OVERDUE`, `RETRY`, `IN_REVIEW`), regenerando su PDF de cobro. El ajuste pasa a `COMPLETED`.
@@ -64,6 +69,22 @@ Si el cliente opta por `FULL_REFUND` (transferencia), el administrador debe proc
 * **Endpoint:** `POST /api/v1/admin/ajustes/{id}/completar-reembolso`
 * **Acción:** El administrador realiza la transferencia bancaria y registra el comprobante en el sistema.
 * **Estado final:** El ajuste se marca como `COMPLETED` y se notifica al usuario final.
+
+---
+
+## 3. Prorrateo y Distribución de Costos de Flete (Cajas Compartidas)
+
+Anteriormente, las órdenes tenían una relación directa ManyToOne con una caja física. Tras la flexibilización logística, las órdenes ahora pueden estar asociadas a **múltiples cajas** (relación ManyToMany) a través de la tabla pivot `order_cajas`. 
+
+Para evitar cobros dobles e inconsistencias en la facturación semanal, el cálculo de cobro del flete se realiza de forma estrictamente prorrateada bajo las siguientes reglas:
+
+1. **Costo de Flete de Caja Individual:** Se calcula el costo flete total de cada caja según su tamaño parametrizado (`caja_size`).
+2. **Costo Proporcional por Pedido:** En una caja compartida por $N$ pedidos, la porción del flete correspondiente a cada pedido se calcula dividiendo el costo total de la caja de forma equitativa:
+   $$\text{Costo Proporcional del Pedido } P \text{ en Caja } C = \frac{\text{Costo Flete Total de la Caja } C}{\text{Cantidad de Pedidos Asignados a la Caja } C}$$
+3. **Acumulación de Flete Final:** Si un pedido está distribuido físicamente en múltiples cajas, su flete total facturado es la sumatoria de todas las porciones proporcionales calculadas en cada caja donde tenga presencia:
+   $$\text{Flete Total Facturado para el Pedido } P = \sum_{C \in \text{Cajas del Pedido } P} \text{Costo Proporcional del Pedido } P \text{ en Caja } C$$
+
+Este motor de prorrateo se ejecuta de forma transaccional al invocarse la generación de cobros del flete logístico semanal.
 
 ---
 
