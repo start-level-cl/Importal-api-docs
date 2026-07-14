@@ -4190,9 +4190,9 @@ paths:
       x-role-group: bodeguero
       x-service: backend
       x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
-  /api/v1/bodeguero/deliveries/{id}/despachar:
+  /api/v1/bodeguero/deliveries/{id}/auditar-empaque:
     post:
-      operationId: backend_post_api_v1_bodeguero_deliveries_id_despachar
+      operationId: backend_post_api_v1_bodeguero_deliveries_id_auditar_empaque
       parameters:
         -           in: path
           name: id

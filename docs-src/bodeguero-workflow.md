@@ -58,15 +58,20 @@ sequenceDiagram
 
     Note over B, API: Paso 4: Empaque e Inspección Financiera
     B->>API: GET /api/v1/bodeguero/cajas/:id (Auditoría de empaque)
-    Note over B, API: Paso 5: Confirmación de Despacho (confirmDespacho)
-    B->>API: POST /api/v1/bodeguero/deliveries/:id/despachar
+    Note over B, API: Paso 5: Registrar Auditoría y Empaque (auditarEmpaque)
+    B->>API: POST /api/v1/bodeguero/deliveries/:id/auditar-empaque
     Note over API: Valida que cobros de INVERSION, LOGISTICA_COMISION y FLETE_SEGURO_ADUANA estén pagados
     alt Hay Cobros Pendientes
         API-->>B: Error HTTP 400 (Bloqueado por deuda)
     else Pagos al día
-        API->>DB: Cambia Delivery & Orders a SHIPPED
+        API->>DB: Cambia Delivery a READY_TO_SHIP
         API->>DB: Guarda Bultos y BultoPhotos
-        API->>C: Envía Notificación DELIVERY_CONFIRMED
+    end
+
+    Note over B, API: Paso 6: Confirmar Salida Física (shipDelivery)
+    B->>API: POST /api/v1/bodeguero/deliveries/:id/ship
+    API->>DB: Cambia Delivery & Orders a SHIPPED
+    API->>C: Envía Notificación DELIVERY_CONFIRMED
     end
 ```
 
@@ -137,11 +142,11 @@ Anteriormente, cuando existían diferencias físicas severas se permitía el rec
 
 ## 3. Bloqueo Financiero de Despacho (Anti-Mora)
 
-Antes de autorizar la salida física de cualquier pedido de bodega, el backend implementa una validación restrictiva de pagos pendientes en el método `confirmDespacho`.
+Antes de autorizar el empaque y preparación de cualquier pedido de bodega, el backend implementa una validación restrictiva de pagos pendientes en el método `auditarEmpaque`.
 
 > [!WARNING]
 > **Política de Cero Deuda en Despacho:**
-> Al intentar despachar una entrega (`Delivery`), el sistema consulta todos los cobros vigentes del cliente asociados a la carga actual.
+> Al intentar auditar y empacar una entrega (`Delivery`), el sistema consulta todos los cobros vigentes del cliente asociados a la carga actual.
 > *   **Tipos de Cobro Auditados:** `INVERSION`, `LOGISTICA_COMISION` y `FLETE_SEGURO_ADUANA`.
 > *   **Criterio de Bloqueo:** Si **al menos uno** de estos cobros posee un estado distinto de `CobroStatus.CONFIRMED` (por ejemplo, `PENDING`, `OVERDUE` o `RETRY`), la transacción es cancelada arrojando un error `HTTP 400 Bad Request`:
 >     > *"El cliente tiene cobros pendientes en esta carga: [Tipos]. Debe estar pagado para poder despachar."*
@@ -156,14 +161,12 @@ Para el transporte marítimo, es obligatorio el uso de cajas físicas que permit
 *   **Costos Logísticos:** El backend asocia automáticamente cada talla de caja con las tarifas vigentes de flete registradas en el sistema.
 *   **Auditoría de Cajas:** A través del endpoint `GET /api/v1/bodeguero/cajas/:id`, el bodeguero audita las órdenes asignadas a esa caja, su peso total y genera el empaque final.
 
----
+## 5. Registrar Auditoría y Empaque (`auditarEmpaque`)
 
-## 5. Confirmación de Despacho (`confirmDespacho`)
+Una vez que se han verificado los pagos y los productos están embalados, se realiza el registro de bultos y auditoría de la entrega, lo que la coloca en estado `READY_TO_SHIP` (Lista para envío).
 
-Una vez que se han verificado los pagos y los productos están embalados, se realiza el despacho físico de los paquetes.
-
-*   **Endpoint:** `POST /api/v1/bodeguero/deliveries/:id/despachar`
-*   **Controlador:** `confirmDespacho(req, id, dto)` en `orders.controller.ts`
+*   **Endpoint:** `POST /api/v1/bodeguero/deliveries/:id/auditar-empaque`
+*   **Controlador:** `auditarEmpaque(req, id, dto)` en `orders.controller.ts`
 *   **Payload de Entrada (`ConfirmDespachoDto`):**
     ```json
     {
@@ -182,10 +185,46 @@ Una vez que se han verificado los pagos y los productos están embalados, se rea
     }
     ```
 
-### 5.1 Cambios en Base de Datos tras el Despacho
-Cuando se valida que la entrega no posee deudas y se procesa exitosamente:
-1.  **Estado de Entrega:** El registro de [Delivery](file:///C:/Users/joyta/OneDrive/Desktop/repos/startup/Importal/Importal-backend/src/modules/orders/entities/delivery.entity.ts) cambia su estado a `DeliveryStatus.SHIPPED` y se guardan metadatos como `dispatched_at` y `dispatched_by_id`.
+### 5.1 Cambios en Base de Datos tras Registrar Auditoría y Empaque
+Cuando se procesa exitosamente la auditoría:
+1.  **Estado de Entrega:** El registro de [Delivery](file:///C:/Users/joyta/OneDrive/Desktop/repos/startup/Importal/Importal-backend/src/modules/orders/entities/delivery.entity.ts) cambia su estado a `DeliveryStatus.READY_TO_SHIP`.
 2.  **Registro de Bultos:** Se registran los elementos en [Bulto](file:///C:/Users/joyta/OneDrive/Desktop/repos/startup/Importal/Importal-backend/src/modules/orders/entities/bulto.entity.ts) y sus respectivas evidencias fotográficas en [BultoPhoto](file:///C:/Users/joyta/OneDrive/Desktop/repos/startup/Importal/Importal-backend/src/modules/orders/entities/bulto-photo.entity.ts).
-3.  **Estado de Pedidos:** Todas las órdenes del cliente en esa carga específica que no estén canceladas o rechazadas cambian su estado a `OrderStatus.SHIPPED` y se vinculan al primer bulto físico generado (`order.bulto_id`).
-4.  **Notificación al Cliente:** Se dispara un evento asíncrono que consume la lambda de notificaciones (`Importal-notification-lambda`) enviando una alerta de tipo `DELIVERY_CONFIRMED` al cliente:
-    > *"Su envío para la carga #XX ha sido despachado física y exitosamente."*
+3.  **Notificación al Cliente:** Se dispara un evento asíncrono que consume la lambda de notificaciones (`Importal-notification-lambda`) enviando una alerta de tipo `DELIVERY_READY` al cliente:
+    > *"Su envío para la carga #XX ha sido auditado y empacado exitosamente. Está listo para despacho."*
+
+---
+
+## 5.2 Confirmar Salida Física (`shipDelivery`)
+
+Cuando el transportista o courier retira físicamente la mercancía de la bodega, se realiza el despacho definitivo.
+
+*   **Endpoint:** `POST /api/v1/bodeguero/deliveries/:id/ship`
+*   **Controlador:** `shipDelivery(req, id)` en `orders.controller.ts`
+*   **Cambios en Base de Datos tras la Salida Física:**
+    1.  **Estado de Entrega:** El registro de [Delivery](file:///C:/Users/joyta/OneDrive/Desktop/repos/startup/Importal/Importal-backend/src/modules/orders/entities/delivery.entity.ts) cambia su estado a `DeliveryStatus.SHIPPED` y se guardan metadatos como `dispatched_at` y `dispatched_by_id`.
+    2.  **Estado de Pedidos:** Todas las órdenes del cliente en esa carga específica que no estén canceladas o rechazadas cambian su estado a `OrderStatus.SHIPPED` y se vinculan al primer bulto físico generado (`order.bulto_id`).
+    3.  **Notificación al Cliente:** Se envía una notificación de despacho en tránsito al cliente.
+
+---
+
+## 6. Dashboard de Bodega y Control de Clientes
+
+Para agilizar la operación y el control diario del bodeguero, se incorporaron dos vistas clave en la interfaz del bodeguero sustentadas por nuevos endpoints:
+
+### 6.1 Dashboard General (`/bodeguero/dashboard`)
+Permite visualizar un resumen de métricas clave y desempeño operativo de la bodega:
+*   **Endpoint:** `GET /api/v1/bodeguero/dashboard`
+*   **Información provista:**
+    *   **Lotes por verificar:** Cargas activas que han arribado pero no han completado su revisión física.
+    *   **Pedidos listos para enviar:** Entregas consolidadas en estado de preparación o despachadas.
+    *   **Incidencias sin resolver:** Pedidos con reportes de daños o faltantes aún no resueltos por los clientes.
+    *   **Indicadores de Desempeño:** Tasa de precisión de inventario y volumen histórico de lotes verificados.
+
+### 6.2 Control de Estado de Clientes por Carga (`/bodeguero/cargas/:id/clientes-status`)
+Permite al bodeguero auditar individualmente a los clientes asociados a una carga y verificar si están listos (liberados de deuda y con revisión física concluida) para el despacho físico.
+*   **Endpoint:** `GET /api/v1/bodeguero/cargas/:id/clientes-status`
+*   **Servicio:** `getCargaClientesStatus(id)` en `orders.service.ts`
+*   **Detalles Retornados por Cliente:**
+    *   `is_free`: Bandera booleana que indica si el cliente ha pagado el 100% de los cobros obligatorios de esta carga (`INVERSION`, `LOGISTICA_COMISION` y `FLETE_SEGURO_ADUANA`), liberándolo de deudas para el despacho.
+    *   `all_orders_reviewed`: Bandera booleana que confirma que todos los pedidos del cliente en esta carga han sido revisados físicamente (`orders_reviewed == orders_total`).
+    *   `unpaid_cobros` y `blocking_cobros_summary`: Listados de cobros pendientes de confirmación que bloquean la entrega.
