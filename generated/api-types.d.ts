@@ -1293,6 +1293,14 @@ export interface Operations {
       "200": GenericObjectArray
     }
   }
+  "backend_get_api_v1_bodeguero_cargas_id_clientes": {
+    method: "GET"
+    path: "/api/v1/bodeguero/cargas/{id}/clientes"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
   "backend_get_api_v1_bodeguero_cargas_id_clientes_status": {
     method: "GET"
     path: "/api/v1/bodeguero/cargas/{id}/clientes-status"
@@ -1317,9 +1325,25 @@ export interface Operations {
       "200": GenericObject
     }
   }
-  "backend_post_api_v1_bodeguero_deliveries_id_despachar": {
+  "backend_get_api_v1_bodeguero_dashboard": {
+    method: "GET"
+    path: "/api/v1/bodeguero/dashboard"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_get_api_v1_bodeguero_deliveries": {
+    method: "GET"
+    path: "/api/v1/bodeguero/deliveries"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_post_api_v1_bodeguero_deliveries_id_auditar_empaque": {
     method: "POST"
-    path: "/api/v1/bodeguero/deliveries/{id}/despachar"
+    path: "/api/v1/bodeguero/deliveries/{id}/auditar-empaque"
     requestBody: ConfirmDespachoRequest
     responses: {
       "200": Delivery
@@ -1331,6 +1355,15 @@ export interface Operations {
     requestBody: undefined
     responses: {
       "200": GenericObject
+    }
+  }
+  "backend_post_api_v1_bodeguero_deliveries_id_ship": {
+    method: "POST"
+    path: "/api/v1/bodeguero/deliveries/{id}/ship"
+    requestBody: undefined
+    responses: {
+      "200": Delivery
+      "400": ErrorResponse
     }
   }
   "backend_get_api_v1_bodeguero_pedidos": {
@@ -1623,22 +1656,6 @@ export interface Operations {
       "200": Ticket
     }
   }
-  "backend_post_api_v1_dev_inspect": {
-    method: "POST"
-    path: "/api/v1/dev/inspect"
-    requestBody: undefined
-    responses: {
-      "200": GenericObject
-    }
-  }
-  "backend_post_api_v1_dev_seed_test_data": {
-    method: "POST"
-    path: "/api/v1/dev/seed-test-data"
-    requestBody: undefined
-    responses: {
-      "200": GenericObject
-    }
-  }
   "backend_get_api_v1_notificaciones": {
     method: "GET"
     path: "/api/v1/notificaciones"
@@ -1786,6 +1803,22 @@ export interface Operations {
     requestBody: UpdateProfileRequest
     responses: {
       "200": UserProfile
+    }
+  }
+  "backend_post_api_v1_users_me_aceptar_consentimiento": {
+    method: "POST"
+    path: "/api/v1/users/me/aceptar-consentimiento"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_get_api_v1_users_me_consentimiento": {
+    method: "GET"
+    path: "/api/v1/users/me/consentimiento"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
     }
   }
   "backend_put_api_v1_users_me_notificaciones": {

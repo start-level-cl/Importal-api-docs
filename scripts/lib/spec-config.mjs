@@ -2196,7 +2196,7 @@ export const operationOverrides = {
       jsonResponse('200', 'Estado de pago de clientes en la carga', 'CargaClientesStatusResponse'),
     ]),
   },
-  'post /api/v1/bodeguero/deliveries/{id}/despachar': {
+  'post /api/v1/bodeguero/deliveries/{id}/auditar-empaque': {
     summary: 'Confirmar despacho físico e ingreso de bultos (Bodeguero/Admin/Root)',
     requestBody: {
       required: true,
@@ -2210,6 +2210,13 @@ export const operationOverrides = {
     },
     responses: Object.fromEntries([
       jsonResponse('200', 'Despacho confirmado con éxito', 'Delivery'),
+    ]),
+  },
+  'post /api/v1/bodeguero/deliveries/{id}/ship': {
+    summary: 'Confirmar salida física de la entrega (Bodeguero/Admin/Root)',
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Salida física de la entrega confirmada con éxito', 'Delivery'),
+      jsonResponse('400', 'Validación estricta fallida (dirección o método de envío faltantes, o estado inválido)', 'ErrorResponse'),
     ]),
   },
   'post /api/v1/cliente/pagos/transbank/iniciar': {

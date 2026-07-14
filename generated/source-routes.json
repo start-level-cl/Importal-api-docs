@@ -1010,41 +1010,6 @@
   },
   {
     "service": "backend",
-    "source": "Importal-backend/src/modules/app/controllers/dev-seeding.controller.ts",
-    "method": "post",
-    "path": "/api/v1/dev/seed-test-data",
-    "operationId": "backend_post_api_v1_dev_seed_test_data",
-    "tag": "Dev Seeding",
-    "tags": [
-      "Dev Seeding"
-    ],
-    "summary": "Seed test data for all main staging views (Staging/Local only)",
-    "roles": [],
-    "security": false,
-    "responseStatus": 200,
-    "responseDescription": "Seeded successfully",
-    "methodName": "seedTestData",
-    "parameters": [],
-    "roleGroup": "comun"
-  },
-  {
-    "service": "backend",
-    "source": "Importal-backend/src/modules/app/controllers/dev-seeding.controller.ts",
-    "method": "post",
-    "path": "/api/v1/dev/inspect",
-    "operationId": "backend_post_api_v1_dev_inspect",
-    "tag": "Dev Seeding",
-    "tags": [
-      "Dev Seeding"
-    ],
-    "roles": [],
-    "security": false,
-    "methodName": "inspectDatabase",
-    "parameters": [],
-    "roleGroup": "comun"
-  },
-  {
-    "service": "backend",
     "source": "Importal-backend/src/modules/app/controllers/health.controller.ts",
     "method": "get",
     "path": "/api/health",
@@ -2217,6 +2182,46 @@
     "service": "backend",
     "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
     "method": "get",
+    "path": "/api/v1/bodeguero/dashboard",
+    "operationId": "backend_get_api_v1_bodeguero_dashboard",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "bodeguero",
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "getBodegueroDashboard",
+    "parameters": [],
+    "roleGroup": "bodeguero"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "get",
+    "path": "/api/v1/bodeguero/cargas/{id}/clientes",
+    "operationId": "backend_get_api_v1_bodeguero_cargas_id_clientes",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "bodeguero",
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "getClientsOfCarga",
+    "parameters": [],
+    "roleGroup": "bodeguero"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "get",
     "path": "/api/v1/bodeguero/pedidos/{id}/auditoria",
     "operationId": "backend_get_api_v1_bodeguero_pedidos_id_auditoria",
     "tag": "Orders",
@@ -2416,9 +2421,9 @@
   {
     "service": "backend",
     "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
-    "method": "post",
-    "path": "/api/v1/bodeguero/deliveries/{id}/despachar",
-    "operationId": "backend_post_api_v1_bodeguero_deliveries_id_despachar",
+    "method": "get",
+    "path": "/api/v1/bodeguero/deliveries",
+    "operationId": "backend_get_api_v1_bodeguero_deliveries",
     "tag": "Orders",
     "tags": [
       "Orders"
@@ -2429,7 +2434,47 @@
       "root"
     ],
     "security": "bearerAuth",
-    "methodName": "confirmDespacho",
+    "methodName": "getBodegueroDeliveries",
+    "parameters": [],
+    "roleGroup": "bodeguero"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "post",
+    "path": "/api/v1/bodeguero/deliveries/{id}/auditar-empaque",
+    "operationId": "backend_post_api_v1_bodeguero_deliveries_id_auditar_empaque",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "bodeguero",
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "auditarEmpaque",
+    "parameters": [],
+    "roleGroup": "bodeguero"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "post",
+    "path": "/api/v1/bodeguero/deliveries/{id}/ship",
+    "operationId": "backend_post_api_v1_bodeguero_deliveries_id_ship",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "bodeguero",
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "shipDelivery",
     "parameters": [],
     "roleGroup": "bodeguero"
   },
@@ -3397,6 +3442,50 @@
     ],
     "security": "bearerAuth",
     "methodName": "revokeConsent",
+    "parameters": [],
+    "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/users/controllers/users.controller.ts",
+    "method": "get",
+    "path": "/api/v1/users/me/consentimiento",
+    "operationId": "backend_get_api_v1_users_me_consentimiento",
+    "tag": "Users",
+    "tags": [
+      "Users"
+    ],
+    "roles": [
+      "root",
+      "admin",
+      "client",
+      "vendor",
+      "bodeguero"
+    ],
+    "security": "bearerAuth",
+    "methodName": "getConsentStatus",
+    "parameters": [],
+    "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/users/controllers/users.controller.ts",
+    "method": "post",
+    "path": "/api/v1/users/me/aceptar-consentimiento",
+    "operationId": "backend_post_api_v1_users_me_aceptar_consentimiento",
+    "tag": "Users",
+    "tags": [
+      "Users"
+    ],
+    "roles": [
+      "root",
+      "admin",
+      "client",
+      "vendor",
+      "bodeguero"
+    ],
+    "security": "bearerAuth",
+    "methodName": "acceptConsent",
     "parameters": [],
     "roleGroup": "comun"
   },

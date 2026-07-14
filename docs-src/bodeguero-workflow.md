@@ -205,11 +205,15 @@ Cuando el transportista o courier retira físicamente la mercancía de la bodega
     2.  **Estado de Pedidos:** Todas las órdenes del cliente en esa carga específica que no estén canceladas o rechazadas cambian su estado a `OrderStatus.SHIPPED` y se vinculan al primer bulto físico generado (`order.bulto_id`).
     3.  **Notificación al Cliente:** Se envía una notificación de despacho en tránsito al cliente.
 
+> [!IMPORTANT]
+> **Validación Estricta de Datos de Envío:**
+> Al intentar confirmar la salida física, el backend realiza una validación estricta de los datos de despacho. Si la entrega no tiene completos los datos de dirección de envío (`shipping_address`) y el método de envío (`shipping_method`), el servidor arrojará de inmediato un error **`HTTP 400 Bad Request`** bloqueando la salida física.
+
 ---
 
 ## 6. Dashboard de Bodega y Control de Clientes
 
-Para agilizar la operación y el control diario del bodeguero, se incorporaron dos vistas clave en la interfaz del bodeguero sustentadas por nuevos endpoints:
+Para agilizar la operación y el control diario del bodeguero, se incorporaron vistas clave en la interfaz del bodeguero sustentadas por endpoints específicos:
 
 ### 6.1 Dashboard General (`/bodeguero/dashboard`)
 Permite visualizar un resumen de métricas clave y desempeño operativo de la bodega:
@@ -228,3 +232,8 @@ Permite al bodeguero auditar individualmente a los clientes asociados a una carg
     *   `is_free`: Bandera booleana que indica si el cliente ha pagado el 100% de los cobros obligatorios de esta carga (`INVERSION`, `LOGISTICA_COMISION` y `FLETE_SEGURO_ADUANA`), liberándolo de deudas para el despacho.
     *   `all_orders_reviewed`: Bandera booleana que confirma que todos los pedidos del cliente en esta carga han sido revisados físicamente (`orders_reviewed == orders_total`).
     *   `unpaid_cobros` y `blocking_cobros_summary`: Listados de cobros pendientes de confirmación que bloquean la entrega.
+
+### 6.3 Listado de Entregas por Despachar (`GET /api/v1/bodeguero/deliveries`)
+Permite obtener la lista de entregas de bodega con opciones de paginación y filtros.
+*   **Endpoint:** `GET /api/v1/bodeguero/deliveries`
+*   **Filtro Automático de Dirección y Método de Envío:** Al solicitar entregas en estado `READY_TO_SHIP` (que es el valor predeterminado si el parámetro `status` no es enviado en la query), el backend filtra de forma automática las entregas omitiendo aquellas que no cuenten con datos de dirección (`shipping_address`) y método de envío (`shipping_method`) confirmados por el cliente. Esto previene que el bodeguero intente preparar o despachar bultos que carecen de destino final definido.

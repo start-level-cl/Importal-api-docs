@@ -4090,6 +4090,31 @@ paths:
       x-role-group: bodeguero
       x-service: backend
       x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+  /api/v1/bodeguero/cargas/{id}/clientes:
+    get:
+      operationId: backend_get_api_v1_bodeguero_cargas_id_clientes
+      parameters:
+        -           in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Operacion exitosa
+      security:
+        -           bearerAuth:
+[]
+      summary: getClientsOfCarga
+      tags:
+        - Orders
+      x-role-group: bodeguero
+      x-service: backend
+      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
   /api/v1/bodeguero/cargas/{id}/clientes-status:
     get:
       operationId: backend_get_api_v1_bodeguero_cargas_id_clientes_status
@@ -4190,6 +4215,48 @@ paths:
       x-role-group: bodeguero
       x-service: backend
       x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+  /api/v1/bodeguero/dashboard:
+    get:
+      operationId: backend_get_api_v1_bodeguero_dashboard
+      parameters:
+[]
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Operacion exitosa
+      security:
+        -           bearerAuth:
+[]
+      summary: getBodegueroDashboard
+      tags:
+        - Orders
+      x-role-group: bodeguero
+      x-service: backend
+      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+  /api/v1/bodeguero/deliveries:
+    get:
+      operationId: backend_get_api_v1_bodeguero_deliveries
+      parameters:
+[]
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Operacion exitosa
+      security:
+        -           bearerAuth:
+[]
+      summary: getBodegueroDeliveries
+      tags:
+        - Orders
+      x-role-group: bodeguero
+      x-service: backend
+      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
   /api/v1/bodeguero/deliveries/{id}/auditar-empaque:
     post:
       operationId: backend_post_api_v1_bodeguero_deliveries_id_auditar_empaque
@@ -4250,6 +4317,46 @@ paths:
         -           bearerAuth:
 []
       summary: getDeliveryPdfEnvio
+      tags:
+        - Orders
+      x-role-group: bodeguero
+      x-service: backend
+      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+  /api/v1/bodeguero/deliveries/{id}/ship:
+    post:
+      operationId: backend_post_api_v1_bodeguero_deliveries_id_ship
+      parameters:
+        -           in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                carga_id: 4
+                client_id: 12
+                created_at: "2026-06-18T08:00:00.000Z"
+                delivered_at: "2026-06-18T12:00:00.000Z"
+                delivered_by: CLIENT
+                id: 1
+                proof_url: "https://cdn.importal.cl/proofs/delivery_123.jpg"
+                status: DELIVERED
+              schema:
+                $ref: "#/components/schemas/Delivery"
+          description: Salida física de la entrega confirmada con éxito
+        400:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: "Validación estricta fallida (dirección o método de envío faltantes, o estado inválido)"
+      security:
+        -           bearerAuth:
+[]
+      summary: Confirmar salida física de la entrega (Bodeguero/Admin/Root)
       tags:
         - Orders
       x-role-group: bodeguero
@@ -5478,42 +5585,6 @@ paths:
       x-role-group: cliente
       x-service: backend
       x-source: "Importal-backend/src/modules/support/controllers/support.controller.ts"
-  /api/v1/dev/inspect:
-    post:
-      operationId: backend_post_api_v1_dev_inspect
-      parameters:
-[]
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GenericObject"
-          description: Operacion exitosa
-      summary: inspectDatabase
-      tags:
-        - Dev Seeding
-      x-role-group: comun
-      x-service: backend
-      x-source: "Importal-backend/src/modules/app/controllers/dev-seeding.controller.ts"
-  /api/v1/dev/seed-test-data:
-    post:
-      operationId: backend_post_api_v1_dev_seed_test_data
-      parameters:
-[]
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GenericObject"
-          description: Seeded successfully
-      summary: Seed test data for all main staging views (Staging/Local only)
-      tags:
-        - Dev Seeding
-      x-role-group: comun
-      x-service: backend
-      x-source: "Importal-backend/src/modules/app/controllers/dev-seeding.controller.ts"
   /api/v1/notificaciones:
     get:
       operationId: backend_get_api_v1_notificaciones
@@ -6203,6 +6274,48 @@ paths:
         -           bearerAuth:
 []
       summary: Actualizar el perfil del usuario autenticado (Común)
+      tags:
+        - Users
+      x-role-group: comun
+      x-service: backend
+      x-source: "Importal-backend/src/modules/users/controllers/users.controller.ts"
+  /api/v1/users/me/aceptar-consentimiento:
+    post:
+      operationId: backend_post_api_v1_users_me_aceptar_consentimiento
+      parameters:
+[]
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Operacion exitosa
+      security:
+        -           bearerAuth:
+[]
+      summary: acceptConsent
+      tags:
+        - Users
+      x-role-group: comun
+      x-service: backend
+      x-source: "Importal-backend/src/modules/users/controllers/users.controller.ts"
+  /api/v1/users/me/consentimiento:
+    get:
+      operationId: backend_get_api_v1_users_me_consentimiento
+      parameters:
+[]
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Operacion exitosa
+      security:
+        -           bearerAuth:
+[]
+      summary: getConsentStatus
       tags:
         - Users
       x-role-group: comun
