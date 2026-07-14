@@ -97,10 +97,26 @@ Permite configurar las preferencias para recibir notificaciones a través de cor
 
 ---
 
-## 2. Revocación de Consentimiento
+## 2. Gestión de Consentimiento
 
-Permite revocar el consentimiento general para el uso de datos y envío de notificaciones. Esta acción sincroniza el cambio con el servicio externo de consentimiento.
+Permite gestionar el consentimiento de protección de datos personales conforme a la Ley 21.719.
 
+### Obtener Estado y Texto del Consentimiento
+- **Método:** `GET`
+- **Ruta:** `/api/v1/users/me/consentimiento`
+- **Roles Permitidos:** `ROOT`, `ADMIN`, `CLIENT`, `VENDOR`, `BODEGUERO`
+- **Respuesta Exitosa (200 OK):**
+  ```json
+  {
+    "consentimiento": false,
+    "policy": {
+      "version": "1.0",
+      "text": "De conformidad con la Ley 21.719 de Protección de Datos Personales..."
+    }
+  }
+  ```
+
+### Revocar Consentimiento
 - **Método:** `POST`
 - **Ruta:** `/api/v1/users/me/revocar-consentimiento`
 - **Roles Permitidos:** `ROOT`, `ADMIN`, `CLIENT`, `VENDOR`, `BODEGUERO`
@@ -116,6 +132,23 @@ Permite revocar el consentimiento general para el uso de datos y envío de notif
 > **Efecto de la revocación en el sistema:**
 > 1. Si está configurada la variable `CONSENT_SERVICE_URL`, se envían peticiones `DELETE` asíncronas para eliminar el consentimiento del usuario en el servicio externo (`/v1/consents/{externalId}/notifications_email` y `/v1/consents/{externalId}/notifications_sms`).
 > 2. En la base de datos local, se modifican los campos `concentimiento = false`, `email = false` y `phone = false` del usuario.
+
+### Aceptar Consentimiento Nuevamente
+- **Método:** `POST`
+- **Ruta:** `/api/v1/users/me/aceptar-consentimiento`
+- **Roles Permitidos:** `ROOT`, `ADMIN`, `CLIENT`, `VENDOR`, `BODEGUERO`
+- **Cuerpo de la Petición:** Ninguno.
+- **Respuesta Exitosa (200 OK):**
+  ```json
+  {
+    "message": "Consentimiento aceptado exitosamente"
+  }
+  ```
+
+> [!IMPORTANT]
+> **Efecto de la aceptación/recuperación en el sistema:**
+> 1. Si está configurada la variable `CONSENT_SERVICE_URL`, se envían peticiones `POST` para registrar el consentimiento para `notifications_email` y `notifications_sms` en el servicio externo.
+> 2. En la base de datos local, se modifica el campo `concentimiento = true`. El usuario ahora puede volver a habilitar las notificaciones por email o teléfono.
 
 ---
 
