@@ -4127,6 +4127,45 @@
         "x-source": "Importal-backend/src/modules/app/controllers/audit.controller.ts"
       }
     },
+    "/api/v1/admin/metrics/carga/{id}": {
+      "get": {
+        "operationId": "backend_get_api_v1_admin_metrics_carga_id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "getCargaMetrics",
+        "tags": [
+          "Admin Metrics"
+        ],
+        "x-role-group": "admin",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/app/controllers/admin-metrics.controller.ts"
+      }
+    },
     "/api/v1/admin/metrics/compliance": {
       "get": {
         "operationId": "backend_get_api_v1_admin_metrics_compliance",
@@ -4363,6 +4402,45 @@
         "x-role-group": "admin",
         "x-service": "backend",
         "x-source": "Importal-backend/src/modules/app/controllers/admin-metrics.controller.ts"
+      }
+    },
+    "/api/v1/admin/orders/adjustments/{id}/authorize-full-refund": {
+      "post": {
+        "operationId": "backend_post_api_v1_admin_orders_adjustments_id_authorize_full_refund",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "authorizeFullRefund",
+        "tags": [
+          "Orders"
+        ],
+        "x-role-group": "admin",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
       }
     },
     "/api/v1/admin/reembolsos/pendientes": {
@@ -5593,6 +5671,114 @@
         "x-source": "Importal-backend/src/modules/app/controllers/audit.controller.ts"
       }
     },
+    "/api/v1/admin/vendedor/pagos": {
+      "get": {
+        "operationId": "backend_get_api_v1_admin_vendedor_pagos",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "getAdminVendorPayouts",
+        "tags": [
+          "Billing"
+        ],
+        "x-role-group": "admin",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts"
+      }
+    },
+    "/api/v1/admin/vendedor/pagos/{id}": {
+      "get": {
+        "operationId": "backend_get_api_v1_admin_vendedor_pagos_id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "getAdminVendorPayoutDetail",
+        "tags": [
+          "Billing"
+        ],
+        "x-role-group": "admin",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts"
+      }
+    },
+    "/api/v1/admin/vendedor/pagos/{id}/procesar": {
+      "post": {
+        "operationId": "backend_post_api_v1_admin_vendedor_pagos_id_procesar",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "processAdminVendorPayout",
+        "tags": [
+          "Billing"
+        ],
+        "x-role-group": "admin",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts"
+      }
+    },
     "/api/v1/billing/exchange-rate": {
       "get": {
         "operationId": "backend_get_api_v1_billing_exchange_rate",
@@ -6290,6 +6476,133 @@
           }
         ],
         "summary": "Confirmar salida física de la entrega (Bodeguero/Admin/Root)",
+        "tags": [
+          "Orders"
+        ],
+        "x-role-group": "bodeguero",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+      }
+    },
+    "/api/v1/bodeguero/inventario": {
+      "get": {
+        "operationId": "backend_get_api_v1_bodeguero_inventario",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "getWarehouseInventory",
+        "tags": [
+          "Orders"
+        ],
+        "x-role-group": "bodeguero",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+      },
+      "post": {
+        "operationId": "backend_post_api_v1_bodeguero_inventario",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "createWarehouseInventory",
+        "tags": [
+          "Orders"
+        ],
+        "x-role-group": "bodeguero",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+      }
+    },
+    "/api/v1/bodeguero/inventario/{id}": {
+      "put": {
+        "operationId": "backend_put_api_v1_bodeguero_inventario_id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "updateWarehouseInventory",
+        "tags": [
+          "Orders"
+        ],
+        "x-role-group": "bodeguero",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+      }
+    },
+    "/api/v1/bodeguero/ordenes-fisicas": {
+      "get": {
+        "operationId": "backend_get_api_v1_bodeguero_ordenes_fisicas",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "getPhysicalWarehouseOrders",
         "tags": [
           "Orders"
         ],
@@ -6996,6 +7309,45 @@
           }
         ],
         "summary": "Eliminar el comprobante de pago subido de un cobro (Cliente)",
+        "tags": [
+          "Billing"
+        ],
+        "x-role-group": "cliente",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts"
+      }
+    },
+    "/api/v1/cliente/cobros/{id}/ordenes": {
+      "get": {
+        "operationId": "backend_get_api_v1_cliente_cobros_id_ordenes",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "getCobroOrders",
         "tags": [
           "Billing"
         ],
@@ -9481,6 +9833,105 @@
         "x-role-group": "vendedor",
         "x-service": "backend",
         "x-source": "Importal-backend/src/modules/app/controllers/admin.controller.ts"
+      }
+    },
+    "/api/v1/vendedor/metrics/carga/{id}": {
+      "get": {
+        "operationId": "backend_get_api_v1_vendedor_metrics_carga_id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "getVendorCargaMetrics",
+        "tags": [
+          "Admin Metrics"
+        ],
+        "x-role-group": "vendedor",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/app/controllers/admin-metrics.controller.ts"
+      }
+    },
+    "/api/v1/vendedor/notificar-sms": {
+      "post": {
+        "operationId": "backend_post_api_v1_vendedor_notificar_sms",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "sendSmsAnnouncement",
+        "tags": [
+          "Notifications"
+        ],
+        "x-role-group": "vendedor",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/notifications/controllers/notifications.controller.ts"
+      }
+    },
+    "/api/v1/vendedor/ordenes/pendientes-cobro": {
+      "get": {
+        "operationId": "backend_get_api_v1_vendedor_ordenes_pendientes_cobro",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "getPendingPayoutOrders",
+        "tags": [
+          "Billing"
+        ],
+        "x-role-group": "vendedor",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts"
       }
     },
     "/api/v1/vendedor/pagos/solicitar": {

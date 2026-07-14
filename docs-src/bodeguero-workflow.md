@@ -230,9 +230,41 @@ Permite al bodeguero auditar individualmente a los clientes asociados a una carg
 *   **Endpoint:** `GET /api/v1/bodeguero/cargas/:id/clientes-status`
 *   **Servicio:** `getCargaClientesStatus(id)` en `orders.service.ts`
 *   **Detalles Retornados por Cliente:**
+    *   `client_id`: ID del cliente (`number`).
+    *   `client_name`: Nombre del cliente (`string`).
+    *   `email`: Correo electrónico del cliente (`string`).
     *   `is_free`: Bandera booleana que indica si el cliente ha pagado el 100% de los cobros obligatorios de esta carga (`INVERSION`, `LOGISTICA_COMISION` y `FLETE_SEGURO_ADUANA`), liberándolo de deudas para el despacho.
+    *   `delivery_id`: ID del despacho asociado (`number` o `null`).
+    *   `delivery_status`: Estado de la entrega/despacho asociado (`DeliveryStatus` o `null`). Valores posibles: `PENDING`, `IN_REVISION`, `READY_TO_SHIP`, `SHIPPED`, `DELIVERED`.
+    *   `orders_total`: Cantidad total de pedidos del cliente en esta carga (`number`).
+    *   `orders_reviewed`: Cantidad de pedidos que ya fueron revisados físicamente (`number`).
     *   `all_orders_reviewed`: Bandera booleana que confirma que todos los pedidos del cliente en esta carga han sido revisados físicamente (`orders_reviewed == orders_total`).
     *   `unpaid_cobros` y `blocking_cobros_summary`: Listados de cobros pendientes de confirmación que bloquean la entrega.
+*   **Ejemplo de Respuesta:**
+    ```json
+    [
+      {
+        "client_id": 1,
+        "client_name": "María González Pérez",
+        "email": "maria@gmail.com",
+        "is_free": true,
+        "delivery_id": 12,
+        "delivery_status": "READY_TO_SHIP",
+        "orders_total": 5,
+        "orders_reviewed": 5,
+        "all_orders_reviewed": true,
+        "blocking_cobros_summary": [
+          {
+            "cobro_id": 101,
+            "tipo_cobro": "INVERSION",
+            "total_clp": 450000,
+            "status": "CONFIRMED"
+          }
+        ],
+        "unpaid_cobros": []
+      }
+    ]
+    ```
 
 ### 6.3 Listado de Entregas por Despachar (`GET /api/v1/bodeguero/deliveries`)
 Permite obtener la lista de entregas de bodega con opciones de paginación y filtros.

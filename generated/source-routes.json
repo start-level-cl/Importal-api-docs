@@ -404,6 +404,43 @@
   },
   {
     "service": "backend",
+    "source": "Importal-backend/src/modules/app/controllers/admin-metrics.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/metrics/carga/{id}",
+    "operationId": "backend_get_api_v1_admin_metrics_carga_id",
+    "tag": "Admin Metrics",
+    "tags": [
+      "Admin Metrics"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "getCargaMetrics",
+    "parameters": [],
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/app/controllers/admin-metrics.controller.ts",
+    "method": "get",
+    "path": "/api/v1/vendedor/metrics/carga/{id}",
+    "operationId": "backend_get_api_v1_vendedor_metrics_carga_id",
+    "tag": "Admin Metrics",
+    "tags": [
+      "Admin Metrics"
+    ],
+    "roles": [
+      "vendor"
+    ],
+    "security": "bearerAuth",
+    "methodName": "getVendorCargaMetrics",
+    "parameters": [],
+    "roleGroup": "vendedor"
+  },
+  {
+    "service": "backend",
     "source": "Importal-backend/src/modules/app/controllers/admin.controller.ts",
     "method": "get",
     "path": "/api/v1/admin/dashboard",
@@ -1597,6 +1634,99 @@
   },
   {
     "service": "backend",
+    "source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts",
+    "method": "get",
+    "path": "/api/v1/vendedor/ordenes/pendientes-cobro",
+    "operationId": "backend_get_api_v1_vendedor_ordenes_pendientes_cobro",
+    "tag": "Billing",
+    "tags": [
+      "Billing"
+    ],
+    "roles": [
+      "vendor"
+    ],
+    "security": "bearerAuth",
+    "methodName": "getPendingPayoutOrders",
+    "parameters": [],
+    "roleGroup": "vendedor"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/vendedor/pagos",
+    "operationId": "backend_get_api_v1_admin_vendedor_pagos",
+    "tag": "Billing",
+    "tags": [
+      "Billing"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "getAdminVendorPayouts",
+    "parameters": [],
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/vendedor/pagos/{id}",
+    "operationId": "backend_get_api_v1_admin_vendedor_pagos_id",
+    "tag": "Billing",
+    "tags": [
+      "Billing"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "getAdminVendorPayoutDetail",
+    "parameters": [],
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts",
+    "method": "post",
+    "path": "/api/v1/admin/vendedor/pagos/{id}/procesar",
+    "operationId": "backend_post_api_v1_admin_vendedor_pagos_id_procesar",
+    "tag": "Billing",
+    "tags": [
+      "Billing"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "processAdminVendorPayout",
+    "parameters": [],
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts",
+    "method": "get",
+    "path": "/api/v1/cliente/cobros/{id}/ordenes",
+    "operationId": "backend_get_api_v1_cliente_cobros_id_ordenes",
+    "tag": "Billing",
+    "tags": [
+      "Billing"
+    ],
+    "roles": [
+      "client"
+    ],
+    "security": "bearerAuth",
+    "methodName": "getCobroOrders",
+    "parameters": [],
+    "roleGroup": "cliente"
+  },
+  {
+    "service": "backend",
     "source": "Importal-backend/src/modules/messaging/controllers/messaging.controller.ts",
     "method": "get",
     "path": "/api/v1/chats",
@@ -1748,6 +1878,24 @@
     "methodName": "markAllAsRead",
     "parameters": [],
     "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/notifications/controllers/notifications.controller.ts",
+    "method": "post",
+    "path": "/api/v1/vendedor/notificar-sms",
+    "operationId": "backend_post_api_v1_vendedor_notificar_sms",
+    "tag": "Notifications",
+    "tags": [
+      "Notifications"
+    ],
+    "roles": [
+      "vendor"
+    ],
+    "security": "bearerAuth",
+    "methodName": "sendSmsAnnouncement",
+    "parameters": [],
+    "roleGroup": "vendedor"
   },
   {
     "service": "backend",
@@ -2792,6 +2940,105 @@
     "methodName": "getClientReturnRequests",
     "parameters": [],
     "roleGroup": "cliente"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "post",
+    "path": "/api/v1/bodeguero/inventario",
+    "operationId": "backend_post_api_v1_bodeguero_inventario",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "bodeguero",
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "createWarehouseInventory",
+    "parameters": [],
+    "roleGroup": "bodeguero"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "get",
+    "path": "/api/v1/bodeguero/inventario",
+    "operationId": "backend_get_api_v1_bodeguero_inventario",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "bodeguero",
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "getWarehouseInventory",
+    "parameters": [],
+    "roleGroup": "bodeguero"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "put",
+    "path": "/api/v1/bodeguero/inventario/{id}",
+    "operationId": "backend_put_api_v1_bodeguero_inventario_id",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "bodeguero",
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "updateWarehouseInventory",
+    "parameters": [],
+    "roleGroup": "bodeguero"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "get",
+    "path": "/api/v1/bodeguero/ordenes-fisicas",
+    "operationId": "backend_get_api_v1_bodeguero_ordenes_fisicas",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "bodeguero",
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "getPhysicalWarehouseOrders",
+    "parameters": [],
+    "roleGroup": "bodeguero"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "post",
+    "path": "/api/v1/admin/orders/adjustments/{id}/authorize-full-refund",
+    "operationId": "backend_post_api_v1_admin_orders_adjustments_id_authorize_full_refund",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "authorizeFullRefund",
+    "parameters": [],
+    "roleGroup": "admin"
   },
   {
     "service": "backend",

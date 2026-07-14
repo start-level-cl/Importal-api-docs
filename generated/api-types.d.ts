@@ -949,6 +949,14 @@ export interface Operations {
       "200": GenericObject
     }
   }
+  "backend_get_api_v1_admin_metrics_carga_id": {
+    method: "GET"
+    path: "/api/v1/admin/metrics/carga/{id}"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
   "backend_get_api_v1_admin_metrics_compliance": {
     method: "GET"
     path: "/api/v1/admin/metrics/compliance"
@@ -992,6 +1000,14 @@ export interface Operations {
   "backend_get_api_v1_admin_metrics_users": {
     method: "GET"
     path: "/api/v1/admin/metrics/users"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_post_api_v1_admin_orders_adjustments_id_authorize_full_refund": {
+    method: "POST"
+    path: "/api/v1/admin/orders/adjustments/{id}/authorize-full-refund"
     requestBody: undefined
     responses: {
       "200": GenericObject
@@ -1229,6 +1245,30 @@ export interface Operations {
       "200": GenericObject
     }
   }
+  "backend_get_api_v1_admin_vendedor_pagos": {
+    method: "GET"
+    path: "/api/v1/admin/vendedor/pagos"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_get_api_v1_admin_vendedor_pagos_id": {
+    method: "GET"
+    path: "/api/v1/admin/vendedor/pagos/{id}"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_post_api_v1_admin_vendedor_pagos_id_procesar": {
+    method: "POST"
+    path: "/api/v1/admin/vendedor/pagos/{id}/procesar"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
   "backend_get_api_v1_billing_exchange_rate": {
     method: "GET"
     path: "/api/v1/billing/exchange-rate"
@@ -1366,6 +1406,38 @@ export interface Operations {
       "400": ErrorResponse
     }
   }
+  "backend_get_api_v1_bodeguero_inventario": {
+    method: "GET"
+    path: "/api/v1/bodeguero/inventario"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_post_api_v1_bodeguero_inventario": {
+    method: "POST"
+    path: "/api/v1/bodeguero/inventario"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_put_api_v1_bodeguero_inventario_id": {
+    method: "PUT"
+    path: "/api/v1/bodeguero/inventario/{id}"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_get_api_v1_bodeguero_ordenes_fisicas": {
+    method: "GET"
+    path: "/api/v1/bodeguero/ordenes-fisicas"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
   "backend_get_api_v1_bodeguero_pedidos": {
     method: "GET"
     path: "/api/v1/bodeguero/pedidos"
@@ -1473,6 +1545,14 @@ export interface Operations {
   "backend_delete_api_v1_cliente_cobros_id_comprobante": {
     method: "DELETE"
     path: "/api/v1/cliente/cobros/{id}/comprobante"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_get_api_v1_cliente_cobros_id_ordenes": {
+    method: "GET"
+    path: "/api/v1/cliente/cobros/{id}/ordenes"
     requestBody: undefined
     responses: {
       "200": GenericObject
@@ -1888,6 +1968,30 @@ export interface Operations {
   "backend_get_api_v1_vendedor_dashboard": {
     method: "GET"
     path: "/api/v1/vendedor/dashboard"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_get_api_v1_vendedor_metrics_carga_id": {
+    method: "GET"
+    path: "/api/v1/vendedor/metrics/carga/{id}"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_post_api_v1_vendedor_notificar_sms": {
+    method: "POST"
+    path: "/api/v1/vendedor/notificar-sms"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_get_api_v1_vendedor_ordenes_pendientes_cobro": {
+    method: "GET"
+    path: "/api/v1/vendedor/ordenes/pendientes-cobro"
     requestBody: undefined
     responses: {
       "200": GenericObject
