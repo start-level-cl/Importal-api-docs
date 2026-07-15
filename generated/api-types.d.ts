@@ -1381,6 +1381,14 @@ export interface Operations {
       "200": GenericObject
     }
   }
+  "backend_get_api_v1_bodeguero_deliveries_id": {
+    method: "GET"
+    path: "/api/v1/bodeguero/deliveries/{id}"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
   "backend_post_api_v1_bodeguero_deliveries_id_auditar_empaque": {
     method: "POST"
     path: "/api/v1/bodeguero/deliveries/{id}/auditar-empaque"

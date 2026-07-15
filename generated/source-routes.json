@@ -2589,6 +2589,26 @@
   {
     "service": "backend",
     "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "get",
+    "path": "/api/v1/bodeguero/deliveries/{id}",
+    "operationId": "backend_get_api_v1_bodeguero_deliveries_id",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "bodeguero",
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "getDeliveryById",
+    "parameters": [],
+    "roleGroup": "bodeguero"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
     "method": "post",
     "path": "/api/v1/bodeguero/deliveries/{id}/auditar-empaque",
     "operationId": "backend_post_api_v1_bodeguero_deliveries_id_auditar_empaque",

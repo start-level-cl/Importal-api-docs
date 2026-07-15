@@ -267,9 +267,20 @@ Permite al bodeguero auditar individualmente a los clientes asociados a una carg
     ```
 
 ### 6.3 Listado de Entregas por Despachar (`GET /api/v1/bodeguero/deliveries`)
-Permite obtener la lista de entregas de bodega con opciones de paginación y filtros.
+Permite obtener la lista paginada de entregas de bodega con opciones de paginación y filtros por cliente, carga y estado.
 *   **Endpoint:** `GET /api/v1/bodeguero/deliveries`
+*   **Campos de Retorno Adicionales por Entrega:**
+    *   `total_weight`: Peso total en kg, calculado como la sumatoria del peso de todos sus bultos (`number`).
+    *   `cajas`: Array de cajas físicas asociadas a las órdenes del cliente en la entrega.
 *   **Filtro Automático de Dirección y Método de Envío:** Al solicitar entregas en estado `READY_TO_SHIP` (que es el valor predeterminado si el parámetro `status` no es enviado en la query), el backend filtra de forma automática las entregas omitiendo aquellas que no cuenten con datos de dirección (`shipping_address`) y método de envío (`shipping_method`) confirmados por el cliente. Esto previene que el bodeguero intente preparar o despachar bultos que carecen de destino final definido.
+
+### 6.3.1 Detalle de Entrega por ID (`GET /api/v1/bodeguero/deliveries/:id`)
+Permite obtener el detalle completo de una entrega específica por su ID.
+*   **Endpoint:** `GET /api/v1/bodeguero/deliveries/:id`
+*   **Servicio:** `getDeliveryById(id)` en `orders.service.ts`
+*   **Campos Retornados:** Incluye toda la estructura de la entrega (`client`, `carga`, `bultos`) complementada con:
+    *   `total_weight`: Peso total en kg de los bultos asociados.
+    *   `cajas`: Colección desduplicada de las cajas físicas asociadas a las órdenes de este cliente.
 
 ### 6.4 Listado de Órdenes Físicas en Bodega (`/bodeguero/ordenes-fisicas`)
 Permite consultar en tiempo real qué pedidos se encuentran almacenados físicamente en la bodega de destino (Chile) y que aún no han sido despachados ni cancelados.

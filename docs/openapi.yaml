@@ -4378,6 +4378,31 @@ paths:
       x-role-group: bodeguero
       x-service: backend
       x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+  /api/v1/bodeguero/deliveries/{id}:
+    get:
+      operationId: backend_get_api_v1_bodeguero_deliveries_id
+      parameters:
+        -           in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Operacion exitosa
+      security:
+        -           bearerAuth:
+[]
+      summary: getDeliveryById
+      tags:
+        - Orders
+      x-role-group: bodeguero
+      x-service: backend
+      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
   /api/v1/bodeguero/deliveries/{id}/auditar-empaque:
     post:
       operationId: backend_post_api_v1_bodeguero_deliveries_id_auditar_empaque
