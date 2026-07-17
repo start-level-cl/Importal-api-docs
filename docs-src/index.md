@@ -2,7 +2,7 @@
 layout: home
 
 hero:
-  name: "Importal Docs"
+  name: "Pascalle Store Docs"
   text: "Portal Técnico de la Plataforma"
   tagline: "Documentación unificada de Backend, Auth, Lambdas y Arquitectura de Sistemas"
   actions:
@@ -14,7 +14,7 @@ hero:
       link: /reference.html
   image:
     src: https://vitepress.dev/vitepress-logo-large.png
-    alt: Importal Logo
+    alt: Pascalle Store Logo
 
 features:
   - icon: 🛡️

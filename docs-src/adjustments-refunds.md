@@ -1,6 +1,6 @@
 # Ajustes de Pedidos y Reembolsos
 
-El sistema de Importal cuenta con un ciclo estructurado para manejar diferencias de stock o incidencias en los pedidos a través de **Ajustes y Reembolsos**. Permite a los vendedores reducir las unidades de un pedido y a los clientes elegir cómo ser compensados.
+El sistema de Pascalle Store cuenta con un ciclo estructurado para manejar diferencias de stock o incidencias en los pedidos a través de **Ajustes y Reembolsos**. Permite a los vendedores reducir las unidades de un pedido y a los clientes elegir cómo ser compensados.
 
 ---
 
@@ -139,4 +139,3 @@ El administrador revisa la solicitud de devolución y la aprueba o la rechaza.
 * **Listar Solicitudes de Devolución:** `GET /api/v1/admin/devoluciones` (Soporta paginación con `page` y `limit`)
 * **Resolver Solicitud de Devolución:** `POST /api/v1/admin/devoluciones/{id}/resolver`
   * Body: `ResolveReturnRequestDto` (`status`, `option`, `reject_reason`, `reject_proof_url`)
-

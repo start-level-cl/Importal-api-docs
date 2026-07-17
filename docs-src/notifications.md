@@ -1,6 +1,6 @@
 # Notificaciones
 
-La plataforma Importal dispone de un sistema centralizado de notificaciones asíncronas para mantener informados a los distintos participantes del ecosistema (Administradores, Vendedores, Clientes y Operarios de Bodega) sobre eventos críticos del negocio.
+La plataforma Pascalle Store dispone de un sistema centralizado de notificaciones asíncronas para mantener informados a los distintos participantes del ecosistema (Administradores, Vendedores, Clientes y Operarios de Bodega) sobre eventos críticos del negocio.
 
 ---
 
@@ -10,7 +10,7 @@ El envío de notificaciones se procesa a través de una cola de SQS y una funci�
 
 ### 1. Internas (In-App)
 * **Destino:** Base de datos DynamoDB.
-* **Consumo:** Consumidas directamente por las aplicaciones frontend de Importal mediante un endpoint dedicado.
+* **Consumo:** Consumidas directamente por las aplicaciones frontend de Pascalle Store mediante un endpoint dedicado.
 * **Comportamiento:** **No** gatillan servicios de mensajería externos (como AWS SES o SNS), optimizando costos y evitando saturar los buzones del usuario.
 
 ### 2. Externas (Email / SMS)
@@ -61,10 +61,10 @@ Mantienen al comprador informado de sus pedidos, estados de facturación, alerta
 | Event Type Code | Canales | Asunto / Título | Propósito y Contenido |
 | :--- | :--- | :--- | :--- |
 | `CLIENT_PROMO_START` | Email, SMS | 🔥 ¡Las ventas comienzan pronto! | Campaña automática enviada a los clientes cuando un vendedor está por iniciar una sesión de ofertas programada. Informa el nombre del vendedor y el horario de inicio del evento. |
-| `CLIENT_REG_OTP` | Email, SMS | 🔒 Código de verificación — Importal | Envía una clave única (One-Time Password) de verificación para el registro o doble factor de autenticación. Expira en 10 minutos. |
-| `CLIENT_REG_APPROVED` | Email | 🎉 ¡Bienvenido a Importal! | Notifica la aprobación definitiva de la cuenta del cliente por parte del administrador. Proporciona su usuario y, en caso de aplicar, una contraseña temporal, junto con un botón de redirección al portal de login. |
+| `CLIENT_REG_OTP` | Email, SMS | 🔒 Código de verificación — Pascalle Store | Envía una clave única (One-Time Password) de verificación para el registro o doble factor de autenticación. Expira en 10 minutos. |
+| `CLIENT_REG_APPROVED` | Email | 🎉 ¡Bienvenido a Pascalle Store! | Notifica la aprobación definitiva de la cuenta del cliente por parte del administrador. Proporciona su usuario y, en caso de aplicar, una contraseña temporal, junto con un botón de redirección al portal de login. |
 | `CLIENT_BILL_GENERATED` | Email | 🧾 Tu factura está lista | Alerta que se ha emitido un nuevo cobro consolidado. Incluye el número de factura, el monto total y la fecha de vencimiento. |
-| `CLIENT_BILL_OVERDUE` | Email | ⚠️ Aviso de Cobro en Mora — Importal | Notificación urgente que avisa al cliente de un saldo vencido sin pagar. Detalla el monto acumulado en mora y advierte sobre el riesgo de suspensión de servicios si no se regulariza. |
+| `CLIENT_BILL_OVERDUE` | Email | ⚠️ Aviso de Cobro en Mora — Pascalle Store | Notificación urgente que avisa al cliente de un saldo vencido sin pagar. Detalla el monto acumulado en mora y advierte sobre el riesgo de suspensión de servicios si no se regulariza. |
 | `CLIENT_ORDER_CONFIRMED` | Email | ✅ Pedido confirmado por el vendedor | Informa al cliente que el vendedor ha aceptado procesar su pedido de compra. Contiene el ID del pedido y los datos de contacto del vendedor. |
 | `CLIENT_BATCH_DISPATCHED` | Email | 🚚 Tu pedido ha sido despachado | Se envía cuando la mercadería del cliente ha sido cargada en el transporte para su entrega. Contiene el ID del pedido y el número de tracking de la empresa transportista. |
 | `CLIENT_ORDER_REJECTED` | In-App | ❌ Pedido cancelado | Notificación únicamente visible in-app para informar que el vendedor ha declinado o cancelado el pedido realizado. |

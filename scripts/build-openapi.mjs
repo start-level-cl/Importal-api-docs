@@ -269,7 +269,7 @@ function createHtml(spec) {
     {
       id: 'flujo-registro',
       title: 'Flujo de Registro de Usuario',
-      description: 'Proceso completo para registrar un nuevo usuario en Importal: desde la solicitud inicial (con normalización de roles y carga de documentos), verificación por email y teléfono, hasta la aprobación administrativa.',
+      description: 'Proceso completo para registrar un nuevo usuario en Pascalle Store: desde la solicitud inicial (con normalización de roles y carga de documentos), verificación por email y teléfono, hasta la aprobación administrativa.',
       steps: [
         {
           step: 1,

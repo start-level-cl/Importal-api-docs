@@ -1,4 +1,4 @@
-# Documentacion API Importal
+# Documentación API Pascalle Store
 
 Este directorio centraliza la documentacion OpenAPI de `Importal-auth`, `Importal-backend` y `Importal-registration-lambda`.
 
@@ -66,7 +66,7 @@ La URL publica final de Vercel debe registrarse aqui despues del primer deploy p
 
 ## Flujos de Carga para Vendedores
 
-En Importal, la gestión de cargas y pedidos para los vendedores está sujeta a las siguientes reglas de negocio y flujos técnicos:
+En Pascalle Store, la gestión de cargas y pedidos para los vendedores está sujeta a las siguientes reglas de negocio y flujos técnicos:
 
 ### 1. Visualización de Pedidos en la Carga Activa
 El vendedor puede listar los pedidos asociados a su asignación de carga activa llamando a:

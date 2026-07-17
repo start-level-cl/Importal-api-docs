@@ -139,7 +139,7 @@ const schemaExamples = {
   },
   RegistrationVerifyRequest: { code: '123456', channel: 'email' },
   CreateAdminRequest: {
-    name: 'Admin Importal',
+    name: 'Admin Pascalle Store',
     email: 'admin@importal.cl',
     phone: '+56911112222',
     rut: '11.111.111-1',
@@ -695,16 +695,16 @@ function withExample(content, example) {
 }
 
 export const info = {
-  title: 'Importal Unified API',
+  title: 'Pascalle Store Unified API',
   version: '1.0.0',
   description:
-    'Especificacion OpenAPI centralizada para Importal-auth, Importal-backend y el flujo publico de registro.',
+    'Especificación OpenAPI centralizada de Pascalle Store para autenticación, backend y el flujo público de registro.',
 }
 
 export const servers = [
   {
     url: 'https://{host}',
-    description: 'API publica de Importal',
+    description: 'API pública de Pascalle Store',
     variables: {
       host: {
         default: 'api.importal.example',

@@ -1,6 +1,6 @@
 # Registro y Lambdas (Serverless)
 
-Para optimizar costos, mejorar el rendimiento y evitar la persistencia de usuarios basura o spam en la base de datos relacional PostgreSQL, Importal utiliza un flujo de registro serverless basado en AWS Lambdas y bases de datos NoSQL.
+Para optimizar costos, mejorar el rendimiento y evitar la persistencia de usuarios basura o spam en la base de datos relacional PostgreSQL, Pascalle Store utiliza un flujo de registro serverless basado en AWS Lambdas y bases de datos NoSQL.
 
 ## Flujo de Registro de Usuarios
 
@@ -58,7 +58,7 @@ sequenceDiagram
 
 ## Crédito de Inversión Inicial al Registro
 
-Al momento de que un administrador aprueba una solicitud de registro (`POST /registration-requests/{email}/approve`), si el rol asignado al usuario es `CLIENT`, el backend de Importal genera automáticamente un crédito de inversión inicial.
+Al momento de que un administrador aprueba una solicitud de registro (`POST /registration-requests/{email}/approve`), si el rol asignado al usuario es `CLIENT`, el backend de Pascalle Store genera automáticamente un crédito de inversión inicial.
 
 ### Reglas de Negocio
 * **1 sala (tipo de transporte):** Si el cliente seleccionó solo 1 tipo de transporte (aéreo o marítimo), se le otorga un crédito de **$50.000 CLP**.

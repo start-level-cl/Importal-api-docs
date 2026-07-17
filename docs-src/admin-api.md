@@ -1,6 +1,6 @@
 # Guía de Referencia de la API del Administrador (Admin API)
 
-Esta guía documenta los endpoints administrativos, de monitoreo y del sistema expuestos en el backend de **Importal** bajo el prefijo `/api/v1/`.
+Esta guía documenta los endpoints administrativos, de monitoreo y del sistema expuestos en el backend de **Pascalle Store** bajo el prefijo `/api/v1/`.
 
 ---
 
@@ -133,7 +133,7 @@ sequenceDiagram
 
 ## 2. Módulo de Usuarios (`users`)
 
-El módulo de gestión de usuarios ha sido enriquecido con un endpoint especializado para la administración y supervisión del comportamiento financiero y operativo de los clientes de Importal.
+El módulo de gestión de usuarios ha sido enriquecido con un endpoint especializado para la administración y supervisión del comportamiento financiero y operativo de los clientes de Pascalle Store.
 
 ### 2.1 Listado Avanzado de Usuarios (Administración)
 * **Método:** `GET`
@@ -468,4 +468,3 @@ Debido a esto, los siguientes endpoints en `OrdersController` han sido marcados 
 * `GET /api/v1/orders/admin/pedidos-transicion`
 * `POST /api/v1/orders/admin/pedidos-transicion/:id/aprobar`
 * `POST /api/v1/orders/admin/pedidos-transicion/:id/rechazar`
-

@@ -1,6 +1,6 @@
 # Trabajos Internos y Reglas de Negocio (Cron & Backend Jobs)
 
-La estabilidad financiera y logística de Importal depende de procesos programados en segundo plano (Cron Jobs) y reglas de validación complejas ejecutadas directamente en el backend de NestJS.
+La estabilidad financiera y logística de Pascalle Store depende de procesos programados en segundo plano (Cron Jobs) y reglas de validación complejas ejecutadas directamente en el backend de NestJS.
 
 ---
 
