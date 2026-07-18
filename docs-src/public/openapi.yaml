@@ -1,5 +1,46 @@
 components:
   schemas:
+    BlockUserRequest:
+      additionalProperties: false
+      properties:
+        motivo:
+          description: Motivo del bloqueo (obligatorio)
+          maxLength: 500
+          type: string
+      required:
+        - motivo
+      type: object
+    BlockUserResponse:
+      additionalProperties: false
+      properties:
+        bloqueado_en:
+          format: "date-time"
+          nullable: true
+          type: string
+        bloqueo:
+          type: boolean
+        bloqueo_motivo:
+          nullable: true
+          type: string
+        bloqueo_origen:
+          enum:
+            - ninguno
+            - financiero
+            - manual
+          type: string
+        id:
+          type: integer
+        name:
+          type: string
+        role:
+          type: string
+      required:
+        - id
+        - name
+        - role
+        - bloqueo
+        - bloqueo_origen
+      type: object
     Carga:
       additionalProperties: false
       properties:
@@ -1590,6 +1631,14 @@ components:
         - page
         - limit
       type: object
+    UnblockUserRequest:
+      additionalProperties: false
+      properties:
+        motivo:
+          description: Motivo del desbloqueo (opcional)
+          maxLength: 500
+          type: string
+      type: object
     UpdateAddressRequest:
       additionalProperties: false
       properties:
@@ -2087,6 +2136,126 @@ paths:
       x-role-group: comun
       x-service: backend
       x-source: "Importal-backend/src/modules/app/controllers/app.controller.ts"
+  /api/v1/admin/admins/{id}/bloquear:
+    post:
+      operationId: backend_post_api_v1_admin_admins_id_bloquear
+      parameters:
+        -           description: ID del administrador a bloquear
+          in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            example:
+              motivo: Incumplimiento reiterado de políticas de la plataforma
+            schema:
+              $ref: "#/components/schemas/BlockUserRequest"
+        required: true
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                bloqueado_en: "2026-07-18T18:00:00.000Z"
+                bloqueo: true
+                bloqueo_motivo: Incumplimiento reiterado de políticas de la plataforma
+                bloqueo_origen: manual
+                id: 12
+                name: Juan Perez
+                role: client
+              schema:
+                $ref: "#/components/schemas/BlockUserResponse"
+          description: Administrador bloqueado. bloqueado_por_id queda NULL si el actor Root no tiene fila local en Postgres (comportamiento esperado)
+        403:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: El usuario objetivo no tiene rol ADMIN (incluye intentar bloquear a otro ROOT)
+        404:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: Usuario no encontrado
+        500:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: "Fallo de sincronizacion con Importal-auth"
+      security:
+        -           bearerAuth:
+[]
+      summary: "Bloquear manualmente a un usuario ADMIN (Root, exclusivo)"
+      tags:
+        - Admin
+      x-role-group: admin
+      x-service: backend
+      x-source: "Importal-backend/src/modules/app/controllers/admin.controller.ts"
+  /api/v1/admin/admins/{id}/desbloquear:
+    post:
+      operationId: backend_post_api_v1_admin_admins_id_desbloquear
+      parameters:
+        -           description: ID del administrador a desbloquear
+          in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            example:
+              motivo: Situación regularizada tras revisión manual
+            schema:
+              $ref: "#/components/schemas/UnblockUserRequest"
+        required: false
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                bloqueado_en: "2026-07-18T18:00:00.000Z"
+                bloqueo: true
+                bloqueo_motivo: Incumplimiento reiterado de políticas de la plataforma
+                bloqueo_origen: manual
+                id: 12
+                name: Juan Perez
+                role: client
+              schema:
+                $ref: "#/components/schemas/BlockUserResponse"
+          description: Administrador desbloqueado
+        403:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: El usuario objetivo no tiene rol ADMIN
+        404:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: Usuario no encontrado
+        500:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: "Fallo de sincronizacion con Importal-auth"
+      security:
+        -           bearerAuth:
+[]
+      summary: "Desbloquear manualmente a un usuario ADMIN (Root, exclusivo)"
+      tags:
+        - Admin
+      x-role-group: admin
+      x-service: backend
+      x-source: "Importal-backend/src/modules/app/controllers/admin.controller.ts"
   /api/v1/admin/ajustes/{id}/completar-reembolso:
     post:
       operationId: backend_post_api_v1_admin_ajustes_id_completar_reembolso
@@ -2374,6 +2543,31 @@ paths:
         -           bearerAuth:
 []
       summary: Gatillar manualmente generación de cobros del periodo y cálculo de intereses de mora (Admin/Root)
+      tags:
+        - Billing
+      x-role-group: admin
+      x-service: backend
+      x-source: "Importal-backend/src/modules/billing/controllers/billing.controller.ts"
+  /api/v1/admin/cobros/{id}:
+    get:
+      operationId: backend_get_api_v1_admin_cobros_id
+      parameters:
+        -           in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Operacion exitosa
+      security:
+        -           bearerAuth:
+[]
+      summary: getCobroById
       tags:
         - Billing
       x-role-group: admin
@@ -3147,6 +3341,31 @@ paths:
       x-role-group: admin
       x-service: backend
       x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+  /api/v1/admin/solicitudes-carga/{id}:
+    get:
+      operationId: backend_get_api_v1_admin_solicitudes_carga_id
+      parameters:
+        -           in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Operacion exitosa
+      security:
+        -           bearerAuth:
+[]
+      summary: getAdminCargaTransitionRequestById
+      tags:
+        - Orders
+      x-role-group: admin
+      x-service: backend
+      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
   /api/v1/admin/solicitudes-carga/{id}/aprobar:
     post:
       operationId: backend_post_api_v1_admin_solicitudes_carga_id_aprobar
@@ -3872,6 +4091,132 @@ paths:
       x-role-group: admin
       x-service: backend
       x-source: "Importal-backend/src/modules/app/controllers/audit.controller.ts"
+  /api/v1/admin/users/{id}/bloquear:
+    post:
+      operationId: backend_post_api_v1_admin_users_id_bloquear
+      parameters:
+        -           description: ID del usuario a bloquear
+          in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            example:
+              motivo: Incumplimiento reiterado de políticas de la plataforma
+            schema:
+              $ref: "#/components/schemas/BlockUserRequest"
+        required: true
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                bloqueado_en: "2026-07-18T18:00:00.000Z"
+                bloqueo: true
+                bloqueo_motivo: Incumplimiento reiterado de políticas de la plataforma
+                bloqueo_origen: manual
+                id: 12
+                name: Juan Perez
+                role: client
+              schema:
+                $ref: "#/components/schemas/BlockUserResponse"
+          description: "Usuario bloqueado. Sincroniza active=false en Importal-auth (impide login y revoca la sesion activa en el siguiente request)"
+        400:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: El actor intenta bloquearse a si mismo
+        403:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: "El usuario objetivo no tiene rol CLIENT, VENDOR o BODEGUERO (ADMIN/ROOT solo pueden bloquearse via /admin/admins/{id}/bloquear)"
+        404:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: Usuario no encontrado
+        500:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: "Fallo de sincronizacion con Importal-auth; no se persiste el cambio en Postgres"
+      security:
+        -           bearerAuth:
+[]
+      summary: Bloquear manualmente a un usuario CLIENT/VENDOR/BODEGUERO (Admin/Root)
+      tags:
+        - Users
+      x-role-group: admin
+      x-service: backend
+      x-source: "Importal-backend/src/modules/users/controllers/users.controller.ts"
+  /api/v1/admin/users/{id}/desbloquear:
+    post:
+      operationId: backend_post_api_v1_admin_users_id_desbloquear
+      parameters:
+        -           description: ID del usuario a desbloquear
+          in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            example:
+              motivo: Situación regularizada tras revisión manual
+            schema:
+              $ref: "#/components/schemas/UnblockUserRequest"
+        required: false
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                bloqueado_en: "2026-07-18T18:00:00.000Z"
+                bloqueo: true
+                bloqueo_motivo: Incumplimiento reiterado de políticas de la plataforma
+                bloqueo_origen: manual
+                id: 12
+                name: Juan Perez
+                role: client
+              schema:
+                $ref: "#/components/schemas/BlockUserResponse"
+          description: "Usuario desbloqueado. Sincroniza active=true en Importal-auth"
+        403:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: "El usuario objetivo no tiene rol CLIENT, VENDOR o BODEGUERO"
+        404:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: Usuario no encontrado
+        500:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: "Fallo de sincronizacion con Importal-auth"
+      security:
+        -           bearerAuth:
+[]
+      summary: Desbloquear manualmente a un usuario CLIENT/VENDOR/BODEGUERO (Admin/Root)
+      tags:
+        - Users
+      x-role-group: admin
+      x-service: backend
+      x-source: "Importal-backend/src/modules/users/controllers/users.controller.ts"
   /api/v1/admin/users/{userId}/actions-log:
     get:
       operationId: backend_get_api_v1_admin_users_userId_actions_log
@@ -4950,6 +5295,31 @@ paths:
       x-role-group: cliente
       x-service: backend
       x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+  /api/v1/cliente/ajustes/{id}:
+    get:
+      operationId: backend_get_api_v1_cliente_ajustes_id
+      parameters:
+        -           in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Operacion exitosa
+      security:
+        -           bearerAuth:
+[]
+      summary: getClientOrderAdjustmentById
+      tags:
+        - Orders
+      x-role-group: cliente
+      x-service: backend
+      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
   /api/v1/cliente/ajustes/{id}/resolver:
     post:
       operationId: backend_post_api_v1_cliente_ajustes_id_resolver
@@ -5034,6 +5404,31 @@ paths:
         -           bearerAuth:
 []
       summary: Obtener historial de cobros pagados del cliente
+      tags:
+        - Billing
+      x-role-group: cliente
+      x-service: backend
+      x-source: "Importal-backend/src/modules/billing/controllers/billing.controller.ts"
+  /api/v1/cliente/cobros/{id}:
+    get:
+      operationId: backend_get_api_v1_cliente_cobros_id
+      parameters:
+        -           in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Operacion exitosa
+      security:
+        -           bearerAuth:
+[]
+      summary: getClientCobroById
       tags:
         - Billing
       x-role-group: cliente
@@ -5235,6 +5630,31 @@ paths:
       x-role-group: cliente
       x-service: backend
       x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+  /api/v1/cliente/deliveries/{id}:
+    get:
+      operationId: backend_get_api_v1_cliente_deliveries_id
+      parameters:
+        -           in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Operacion exitosa
+      security:
+        -           bearerAuth:
+[]
+      summary: getClientDeliveryById
+      tags:
+        - Orders
+      x-role-group: cliente
+      x-service: backend
+      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
   /api/v1/cliente/deliveries/{id}/confirmar-entrega:
     post:
       operationId: backend_post_api_v1_cliente_deliveries_id_confirmar_entrega
@@ -5373,6 +5793,31 @@ paths:
         -           bearerAuth:
 []
       summary: Crear una solicitud de devolución para un producto entregado (Cliente)
+      tags:
+        - Orders
+      x-role-group: cliente
+      x-service: backend
+      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+  /api/v1/cliente/devoluciones/{id}:
+    get:
+      operationId: backend_get_api_v1_cliente_devoluciones_id
+      parameters:
+        -           in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Operacion exitosa
+      security:
+        -           bearerAuth:
+[]
+      summary: getClientReturnRequestById
       tags:
         - Orders
       x-role-group: cliente
@@ -5699,6 +6144,31 @@ paths:
         -           bearerAuth:
 []
       summary: createOrder
+      tags:
+        - Orders
+      x-role-group: cliente
+      x-service: backend
+      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+  /api/v1/cliente/pedidos/{id}:
+    get:
+      operationId: backend_get_api_v1_cliente_pedidos_id
+      parameters:
+        -           in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Operacion exitosa
+      security:
+        -           bearerAuth:
+[]
+      summary: getClientOrderById
       tags:
         - Orders
       x-role-group: cliente
@@ -7045,6 +7515,31 @@ paths:
       x-role-group: vendedor
       x-service: backend
       x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+  /api/v1/vendedor/pedidos/{id}:
+    get:
+      operationId: backend_get_api_v1_vendedor_pedidos_id
+      parameters:
+        -           in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Operacion exitosa
+      security:
+        -           bearerAuth:
+[]
+      summary: getVendorOrderById
+      tags:
+        - Orders
+      x-role-group: vendedor
+      x-service: backend
+      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
   /api/v1/vendedor/pedidos/{id}/ajustar:
     put:
       operationId: backend_put_api_v1_vendedor_pedidos_id_ajustar
@@ -7427,6 +7922,31 @@ paths:
         -           bearerAuth:
 []
       summary: Crear una nueva solicitud de tránsito de carga (Vendedor)
+      tags:
+        - Orders
+      x-role-group: vendedor
+      x-service: backend
+      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+  /api/v1/vendedor/solicitudes-carga/{id}:
+    get:
+      operationId: backend_get_api_v1_vendedor_solicitudes_carga_id
+      parameters:
+        -           in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Operacion exitosa
+      security:
+        -           bearerAuth:
+[]
+      summary: getVendorCargaTransitionRequestById
       tags:
         - Orders
       x-role-group: vendedor

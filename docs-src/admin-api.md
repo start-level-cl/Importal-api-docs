@@ -21,6 +21,10 @@ Esta tabla consolida los endpoints disponibles para roles de administración y g
 | **Usuarios** | `GET` | `/api/v1/users/:id/pedidos` | `ADMIN`, `ROOT` | Alias para la consulta de órdenes de un usuario. |
 | **Usuarios** | `GET` | `/api/v1/users/:id/cobros` | `ADMIN`, `ROOT` | Consulta el historial de cobros de un usuario. |
 | **Usuarios** | `DELETE`| `/api/v1/users/:id` | `ROOT` | Eliminación de un usuario del sistema. |
+| **Usuarios** | `POST` | `/api/v1/admin/users/:id/bloquear` | `ADMIN`, `ROOT` | Bloquea manualmente a un usuario `CLIENT`, `VENDOR` o `BODEGUERO` (impide login y revoca sesión). |
+| **Usuarios** | `POST` | `/api/v1/admin/users/:id/desbloquear` | `ADMIN`, `ROOT` | Desbloquea manualmente a un usuario `CLIENT`, `VENDOR` o `BODEGUERO`. |
+| **Usuarios** | `POST` | `/api/v1/admin/admins/:id/bloquear` | `ROOT` | Bloquea manualmente a un usuario `ADMIN` (exclusivo de Root). |
+| **Usuarios** | `POST` | `/api/v1/admin/admins/:id/desbloquear` | `ROOT` | Desbloquea manualmente a un usuario `ADMIN` (exclusivo de Root). |
 | **Usuarios** | `POST` | `/api/v1/users/change-contact/request` | `ROOT`, `ADMIN`, `CLIENT`, `VENDOR`, `BODEGUERO` | Solicita código/token para cambio de teléfono o correo de contacto. |
 | **Usuarios** | `POST` | `/api/v1/users/change-contact/verify` | `ROOT`, `ADMIN`, `CLIENT`, `VENDOR`, `BODEGUERO` | Verifica el token enviado y confirma la actualización del contacto. |
 | **Usuarios** | `GET` | `/api/v1/registration-requests` | `ADMIN`, `ROOT` | Obtiene el listado de solicitudes de registro pendientes con paginación offset. |
@@ -277,6 +281,63 @@ El onboarding de nuevos clientes e integrantes se gestiona a través de solicitu
   }
   ```
 * **Lógica Interna:** El backend utiliza el middleware de autenticación para obtener el revisor real de la sesión. Si es aprobada, se crea de forma transaccional el registro del usuario en PostgreSQL y en el Auth Service.
+
+### 2.4 Bloqueo Manual de Usuarios (Admin → Cliente/Vendedor/Bodeguero, Root → Admin)
+
+Además del bloqueo automático por mora que ya gestiona `billing.service.ts` (10 días de atraso), la plataforma permite a `ADMIN`/`ROOT` bloquear y desbloquear cuentas manualmente (por ejemplo, por fraude o incumplimiento de políticas). Ambos mecanismos comparten la misma columna `bloqueo` en la tabla `users`, distinguidos por un nuevo campo `bloqueo_origen` (`'ninguno' | 'financiero' | 'manual'`).
+
+> [!IMPORTANT]
+> **El bloqueo manual nunca se revierte automáticamente por el job de mora.** Si un cliente bloqueado manualmente salda toda su deuda, `status_mora` vuelve a `LIBRE`, pero `bloqueo` permanece `true` hasta que un `ADMIN`/`ROOT` lo desbloquee explícitamente. Simétricamente, el job de mora nunca sobrescribe un `bloqueo_origen: 'manual'` preexistente.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Actor as Admin / Root
+    participant API as Users/Admin Controller
+    participant Service as UsersService
+    participant Auth as Importal-auth
+    participant DB as Postgres
+
+    Actor->>API: POST /admin/users/:id/bloquear (motivo)
+    API->>Service: blockUserByAdmin(id, actorId, dto)
+    Note over Service: Valida rol objetivo (CLIENT/VENDOR/BODEGUERO)
+    Service->>Auth: PUT /auth/api/v1/users/:external_id { active: false }
+    alt Sincronización falla
+        Auth-->>Service: Error
+        Service-->>API: 500 Internal Server Error (no persiste nada)
+    else Sincronización exitosa
+        Auth-->>Service: 200 OK
+        Service->>DB: UPDATE users SET bloqueo=true, bloqueo_origen='manual', ...
+        Service-->>API: Usuario bloqueado
+        API-->>Actor: 200 OK
+        Note over Auth: Próxima petición del usuario bloqueado a Importal-backend
+        Auth-->>Auth: RolesGuard → GET /auth/api/v1/validate → 401 INVALID_TOKEN
+    end
+```
+
+* **Endpoints — Admin → Cliente/Vendedor/Bodeguero** (`ADMIN`, `ROOT`):
+  * `POST /api/v1/admin/users/:id/bloquear` — Body: `{ "motivo": "..." }` (requerido, máx. 500 caracteres).
+  * `POST /api/v1/admin/users/:id/desbloquear` — Body: `{ "motivo": "..." }` (opcional).
+  * Ambos validan `target.role ∈ {CLIENT, VENDOR, BODEGUERO}`; si el objetivo es `ADMIN` o `ROOT`, retornan `403 Forbidden` (esos roles solo pueden bloquearse vía el endpoint de Root).
+* **Endpoints — Root → Admin** (`ROOT`, exclusivo):
+  * `POST /api/v1/admin/admins/:id/bloquear` y `POST /api/v1/admin/admins/:id/desbloquear` — mismo contrato de body, pero exigen `target.role === ADMIN` estrictamente (rechazan incluso a otro `ROOT`).
+* **Respuesta (200) de los 4 endpoints:**
+  ```json
+  {
+    "id": 12,
+    "name": "Juan Pérez",
+    "role": "CLIENT",
+    "bloqueo": true,
+    "bloqueo_origen": "manual",
+    "bloqueo_motivo": "Incumplimiento reiterado de políticas de la plataforma",
+    "bloqueado_en": "2026-07-18T18:00:00.000Z"
+  }
+  ```
+* **Idempotencia:** los 4 endpoints son idempotentes. Si el usuario ya está en el estado solicitado, no lanzan error — solo actualizan `bloqueo_motivo`, `bloqueado_por_id` y `bloqueado_en` (permite, por ejemplo, "reforzar" un bloqueo financiero convirtiéndolo en manual).
+* **Impacto en login y sesión:** el backend sincroniza `active: !bloqueado` en `Importal-auth` (`PUT /auth/api/v1/users/:external_id`) **antes** de persistir el cambio en Postgres. Esto reutiliza el flag `active`/`activo` que `Importal-auth` ya evalúa en `validateUserPassword` (login) y en `verifyAndValidateUserToken` (validación de sesión en cada request vía `RolesGuard` → `GET /auth/api/v1/validate`). Si la sincronización falla, la operación se aborta completa con `500 Internal Server Error` sin persistir nada en Postgres.
+* **Auditoría del actor (`bloqueado_por_id`):** `ROOT` no se persiste en la tabla `users` de Postgres (solo existe en DynamoDB vía `BootstrapAuthUsersService`). Cuando el actor es `ROOT`, `bloqueado_por_id` queda `NULL` de forma segura — comportamiento esperado, no un bug.
+* **Notificaciones:** se notifica al usuario objetivo in-app (`ACCOUNT_BLOCKED`/`ACCOUNT_UNBLOCKED`) y por correo vía SQS (obligatorio, ya que un usuario bloqueado no puede iniciar sesión para ver la notificación in-app). Cuando `ROOT` bloquea/desbloquea a un `ADMIN`, también se notifica a todo el equipo administrativo (`ADMIN_BLOCKED_BY_ROOT` / `ADMIN_UNBLOCKED_BY_ROOT`).
+* **Visibilidad administrativa:** `GET /api/v1/admin/users` y `GET /api/v1/users/:id` exponen `bloqueo`, `bloqueo_origen`, `bloqueo_motivo` y `bloqueado_en` en su respuesta.
 
 ---
 

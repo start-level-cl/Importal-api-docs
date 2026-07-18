@@ -514,6 +514,42 @@
   },
   {
     "service": "backend",
+    "source": "Importal-backend/src/modules/app/controllers/admin.controller.ts",
+    "method": "post",
+    "path": "/api/v1/admin/admins/{id}/bloquear",
+    "operationId": "backend_post_api_v1_admin_admins_id_bloquear",
+    "tag": "Admin",
+    "tags": [
+      "Admin"
+    ],
+    "roles": [
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "blockAdmin",
+    "parameters": [],
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/app/controllers/admin.controller.ts",
+    "method": "post",
+    "path": "/api/v1/admin/admins/{id}/desbloquear",
+    "operationId": "backend_post_api_v1_admin_admins_id_desbloquear",
+    "tag": "Admin",
+    "tags": [
+      "Admin"
+    ],
+    "roles": [
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "unblockAdmin",
+    "parameters": [],
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
     "source": "Importal-backend/src/modules/app/controllers/app.controller.ts",
     "method": "get",
     "path": "/api/v1",
@@ -1297,6 +1333,25 @@
   {
     "service": "backend",
     "source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/cobros/{id}",
+    "operationId": "backend_get_api_v1_admin_cobros_id",
+    "tag": "Billing",
+    "tags": [
+      "Billing"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "getCobroById",
+    "parameters": [],
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts",
     "method": "post",
     "path": "/api/v1/admin/cobros/{id}/confirmar",
     "operationId": "backend_post_api_v1_admin_cobros_id_confirmar",
@@ -1500,6 +1555,24 @@
     ],
     "security": "bearerAuth",
     "methodName": "getClientCobros",
+    "parameters": [],
+    "roleGroup": "cliente"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts",
+    "method": "get",
+    "path": "/api/v1/cliente/cobros/{id}",
+    "operationId": "backend_get_api_v1_cliente_cobros_id",
+    "tag": "Billing",
+    "tags": [
+      "Billing"
+    ],
+    "roles": [
+      "client"
+    ],
+    "security": "bearerAuth",
+    "methodName": "getClientCobroById",
     "parameters": [],
     "roleGroup": "cliente"
   },
@@ -2724,6 +2797,24 @@
     "service": "backend",
     "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
     "method": "get",
+    "path": "/api/v1/cliente/ajustes/{id}",
+    "operationId": "backend_get_api_v1_cliente_ajustes_id",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "client"
+    ],
+    "security": "bearerAuth",
+    "methodName": "getClientOrderAdjustmentById",
+    "parameters": [],
+    "roleGroup": "cliente"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "get",
     "path": "/api/v1/cliente/creditos",
     "operationId": "backend_get_api_v1_cliente_creditos",
     "tag": "Orders",
@@ -2947,6 +3038,24 @@
     "service": "backend",
     "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
     "method": "get",
+    "path": "/api/v1/cliente/deliveries/{id}",
+    "operationId": "backend_get_api_v1_cliente_deliveries_id",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "client"
+    ],
+    "security": "bearerAuth",
+    "methodName": "getClientDeliveryById",
+    "parameters": [],
+    "roleGroup": "cliente"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "get",
     "path": "/api/v1/cliente/devoluciones",
     "operationId": "backend_get_api_v1_cliente_devoluciones",
     "tag": "Orders",
@@ -3059,6 +3168,97 @@
     "methodName": "authorizeFullRefund",
     "parameters": [],
     "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "get",
+    "path": "/api/v1/vendedor/pedidos/{id}",
+    "operationId": "backend_get_api_v1_vendedor_pedidos_id",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "vendor"
+    ],
+    "security": "bearerAuth",
+    "methodName": "getVendorOrderById",
+    "parameters": [],
+    "roleGroup": "vendedor"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "get",
+    "path": "/api/v1/cliente/pedidos/{id}",
+    "operationId": "backend_get_api_v1_cliente_pedidos_id",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "client"
+    ],
+    "security": "bearerAuth",
+    "methodName": "getClientOrderById",
+    "parameters": [],
+    "roleGroup": "cliente"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "get",
+    "path": "/api/v1/cliente/devoluciones/{id}",
+    "operationId": "backend_get_api_v1_cliente_devoluciones_id",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "client"
+    ],
+    "security": "bearerAuth",
+    "methodName": "getClientReturnRequestById",
+    "parameters": [],
+    "roleGroup": "cliente"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/solicitudes-carga/{id}",
+    "operationId": "backend_get_api_v1_admin_solicitudes_carga_id",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "getAdminCargaTransitionRequestById",
+    "parameters": [],
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "get",
+    "path": "/api/v1/vendedor/solicitudes-carga/{id}",
+    "operationId": "backend_get_api_v1_vendedor_solicitudes_carga_id",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "vendor"
+    ],
+    "security": "bearerAuth",
+    "methodName": "getVendorCargaTransitionRequestById",
+    "parameters": [],
+    "roleGroup": "vendedor"
   },
   {
     "service": "backend",
@@ -3791,6 +3991,44 @@
     ],
     "security": "bearerAuth",
     "methodName": "getAdminUsers",
+    "parameters": [],
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/users/controllers/users.controller.ts",
+    "method": "post",
+    "path": "/api/v1/admin/users/{id}/bloquear",
+    "operationId": "backend_post_api_v1_admin_users_id_bloquear",
+    "tag": "Users",
+    "tags": [
+      "Users"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "blockUser",
+    "parameters": [],
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/users/controllers/users.controller.ts",
+    "method": "post",
+    "path": "/api/v1/admin/users/{id}/desbloquear",
+    "operationId": "backend_post_api_v1_admin_users_id_desbloquear",
+    "tag": "Users",
+    "tags": [
+      "Users"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "unblockUser",
     "parameters": [],
     "roleGroup": "admin"
   },

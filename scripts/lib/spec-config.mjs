@@ -144,6 +144,21 @@ const schemaExamples = {
     phone: '+56911112222',
     rut: '11.111.111-1',
   },
+  BlockUserRequest: {
+    motivo: 'Incumplimiento reiterado de políticas de la plataforma',
+  },
+  UnblockUserRequest: {
+    motivo: 'Situación regularizada tras revisión manual',
+  },
+  BlockUserResponse: {
+    id: 12,
+    name: 'Juan Perez',
+    role: 'client',
+    bloqueo: true,
+    bloqueo_origen: 'manual',
+    bloqueo_motivo: 'Incumplimiento reiterado de políticas de la plataforma',
+    bloqueado_en: '2026-07-18T18:00:00.000Z',
+  },
   CreateProductRequest: {
     marca: 'Apple',
     price_usd: 999.99,
@@ -1014,6 +1029,29 @@ export const schemas = {
     },
     ['name', 'email', 'phone', 'rut'],
   ),
+  BlockUserRequest: objectSchema(
+    {
+      motivo: { type: 'string', maxLength: 500, description: 'Motivo del bloqueo (obligatorio)' },
+    },
+    ['motivo'],
+  ),
+  UnblockUserRequest: objectSchema(
+    {
+      motivo: { type: 'string', maxLength: 500, description: 'Motivo del desbloqueo (opcional)' },
+    },
+  ),
+  BlockUserResponse: objectSchema(
+    {
+      id: { type: 'integer' },
+      name: { type: 'string' },
+      role: { type: 'string' },
+      bloqueo: { type: 'boolean' },
+      bloqueo_origen: stringEnum(['ninguno', 'financiero', 'manual']),
+      bloqueo_motivo: { type: 'string', nullable: true },
+      bloqueado_en: { type: 'string', format: 'date-time', nullable: true },
+    },
+    ['id', 'name', 'role', 'bloqueo', 'bloqueo_origen'],
+  ),
   CreateProductRequest: objectSchema(
     {
       marca: { type: 'string' },
@@ -1877,6 +1915,59 @@ export const operationOverrides = {
     summary: 'Crear administrador desde root',
     requestBody: jsonRequest('CreateAdminRequest'),
     responses: Object.fromEntries([jsonResponse('200', 'Administrador creado', 'GenericObject')]),
+  },
+  'post /api/v1/admin/users/{id}/bloquear': {
+    summary: 'Bloquear manualmente a un usuario CLIENT/VENDOR/BODEGUERO (Admin/Root)',
+    parameters: [
+      { name: 'id', in: 'path', required: true, schema: { type: 'integer' }, description: 'ID del usuario a bloquear' },
+    ],
+    requestBody: jsonRequest('BlockUserRequest'),
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Usuario bloqueado. Sincroniza active=false en Importal-auth (impide login y revoca la sesion activa en el siguiente request)', 'BlockUserResponse'),
+      jsonResponse('400', 'El actor intenta bloquearse a si mismo', 'ErrorResponse'),
+      jsonResponse('403', 'El usuario objetivo no tiene rol CLIENT, VENDOR o BODEGUERO (ADMIN/ROOT solo pueden bloquearse via /admin/admins/{id}/bloquear)', 'ErrorResponse'),
+      jsonResponse('404', 'Usuario no encontrado', 'ErrorResponse'),
+      jsonResponse('500', 'Fallo de sincronizacion con Importal-auth; no se persiste el cambio en Postgres', 'ErrorResponse'),
+    ]),
+  },
+  'post /api/v1/admin/users/{id}/desbloquear': {
+    summary: 'Desbloquear manualmente a un usuario CLIENT/VENDOR/BODEGUERO (Admin/Root)',
+    parameters: [
+      { name: 'id', in: 'path', required: true, schema: { type: 'integer' }, description: 'ID del usuario a desbloquear' },
+    ],
+    requestBody: jsonRequest('UnblockUserRequest', false),
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Usuario desbloqueado. Sincroniza active=true en Importal-auth', 'BlockUserResponse'),
+      jsonResponse('403', 'El usuario objetivo no tiene rol CLIENT, VENDOR o BODEGUERO', 'ErrorResponse'),
+      jsonResponse('404', 'Usuario no encontrado', 'ErrorResponse'),
+      jsonResponse('500', 'Fallo de sincronizacion con Importal-auth', 'ErrorResponse'),
+    ]),
+  },
+  'post /api/v1/admin/admins/{id}/bloquear': {
+    summary: 'Bloquear manualmente a un usuario ADMIN (Root, exclusivo)',
+    parameters: [
+      { name: 'id', in: 'path', required: true, schema: { type: 'integer' }, description: 'ID del administrador a bloquear' },
+    ],
+    requestBody: jsonRequest('BlockUserRequest'),
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Administrador bloqueado. bloqueado_por_id queda NULL si el actor Root no tiene fila local en Postgres (comportamiento esperado)', 'BlockUserResponse'),
+      jsonResponse('403', 'El usuario objetivo no tiene rol ADMIN (incluye intentar bloquear a otro ROOT)', 'ErrorResponse'),
+      jsonResponse('404', 'Usuario no encontrado', 'ErrorResponse'),
+      jsonResponse('500', 'Fallo de sincronizacion con Importal-auth', 'ErrorResponse'),
+    ]),
+  },
+  'post /api/v1/admin/admins/{id}/desbloquear': {
+    summary: 'Desbloquear manualmente a un usuario ADMIN (Root, exclusivo)',
+    parameters: [
+      { name: 'id', in: 'path', required: true, schema: { type: 'integer' }, description: 'ID del administrador a desbloquear' },
+    ],
+    requestBody: jsonRequest('UnblockUserRequest', false),
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Administrador desbloqueado', 'BlockUserResponse'),
+      jsonResponse('403', 'El usuario objetivo no tiene rol ADMIN', 'ErrorResponse'),
+      jsonResponse('404', 'Usuario no encontrado', 'ErrorResponse'),
+      jsonResponse('500', 'Fallo de sincronizacion con Importal-auth', 'ErrorResponse'),
+    ]),
   },
   'get /api/v1/notificaciones': {
     responses: Object.fromEntries([jsonResponse('200', 'Notificaciones del usuario', 'NotificationArray')]),
