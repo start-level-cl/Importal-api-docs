@@ -54,7 +54,7 @@ El cliente visualiza sus ajustes pendientes y decide cómo resolverlos:
     > **Restricción de Cancelación Total:**
     > El cliente **ya no tiene permitido** cancelar la orden por completo (rechazar la recepción parcial) cuando se trate de un ajuste derivado de diferencias físicas tras la revisión en bodega. El backend arrojará una excepción `BadRequestException` indicando: *"No se permite la cancelación total del pedido. Debe aceptar el despacho de las unidades físicas disponibles y procesar la compensación de las diferencias."*
     > 
-    > La cancelación total (`accept_partial: false`) **únicamente** queda habilitada cuando se trate de un ajuste derivado de una transición de carga solicitada por el vendedor (`is_transition_request: true`).
+    > La cancelación total (`accept_partial: false`) queda habilitada cuando se trate de un ajuste derivado de una transición de carga solicitada por el vendedor (`is_transition_request: true`), **o** cuando un administrador la haya habilitado manualmente para ese ajuste puntual (`client_cancel_unlocked: true`) mediante `POST /api/v1/admin/ajustes/{id}/habilitar-cancelacion`.
 * **Métodos de Compensación (`compensation_method`):**
   * `CREDIT_NEXT_BILL`: Genera un abono o nota de crédito (`ClientCredit`) aplicable al siguiente cobro del cliente. El ajuste pasa a `COMPLETED`.
   * `PARTIAL_DEDUCTION`: Deduce el dinero directamente de la factura (Cobro) actual si esta se encuentra pendiente (`PENDING`, `OVERDUE`, `RETRY`, `IN_REVIEW`), regenerando su PDF de cobro. El ajuste pasa a `COMPLETED`.
@@ -136,6 +136,11 @@ El administrador revisa la solicitud de devolución y la aprueba o la rechaza.
 * **Listar Reembolsos Pendientes:** `GET /api/v1/admin/reembolsos/pendientes`
 * **Completar Reembolso Manual:** `POST /api/v1/admin/ajustes/{id}/completar-reembolso`
   * Body: `CompleteRefundDto` (`comment`, `payment_proof_url`)
+* **Listar Ajustes de Bodega Pendientes:** `GET /api/v1/admin/ajustes/pendientes`
+  * Devuelve los ajustes `PENDING_CLIENT` derivados de diferencias físicas en bodega (`is_transition_request: false`), incluyendo su estado actual de `client_cancel_unlocked`.
+* **Habilitar Cancelación Total de un Ajuste:** `POST /api/v1/admin/ajustes/{id}/habilitar-cancelacion`
+  * Body: `UnlockAdjustmentCancellationDto` (`admin_comment`, opcional)
+  * Habilita, para ese ajuste puntual, que el cliente pueda resolver con `accept_partial: false`. Solo aplica a ajustes `PENDING_CLIENT` que no sean de transición de carga y que no estén ya habilitados. Notifica al cliente al ejecutarse.
 * **Listar Solicitudes de Devolución:** `GET /api/v1/admin/devoluciones` (Soporta paginación con `page` y `limit`)
 * **Resolver Solicitud de Devolución:** `POST /api/v1/admin/devoluciones/{id}/resolver`
   * Body: `ResolveReturnRequestDto` (`status`, `option`, `reject_reason`, `reject_proof_url`)
