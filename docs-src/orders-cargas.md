@@ -276,8 +276,9 @@ CRUD de ítems operativos de bodega usados principalmente para trueques (`BARTER
 - **Método:** `POST`
 - **Ruta:** `/api/v1/bodeguero/inventario`
 - **Roles Permitidos:** `BODEGUERO`, `ADMIN`, `ROOT`
-- **Cuerpo (JSON):** `CreateWarehouseInventoryDto`
-- **Respuesta:** `201 Created`. Se crea siempre en `status: "ACTIVE"`, con `registered_by_id` tomado del JWT.
+- **Content-Type:** `multipart/form-data` (igual que `POST /vendedor/productos`; reutiliza `S3Service.uploadFiles`, tope de 4 archivos).
+- **Campos (form-data):** `name` (requerido), `sku` (opcional), `marca` (opcional), `stock` (requerido, número ≥ 0), `location` (requerido), `photos` (opcional, hasta 4 imágenes — **a diferencia de `vendedor/productos`, no son obligatorias**).
+- **Respuesta:** `201 Created`. Se crea siempre en `status: "ACTIVE"`, con `registered_by_id` tomado del JWT y `photo_urls` resuelto a URLs firmadas de S3 (presigned, expiran en 1h).
 
 ### 5.2 Listar Inventario
 

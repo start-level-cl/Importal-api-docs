@@ -1087,6 +1087,12 @@ export const schemas = {
       marca: { type: 'string', nullable: true },
       stock: { type: 'integer', minimum: 0 },
       location: { type: 'string' },
+      photos: {
+        type: 'array',
+        items: { type: 'string', format: 'binary' },
+        maxItems: 4,
+        description: 'Opcional, hasta 4 imágenes. A diferencia de vendedor/productos, no es obligatorio adjuntar fotos',
+      },
     },
     ['name', 'stock', 'location'],
   ),
@@ -1102,6 +1108,7 @@ export const schemas = {
       marca: { type: 'string', nullable: true },
       stock: { type: 'integer' },
       location: { type: 'string' },
+      photo_urls: { type: 'array', items: { type: 'string' }, description: 'URLs firmadas de S3 (presigned, expiran en 1h)' },
       status: stringEnum(['ACTIVE', 'INACTIVE']),
       registered_by_id: { type: 'integer' },
     },
@@ -2321,9 +2328,18 @@ export const operationOverrides = {
   },
   'post /api/v1/bodeguero/inventario': {
     summary: 'Registrar un ítem operativo en el inventario interno de bodega, usado principalmente para trueques (Bodeguero/Admin/Root)',
-    requestBody: jsonRequest('CreateWarehouseInventoryRequest'),
+    requestBody: {
+      required: true,
+      content: {
+        'multipart/form-data': {
+          schema: {
+            '$ref': '#/components/schemas/CreateWarehouseInventoryRequest',
+          },
+        },
+      },
+    },
     responses: Object.fromEntries([
-      jsonResponse('201', 'Ítem de inventario creado en estado ACTIVE', 'WarehouseInventoryItem'),
+      jsonResponse('201', 'Ítem de inventario creado en estado ACTIVE, con photo_urls resuelto a URLs firmadas', 'WarehouseInventoryItem'),
     ]),
   },
   'get /api/v1/bodeguero/inventario': {

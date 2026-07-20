@@ -227,6 +227,7 @@ export type CreateWarehouseInventoryRequest = {
   location: string
   marca?: string
   name: string
+  photos?: (string)[]
   sku?: string
   stock: number
 }
@@ -776,6 +777,7 @@ export type WarehouseInventoryItem = {
   location: string
   marca?: string
   name: string
+  photo_urls?: (string)[]
   registered_by_id?: number
   sku?: string
   status: "ACTIVE" | "INACTIVE"
@@ -837,9 +839,25 @@ export interface Operations {
       "500": ErrorResponse
     }
   }
+  "backend_get_api_v1_admin_ajustes_pendientes": {
+    method: "GET"
+    path: "/api/v1/admin/ajustes/pendientes"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
   "backend_post_api_v1_admin_ajustes_id_completar_reembolso": {
     method: "POST"
     path: "/api/v1/admin/ajustes/{id}/completar-reembolso"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_post_api_v1_admin_ajustes_id_habilitar_cancelacion": {
+    method: "POST"
+    path: "/api/v1/admin/ajustes/{id}/habilitar-cancelacion"
     requestBody: undefined
     responses: {
       "200": GenericObject

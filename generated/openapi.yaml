@@ -608,6 +608,13 @@ components:
           type: string
         name:
           type: string
+        photos:
+          description: "Opcional, hasta 4 imágenes. A diferencia de vendedor/productos, no es obligatorio adjuntar fotos"
+          items:
+            format: binary
+            type: string
+          maxItems: 4
+          type: array
         sku:
           nullable: true
           type: string
@@ -2103,6 +2110,11 @@ components:
           type: string
         name:
           type: string
+        photo_urls:
+          description: "URLs firmadas de S3 (presigned, expiran en 1h)"
+          items:
+            type: string
+          type: array
         registered_by_id:
           type: integer
         sku:
@@ -2339,6 +2351,27 @@ paths:
       x-role-group: admin
       x-service: backend
       x-source: "Importal-backend/src/modules/app/controllers/admin.controller.ts"
+  /api/v1/admin/ajustes/pendientes:
+    get:
+      operationId: backend_get_api_v1_admin_ajustes_pendientes
+      parameters:
+[]
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Operacion exitosa
+      security:
+        -           bearerAuth:
+[]
+      summary: getPendingAdjustmentsForAdmin
+      tags:
+        - Orders
+      x-role-group: admin
+      x-service: backend
+      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
   /api/v1/admin/ajustes/{id}/completar-reembolso:
     post:
       operationId: backend_post_api_v1_admin_ajustes_id_completar_reembolso
@@ -2359,6 +2392,31 @@ paths:
         -           bearerAuth:
 []
       summary: completeRefund
+      tags:
+        - Orders
+      x-role-group: admin
+      x-service: backend
+      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+  /api/v1/admin/ajustes/{id}/habilitar-cancelacion:
+    post:
+      operationId: backend_post_api_v1_admin_ajustes_id_habilitar_cancelacion
+      parameters:
+        -           in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Operacion exitosa
+      security:
+        -           bearerAuth:
+[]
+      summary: unlockAdjustmentCancellation
       tags:
         - Orders
       x-role-group: admin
@@ -4995,7 +5053,7 @@ paths:
 []
       requestBody:
         content:
-          application/json:
+          multipart/form-data:
             schema:
               $ref: "#/components/schemas/CreateWarehouseInventoryRequest"
         required: true
@@ -5005,7 +5063,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/WarehouseInventoryItem"
-          description: Ítem de inventario creado en estado ACTIVE
+          description: "Ítem de inventario creado en estado ACTIVE, con photo_urls resuelto a URLs firmadas"
       security:
         -           bearerAuth:
 []

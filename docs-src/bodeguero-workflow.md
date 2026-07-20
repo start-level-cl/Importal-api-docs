@@ -299,9 +299,9 @@ Para optimizar la logística y ofrecer soluciones rápidas a incidencias de quie
 
 ### 7.1 Registro de Ítems Operativos de Bodega
 *   **Endpoints:**
-    *   `POST /api/v1/bodeguero/inventario` (Registrar ítem, siempre creado en `status: ACTIVE`)
-    *   `GET /api/v1/bodeguero/inventario` (Listar y buscar con filtros SKU, nombre y `status`)
-    *   `PUT /api/v1/bodeguero/inventario/:id` (Actualizar stock y ubicación)
+    *   `POST /api/v1/bodeguero/inventario` (Registrar ítem, siempre creado en `status: ACTIVE`. `multipart/form-data`, admite hasta 4 `photos` opcionales — mismo mecanismo de subida que `POST /vendedor/productos`, pero sin exigir al menos una foto)
+    *   `GET /api/v1/bodeguero/inventario` (Listar y buscar con filtros SKU, nombre y `status`; `photo_urls` viene resuelto a URLs firmadas de S3)
+    *   `PUT /api/v1/bodeguero/inventario/:id` (Actualizar stock y ubicación; no permite cambiar fotos)
     *   `DELETE /api/v1/bodeguero/inventario/:id` (Desactivar ítem — soft-delete, marca `status: INACTIVE`)
 *   **Regla de Operación:** Estos productos se registran por el bodeguero indicando el nombre, SKU, marca, stock y su ubicación física (ej: "Pasillo 3, Estante B"). **No pertenecen al catálogo público de ventas** ni tienen precios al cliente, comisiones, ni asignaciones a vendedores.
 *   **Lógica alineada con `vendedor/productos`:** mismo patrón de creador asignado vía JWT y `DELETE` como soft-delete (necesario porque `Order.warehouse_inventory_id` puede referenciar el ítem en un trueque, sin `ON DELETE CASCADE`/`SET NULL` configurado). A diferencia de `vendedor/productos`, `UPDATE`/`DELETE` **no** restringen por dueño: cualquier `BODEGUERO`/`ADMIN`/`ROOT` puede gestionar cualquier ítem, al ser un recurso compartido de la bodega.

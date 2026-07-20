@@ -2880,6 +2880,44 @@
   {
     "service": "backend",
     "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "get",
+    "path": "/api/v1/admin/ajustes/pendientes",
+    "operationId": "backend_get_api_v1_admin_ajustes_pendientes",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "getPendingAdjustmentsForAdmin",
+    "parameters": [],
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "post",
+    "path": "/api/v1/admin/ajustes/{id}/habilitar-cancelacion",
+    "operationId": "backend_post_api_v1_admin_ajustes_id_habilitar_cancelacion",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "unlockAdjustmentCancellation",
+    "parameters": [],
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
     "method": "put",
     "path": "/api/v1/admin/cargas/{id}/llegada",
     "operationId": "backend_put_api_v1_admin_cargas_id_llegada",
