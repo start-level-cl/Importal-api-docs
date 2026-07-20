@@ -3143,6 +3143,26 @@
   {
     "service": "backend",
     "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "delete",
+    "path": "/api/v1/bodeguero/inventario/{id}",
+    "operationId": "backend_delete_api_v1_bodeguero_inventario_id",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "bodeguero",
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "deleteWarehouseInventory",
+    "parameters": [],
+    "roleGroup": "bodeguero"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
     "method": "post",
     "path": "/api/v1/admin/orders/adjustments/{id}/authorize-full-refund",
     "operationId": "backend_post_api_v1_admin_orders_adjustments_id_authorize_full_refund",

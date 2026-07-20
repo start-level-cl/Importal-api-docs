@@ -598,6 +598,27 @@ components:
         - title
         - description
       type: object
+    CreateWarehouseInventoryRequest:
+      additionalProperties: false
+      properties:
+        location:
+          type: string
+        marca:
+          nullable: true
+          type: string
+        name:
+          type: string
+        sku:
+          nullable: true
+          type: string
+        stock:
+          minimum: 0
+          type: integer
+      required:
+        - name
+        - stock
+        - location
+      type: object
     DashboardSummary:
       additionalProperties: false
       properties:
@@ -1802,6 +1823,15 @@ components:
           description: Nuevo número de teléfono
           type: string
       type: object
+    UpdateWarehouseInventoryRequest:
+      additionalProperties: false
+      properties:
+        location:
+          type: string
+        stock:
+          minimum: 0
+          type: integer
+      type: object
     UserAddress:
       additionalProperties: false
       properties:
@@ -2060,6 +2090,59 @@ components:
       required:
         - token
         - code
+      type: object
+    WarehouseInventoryItem:
+      additionalProperties: false
+      properties:
+        id:
+          type: integer
+        location:
+          type: string
+        marca:
+          nullable: true
+          type: string
+        name:
+          type: string
+        registered_by_id:
+          type: integer
+        sku:
+          nullable: true
+          type: string
+        status:
+          enum:
+            - ACTIVE
+            - INACTIVE
+          type: string
+        stock:
+          type: integer
+      required:
+        - id
+        - name
+        - stock
+        - location
+        - status
+      type: object
+    WarehouseInventoryListResponse:
+      additionalProperties: false
+      properties:
+        data:
+          items:
+            $ref: "#/components/schemas/WarehouseInventoryItem"
+          type: array
+        limit:
+          type: integer
+        page:
+          type: integer
+        pages:
+          type: integer
+        total:
+          type: integer
+      required:
+        - data
+        - total
+        - page
+        - limit
+        - pages
       type: object
   securitySchemes:
     bearerAuth:
@@ -4857,18 +4940,50 @@ paths:
     get:
       operationId: backend_get_api_v1_bodeguero_inventario
       parameters:
-[]
+        -           description: "Filtrar por nombre (parcial, case-insensitive)"
+          in: query
+          name: name
+          required: false
+          schema:
+            type: string
+        -           description: "Filtrar por SKU (parcial, case-insensitive)"
+          in: query
+          name: sku
+          required: false
+          schema:
+            type: string
+        -           description: "Filtrar por estado. Sin este filtro, retorna ítems de todos los estados"
+          in: query
+          name: status
+          required: false
+          schema:
+            enum:
+              - ACTIVE
+              - INACTIVE
+            type: string
+        -           description: Número de página (default 1)
+          in: query
+          name: page
+          required: false
+          schema:
+            type: integer
+        -           description: Ítems por página (default 20)
+          in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
       responses:
         200:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericObject"
-          description: Operacion exitosa
+                $ref: "#/components/schemas/WarehouseInventoryListResponse"
+          description: Listado paginado de inventario
       security:
         -           bearerAuth:
 []
-      summary: getWarehouseInventory
+      summary: "Listar el inventario interno de bodega, paginado (Bodeguero/Admin/Root)"
       tags:
         - Orders
       x-role-group: bodeguero
@@ -4878,25 +4993,31 @@ paths:
       operationId: backend_post_api_v1_bodeguero_inventario
       parameters:
 []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateWarehouseInventoryRequest"
+        required: true
       responses:
-        200:
+        201:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericObject"
-          description: Operacion exitosa
+                $ref: "#/components/schemas/WarehouseInventoryItem"
+          description: Ítem de inventario creado en estado ACTIVE
       security:
         -           bearerAuth:
 []
-      summary: createWarehouseInventory
+      summary: "Registrar un ítem operativo en el inventario interno de bodega, usado principalmente para trueques (Bodeguero/Admin/Root)"
       tags:
         - Orders
       x-role-group: bodeguero
       x-service: backend
       x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
   /api/v1/bodeguero/inventario/{id}:
-    put:
-      operationId: backend_put_api_v1_bodeguero_inventario_id
+    delete:
+      operationId: backend_delete_api_v1_bodeguero_inventario_id
       parameters:
         -           in: path
           name: id
@@ -4907,13 +5028,46 @@ paths:
         200:
           content:
             application/json:
+              example:
+                message: Operacion exitosa
+                ok: true
               schema:
                 $ref: "#/components/schemas/GenericObject"
-          description: Operacion exitosa
+          description: Ítem marcado como INACTIVE
       security:
         -           bearerAuth:
 []
-      summary: updateWarehouseInventory
+      summary: "Desactivar (soft-delete) un ítem de inventario. No borra la fila porque pedidos de trueque pueden referenciarla (Bodeguero/Admin/Root)"
+      tags:
+        - Orders
+      x-role-group: bodeguero
+      x-service: backend
+      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+    put:
+      operationId: backend_put_api_v1_bodeguero_inventario_id
+      parameters:
+        -           in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateWarehouseInventoryRequest"
+        required: true
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WarehouseInventoryItem"
+          description: Ítem de inventario actualizado
+      security:
+        -           bearerAuth:
+[]
+      summary: Actualizar stock y/o ubicación de un ítem de inventario. Sin restricción de dueño (Bodeguero/Admin/Root)
       tags:
         - Orders
       x-role-group: bodeguero

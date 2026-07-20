@@ -1080,6 +1080,43 @@ export const schemas = {
     ['id', 'marca', 'price_usd'],
   ),
   ProductArray: { type: 'array', items: { $ref: '#/components/schemas/Product' } },
+  CreateWarehouseInventoryRequest: objectSchema(
+    {
+      name: { type: 'string' },
+      sku: { type: 'string', nullable: true },
+      marca: { type: 'string', nullable: true },
+      stock: { type: 'integer', minimum: 0 },
+      location: { type: 'string' },
+    },
+    ['name', 'stock', 'location'],
+  ),
+  UpdateWarehouseInventoryRequest: objectSchema({
+    stock: { type: 'integer', minimum: 0 },
+    location: { type: 'string' },
+  }),
+  WarehouseInventoryItem: objectSchema(
+    {
+      id: { type: 'integer' },
+      name: { type: 'string' },
+      sku: { type: 'string', nullable: true },
+      marca: { type: 'string', nullable: true },
+      stock: { type: 'integer' },
+      location: { type: 'string' },
+      status: stringEnum(['ACTIVE', 'INACTIVE']),
+      registered_by_id: { type: 'integer' },
+    },
+    ['id', 'name', 'stock', 'location', 'status'],
+  ),
+  WarehouseInventoryListResponse: objectSchema(
+    {
+      data: { type: 'array', items: { $ref: '#/components/schemas/WarehouseInventoryItem' } },
+      total: { type: 'integer' },
+      page: { type: 'integer' },
+      limit: { type: 'integer' },
+      pages: { type: 'integer' },
+    },
+    ['data', 'total', 'page', 'limit', 'pages'],
+  ),
   Notification: objectSchema(
     {
       id: { type: 'integer' },
@@ -2281,6 +2318,33 @@ export const operationOverrides = {
   'get /api/v1/bodeguero/pedidos/{id}/auditoria': {
     summary: 'Consultar el historial de auditoría y transiciones de un pedido (Bodeguero/Admin/Root)',
     responses: Object.fromEntries([jsonResponse('200', 'Historial de auditoría', 'GenericObjectArray')]),
+  },
+  'post /api/v1/bodeguero/inventario': {
+    summary: 'Registrar un ítem operativo en el inventario interno de bodega, usado principalmente para trueques (Bodeguero/Admin/Root)',
+    requestBody: jsonRequest('CreateWarehouseInventoryRequest'),
+    responses: Object.fromEntries([
+      jsonResponse('201', 'Ítem de inventario creado en estado ACTIVE', 'WarehouseInventoryItem'),
+    ]),
+  },
+  'get /api/v1/bodeguero/inventario': {
+    summary: 'Listar el inventario interno de bodega, paginado (Bodeguero/Admin/Root)',
+    parameters: [
+      { name: 'name', in: 'query', required: false, schema: { type: 'string' }, description: 'Filtrar por nombre (parcial, case-insensitive)' },
+      { name: 'sku', in: 'query', required: false, schema: { type: 'string' }, description: 'Filtrar por SKU (parcial, case-insensitive)' },
+      { name: 'status', in: 'query', required: false, schema: { type: 'string', enum: ['ACTIVE', 'INACTIVE'] }, description: 'Filtrar por estado. Sin este filtro, retorna ítems de todos los estados' },
+      { name: 'page', in: 'query', required: false, schema: { type: 'integer' }, description: 'Número de página (default 1)' },
+      { name: 'limit', in: 'query', required: false, schema: { type: 'integer' }, description: 'Ítems por página (default 20)' },
+    ],
+    responses: Object.fromEntries([jsonResponse('200', 'Listado paginado de inventario', 'WarehouseInventoryListResponse')]),
+  },
+  'put /api/v1/bodeguero/inventario/{id}': {
+    summary: 'Actualizar stock y/o ubicación de un ítem de inventario. Sin restricción de dueño (Bodeguero/Admin/Root)',
+    requestBody: jsonRequest('UpdateWarehouseInventoryRequest'),
+    responses: Object.fromEntries([jsonResponse('200', 'Ítem de inventario actualizado', 'WarehouseInventoryItem')]),
+  },
+  'delete /api/v1/bodeguero/inventario/{id}': {
+    summary: 'Desactivar (soft-delete) un ítem de inventario. No borra la fila porque pedidos de trueque pueden referenciarla (Bodeguero/Admin/Root)',
+    responses: Object.fromEntries([jsonResponse('200', 'Ítem marcado como INACTIVE', 'GenericObject')]),
   },
   'get /api/v1/bodeguero/cargas/{id}/clientes-status': {
     summary: 'Obtener estado de pago de clientes en una carga (Bodeguero/Admin/Root)',

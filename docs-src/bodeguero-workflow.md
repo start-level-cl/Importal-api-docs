@@ -299,10 +299,12 @@ Para optimizar la logística y ofrecer soluciones rápidas a incidencias de quie
 
 ### 7.1 Registro de Ítems Operativos de Bodega
 *   **Endpoints:**
-    *   `POST /api/v1/bodeguero/inventario` (Registrar ítem)
-    *   `GET /api/v1/bodeguero/inventario` (Listar y buscar con filtros SKU y nombre)
+    *   `POST /api/v1/bodeguero/inventario` (Registrar ítem, siempre creado en `status: ACTIVE`)
+    *   `GET /api/v1/bodeguero/inventario` (Listar y buscar con filtros SKU, nombre y `status`)
     *   `PUT /api/v1/bodeguero/inventario/:id` (Actualizar stock y ubicación)
+    *   `DELETE /api/v1/bodeguero/inventario/:id` (Desactivar ítem — soft-delete, marca `status: INACTIVE`)
 *   **Regla de Operación:** Estos productos se registran por el bodeguero indicando el nombre, SKU, marca, stock y su ubicación física (ej: "Pasillo 3, Estante B"). **No pertenecen al catálogo público de ventas** ni tienen precios al cliente, comisiones, ni asignaciones a vendedores.
+*   **Lógica alineada con `vendedor/productos`:** mismo patrón de creador asignado vía JWT y `DELETE` como soft-delete (necesario porque `Order.warehouse_inventory_id` puede referenciar el ítem en un trueque, sin `ON DELETE CASCADE`/`SET NULL` configurado). A diferencia de `vendedor/productos`, `UPDATE`/`DELETE` **no** restringen por dueño: cualquier `BODEGUERO`/`ADMIN`/`ROOT` puede gestionar cualquier ítem, al ser un recurso compartido de la bodega.
 
 ### 7.2 Flujo en Trueques y Regla de Costo $0
 1.  **Propuesta de Trueque:** Cuando ocurre una falta de stock, el administrador puede ingresar a los tickets de tipo `BARTER_NEGOTIATION` y proponer un cambio al cliente utilizando un ítem del catálogo o un ítem registrado en el inventario interno de bodega (`warehouse_inventory_id`).

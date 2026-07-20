@@ -58,6 +58,7 @@ Esta sección documenta el ciclo de vida completo de los pedidos y cargas de imp
 | `POST` | `/api/v1/bodeguero/inventario` | `BODEGUERO`, `ADMIN`, `ROOT` | Crear entrada de inventario. |
 | `GET` | `/api/v1/bodeguero/inventario` | `BODEGUERO`, `ADMIN`, `ROOT` | Listar inventario de bodega. |
 | `PUT` | `/api/v1/bodeguero/inventario/:id` | `BODEGUERO`, `ADMIN`, `ROOT` | Actualizar entrada de inventario. |
+| `DELETE` | `/api/v1/bodeguero/inventario/:id` | `BODEGUERO`, `ADMIN`, `ROOT` | Desactivar (soft-delete) una entrada de inventario. |
 | `GET` | `/api/v1/bodeguero/pedidos` | `BODEGUERO`, `ADMIN`, `ROOT` | Listar pedidos de bodega (filtros por cliente, carga y `excludeDelivered`). |
 
 ---
@@ -268,28 +269,38 @@ Permite al vendedor indicar que acepta continuar operando dentro de una carga qu
 
 ## 5. Inventario de Bodega
 
+CRUD de ítems operativos de bodega usados principalmente para trueques (`BARTER_NEGOTIATION`), no para el catálogo público de ventas. Sigue el mismo patrón de `vendedor/productos` (creador asignado automáticamente vía JWT, `DELETE` como soft-delete que cambia `status` en vez de borrar la fila), salvo que **no hay restricción de dueño** en `UPDATE`/`DELETE`: cualquier `BODEGUERO`/`ADMIN`/`ROOT` puede editar o desactivar cualquier ítem, ya que es un recurso compartido entre turnos, no un catálogo personal.
+
 ### 5.1 Crear Entrada de Inventario
 
 - **Método:** `POST`
 - **Ruta:** `/api/v1/bodeguero/inventario`
 - **Roles Permitidos:** `BODEGUERO`, `ADMIN`, `ROOT`
 - **Cuerpo (JSON):** `CreateWarehouseInventoryDto`
-- **Respuesta:** `201 Created`
+- **Respuesta:** `201 Created`. Se crea siempre en `status: "ACTIVE"`, con `registered_by_id` tomado del JWT.
 
 ### 5.2 Listar Inventario
 
 - **Método:** `GET`
 - **Ruta:** `/api/v1/bodeguero/inventario`
 - **Roles Permitidos:** `BODEGUERO`, `ADMIN`, `ROOT`
-- **Query Parameters:** `GetWarehouseInventoryQueryDto` (filtros de carga, cliente, estado).
+- **Query Parameters:** `GetWarehouseInventoryQueryDto` — `name`, `sku`, `status` (`ACTIVE`/`INACTIVE`, opcional; sin filtro retorna todos los estados), `page`/`limit` (paginado).
 
 ### 5.3 Actualizar Entrada de Inventario
 
 - **Método:** `PUT`
 - **Ruta:** `/api/v1/bodeguero/inventario/:id`
-- **Cuerpo (JSON):** `UpdateWarehouseInventoryDto`
+- **Cuerpo (JSON):** `UpdateWarehouseInventoryDto` (`stock`, `location`).
 
-### 5.4 Listar Pedidos de Bodega
+### 5.4 Eliminar (Desactivar) Entrada de Inventario
+
+- **Método:** `DELETE`
+- **Ruta:** `/api/v1/bodeguero/inventario/:id`
+- **Roles Permitidos:** `BODEGUERO`, `ADMIN`, `ROOT`
+- **Respuesta:** `200 OK` — `{ "ok": true }`. Soft-delete: marca `status = "INACTIVE"` en lugar de borrar la fila, porque pedidos de trueque (`Order.warehouse_inventory_id`) pueden referenciar el ítem y esa FK no tiene `ON DELETE CASCADE`/`SET NULL` configurado.
+- **Errores:** `404` si el ítem no existe.
+
+### 5.5 Listar Pedidos de Bodega
 
 Devuelve los pedidos de cargas ya arribadas (`ARRIVED`), con las relaciones `product`, `carga`, `cajas` y `client`. Reemplaza al antiguo endpoint `GET /bodeguero/ordenes-fisicas` (removido), que tenía la misma lógica de filtrado duplicada.
 

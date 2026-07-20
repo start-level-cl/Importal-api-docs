@@ -223,6 +223,14 @@ export type CreateSupportTicketRequest = {
   title: string
 }
 
+export type CreateWarehouseInventoryRequest = {
+  location: string
+  marca?: string
+  name: string
+  sku?: string
+  stock: number
+}
+
 export type DashboardSummary = {
   clientes_activos: number
   clientes_en_mora: number
@@ -662,6 +670,11 @@ export type UpdateUserRequest = {
   phone?: string
 }
 
+export type UpdateWarehouseInventoryRequest = {
+  location?: string
+  stock?: number
+}
+
 export type UserAddress = {
   alias?: string
   calle: string
@@ -756,6 +769,25 @@ export type VerifyCodeResponse = {
 export type VerifyContactChangeRequest = {
   code: string
   token: string
+}
+
+export type WarehouseInventoryItem = {
+  id: number
+  location: string
+  marca?: string
+  name: string
+  registered_by_id?: number
+  sku?: string
+  status: "ACTIVE" | "INACTIVE"
+  stock: number
+}
+
+export type WarehouseInventoryListResponse = {
+  data: (WarehouseInventoryItem)[]
+  limit: number
+  page: number
+  pages: number
+  total: number
 }
 
 export interface Operations {
@@ -1498,12 +1530,20 @@ export interface Operations {
     path: "/api/v1/bodeguero/inventario"
     requestBody: undefined
     responses: {
-      "200": GenericObject
+      "200": WarehouseInventoryListResponse
     }
   }
   "backend_post_api_v1_bodeguero_inventario": {
     method: "POST"
     path: "/api/v1/bodeguero/inventario"
+    requestBody: CreateWarehouseInventoryRequest
+    responses: {
+      "201": WarehouseInventoryItem
+    }
+  }
+  "backend_delete_api_v1_bodeguero_inventario_id": {
+    method: "DELETE"
+    path: "/api/v1/bodeguero/inventario/{id}"
     requestBody: undefined
     responses: {
       "200": GenericObject
@@ -1512,9 +1552,9 @@ export interface Operations {
   "backend_put_api_v1_bodeguero_inventario_id": {
     method: "PUT"
     path: "/api/v1/bodeguero/inventario/{id}"
-    requestBody: undefined
+    requestBody: UpdateWarehouseInventoryRequest
     responses: {
-      "200": GenericObject
+      "200": WarehouseInventoryItem
     }
   }
   "backend_get_api_v1_bodeguero_pedidos": {
