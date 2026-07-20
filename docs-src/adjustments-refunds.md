@@ -297,6 +297,7 @@ Devuelve el tipo de cambio USD → CLP oficial vigente.
 | `PUT` | `/api/v1/admin/tarifas/logisticas` | `ADMIN`, `ROOT` | Actualizar tarifa logística existente. |
 
 - **GET** — Devuelve el listado de tarifas por tipo de transporte (`AEREA`, `MARITIMA`) y tamaño de caja.
+  - `concept` (opcional, string): Filtrar por concepto de tarifa. Búsqueda parcial e insensible a mayúsculas/minúsculas (ILIKE `%concept%`). Ejemplo: `?concept=flete` retorna todas las tarifas cuyo campo `concept` contenga la palabra "flete".
 - **POST** — Cuerpo: `CreateLogisticsRateDto`.
 - **PUT** — Cuerpo: `UpdateLogisticsRateDto`.
 
