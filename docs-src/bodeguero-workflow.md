@@ -301,6 +301,7 @@ Para optimizar la logística y ofrecer soluciones rápidas a incidencias de quie
 *   **Endpoints:**
     *   `POST /api/v1/bodeguero/inventario` (Registrar ítem, siempre creado en `status: ACTIVE`. `multipart/form-data`, admite hasta 4 `photos` opcionales — mismo mecanismo de subida que `POST /vendedor/productos`, pero sin exigir al menos una foto)
     *   `GET /api/v1/bodeguero/inventario` (Listar y buscar con filtros SKU, nombre y `status`; `photo_urls` viene resuelto a URLs firmadas de S3)
+    *   `GET /api/v1/bodeguero/inventario/:id` (Detalle de un ítem individual; `404` si no existe)
     *   `PUT /api/v1/bodeguero/inventario/:id` (Actualizar stock y ubicación; no permite cambiar fotos)
     *   `DELETE /api/v1/bodeguero/inventario/:id` (Desactivar ítem — soft-delete, marca `status: INACTIVE`)
 *   **Regla de Operación:** Estos productos se registran por el bodeguero indicando el nombre, SKU, marca, stock y su ubicación física (ej: "Pasillo 3, Estante B"). **No pertenecen al catálogo público de ventas** ni tienen precios al cliente, comisiones, ni asignaciones a vendedores.

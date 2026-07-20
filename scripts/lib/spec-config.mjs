@@ -2353,6 +2353,13 @@ export const operationOverrides = {
     ],
     responses: Object.fromEntries([jsonResponse('200', 'Listado paginado de inventario', 'WarehouseInventoryListResponse')]),
   },
+  'get /api/v1/bodeguero/inventario/{id}': {
+    summary: 'Obtener el detalle de un ítem de inventario por su ID (Bodeguero/Admin/Root)',
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Ítem de inventario, con photo_urls resuelto a URLs firmadas', 'WarehouseInventoryItem'),
+      jsonResponse('404', 'Ítem no encontrado', 'ErrorResponse'),
+    ]),
+  },
   'put /api/v1/bodeguero/inventario/{id}': {
     summary: 'Actualizar stock y/o ubicación de un ítem de inventario. Sin restricción de dueño (Bodeguero/Admin/Root)',
     requestBody: jsonRequest('UpdateWarehouseInventoryRequest'),

@@ -1567,6 +1567,15 @@ export interface Operations {
       "200": GenericObject
     }
   }
+  "backend_get_api_v1_bodeguero_inventario_id": {
+    method: "GET"
+    path: "/api/v1/bodeguero/inventario/{id}"
+    requestBody: undefined
+    responses: {
+      "200": WarehouseInventoryItem
+      "404": ErrorResponse
+    }
+  }
   "backend_put_api_v1_bodeguero_inventario_id": {
     method: "PUT"
     path: "/api/v1/bodeguero/inventario/{id}"

@@ -7407,6 +7407,53 @@
         "x-service": "backend",
         "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
       },
+      "get": {
+        "operationId": "backend_get_api_v1_bodeguero_inventario_id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WarehouseInventoryItem"
+                }
+              }
+            },
+            "description": "Ítem de inventario, con photo_urls resuelto a URLs firmadas"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Ítem no encontrado"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Obtener el detalle de un ítem de inventario por su ID (Bodeguero/Admin/Root)",
+        "tags": [
+          "Orders"
+        ],
+        "x-role-group": "bodeguero",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+      },
       "put": {
         "operationId": "backend_put_api_v1_bodeguero_inventario_id",
         "parameters": [
