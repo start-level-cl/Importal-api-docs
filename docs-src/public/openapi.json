@@ -2058,9 +2058,13 @@
       "ReviewOrderRequest": {
         "additionalProperties": false,
         "properties": {
-          "caja_id": {
+          "caja_ids": {
+            "description": "Reemplaza por completo el set de cajas del pedido (no es acumulativo). ManyToMany: un pedido puede tener varias cajas",
+            "items": {
+              "type": "integer"
+            },
             "nullable": true,
-            "type": "integer"
+            "type": "array"
           },
           "dañados": {
             "nullable": true,
@@ -7628,11 +7632,13 @@
           "content": {
             "application/json": {
               "example": {
-                "caja_id": 14,
+                "caja_ids": [
+                  14,
+                  15
+                ],
                 "dañados": 0,
                 "faltaron": 0,
                 "llegaron": 2,
-                "peso_cobrado_kg": 1.2,
                 "revisado": true,
                 "status": "CONFIRMED",
                 "video_ref_info": "Cámara 02, Grabación 10:15 - 10:20, S3 Key: video_120.mp4"

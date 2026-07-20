@@ -525,7 +525,7 @@ export type ReturnRequest = {
 export type ReturnRequestArray = (ReturnRequest)[]
 
 export type ReviewOrderRequest = {
-  caja_id?: number
+  caja_ids?: (number)[]
   dañados?: number
   faltaron?: number
   llegaron?: number

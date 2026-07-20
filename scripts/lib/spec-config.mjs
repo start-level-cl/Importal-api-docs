@@ -412,8 +412,7 @@ const schemaExamples = {
     llegaron: 2,
     faltaron: 0,
     dañados: 0,
-    peso_cobrado_kg: 1.2,
-    caja_id: 14,
+    caja_ids: [14, 15],
     video_ref_info: 'Cámara 02, Grabación 10:15 - 10:20, S3 Key: video_120.mp4',
   },
   RequestDeliveryShippingRequest: {
@@ -1307,7 +1306,12 @@ export const schemas = {
       faltaron: { type: 'integer', nullable: true },
       dañados: { type: 'integer', nullable: true },
       peso_cobrado_kg: { type: 'number', nullable: true },
-      caja_id: { type: 'integer', nullable: true },
+      caja_ids: {
+        type: 'array',
+        items: { type: 'integer' },
+        nullable: true,
+        description: 'Reemplaza por completo el set de cajas del pedido (no es acumulativo). ManyToMany: un pedido puede tener varias cajas',
+      },
       video_ref_info: { type: 'string', nullable: true },
     },
     [],

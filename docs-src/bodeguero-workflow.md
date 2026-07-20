@@ -102,7 +102,7 @@ La carga logística se origina en estado `IN_TRANSIT`. Cuando el transporte fís
 Una vez que la carga ha arribado, los productos se descargan y se auditan contra el manifiesto digital usando el método `reviewOrder`.
 
 *   **Endpoint:** `PUT /api/v1/bodeguero/pedidos/:id/revisar`
-*   **Parámetros:** `ReviewOrderDto` (`llegaron`, `faltaron`, `dañados`, `peso_cobrado_kg`, `caja_id`)
+*   **Parámetros:** `ReviewOrderDto` (`llegaron`, `faltaron`, `dañados`, `peso_cobrado_kg`, `caja_ids: number[]`)
 
 ### 2.1 Ecuación de Cuadratura Física
 El backend valida estrictamente que la suma de las cantidades física e incidencias coincida con la cantidad original solicitada:
@@ -111,10 +111,10 @@ Si esta ecuación no se cumple, el backend arroja un error de validación impidi
 
 ### 2.2 Reglas de Cubicación y Peso (Aéreo vs Marítimo)
 
-| Vía de Transporte | Campo de Peso (`peso_cobrado_kg`) | Campo de Caja (`caja_id`) | Regla Excluyente del Backend |
+| Vía de Transporte | Campo de Peso (`peso_cobrado_kg`) | Campo de Cajas (`caja_ids`) | Regla Excluyente del Backend |
 | :--- | :--- | :--- | :--- |
-| **AÉREO** | Opcional | Opcional | Debe ingresarse el Peso **o** la Caja, pero **nunca ambos** simultáneamente. |
-| **MARÍTIMO** | **Prohibido** | **Obligatorio** | Debe asociarse obligatoriamente a una caja física existente. El peso manual no aplica en marítimo. |
+| **AÉREO** | Opcional | Opcional (una o más cajas) | Debe ingresarse el Peso **o** las Cajas, pero **nunca ambos** simultáneamente. |
+| **MARÍTIMO** | **Prohibido** | **Obligatorio** | Debe asociarse obligatoriamente a una o más cajas físicas existentes. El peso manual no aplica en marítimo. |
 
 ---
 
@@ -157,7 +157,7 @@ Antes de autorizar el empaque y preparación de cualquier pedido de bodega, el b
 
 Para el transporte marítimo, es obligatorio el uso de cajas físicas para consolidar la carga de los clientes. 
 
-*   **Relación Flexibilizada (Many-to-Many):** Anteriormente, cada orden pertenecía de forma estricta a una sola caja (`caja_id`). En la versión actual, las órdenes se asocian a **múltiples cajas de forma simultánea** a través de la tabla pivot `order_cajas`. Esto permite distribuir físicamente piezas de un mismo pedido en distintos contenedores si la cubertura de espacio así lo requiere.
+*   **Relación Many-to-Many (`order_cajas`):** una orden puede asociarse a **múltiples cajas simultáneamente**, y una caja puede contener múltiples órdenes. La asignación se hace vía `reviewOrder` enviando `caja_ids: number[]`. **Importante — semántica de reemplazo:** cada llamada a `revisar` con `caja_ids` reemplaza por completo el set de cajas del pedido (no es acumulativo); para agregar una caja a un pedido que ya tiene otras asignadas, el frontend debe reenviar el array completo (las anteriores + la nueva). El backend valida que **todas** las cajas del array existan (`404` listando las faltantes) y que cada tamaño de caja tenga tarifa de flete activa (`400` si falta alguna) antes de guardar.
 *   **Creación de Cajas:** El bodeguero registra las cajas en la base de datos (`POST /api/v1/bodeguero/cajas`) asociándolas al cliente y la carga correspondiente, especificando el tamaño de la caja (`caja_size`: S, M, L, XL).
 *   **Costos Logísticos Proporcionales:** El flete no se cobra dos veces por estar el pedido en múltiples cajas; en su lugar, se prorratea el costo total de cada caja entre todos los pedidos asignados a ella. El flete final del pedido es la sumatoria de sus porciones prorrateadas (ver detalle de la fórmula en [Ajustes de Pedidos y Reembolsos](file:///C:/Users/joyta/OneDrive/Desktop/repos/startup/Importal/importal-api-docs/docs-src/adjustments-refunds.md)).
 *   **Auditoría de Cajas:** A través del endpoint `GET /api/v1/bodeguero/cajas/:id`, el bodeguero audita el contenido real, las órdenes asignadas y el peso de una caja específica para proceder con su sellado.
