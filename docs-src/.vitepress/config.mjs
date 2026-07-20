@@ -21,7 +21,12 @@ export default withMermaid(
           { text: 'Ajustes y Reembolsos', link: '/adjustments-refunds' },
           { text: 'Flujo de Bodega', link: '/bodeguero-workflow' },
           { text: 'Notificaciones', link: '/notifications' },
-          { text: 'Perfil, Direcciones y Facturación', link: '/user-settings' }
+          { text: 'Perfil, Direcciones y Facturación', link: '/user-settings' },
+          { text: 'Productos y Catálogo', link: '/products' },
+          { text: 'Mensajería (Chats)', link: '/messaging' },
+          { text: 'Pedidos y Cargas', link: '/orders-cargas' },
+          { text: 'Tickets de Soporte', link: '/support-tickets' },
+          { text: 'Dashboards y Métricas', link: '/dashboards-metrics' }
         ]},
         { text: 'Referencia API ↗', link: '/reference.html', target: '_blank' }
       ],
@@ -43,6 +48,17 @@ export default withMermaid(
             { text: 'Flujo de Bodega', link: '/bodeguero-workflow' },
             { text: 'Notificaciones', link: '/notifications' },
             { text: 'Perfil, Direcciones y Facturación', link: '/user-settings' }
+          ]
+        },
+        {
+          text: 'Módulos de la API',
+          items: [
+            { text: 'Productos y Catálogo', link: '/products' },
+            { text: 'Mensajería (Chats)', link: '/messaging' },
+            { text: 'Pedidos y Cargas', link: '/orders-cargas' },
+            { text: 'Tickets de Soporte', link: '/support-tickets' },
+            { text: 'Dashboards y Métricas', link: '/dashboards-metrics' },
+            { text: 'Admin API (Referencia)', link: '/admin-api' }
           ]
         }
       ],

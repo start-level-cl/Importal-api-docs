@@ -206,3 +206,91 @@ Crea los datos de facturación si no existen, o actualiza los existentes en caso
 > [!CAUTION]
 > **Validación de RUT Chileno:**
 > El backend valida mediante algoritmo del dígito verificador que `rut_empresa` sea un RUT válido. Si no supera la validación, la petición fallará con una excepción `400 BadRequestException` con el mensaje: *"El RUT de la empresa no es válido."*
+
+---
+
+## 5. Gestión de Consentimiento
+
+### Obtener Estado de Consentimiento
+
+Devuelve el estado actual de consentimiento del usuario autenticado para el uso de datos y el envío de notificaciones.
+
+- **Método:** `GET`
+- **Ruta:** `/api/v1/users/me/consentimiento`
+- **Roles Permitidos:** `ROOT`, `ADMIN`, `CLIENT`, `VENDOR`, `BODEGUERO`
+- **Respuesta Exitosa (200 OK):**
+  ```json
+  {
+    "concentimiento": true,
+    "email": true,
+    "phone": false
+  }
+  ```
+
+### Aceptar Consentimiento
+
+Permite al usuario aceptar los términos de uso de datos y consentimiento de notificaciones.
+
+- **Método:** `POST`
+- **Ruta:** `/api/v1/users/me/aceptar-consentimiento`
+- **Roles Permitidos:** `ROOT`, `ADMIN`, `CLIENT`, `VENDOR`, `BODEGUERO`
+- **Cuerpo de la Petición:** Ninguno.
+- **Respuesta Exitosa (200 OK):**
+  ```json
+  {
+    "message": "Consentimiento aceptado exitosamente"
+  }
+  ```
+
+> [!NOTE]
+> Al aceptar el consentimiento, se activan los canales de notificación (`email` y `phone`) y se sincroniza el estado con el servicio externo de consentimiento (si está configurado `CONSENT_SERVICE_URL`).
+
+---
+
+## 6. Cambio de Datos de Contacto (Email / Teléfono)
+
+El cambio de correo electrónico o número de teléfono requiere un flujo de verificación por código OTP para garantizar la autenticidad del cambio.
+
+### 6.1 Solicitar Cambio de Contacto
+
+Envía un código de verificación al nuevo correo o teléfono para confirmar el cambio.
+
+- **Método:** `POST`
+- **Ruta:** `/api/v1/users/change-contact/request`
+- **Roles Permitidos:** `ROOT`, `ADMIN`, `CLIENT`, `VENDOR`, `BODEGUERO`
+- **Cuerpo de la Petición (JSON):** `RequestContactChangeDto`
+  ```json
+  {
+    "type": "email",
+    "new_value": "nuevo.correo@ejemplo.com"
+  }
+  ```
+  - `type` (string, requerido, enum `email` | `phone`): Tipo de dato de contacto a modificar.
+  - `new_value` (string, requerido): Nuevo valor del correo o número de teléfono.
+- **Respuesta Exitosa (200 OK):** Confirmación de envío del código de verificación.
+
+### 6.2 Verificar y Confirmar Cambio
+
+Verifica el código OTP recibido y aplica el cambio en la base de datos.
+
+- **Método:** `POST`
+- **Ruta:** `/api/v1/users/change-contact/verify`
+- **Roles Permitidos:** `ROOT`, `ADMIN`, `CLIENT`, `VENDOR`, `BODEGUERO`
+- **Cuerpo de la Petición (JSON):** `VerifyContactChangeDto`
+  ```json
+  {
+    "type": "email",
+    "code": "482910"
+  }
+  ```
+  - `type` (string, requerido): Tipo de contacto que se está verificando.
+  - `code` (string, requerido): Código OTP recibido en el nuevo correo o teléfono.
+- **Respuesta Exitosa (200 OK):** Datos de contacto actualizados correctamente.
+
+> [!IMPORTANT]
+> **Flujo del Cambio de Contacto:**
+> 1. El usuario llama a `request` indicando el nuevo valor.
+> 2. El backend envía un código OTP al nuevo correo/teléfono.
+> 3. El usuario llama a `verify` con el código recibido.
+> 4. Si el código es válido, el cambio se persiste en la base de datos y se sincroniza con el servicio de autenticación.
+

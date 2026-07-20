@@ -139,3 +139,164 @@ El administrador revisa la solicitud de devolución y la aprueba o la rechaza.
 * **Listar Solicitudes de Devolución:** `GET /api/v1/admin/devoluciones` (Soporta paginación con `page` y `limit`)
 * **Resolver Solicitud de Devolución:** `POST /api/v1/admin/devoluciones/{id}/resolver`
   * Body: `ResolveReturnRequestDto` (`status`, `option`, `reject_reason`, `reject_proof_url`)
+
+---
+
+## 4. Cobros y Billing (Rutas Completas)
+
+### 4.1 Gestión de Cobros (Admin)
+
+| Método | Ruta | Roles | Descripción |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/v1/admin/cobros` | `ADMIN`, `ROOT` | Listado paginado de cobros con filtros. |
+| `GET` | `/api/v1/admin/cobros/pendientes-validacion` | `ADMIN`, `ROOT` | Cobros con comprobante subido pendientes de revisión. |
+| `GET` | `/api/v1/admin/cobros/:id` | `ADMIN`, `ROOT` | Detalle de un cobro específico. |
+| `GET` | `/api/v1/admin/cobros/:id/comprobantes` | `ADMIN`, `ROOT` | Imágenes de comprobantes de un cobro (base64). |
+| `POST` | `/api/v1/admin/cobros/:id/confirmar` | `ADMIN`, `ROOT` | Confirmar, rechazar o reintentar un cobro. |
+| `POST` | `/api/v1/admin/cobros/trigger` | `ADMIN`, `ROOT` | Disparar manualmente el proceso de billing. |
+
+#### Listar Cobros Admin
+
+- **Método:** `GET`
+- **Ruta:** `/api/v1/admin/cobros`
+- **Query Parameters:**
+  - `filter` (opcional, string): `pendientes` | `listos_para_revisar` | `pagados` (sin filtro = todos).
+  - `page` (opcional, default `1`): Página.
+  - `limit` (opcional, default `20`): Registros por página.
+
+#### Disparar Billing Manual (Trigger)
+
+- **Método:** `POST`
+- **Ruta:** `/api/v1/admin/cobros/trigger`
+- **Query Parameters:**
+  - `forceDay` (opcional, enum): `tuesday` | `friday` — Forzar ejecución como si fuera el día especificado.
+- **Respuesta (200 OK):**
+  ```json
+  {
+    "ok": true,
+    "message": "Procesamiento de facturación y moras completado.",
+    "billResult": { ... }
+  }
+  ```
+
+> [!CAUTION]
+> Este endpoint ejecuta la generación de cobros y el procesamiento de moras de forma inmediata. Úsalo con precaución en entornos productivos para evitar duplicar cobros.
+
+### 4.2 Cobros del Cliente
+
+| Método | Ruta | Roles | Descripción |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/v1/cliente/cobros` | `CLIENT` | Listar cobros del cliente (`carga_id?`, `page`, `limit`). |
+| `GET` | `/api/v1/cliente/cobros/:id` | `CLIENT` | Detalle de un cobro propio. |
+| `GET` | `/api/v1/cliente/cobros/:id/pdf` | `CLIENT`, `ADMIN`, `ROOT` | Descargar PDF del cobro. |
+| `GET` | `/api/v1/cliente/cobros/:id/ordenes` | `CLIENT` | Órdenes asociadas al cobro. |
+| `GET` | `/api/v1/cliente/cobros/pagados` | `CLIENT` | Listado de cobros ya confirmados/pagados. |
+| `GET` | `/api/v1/cliente/estado-mora` | `CLIENT` | Estado de mora actual del cliente. |
+| `POST` | `/api/v1/cliente/cobros/:id/pagar` | `CLIENT` | Subir comprobante(s) de pago (max 4 archivos). |
+| `DELETE` | `/api/v1/cliente/cobros/:id/comprobante` | `CLIENT` | Eliminar un comprobante de pago subido. |
+
+#### Descargar PDF del Cobro
+
+- **Método:** `GET`
+- **Ruta:** `/api/v1/cliente/cobros/:id/pdf`
+- **Roles Permitidos:** `CLIENT`, `ADMIN`, `ROOT`
+- **Respuesta:** Archivo PDF con `Content-Type: application/pdf` y `Content-Disposition: inline`.
+
+#### Subir Comprobante de Pago
+
+- **Método:** `POST`
+- **Ruta:** `/api/v1/cliente/cobros/:id/pagar`
+- **Roles Permitidos:** `CLIENT`
+- **Content-Type:** `multipart/form-data`
+- **Campos:** `files` (campo de archivos múltiples, máximo 4 acumulados).
+
+#### Eliminar Comprobante
+
+- **Método:** `DELETE`
+- **Ruta:** `/api/v1/cliente/cobros/:id/comprobante`
+- **Roles Permitidos:** `CLIENT`
+- **Cuerpo (JSON):** `{ "url": "https://s3.amazonaws.com/..." }` — URL del comprobante a eliminar.
+
+### 4.3 Pagos del Vendedor
+
+| Método | Ruta | Roles | Descripción |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/api/v1/vendedor/pagos/solicitar` | `VENDOR` | Solicitar retiro/cobro de ventas. |
+| `GET` | `/api/v1/vendedor/ordenes/pendientes-cobro` | `VENDOR` | Órdenes pendientes de liquidación. |
+
+#### Solicitar Pago (Vendedor)
+
+- **Método:** `POST`
+- **Ruta:** `/api/v1/vendedor/pagos/solicitar`
+- **Content-Type:** `multipart/form-data`
+- **Campos:**
+  - `files` (archivo, hasta 4): Comprobantes de soporte.
+  - `note` (string, opcional): Nota o comentario adicional.
+  - `amount` (número, opcional): Monto solicitado en CLP.
+  - `order_ids` (array, opcional): IDs de órdenes específicas a liquidar.
+- **Respuesta:** `201 Created` con la solicitud de pago creada.
+
+---
+
+## 5. Tipo de Cambio (Dólar)
+
+### 5.1 Tipo de Cambio Actual (Público)
+
+Devuelve el tipo de cambio USD → CLP oficial vigente.
+
+- **Método:** `GET`
+- **Ruta:** `/api/v1/billing/exchange-rate`
+- **Roles Permitidos:** Sin autenticación requerida (público).
+- **Respuesta (200 OK):**
+  ```json
+  {
+    "rate": 950.50,
+    "created_at": "2026-07-20T08:00:00.000Z"
+  }
+  ```
+
+### 5.2 Actualizar Tipo de Cambio (Admin)
+
+- **Método:** `POST`
+- **Ruta:** `/api/v1/admin/exchange-rate`
+- **Roles Permitidos:** `ADMIN`, `ROOT`
+- **Cuerpo (JSON):**
+  ```json
+  {
+    "rate": 955.00
+  }
+  ```
+
+### 5.3 Historial de Tipo de Cambio
+
+- **Método:** `GET`
+- **Ruta:** `/api/v1/admin/exchange-rate/history`
+- **Roles Permitidos:** `ADMIN`, `ROOT`
+- **Query Parameters:** `page`, `limit`
+
+---
+
+## 6. Tarifas de Comisiones y Logística
+
+### 6.1 Tabla de Comisiones
+
+| Método | Ruta | Roles | Descripción |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/v1/tarifas/comisiones` | Todos | Consultar tabla de comisiones por tramos. |
+| `PUT` | `/api/v1/admin/tarifas/comisiones` | `ADMIN`, `ROOT` | Actualizar comisiones. |
+
+- **GET** — Devuelve los tramos de comisión (`CommissionTier`) aplicables según el volumen de inversión.
+- **PUT** — Cuerpo: `UpdateCommissionTierDto` con los nuevos tramos y porcentajes.
+
+### 6.2 Tarifas Logísticas
+
+| Método | Ruta | Roles | Descripción |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/v1/tarifas/logisticas` | Todos | Consultar tarifas de flete y logística. |
+| `POST` | `/api/v1/admin/tarifas/logisticas` | `ADMIN`, `ROOT` | Crear nueva tarifa logística. |
+| `PUT` | `/api/v1/admin/tarifas/logisticas` | `ADMIN`, `ROOT` | Actualizar tarifa logística existente. |
+
+- **GET** — Devuelve el listado de tarifas por tipo de transporte (`AEREA`, `MARITIMA`) y tamaño de caja.
+- **POST** — Cuerpo: `CreateLogisticsRateDto`.
+- **PUT** — Cuerpo: `UpdateLogisticsRateDto`.
+

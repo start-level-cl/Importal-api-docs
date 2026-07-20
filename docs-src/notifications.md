@@ -81,3 +81,85 @@ Notificaciones de flujo operativo destinadas al personal encargado del almacenam
 | :--- | :--- | :--- | :--- |
 | `BODEGA_CARGO_READY` | Email | 📦 Carga lista para verificación | Notifica al personal del centro de distribución que ha ingresado físicamente un lote/carga. Proporciona el ID del lote, nombre del vendedor de origen y la cantidad estimada de ítems para iniciar el conteo de recepción. |
 | `BODEGA_ORDER_DISPATCH` | In-App | 🚛 Pedido listo para despacho | Alerta interna para los operarios de picking indicando que un pedido aprobado ya cuenta con la documentación requerida y debe prepararse para su retiro por parte del courier. |
+| `ACCOUNT_BLOCKED` | In-App, Email | 🔒 Tu cuenta ha sido suspendida | Notifica al usuario que su cuenta fue bloqueada manualmente por un administrador. Incluye el motivo del bloqueo. |
+| `ACCOUNT_UNBLOCKED` | In-App, Email | ✅ Tu cuenta ha sido reactivada | Notifica al usuario que su cuenta fue desbloqueada manualmente. |
+| `ADMIN_BLOCKED_BY_ROOT` | In-App, Email | 🔒 Administrador suspendido | Notifica a todo el equipo administrativo cuando el Root bloquea a un administrador. |
+| `ADMIN_UNBLOCKED_BY_ROOT` | In-App, Email | ✅ Administrador reactivado | Notifica a todo el equipo administrativo cuando el Root desbloquea a un administrador. |
+
+---
+
+## 5. Endpoints REST de Notificaciones
+
+### 5.1 Listar Notificaciones del Usuario
+
+Obtiene las notificaciones in-app del usuario autenticado, paginadas y filtradas.
+
+- **Método:** `GET`
+- **Ruta:** `/api/v1/notificaciones`
+- **Roles Permitidos:** `ADMIN`, `CLIENT`, `VENDOR`, `BODEGUERO`, `ROOT`
+- **Query Parameters:**
+  - `page` (opcional, default `1`): Número de página.
+  - `limit` (opcional, default `20`): Cantidad de notificaciones por página.
+  - `all` (opcional, string `'true'`): Si se envía `true`, retorna todas las notificaciones sin filtrar por estado de lectura.
+- **Respuesta Exitosa (200 OK):**
+  ```json
+  {
+    "data": [
+      {
+        "id": 55,
+        "type": "CLIENT_BILL_GENERATED",
+        "title": "🧾 Tu factura está lista",
+        "body": "Se ha emitido un nuevo cobro por CLP $145,000. Fecha de vencimiento: 25/07/2026.",
+        "read": false,
+        "created_at": "2026-07-20T12:00:00.000Z"
+      }
+    ],
+    "meta": {
+      "page": 1,
+      "total": 12,
+      "unread": 3
+    }
+  }
+  ```
+
+### 5.2 Marcar Notificación como Leída
+
+Marca una notificación específica como leída para el usuario autenticado.
+
+- **Método:** `PUT`
+- **Ruta:** `/api/v1/notificaciones/:id/leer`
+- **Roles Permitidos:** `ADMIN`, `CLIENT`, `VENDOR`, `BODEGUERO`, `ROOT`
+- **Path Parameters:**
+  - `id` (número, requerido): ID de la notificación.
+- **Respuesta Exitosa (200 OK):** Notificación actualizada con `read: true`.
+
+### 5.3 Marcar Todas como Leídas
+
+Marca en bloque todas las notificaciones no leídas del usuario autenticado.
+
+- **Método:** `PUT`
+- **Ruta:** `/api/v1/notificaciones/leer-todas`
+- **Roles Permitidos:** `ADMIN`, `CLIENT`, `VENDOR`, `BODEGUERO`, `ROOT`
+- **Cuerpo de la Petición:** Ninguno.
+- **Respuesta Exitosa (200 OK):** Confirmación de actualización masiva.
+
+---
+
+## 6. Anuncio SMS Masivo (Vendedor)
+
+Los vendedores pueden enviar un SMS de anuncio promocional a sus clientes registrados en la plataforma.
+
+- **Método:** `POST`
+- **Ruta:** `/api/v1/vendedor/notificar-sms`
+- **Roles Permitidos:** `VENDOR`
+- **Cuerpo de la Petición (JSON):** `SendSmsAnnouncementDto`
+  ```json
+  {
+    "message": "¡Nuevos productos disponibles esta semana! Ingresa a la plataforma para ver el catálogo."
+  }
+  ```
+  - `message` (string, requerido): Contenido del SMS a enviar. Se recomienda un máximo de 160 caracteres.
+- **Respuesta Exitosa (200 OK):** Confirmación de envío a la cola SQS.
+
+> [!NOTE]
+> El SMS se encola en AWS SQS y se procesa de forma asíncrona por la Lambda de notificaciones. El endpoint confirma la recepción del mensaje en la cola, no la entrega final al destinatario.
