@@ -192,7 +192,7 @@ El administrador revisa la solicitud de devolución y la aprueba o la rechaza.
 | Método | Ruta | Roles | Descripción |
 | :--- | :--- | :--- | :--- |
 | `GET` | `/api/v1/cliente/cobros` | `CLIENT` | Listar cobros del cliente (`carga_id?`, `page`, `limit`). |
-| `GET` | `/api/v1/cliente/cobros/:id` | `CLIENT` | Detalle de un cobro propio. |
+| `GET` | `/api/v1/cliente/cobros/:id` | `CLIENT` | Detalle de un cobro propio. Cada ítem (`items[]`) incluye `photo_urls` (fotos del producto de la orden, firmadas), `cantidad` (`order.total_items`) y `talla` (`order.talla`); `[]`/`null` si el ítem no tiene orden asociada. |
 | `GET` | `/api/v1/cliente/cobros/:id/pdf` | `CLIENT`, `ADMIN`, `ROOT` | Descargar PDF del cobro. |
 | `GET` | `/api/v1/cliente/cobros/:id/ordenes` | `CLIENT` | Órdenes asociadas al cobro. |
 | `GET` | `/api/v1/cliente/cobros/pagados` | `CLIENT` | Listado de cobros ya confirmados/pagados. |
