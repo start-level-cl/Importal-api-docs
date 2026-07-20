@@ -392,28 +392,21 @@ components:
       additionalProperties: false
       properties:
         bultos:
-          items:
-            properties:
-              bulto_number:
-                type: integer
-              photos:
-                items:
-                  format: binary
-                  type: string
-                type: array
-              weight_kg:
-                nullable: true
-                type: number
-            required:
-              - bulto_number
-            type: object
-          type: array
+          description: "JSON serializado con el listado de bultos: [{ \"bulto_number\": 1, \"weight_kg\": 12.5 }, ...]"
+          type: string
         camera_id:
           nullable: true
           type: string
         carrier_proof_url:
           nullable: true
           type: string
+        photos:
+          description: "Una imagen por bulto, en el mismo orden que bultos (posicional: photos[i] → bultos[i]). La cantidad debe coincidir exactamente con la de bultos"
+          items:
+            format: binary
+            type: string
+          maxItems: 20
+          type: array
         video_ref_info:
           nullable: true
           type: string

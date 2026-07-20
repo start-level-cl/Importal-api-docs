@@ -144,13 +144,10 @@ export type ConfirmDeliveryRequest = {
 }
 
 export type ConfirmDespachoRequest = {
-  bultos?: ({
-    bulto_number: number
-    photos?: (string)[]
-    weight_kg?: number
-  })[]
+  bultos?: string
   camera_id?: string
   carrier_proof_url?: string
+  photos?: (string)[]
   video_ref_info?: string
 }
 

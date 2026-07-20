@@ -167,24 +167,12 @@ Para el transporte marítimo, es obligatorio el uso de cajas físicas para conso
 Una vez que se han verificado los pagos y los productos están embalados, se realiza el registro de bultos y auditoría de la entrega, lo que la coloca en estado `READY_TO_SHIP` (Lista para envío).
 
 *   **Endpoint:** `POST /api/v1/bodeguero/deliveries/:id/auditar-empaque`
-*   **Controlador:** `auditarEmpaque(req, id, dto)` en `orders.controller.ts`
-*   **Payload de Entrada (`ConfirmDespachoDto`):**
-    ```json
-    {
-      "video_ref_info": "Cámara principal - Grabación de Sellado",
-      "camera_id": "CAM-04-DESPACHO",
-      "carrier_proof_url": "https://s3.amazonaws.com/importal-proofs/guia-transportista-9812.pdf",
-      "bultos": [
-        {
-          "bulto_number": 1,
-          "weight_kg": 14.5,
-          "photos": [
-            "https://s3.amazonaws.com/importal-proofs/bulto-1-photo1.jpg"
-          ]
-        }
-      ]
-    }
-    ```
+*   **Controlador:** `auditarEmpaque(req, id, body, files)` en `orders.controller.ts`
+*   **Content-Type:** `multipart/form-data` (reutiliza `S3Service`, sube bajo el prefijo `portal/bultos`).
+*   **Campos (form-data):**
+    *   `bultos`: string JSON con el listado de bultos, ej. `'[{"bulto_number":1,"weight_kg":14.5}]'`.
+    *   `photos`: **una imagen por bulto**, en el mismo orden que `bultos` (correlación posicional `photos[i]` → `bultos[i]`, máx. 20). El backend valida la regla 1:1 — la cantidad de fotos debe coincidir con la de bultos, si no responde `400`. Cada foto se sube a S3 y se guarda como `BultoPhoto`; se devuelven firmadas en los reads de deliveries.
+    *   `video_ref_info`, `camera_id`, `carrier_proof_url`: opcionales, texto.
 
 ### 5.1 Cambios en Base de Datos tras Registrar Auditoría y Empaque
 Cuando se procesa exitosamente la auditoría:

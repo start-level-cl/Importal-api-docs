@@ -422,18 +422,9 @@ const schemaExamples = {
   ConfirmDespachoRequest: {
     video_ref_info: 'Cámara 04, Grabación 15:30 - 15:35',
     camera_id: 'CAM-04',
-    bultos: [
-      {
-        bulto_number: 1,
-        weight_kg: 12.5,
-        photos: ['(binary file)', '(binary file)']
-      },
-      {
-        bulto_number: 2,
-        weight_kg: 8.1,
-        photos: ['(binary file)']
-      }
-    ],
+    bultos:
+      '[{"bulto_number":1,"weight_kg":12.5},{"bulto_number":2,"weight_kg":8.1}]',
+    photos: ['(binary file bulto 1)', '(binary file bulto 2)'],
     carrier_proof_url: 'https://s3.amazonaws.com/bucket/comprobante.jpg',
   },
   CargaClientesStatusResponse: [
@@ -1382,19 +1373,16 @@ export const schemas = {
       camera_id: { type: 'string', nullable: true },
       carrier_proof_url: { type: 'string', nullable: true },
       bultos: {
+        type: 'string',
+        description:
+          'JSON serializado con el listado de bultos: [{ "bulto_number": 1, "weight_kg": 12.5 }, ...]',
+      },
+      photos: {
         type: 'array',
-        items: {
-          type: 'object',
-          properties: {
-            bulto_number: { type: 'integer' },
-            weight_kg: { type: 'number', nullable: true },
-            photos: {
-              type: 'array',
-              items: { type: 'string', format: 'binary' },
-            },
-          },
-          required: ['bulto_number'],
-        },
+        items: { type: 'string', format: 'binary' },
+        maxItems: 20,
+        description:
+          'Una imagen por bulto, en el mismo orden que bultos (posicional: photos[i] → bultos[i]). La cantidad debe coincidir exactamente con la de bultos',
       },
     },
     [],
