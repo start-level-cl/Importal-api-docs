@@ -4919,27 +4919,6 @@ paths:
       x-role-group: bodeguero
       x-service: backend
       x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
-  /api/v1/bodeguero/ordenes-fisicas:
-    get:
-      operationId: backend_get_api_v1_bodeguero_ordenes_fisicas
-      parameters:
-[]
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GenericObject"
-          description: Operacion exitosa
-      security:
-        -           bearerAuth:
-[]
-      summary: getPhysicalWarehouseOrders
-      tags:
-        - Orders
-      x-role-group: bodeguero
-      x-service: backend
-      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
   /api/v1/bodeguero/pedidos:
     get:
       operationId: backend_get_api_v1_bodeguero_pedidos
@@ -4956,6 +4935,12 @@ paths:
           required: false
           schema:
             type: integer
+        -           description: "true/1: excluye también pedidos DELIVERED, ademas de CANCELLED/REJECTED. Usar para obtener solo pedidos pendientes de despacho físico en bodega"
+          in: query
+          name: excludeDelivered
+          required: false
+          schema:
+            type: boolean
       responses:
         200:
           content:
@@ -4969,7 +4954,7 @@ paths:
       security:
         -           bearerAuth:
 []
-      summary: Listar pedidos en cargas cerradas para la bodega (Bodeguero/Admin/Root)
+      summary: "Listar pedidos de cargas arribadas para la bodega, con relaciones de cajas y cliente (Bodeguero/Admin/Root)"
       tags:
         - Orders
       x-role-group: bodeguero
@@ -6768,7 +6753,12 @@ paths:
     get:
       operationId: backend_get_api_v1_tarifas_logisticas
       parameters:
-[]
+        -           description: "Filtrar por concepto (búsqueda parcial, case-insensitive)"
+          in: query
+          name: concept
+          required: false
+          schema:
+            type: string
       responses:
         200:
           content:

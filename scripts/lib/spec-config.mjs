@@ -2258,10 +2258,11 @@ export const operationOverrides = {
     responses: Object.fromEntries([jsonResponse('201', 'Solicitud creada con éxito', 'GenericObject')]),
   },
   'get /api/v1/bodeguero/pedidos': {
-    summary: 'Listar pedidos en cargas cerradas para la bodega (Bodeguero/Admin/Root)',
+    summary: 'Listar pedidos de cargas arribadas para la bodega, con relaciones de cajas y cliente (Bodeguero/Admin/Root)',
     parameters: [
       { name: 'clientId', in: 'query', required: false, schema: { type: 'integer' }, description: 'Filtrar por cliente' },
       { name: 'cargaId', in: 'query', required: false, schema: { type: 'integer' }, description: 'Filtrar por carga' },
+      { name: 'excludeDelivered', in: 'query', required: false, schema: { type: 'boolean' }, description: 'true/1: excluye también pedidos DELIVERED, ademas de CANCELLED/REJECTED. Usar para obtener solo pedidos pendientes de despacho físico en bodega' },
     ],
     responses: Object.fromEntries([jsonResponse('200', 'Pedidos de bodega', 'GenericObjectArray')]),
   },

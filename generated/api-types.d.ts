@@ -1517,14 +1517,6 @@ export interface Operations {
       "200": GenericObject
     }
   }
-  "backend_get_api_v1_bodeguero_ordenes_fisicas": {
-    method: "GET"
-    path: "/api/v1/bodeguero/ordenes-fisicas"
-    requestBody: undefined
-    responses: {
-      "200": GenericObject
-    }
-  }
   "backend_get_api_v1_bodeguero_pedidos": {
     method: "GET"
     path: "/api/v1/bodeguero/pedidos"

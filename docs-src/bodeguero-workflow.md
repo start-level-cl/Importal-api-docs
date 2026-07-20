@@ -282,13 +282,14 @@ Permite obtener el detalle completo de una entrega específica por su ID.
     *   `total_weight`: Peso total en kg de los bultos asociados.
     *   `cajas`: Colección desduplicada de las cajas físicas asociadas a las órdenes de este cliente.
 
-### 6.4 Listado de Órdenes Físicas en Bodega (`/bodeguero/ordenes-fisicas`)
-Permite consultar en tiempo real qué pedidos se encuentran almacenados físicamente en la bodega de destino (Chile) y que aún no han sido despachados ni cancelados.
-*   **Endpoint:** `GET /api/v1/bodeguero/ordenes-fisicas`
+### 6.4 Listado de Órdenes Físicas en Bodega (`/bodeguero/pedidos?excludeDelivered=true`)
+Permite consultar en tiempo real qué pedidos se encuentran almacenados físicamente en la bodega de destino (Chile) y que aún no han sido despachados ni cancelados. Este caso de uso se sirve ahora desde el endpoint unificado `GET /bodeguero/pedidos` (el antiguo `GET /bodeguero/ordenes-fisicas` fue removido por tener lógica duplicada).
+*   **Endpoint:** `GET /api/v1/bodeguero/pedidos?excludeDelivered=true`
 *   **Lógica de Selección:**
     1. Filtra las órdenes cuya carga asociada se encuentra en estado `CargaStatus.ARRIVED`.
-    2. Excluye de forma estricta los estados finales de salida física (`OrderStatus.DELIVERED`, `OrderStatus.CANCELLED` y `OrderStatus.REJECTED`).
+    2. Con `excludeDelivered=true`, excluye de forma estricta los estados finales de salida física (`OrderStatus.DELIVERED`, `OrderStatus.CANCELLED` y `OrderStatus.REJECTED`). Sin el flag, solo excluye `CANCELLED`/`REJECTED` (comportamiento histórico de `/bodeguero/pedidos`, útil para búsquedas que también deben incluir entregados).
     3. Retorna las órdenes con sus relaciones completas (`product`, `carga`, `cajas`, `client`) para auditar qué cajas tienen asignadas y si ya han sido marcadas como revisadas (`revisado: boolean`).
+    4. También admite los filtros `clientId` y `cargaId` para acotar la búsqueda a un cliente o carga específicos.
 
 ---
 

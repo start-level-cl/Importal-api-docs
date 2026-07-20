@@ -1428,7 +1428,17 @@
     ],
     "security": "bearerAuth",
     "methodName": "getLogisticsRates",
-    "parameters": [],
+    "parameters": [
+      {
+        "name": "concept",
+        "in": "query",
+        "required": false,
+        "description": "Filtrar por concepto (búsqueda parcial, case-insensitive)",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
     "roleGroup": "comun"
   },
   {
@@ -3127,26 +3137,6 @@
     ],
     "security": "bearerAuth",
     "methodName": "updateWarehouseInventory",
-    "parameters": [],
-    "roleGroup": "bodeguero"
-  },
-  {
-    "service": "backend",
-    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
-    "method": "get",
-    "path": "/api/v1/bodeguero/ordenes-fisicas",
-    "operationId": "backend_get_api_v1_bodeguero_ordenes_fisicas",
-    "tag": "Orders",
-    "tags": [
-      "Orders"
-    ],
-    "roles": [
-      "bodeguero",
-      "admin",
-      "root"
-    ],
-    "security": "bearerAuth",
-    "methodName": "getPhysicalWarehouseOrders",
     "parameters": [],
     "roleGroup": "bodeguero"
   },

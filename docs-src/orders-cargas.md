@@ -52,13 +52,13 @@ Esta sección documenta el ciclo de vida completo de los pedidos y cargas de imp
 | `POST` | `/api/v1/cliente/deliveries/:id/solicitar-envio` | `CLIENT` | Solicitar despacho de delivery. |
 | `POST` | `/api/v1/cliente/deliveries/:id/confirmar-entrega` | `CLIENT` | Confirmar recepción de delivery. |
 
-### Bodeguero — Inventario
+### Bodeguero — Inventario y Pedidos
 | Método | Ruta | Roles Permitidos | Descripción |
 | :--- | :--- | :--- | :--- |
 | `POST` | `/api/v1/bodeguero/inventario` | `BODEGUERO`, `ADMIN`, `ROOT` | Crear entrada de inventario. |
 | `GET` | `/api/v1/bodeguero/inventario` | `BODEGUERO`, `ADMIN`, `ROOT` | Listar inventario de bodega. |
 | `PUT` | `/api/v1/bodeguero/inventario/:id` | `BODEGUERO`, `ADMIN`, `ROOT` | Actualizar entrada de inventario. |
-| `GET` | `/api/v1/bodeguero/ordenes-fisicas` | `BODEGUERO`, `ADMIN`, `ROOT` | Listar órdenes físicas en bodega. |
+| `GET` | `/api/v1/bodeguero/pedidos` | `BODEGUERO`, `ADMIN`, `ROOT` | Listar pedidos de bodega (filtros por cliente, carga y `excludeDelivered`). |
 
 ---
 
@@ -289,13 +289,17 @@ Permite al vendedor indicar que acepta continuar operando dentro de una carga qu
 - **Ruta:** `/api/v1/bodeguero/inventario/:id`
 - **Cuerpo (JSON):** `UpdateWarehouseInventoryDto`
 
-### 5.4 Órdenes Físicas en Bodega
+### 5.4 Listar Pedidos de Bodega
 
-Devuelve las órdenes físicas actualmente almacenadas en bodega esperando despacho.
+Devuelve los pedidos de cargas ya arribadas (`ARRIVED`), con las relaciones `product`, `carga`, `cajas` y `client`. Reemplaza al antiguo endpoint `GET /bodeguero/ordenes-fisicas` (removido), que tenía la misma lógica de filtrado duplicada.
 
 - **Método:** `GET`
-- **Ruta:** `/api/v1/bodeguero/ordenes-fisicas`
+- **Ruta:** `/api/v1/bodeguero/pedidos`
 - **Roles Permitidos:** `BODEGUERO`, `ADMIN`, `ROOT`
+- **Query Parameters:**
+  - `clientId` (opcional, número): Filtrar por cliente.
+  - `cargaId` (opcional, número): Filtrar por carga.
+  - `excludeDelivered` (opcional, booleano `true`/`1`): Además de excluir siempre `CANCELLED`/`REJECTED`, excluye también `DELIVERED`. Úsalo para obtener solo los pedidos físicamente pendientes de despacho — este es el caso de uso que antes cubría `ordenes-fisicas`, ej. `GET /api/v1/bodeguero/pedidos?excludeDelivered=true`.
 
 > [!TIP]
 > Para el flujo completo de bodega (recepción, revisión, empaque y despacho), consulta la [Guía de Flujo de Bodega](./bodeguero-workflow).
