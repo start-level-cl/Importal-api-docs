@@ -294,3 +294,52 @@ Verifica el código OTP recibido y aplica el cambio en la base de datos.
 > 3. El usuario llama a `verify` con el código recibido.
 > 4. Si el código es válido, el cambio se persiste en la base de datos y se sincroniza con el servicio de autenticación.
 
+---
+
+## 7. Desuscripción de Notificaciones (Público)
+
+Permite a los usuarios desuscribirse de las notificaciones de manera pública, por ejemplo, mediante un enlace de desuscripción de un solo clic en los correos recibidos. Estos endpoints no requieren autenticación.
+
+### 7.1 Obtener Desuscripción (GET)
+
+Procesa una solicitud de desuscripción vía GET y redirige al usuario.
+
+- **Método:** `GET`
+- **Ruta:** `/api/v1/users/unsubscribe`
+- **Roles Permitidos:** Público (Sin autenticación)
+- **Parámetros de Consulta (Query Params):**
+  - `id` (número, requerido): ID del usuario que desea desuscribirse.
+  - `token` (string, requerido): Token HMAC generado para validar la autenticidad de la solicitud.
+  - `redirect` (string, opcional): URL a la cual redirigir al usuario tras procesar la desuscripción.
+- **Respuesta Exitosa:**
+  - Redirección HTTP (`302 Found`) a la URL especificada en `redirect` (o a una URL por defecto configurada en el sistema).
+
+### 7.2 Confirmar Desuscripción (POST)
+
+Procesa la desuscripción del usuario directamente a través de una petición JSON.
+
+- **Método:** `POST`
+- **Ruta:** `/api/v1/users/unsubscribe`
+- **Roles Permitidos:** Público (Sin autenticación)
+- **Cuerpo de la Petición (JSON):**
+  ```json
+  {
+    "id": 12,
+    "token": "d748f32a..."
+  }
+  ```
+  - `id` (número, requerido): ID del usuario que desea desuscribirse.
+  - `token` (string, requerido): Token HMAC de validación.
+- **Respuesta Exitosa (200 OK):**
+  ```json
+  {
+    "message": "Desuscripción exitosa"
+  }
+  ```
+
+> [!NOTE]
+> **Seguridad y Validación:**
+> - El `token` es un código hash HMAC-SHA256 generado usando el ID del usuario y una clave secreta del servidor. Esto previene que terceros puedan desuscribir a usuarios de forma arbitraria.
+> - Al procesar la desuscripción, el sistema desactiva el canal de notificaciones por correo electrónico (`email = false`) y opcionalmente puede revocar el consentimiento general.
+
+

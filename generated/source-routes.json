@@ -4239,6 +4239,47 @@
     "roleGroup": "comun"
   },
   {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/users/controllers/users.controller.ts",
+    "method": "post",
+    "path": "/api/v1/users/unsubscribe",
+    "operationId": "backend_post_api_v1_users_unsubscribe",
+    "tag": "Users",
+    "tags": [
+      "Users"
+    ],
+    "roles": [],
+    "security": "bearerAuth",
+    "methodName": "unsubscribePost",
+    "parameters": [
+      {
+        "name": " id: number; token: string ",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/users/controllers/users.controller.ts",
+    "method": "get",
+    "path": "/api/v1/users/unsubscribe",
+    "operationId": "backend_get_api_v1_users_unsubscribe",
+    "tag": "Users",
+    "tags": [
+      "Users"
+    ],
+    "roles": [],
+    "security": "bearerAuth",
+    "methodName": "unsubscribeGet",
+    "parameters": [],
+    "roleGroup": "comun"
+  },
+  {
     "service": "registration-lambda",
     "source": "Importal-registration-lambda/src/index.ts",
     "method": "post",

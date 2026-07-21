@@ -2100,6 +2100,22 @@ export interface Operations {
       "200": GenericMessage
     }
   }
+  "backend_get_api_v1_users_unsubscribe": {
+    method: "GET"
+    path: "/api/v1/users/unsubscribe"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_post_api_v1_users_unsubscribe": {
+    method: "POST"
+    path: "/api/v1/users/unsubscribe"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
   "backend_delete_api_v1_users_id": {
     method: "DELETE"
     path: "/api/v1/users/{id}"

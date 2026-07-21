@@ -10664,6 +10664,73 @@
         "x-source": "Importal-backend/src/modules/users/controllers/users.controller.ts"
       }
     },
+    "/api/v1/users/unsubscribe": {
+      "get": {
+        "operationId": "backend_get_api_v1_users_unsubscribe",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "unsubscribeGet",
+        "tags": [
+          "Users"
+        ],
+        "x-role-group": "comun",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/users/controllers/users.controller.ts"
+      },
+      "post": {
+        "operationId": "backend_post_api_v1_users_unsubscribe",
+        "parameters": [
+          {
+            "in": "path",
+            "name": " id: number; token: string ",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "unsubscribePost",
+        "tags": [
+          "Users"
+        ],
+        "x-role-group": "comun",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/users/controllers/users.controller.ts"
+      }
+    },
     "/api/v1/users/{id}": {
       "delete": {
         "operationId": "backend_delete_api_v1_users_id",
