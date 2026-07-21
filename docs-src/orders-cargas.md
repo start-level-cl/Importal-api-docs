@@ -211,6 +211,7 @@ Permite al vendedor indicar que acepta continuar operando dentro de una carga qu
 - **Ruta:** `/api/v1/vendedor/pedidos-carga/status`
 - **Query Parameters:**
   - `tipo_carga` (opcional): `AEREA` o `MARITIMA`.
+  - `status` (opcional): Filtrar por estado de la asignación del vendedor (valores: ACTIVE, INACTIVE. Por defecto: ACTIVE).
   - `page` (opcional): Número de página para la paginación.
   - `limit` (opcional): Límite de elementos por página.
 - **Respuesta:**
