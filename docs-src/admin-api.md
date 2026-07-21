@@ -494,7 +494,7 @@ Permite obtener informes consolidados de los flujos de peso, ingresos y cantidad
 * **Ruta:** `/api/v1/vendedor/metrics/carga/:id`
 * **Roles Autorizados:** `VENDOR`
 * **Response:**
-  Retorna la porción de métricas correspondiente únicamente a las publicaciones y pedidos vendidos por el vendedor solicitante dentro de la carga indicada (sus ingresos USD/CLP, peso físico y cantidad de ítems).
+  Retorna la porción de métricas correspondiente únicamente a las publicaciones y pedidos vendidos por el vendedor solicitante dentro de la carga indicada. Los campos devueltos incluyen: `total_orders`, `total_units_sold` (unidades físicas vendidas), `income_usd` (ingresos en USD), `average_order_value_usd` (ticket promedio por orden en USD), `total_weight_kg` y el desglose de pedidos por estado en `status_breakdown` (excluyendo pedidos entregados `DELIVERED`). Se eliminan los campos `carga_id`, `vendor_id` e `income_clp` para simplificar el payload.
 
 ---
 
