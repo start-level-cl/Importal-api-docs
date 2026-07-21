@@ -211,6 +211,22 @@ Permite al vendedor indicar que acepta continuar operando dentro de una carga qu
 - **Ruta:** `/api/v1/vendedor/pedidos-carga/status`
 - **Query Parameters:**
   - `tipo_carga` (opcional): `AEREA` o `MARITIMA`.
+  - `page` (opcional): Número de página para la paginación.
+  - `limit` (opcional): Límite de elementos por página.
+- **Respuesta:**
+  ```json
+  {
+    "data": [
+      // ... list of items
+    ],
+    "meta": {
+      "total": 42,
+      "page": 1,
+      "limit": 10,
+      "last_page": 5
+    }
+  }
+  ```
 
 ---
 
