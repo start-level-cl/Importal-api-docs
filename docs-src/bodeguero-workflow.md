@@ -172,7 +172,9 @@ Una vez que se han verificado los pagos y los productos están embalados, se rea
 *   **Campos (form-data):**
     *   `bultos`: string JSON con el listado de bultos, ej. `'[{"bulto_number":1,"weight_kg":14.5}]'`.
     *   `photos`: **una imagen por bulto**, en el mismo orden que `bultos` (correlación posicional `photos[i]` → `bultos[i]`, máx. 20). El backend valida la regla 1:1 — la cantidad de fotos debe coincidir con la de bultos, si no responde `400`. Cada foto se sube a S3 y se guarda como `BultoPhoto`; se devuelven firmadas en los reads de deliveries.
-    *   `video_ref_info`, `camera_id`, `carrier_proof_url`: opcionales, texto.
+    *   `video_ref_info`, `camera_id`: opcionales, texto.
+    *   `audit_date`: opcional, día de la auditoría en formato "YYYY-MM-DD" (ISO Date).
+    *   `audit_start_time`, `audit_end_time`: opcionales, horas de inicio y término en formato "HH:MM" (texto).
 
 ### 5.1 Cambios en Base de Datos tras Registrar Auditoría y Empaque
 Cuando se procesa exitosamente la auditoría:
