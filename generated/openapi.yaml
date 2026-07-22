@@ -608,6 +608,11 @@ components:
             type: string
           maxItems: 4
           type: array
+        sizes:
+          description: Arreglo opcional de tallas con stock individual
+          items:
+            $ref: "#/components/schemas/WarehouseInventorySizeDto"
+          type: array
         sku:
           nullable: true
           type: string
@@ -1835,6 +1840,11 @@ components:
       properties:
         location:
           type: string
+        sizes:
+          description: Arreglo opcional de tallas con stock individual
+          items:
+            $ref: "#/components/schemas/WarehouseInventorySizeDto"
+          type: array
         stock:
           minimum: 0
           type: integer
@@ -2121,6 +2131,11 @@ components:
           type: array
         registered_by_id:
           type: integer
+        sizes:
+          description: Arreglo de tallas con su ID y stock individual
+          items:
+            $ref: "#/components/schemas/WarehouseInventorySize"
+          type: array
         sku:
           nullable: true
           type: string
@@ -2163,6 +2178,34 @@ components:
         - page
         - limit
         - pages
+      type: object
+    WarehouseInventorySize:
+      additionalProperties: false
+      properties:
+        id:
+          type: integer
+        stock:
+          type: integer
+        talla:
+          type: string
+      required:
+        - id
+        - talla
+        - stock
+      type: object
+    WarehouseInventorySizeDto:
+      additionalProperties: false
+      properties:
+        stock:
+          description: Cantidad de stock para esta talla
+          minimum: 0
+          type: integer
+        talla:
+          description: Nombre o código de la talla
+          type: string
+      required:
+        - talla
+        - stock
       type: object
   securitySchemes:
     bearerAuth:
@@ -3221,6 +3264,25 @@ paths:
         201:
           content:
             application/json:
+              example:
+                id: 15
+                location: "Pasillo 2, Estante C"
+                marca: Nike
+                name: Buzo Deportivo Nike
+                photo_urls:
+                  - "https://cdn.importal.cl/inventario/buzo.jpg"
+                registered_by_id: 3
+                sizes:
+                  -                     id: 1
+                    stock: 3
+                    talla: M
+                  -                     id: 2
+                    stock: 5
+                    talla: L
+                sku: "BUZ-NK-01"
+                status: ACTIVE
+                stock: 8
+                talla: null
               schema:
                 $ref: "#/components/schemas/WarehouseInventoryItem"
           description: "Ítem de inventario creado en estado ACTIVE, con photo_urls resuelto a URLs firmadas"
@@ -3245,6 +3307,14 @@ paths:
       requestBody:
         content:
           application/json:
+            example:
+              location: "Pasillo 2, Estante C"
+              sizes:
+                -                   stock: 4
+                  talla: M
+                -                   stock: 6
+                  talla: L
+              stock: 10
             schema:
               $ref: "#/components/schemas/UpdateWarehouseInventoryRequest"
         required: true
@@ -3252,6 +3322,25 @@ paths:
         200:
           content:
             application/json:
+              example:
+                id: 15
+                location: "Pasillo 2, Estante C"
+                marca: Nike
+                name: Buzo Deportivo Nike
+                photo_urls:
+                  - "https://cdn.importal.cl/inventario/buzo.jpg"
+                registered_by_id: 3
+                sizes:
+                  -                     id: 1
+                    stock: 3
+                    talla: M
+                  -                     id: 2
+                    stock: 5
+                    talla: L
+                sku: "BUZ-NK-01"
+                status: ACTIVE
+                stock: 8
+                talla: null
               schema:
                 $ref: "#/components/schemas/WarehouseInventoryItem"
           description: Ítem de inventario actualizado
@@ -5368,6 +5457,25 @@ paths:
         201:
           content:
             application/json:
+              example:
+                id: 15
+                location: "Pasillo 2, Estante C"
+                marca: Nike
+                name: Buzo Deportivo Nike
+                photo_urls:
+                  - "https://cdn.importal.cl/inventario/buzo.jpg"
+                registered_by_id: 3
+                sizes:
+                  -                     id: 1
+                    stock: 3
+                    talla: M
+                  -                     id: 2
+                    stock: 5
+                    talla: L
+                sku: "BUZ-NK-01"
+                status: ACTIVE
+                stock: 8
+                talla: null
               schema:
                 $ref: "#/components/schemas/WarehouseInventoryItem"
           description: "Ítem de inventario creado en estado ACTIVE, con photo_urls resuelto a URLs firmadas"
@@ -5420,6 +5528,25 @@ paths:
         200:
           content:
             application/json:
+              example:
+                id: 15
+                location: "Pasillo 2, Estante C"
+                marca: Nike
+                name: Buzo Deportivo Nike
+                photo_urls:
+                  - "https://cdn.importal.cl/inventario/buzo.jpg"
+                registered_by_id: 3
+                sizes:
+                  -                     id: 1
+                    stock: 3
+                    talla: M
+                  -                     id: 2
+                    stock: 5
+                    talla: L
+                sku: "BUZ-NK-01"
+                status: ACTIVE
+                stock: 8
+                talla: null
               schema:
                 $ref: "#/components/schemas/WarehouseInventoryItem"
           description: "Ítem de inventario, con photo_urls resuelto a URLs firmadas"
@@ -5449,6 +5576,14 @@ paths:
       requestBody:
         content:
           application/json:
+            example:
+              location: "Pasillo 2, Estante C"
+              sizes:
+                -                   stock: 4
+                  talla: M
+                -                   stock: 6
+                  talla: L
+              stock: 10
             schema:
               $ref: "#/components/schemas/UpdateWarehouseInventoryRequest"
         required: true
@@ -5456,6 +5591,25 @@ paths:
         200:
           content:
             application/json:
+              example:
+                id: 15
+                location: "Pasillo 2, Estante C"
+                marca: Nike
+                name: Buzo Deportivo Nike
+                photo_urls:
+                  - "https://cdn.importal.cl/inventario/buzo.jpg"
+                registered_by_id: 3
+                sizes:
+                  -                     id: 1
+                    stock: 3
+                    talla: M
+                  -                     id: 2
+                    stock: 5
+                    talla: L
+                sku: "BUZ-NK-01"
+                status: ACTIVE
+                stock: 8
+                talla: null
               schema:
                 $ref: "#/components/schemas/WarehouseInventoryItem"
           description: Ítem de inventario actualizado
@@ -5479,6 +5633,14 @@ paths:
       requestBody:
         content:
           application/json:
+            example:
+              location: "Pasillo 2, Estante C"
+              sizes:
+                -                   stock: 4
+                  talla: M
+                -                   stock: 6
+                  talla: L
+              stock: 10
             schema:
               $ref: "#/components/schemas/UpdateWarehouseInventoryRequest"
         required: true
@@ -5486,6 +5648,25 @@ paths:
         200:
           content:
             application/json:
+              example:
+                id: 15
+                location: "Pasillo 2, Estante C"
+                marca: Nike
+                name: Buzo Deportivo Nike
+                photo_urls:
+                  - "https://cdn.importal.cl/inventario/buzo.jpg"
+                registered_by_id: 3
+                sizes:
+                  -                     id: 1
+                    stock: 3
+                    talla: M
+                  -                     id: 2
+                    stock: 5
+                    talla: L
+                sku: "BUZ-NK-01"
+                status: ACTIVE
+                stock: 8
+                talla: null
               schema:
                 $ref: "#/components/schemas/WarehouseInventoryItem"
           description: Ítem de inventario actualizado

@@ -225,6 +225,7 @@ export type CreateWarehouseInventoryRequest = {
   marca?: string
   name: string
   photos?: (string)[]
+  sizes?: (WarehouseInventorySizeDto)[]
   sku?: string
   stock: number
   talla?: string
@@ -671,6 +672,7 @@ export type UpdateUserRequest = {
 
 export type UpdateWarehouseInventoryRequest = {
   location?: string
+  sizes?: (WarehouseInventorySizeDto)[]
   stock?: number
   talla?: string
 }
@@ -778,6 +780,7 @@ export type WarehouseInventoryItem = {
   name: string
   photo_urls?: (string)[]
   registered_by_id?: number
+  sizes?: (WarehouseInventorySize)[]
   sku?: string
   status: "ACTIVE" | "INACTIVE"
   stock: number
@@ -790,6 +793,17 @@ export type WarehouseInventoryListResponse = {
   page: number
   pages: number
   total: number
+}
+
+export type WarehouseInventorySize = {
+  id: number
+  stock: number
+  talla: string
+}
+
+export type WarehouseInventorySizeDto = {
+  stock: number
+  talla: string
 }
 
 export interface Operations {

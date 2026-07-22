@@ -19,7 +19,7 @@ Este módulo documenta el sistema de tickets de soporte de Pascalle Store, dispo
 | **Admin** | `PUT` | `/api/v1/admin/soporte/tickets/:id/resolucion` | `ADMIN`, `ROOT` | Resolver un ticket. |
 | **Admin** | `POST` | `/api/v1/admin/tickets/:id/resolver` | `ADMIN`, `ROOT` | Alias: Resolver un ticket. |
 | **Admin** | `POST` | `/api/v1/admin/tickets/:id/proponer-trueque` | `ADMIN`, `ROOT` | Proponer un producto de trueque al cliente. |
-| **Admin** | `GET` | `/api/v1/admin/trueques/productos-bodega`<br>`/api/v1/admin/tickets/productos-bodega`<br>`/api/v1/admin/soporte/productos-bodega` | `ADMIN`, `ROOT` | Listar productos de bodega para trueque (filtro query `talla`, retorna `talla`). |
+| **Admin** | `GET` | `/api/v1/admin/trueques/productos-bodega`<br>`/api/v1/admin/tickets/productos-bodega`<br>`/api/v1/admin/soporte/productos-bodega` | `ADMIN`, `ROOT` | Listar productos de bodega para trueque (filtro query `talla`, retorna `sizes: Array<{ id, talla, stock }>`). |
 | **Admin** | `POST` | `/api/v1/admin/tickets/:id/resolver-transporte` | `ADMIN`, `ROOT` | Aprobar o rechazar solicitud de transporte. |
 | **Admin** | `POST` | `/api/v1/admin/tickets/:id/cancelar-trueque` | `ADMIN`, `ROOT` | Cancelar la propuesta de trueque activa. |
 
@@ -164,7 +164,7 @@ Permite consultar el catálogo de ítems operativos de bodega para seleccionar p
   - `status` (enum `WarehouseInventoryStatus`, opcional): Filtrar por estado (`ACTIVE`/`INACTIVE`, por defecto `ACTIVE`).
   - `page` (número, opcional): Número de página (por defecto 1).
   - `limit` (número, opcional): Ítems por página (por defecto 20).
-- **Respuesta Exitosa (200 OK):** Retorna el listado paginado de productos de bodega (`WarehouseInventoryItem`), donde cada objeto incluye el campo `talla`:
+- **Respuesta Exitosa (200 OK):** Retorna el listado paginado de productos de bodega (`WarehouseInventoryItem`), donde cada objeto incluye el arreglo de tallas `sizes: Array<{ id: number, talla: string, stock: number }>` y la propiedad `talla` (opcional/legacy):
   ```json
   {
     "data": [
@@ -173,12 +173,16 @@ Permite consultar el catálogo de ítems operativos de bodega para seleccionar p
         "name": "Buzo Deportivo Nike",
         "sku": "BUZ-NK-01",
         "marca": "Nike",
-        "talla": "L",
+        "talla": null,
         "stock": 8,
         "location": "Pasillo 2, Estante C",
         "photo_urls": ["https://s3.amazonaws.com/bucket/buzo.jpg"],
         "status": "ACTIVE",
-        "registered_by_id": 3
+        "registered_by_id": 3,
+        "sizes": [
+          { "id": 1, "talla": "M", "stock": 3 },
+          { "id": 2, "talla": "L", "stock": 5 }
+        ]
       }
     ],
     "total": 1,

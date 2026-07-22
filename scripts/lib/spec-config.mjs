@@ -689,6 +689,43 @@ const schemaExamples = {
       updated_at: '2026-07-01T18:00:00.000Z',
     },
   },
+  WarehouseInventorySize: { id: 1, talla: 'M', stock: 3 },
+  WarehouseInventorySizeDto: { talla: 'M', stock: 3 },
+  CreateWarehouseInventoryRequest: {
+    name: 'Buzo Deportivo Nike',
+    sku: 'BUZ-NK-01',
+    marca: 'Nike',
+    stock: 8,
+    location: 'Pasillo 2, Estante C',
+    sizes: [
+      { talla: 'M', stock: 3 },
+      { talla: 'L', stock: 5 },
+    ],
+  },
+  UpdateWarehouseInventoryRequest: {
+    stock: 10,
+    location: 'Pasillo 2, Estante C',
+    sizes: [
+      { talla: 'M', stock: 4 },
+      { talla: 'L', stock: 6 },
+    ],
+  },
+  WarehouseInventoryItem: {
+    id: 15,
+    name: 'Buzo Deportivo Nike',
+    sku: 'BUZ-NK-01',
+    marca: 'Nike',
+    talla: null,
+    stock: 8,
+    location: 'Pasillo 2, Estante C',
+    photo_urls: ['https://cdn.importal.cl/inventario/buzo.jpg'],
+    status: 'ACTIVE',
+    registered_by_id: 3,
+    sizes: [
+      { id: 1, talla: 'M', stock: 3 },
+      { id: 2, talla: 'L', stock: 5 },
+    ],
+  },
 }
 
 function getSchemaExample(schemaRef) {
@@ -1070,6 +1107,21 @@ export const schemas = {
     ['id', 'marca', 'price_usd'],
   ),
   ProductArray: { type: 'array', items: { $ref: '#/components/schemas/Product' } },
+  WarehouseInventorySize: objectSchema(
+    {
+      id: { type: 'integer' },
+      talla: { type: 'string' },
+      stock: { type: 'integer' },
+    },
+    ['id', 'talla', 'stock'],
+  ),
+  WarehouseInventorySizeDto: objectSchema(
+    {
+      talla: { type: 'string', description: 'Nombre o código de la talla' },
+      stock: { type: 'integer', minimum: 0, description: 'Cantidad de stock para esta talla' },
+    },
+    ['talla', 'stock'],
+  ),
   CreateWarehouseInventoryRequest: objectSchema(
     {
       name: { type: 'string' },
@@ -1084,6 +1136,11 @@ export const schemas = {
         maxItems: 4,
         description: 'Opcional, hasta 4 imágenes. A diferencia de vendedor/productos, no es obligatorio adjuntar fotos',
       },
+      sizes: {
+        type: 'array',
+        items: { $ref: '#/components/schemas/WarehouseInventorySizeDto' },
+        description: 'Arreglo opcional de tallas con stock individual',
+      },
     },
     ['name', 'stock', 'location'],
   ),
@@ -1091,6 +1148,11 @@ export const schemas = {
     stock: { type: 'integer', minimum: 0 },
     location: { type: 'string' },
     talla: { type: 'string', nullable: true, description: 'Talla del producto en bodega' },
+    sizes: {
+      type: 'array',
+      items: { $ref: '#/components/schemas/WarehouseInventorySizeDto' },
+      description: 'Arreglo opcional de tallas con stock individual',
+    },
   }),
   WarehouseInventoryItem: objectSchema(
     {
@@ -1104,6 +1166,11 @@ export const schemas = {
       photo_urls: { type: 'array', items: { type: 'string' }, description: 'URLs firmadas de S3 (presigned, expiran en 1h)' },
       status: stringEnum(['ACTIVE', 'INACTIVE']),
       registered_by_id: { type: 'integer' },
+      sizes: {
+        type: 'array',
+        items: { $ref: '#/components/schemas/WarehouseInventorySize' },
+        description: 'Arreglo de tallas con su ID y stock individual',
+      },
     },
     ['id', 'name', 'stock', 'location', 'status'],
   ),
