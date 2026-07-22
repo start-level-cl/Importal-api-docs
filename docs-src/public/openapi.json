@@ -856,6 +856,11 @@
           "stock": {
             "minimum": 0,
             "type": "integer"
+          },
+          "talla": {
+            "description": "Talla del producto en bodega",
+            "nullable": true,
+            "type": "string"
           }
         },
         "required": [
@@ -2573,6 +2578,11 @@
           "stock": {
             "minimum": 0,
             "type": "integer"
+          },
+          "talla": {
+            "description": "Talla del producto en bodega",
+            "nullable": true,
+            "type": "string"
           }
         },
         "type": "object"
@@ -2975,6 +2985,11 @@
           },
           "stock": {
             "type": "integer"
+          },
+          "talla": {
+            "description": "Talla del producto en bodega",
+            "nullable": true,
+            "type": "string"
           }
         },
         "required": [
@@ -4485,6 +4500,182 @@
         "x-source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts"
       }
     },
+    "/api/v1/admin/inventario-bodega": {
+      "get": {
+        "operationId": "backend_get_api_v1_admin_inventario_bodega",
+        "parameters": [
+          {
+            "description": "Filtrar por nombre (parcial, case-insensitive)",
+            "in": "query",
+            "name": "name",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filtrar por SKU (parcial, case-insensitive)",
+            "in": "query",
+            "name": "sku",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filtrar por talla del producto en bodega",
+            "in": "query",
+            "name": "talla",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filtrar por estado. Sin este filtro, retorna ítems de todos los estados",
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "enum": [
+                "ACTIVE",
+                "INACTIVE"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Número de página (default 1)",
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Ítems por página (default 20)",
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WarehouseInventoryListResponse"
+                }
+              }
+            },
+            "description": "Listado paginado de inventario"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Listar el inventario interno de bodega, paginado (Admin/Root)",
+        "tags": [
+          "Orders"
+        ],
+        "x-role-group": "admin",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+      },
+      "post": {
+        "operationId": "backend_post_api_v1_admin_inventario_bodega",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateWarehouseInventoryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WarehouseInventoryItem"
+                }
+              }
+            },
+            "description": "Ítem de inventario creado en estado ACTIVE, con photo_urls resuelto a URLs firmadas"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Registrar un ítem operativo en el inventario interno de bodega (Admin/Root)",
+        "tags": [
+          "Orders"
+        ],
+        "x-role-group": "admin",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+      }
+    },
+    "/api/v1/admin/inventario-bodega/{id}": {
+      "patch": {
+        "operationId": "backend_patch_api_v1_admin_inventario_bodega_id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateWarehouseInventoryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WarehouseInventoryItem"
+                }
+              }
+            },
+            "description": "Ítem de inventario actualizado"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Actualizar stock, ubicación y/o talla de un ítem de inventario (Admin/Root)",
+        "tags": [
+          "Orders"
+        ],
+        "x-role-group": "admin",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+      }
+    },
     "/api/v1/admin/logs": {
       "get": {
         "operationId": "backend_get_api_v1_admin_logs",
@@ -5117,6 +5308,95 @@
         "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
       }
     },
+    "/api/v1/admin/soporte/productos-bodega": {
+      "get": {
+        "operationId": "backend_get_api_v1_admin_soporte_productos_bodega",
+        "parameters": [
+          {
+            "description": "Filtrar por nombre",
+            "in": "query",
+            "name": "name",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filtrar por SKU",
+            "in": "query",
+            "name": "sku",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filtrar por talla del producto en bodega",
+            "in": "query",
+            "name": "talla",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filtrar por estado (default ACTIVE)",
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "enum": [
+                "ACTIVE",
+                "INACTIVE"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Número de página",
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Ítems por página",
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WarehouseInventoryListResponse"
+                }
+              }
+            },
+            "description": "Listado de productos de bodega para trueque"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Listar productos de bodega disponibles para trueque (Alias) (Admin/Root)",
+        "tags": [
+          "Admin"
+        ],
+        "x-role-group": "admin",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/support/controllers/support.controller.ts"
+      }
+    },
     "/api/v1/admin/soporte/tickets/{id}/resolucion": {
       "put": {
         "operationId": "backend_put_api_v1_admin_soporte_tickets_id_resolucion",
@@ -5551,6 +5831,95 @@
         "x-source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts"
       }
     },
+    "/api/v1/admin/tickets/productos-bodega": {
+      "get": {
+        "operationId": "backend_get_api_v1_admin_tickets_productos_bodega",
+        "parameters": [
+          {
+            "description": "Filtrar por nombre",
+            "in": "query",
+            "name": "name",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filtrar por SKU",
+            "in": "query",
+            "name": "sku",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filtrar por talla del producto en bodega",
+            "in": "query",
+            "name": "talla",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filtrar por estado (default ACTIVE)",
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "enum": [
+                "ACTIVE",
+                "INACTIVE"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Número de página",
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Ítems por página",
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WarehouseInventoryListResponse"
+                }
+              }
+            },
+            "description": "Listado de productos de bodega para trueque"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Listar productos de bodega disponibles para trueque (Alias) (Admin/Root)",
+        "tags": [
+          "Admin"
+        ],
+        "x-role-group": "admin",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/support/controllers/support.controller.ts"
+      }
+    },
     "/api/v1/admin/tickets/{id}/cancelar-trueque": {
       "post": {
         "operationId": "backend_post_api_v1_admin_tickets_id_cancelar_trueque",
@@ -5872,6 +6241,95 @@
         "x-role-group": "admin",
         "x-service": "backend",
         "x-source": "Importal-backend/src/modules/app/controllers/audit.controller.ts"
+      }
+    },
+    "/api/v1/admin/trueques/productos-bodega": {
+      "get": {
+        "operationId": "backend_get_api_v1_admin_trueques_productos_bodega",
+        "parameters": [
+          {
+            "description": "Filtrar por nombre",
+            "in": "query",
+            "name": "name",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filtrar por SKU",
+            "in": "query",
+            "name": "sku",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filtrar por talla del producto en bodega",
+            "in": "query",
+            "name": "talla",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filtrar por estado (default ACTIVE)",
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "enum": [
+                "ACTIVE",
+                "INACTIVE"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Número de página",
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Ítems por página",
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WarehouseInventoryListResponse"
+                }
+              }
+            },
+            "description": "Listado de productos de bodega para trueque"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Listar productos de bodega disponibles para trueque (Admin/Root)",
+        "tags": [
+          "Admin"
+        ],
+        "x-role-group": "admin",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/support/controllers/support.controller.ts"
       }
     },
     "/api/v1/admin/users": {
@@ -7262,6 +7720,15 @@
             }
           },
           {
+            "description": "Filtrar por talla del producto en bodega",
+            "in": "query",
+            "name": "talla",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
             "description": "Filtrar por estado. Sin este filtro, retorna ítems de todos los estados",
             "in": "query",
             "name": "status",
@@ -7446,6 +7913,53 @@
         "x-service": "backend",
         "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
       },
+      "patch": {
+        "operationId": "backend_patch_api_v1_bodeguero_inventario_id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateWarehouseInventoryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WarehouseInventoryItem"
+                }
+              }
+            },
+            "description": "Ítem de inventario actualizado"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Actualizar stock, ubicación y/o talla de un ítem de inventario (Bodeguero/Admin/Root)",
+        "tags": [
+          "Orders"
+        ],
+        "x-role-group": "bodeguero",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+      },
       "put": {
         "operationId": "backend_put_api_v1_bodeguero_inventario_id",
         "parameters": [
@@ -7485,7 +7999,7 @@
             "bearerAuth": []
           }
         ],
-        "summary": "Actualizar stock y/o ubicación de un ítem de inventario. Sin restricción de dueño (Bodeguero/Admin/Root)",
+        "summary": "Actualizar stock, ubicación y/o talla de un ítem de inventario. Sin restricción de dueño (Bodeguero/Admin/Root)",
         "tags": [
           "Orders"
         ],

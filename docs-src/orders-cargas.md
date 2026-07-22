@@ -52,14 +52,14 @@ Esta sección documenta el ciclo de vida completo de los pedidos y cargas de imp
 | `POST` | `/api/v1/cliente/deliveries/:id/solicitar-envio` | `CLIENT` | Solicitar despacho de delivery. |
 | `POST` | `/api/v1/cliente/deliveries/:id/confirmar-entrega` | `CLIENT` | Confirmar recepción de delivery. |
 
-### Bodeguero — Inventario y Pedidos
+### Bodeguero y Admin — Inventario y Pedidos
 | Método | Ruta | Roles Permitidos | Descripción |
 | :--- | :--- | :--- | :--- |
-| `POST` | `/api/v1/bodeguero/inventario` | `BODEGUERO`, `ADMIN`, `ROOT` | Crear entrada de inventario. |
-| `GET` | `/api/v1/bodeguero/inventario` | `BODEGUERO`, `ADMIN`, `ROOT` | Listar inventario de bodega. |
-| `GET` | `/api/v1/bodeguero/inventario/:id` | `BODEGUERO`, `ADMIN`, `ROOT` | Detalle de una entrada de inventario. |
-| `PUT` | `/api/v1/bodeguero/inventario/:id` | `BODEGUERO`, `ADMIN`, `ROOT` | Actualizar entrada de inventario. |
-| `DELETE` | `/api/v1/bodeguero/inventario/:id` | `BODEGUERO`, `ADMIN`, `ROOT` | Desactivar (soft-delete) una entrada de inventario. |
+| `POST` | `/api/v1/admin/inventario-bodega`<br>`/api/v1/bodeguero/inventario` | `BODEGUERO`, `ADMIN`, `ROOT` | Crear entrada de inventario (soporta `talla` opcional). |
+| `GET` | `/api/v1/admin/inventario-bodega`<br>`/api/v1/bodeguero/inventario` | `BODEGUERO`, `ADMIN`, `ROOT` | Listar inventario de bodega (soporta filtro query `talla`). |
+| `GET` | `/api/v1/admin/inventario-bodega/:id`<br>`/api/v1/bodeguero/inventario/:id` | `BODEGUERO`, `ADMIN`, `ROOT` | Detalle de una entrada de inventario (retorna `talla`). |
+| `PATCH` / `PUT` | `/api/v1/admin/inventario-bodega/:id`<br>`/api/v1/bodeguero/inventario/:id` | `BODEGUERO`, `ADMIN`, `ROOT` | Actualizar entrada de inventario (soporta `talla` opcional). |
+| `DELETE` | `/api/v1/admin/inventario-bodega/:id`<br>`/api/v1/bodeguero/inventario/:id` | `BODEGUERO`, `ADMIN`, `ROOT` | Desactivar (soft-delete) una entrada de inventario. |
 | `GET` | `/api/v1/bodeguero/pedidos` | `BODEGUERO`, `ADMIN`, `ROOT` | Listar pedidos de bodega (filtros por cliente, carga y `excludeDelivered`). |
 
 ---
@@ -292,37 +292,38 @@ CRUD de ítems operativos de bodega usados principalmente para trueques (`BARTER
 ### 5.1 Crear Entrada de Inventario
 
 - **Método:** `POST`
-- **Ruta:** `/api/v1/bodeguero/inventario`
+- **Ruta:** `/api/v1/admin/inventario-bodega` / `/api/v1/bodeguero/inventario`
 - **Roles Permitidos:** `BODEGUERO`, `ADMIN`, `ROOT`
 - **Content-Type:** `multipart/form-data` (igual que `POST /vendedor/productos`; reutiliza `S3Service.uploadFiles`, tope de 4 archivos).
-- **Campos (form-data):** `name` (requerido), `sku` (opcional), `marca` (opcional), `stock` (requerido, número ≥ 0), `location` (requerido), `photos` (opcional, hasta 4 imágenes — **a diferencia de `vendedor/productos`, no son obligatorias**).
-- **Respuesta:** `201 Created`. Se crea siempre en `status: "ACTIVE"`, con `registered_by_id` tomado del JWT y `photo_urls` resuelto a URLs firmadas de S3 (presigned, expiran en 1h).
+- **Campos (form-data):** `name` (requerido), `sku` (opcional), `marca` (opcional), `talla` (opcional, string — ej. `"S"`, `"M"`, `"L"`, `"42"`), `stock` (requerido, número ≥ 0), `location` (requerido), `photos` (opcional, hasta 4 imágenes — **a diferencia de `vendedor/productos`, no son obligatorias**).
+- **Respuesta:** `201 Created`. Se crea siempre en `status: "ACTIVE"`, con `registered_by_id` tomado del JWT, `talla` registrada (o null) y `photo_urls` resuelto a URLs firmadas de S3 (presigned, expiran en 1h).
 
 ### 5.2 Listar Inventario
 
 - **Método:** `GET`
-- **Ruta:** `/api/v1/bodeguero/inventario`
+- **Ruta:** `/api/v1/admin/inventario-bodega` / `/api/v1/bodeguero/inventario`
 - **Roles Permitidos:** `BODEGUERO`, `ADMIN`, `ROOT`
-- **Query Parameters:** `GetWarehouseInventoryQueryDto` — `name`, `sku`, `status` (`ACTIVE`/`INACTIVE`, opcional; sin filtro retorna todos los estados), `page`/`limit` (paginado).
+- **Query Parameters:** `GetWarehouseInventoryQueryDto` — `name`, `sku`, `talla` (opcional, filtro por talla del producto), `status` (`ACTIVE`/`INACTIVE`, opcional; sin filtro retorna todos los estados), `page`/`limit` (paginado).
 
 ### 5.3 Obtener Detalle de Entrada de Inventario
 
 - **Método:** `GET`
-- **Ruta:** `/api/v1/bodeguero/inventario/:id`
+- **Ruta:** `/api/v1/admin/inventario-bodega/:id` / `/api/v1/bodeguero/inventario/:id`
 - **Roles Permitidos:** `BODEGUERO`, `ADMIN`, `ROOT`
-- **Respuesta:** `200 OK` con el ítem, incluyendo la relación `registered_by` y `photo_urls` resuelto a URLs firmadas de S3.
+- **Respuesta:** `200 OK` con el ítem (incluyendo propiedad `talla`), la relación `registered_by` y `photo_urls` resuelto a URLs firmadas de S3.
 - **Errores:** `404` si el ítem no existe.
 
 ### 5.4 Actualizar Entrada de Inventario
 
-- **Método:** `PUT`
-- **Ruta:** `/api/v1/bodeguero/inventario/:id`
-- **Cuerpo (JSON):** `UpdateWarehouseInventoryDto` (`stock`, `location`).
+- **Método:** `PATCH` / `PUT`
+- **Ruta:** `/api/v1/admin/inventario-bodega/:id` / `/api/v1/bodeguero/inventario/:id`
+- **Roles Permitidos:** `BODEGUERO`, `ADMIN`, `ROOT`
+- **Cuerpo (JSON):** `UpdateWarehouseInventoryDto` (`stock`, `location`, `talla`).
 
 ### 5.5 Eliminar (Desactivar) Entrada de Inventario
 
 - **Método:** `DELETE`
-- **Ruta:** `/api/v1/bodeguero/inventario/:id`
+- **Ruta:** `/api/v1/admin/inventario-bodega/:id` / `/api/v1/bodeguero/inventario/:id`
 - **Roles Permitidos:** `BODEGUERO`, `ADMIN`, `ROOT`
 - **Respuesta:** `200 OK` — `{ "ok": true }`. Soft-delete: marca `status = "INACTIVE"` en lugar de borrar la fila, porque pedidos de trueque (`Order.warehouse_inventory_id`) pueden referenciar el ítem y esa FK no tiene `ON DELETE CASCADE`/`SET NULL` configurado.
 - **Errores:** `404` si el ítem no existe.

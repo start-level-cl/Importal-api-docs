@@ -227,6 +227,7 @@ export type CreateWarehouseInventoryRequest = {
   photos?: (string)[]
   sku?: string
   stock: number
+  talla?: string
 }
 
 export type DashboardSummary = {
@@ -671,6 +672,7 @@ export type UpdateUserRequest = {
 export type UpdateWarehouseInventoryRequest = {
   location?: string
   stock?: number
+  talla?: string
 }
 
 export type UserAddress = {
@@ -779,6 +781,7 @@ export type WarehouseInventoryItem = {
   sku?: string
   status: "ACTIVE" | "INACTIVE"
   stock: number
+  talla?: string
 }
 
 export type WarehouseInventoryListResponse = {
@@ -1028,6 +1031,30 @@ export interface Operations {
       "200": GenericObjectArray
     }
   }
+  "backend_get_api_v1_admin_inventario_bodega": {
+    method: "GET"
+    path: "/api/v1/admin/inventario-bodega"
+    requestBody: undefined
+    responses: {
+      "200": WarehouseInventoryListResponse
+    }
+  }
+  "backend_post_api_v1_admin_inventario_bodega": {
+    method: "POST"
+    path: "/api/v1/admin/inventario-bodega"
+    requestBody: CreateWarehouseInventoryRequest
+    responses: {
+      "201": WarehouseInventoryItem
+    }
+  }
+  "backend_patch_api_v1_admin_inventario_bodega_id": {
+    method: "PATCH"
+    path: "/api/v1/admin/inventario-bodega/{id}"
+    requestBody: UpdateWarehouseInventoryRequest
+    responses: {
+      "200": WarehouseInventoryItem
+    }
+  }
   "backend_get_api_v1_admin_logs": {
     method: "GET"
     path: "/api/v1/admin/logs"
@@ -1148,6 +1175,14 @@ export interface Operations {
       "200": GenericObject
     }
   }
+  "backend_get_api_v1_admin_soporte_productos_bodega": {
+    method: "GET"
+    path: "/api/v1/admin/soporte/productos-bodega"
+    requestBody: undefined
+    responses: {
+      "200": WarehouseInventoryListResponse
+    }
+  }
   "backend_put_api_v1_admin_soporte_tickets_id_resolucion": {
     method: "PUT"
     path: "/api/v1/admin/soporte/tickets/{id}/resolucion"
@@ -1236,6 +1271,14 @@ export interface Operations {
       "200": GenericObject
     }
   }
+  "backend_get_api_v1_admin_tickets_productos_bodega": {
+    method: "GET"
+    path: "/api/v1/admin/tickets/productos-bodega"
+    requestBody: undefined
+    responses: {
+      "200": WarehouseInventoryListResponse
+    }
+  }
   "backend_post_api_v1_admin_tickets_id_cancelar_trueque": {
     method: "POST"
     path: "/api/v1/admin/tickets/{id}/cancelar-trueque"
@@ -1290,6 +1333,14 @@ export interface Operations {
     requestBody: undefined
     responses: {
       "200": GenericObject
+    }
+  }
+  "backend_get_api_v1_admin_trueques_productos_bodega": {
+    method: "GET"
+    path: "/api/v1/admin/trueques/productos-bodega"
+    requestBody: undefined
+    responses: {
+      "200": WarehouseInventoryListResponse
     }
   }
   "backend_get_api_v1_admin_users": {
@@ -1571,6 +1622,14 @@ export interface Operations {
     responses: {
       "200": WarehouseInventoryItem
       "404": ErrorResponse
+    }
+  }
+  "backend_patch_api_v1_bodeguero_inventario_id": {
+    method: "PATCH"
+    path: "/api/v1/bodeguero/inventario/{id}"
+    requestBody: UpdateWarehouseInventoryRequest
+    responses: {
+      "200": WarehouseInventoryItem
     }
   }
   "backend_put_api_v1_bodeguero_inventario_id": {

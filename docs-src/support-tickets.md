@@ -19,6 +19,7 @@ Este módulo documenta el sistema de tickets de soporte de Pascalle Store, dispo
 | **Admin** | `PUT` | `/api/v1/admin/soporte/tickets/:id/resolucion` | `ADMIN`, `ROOT` | Resolver un ticket. |
 | **Admin** | `POST` | `/api/v1/admin/tickets/:id/resolver` | `ADMIN`, `ROOT` | Alias: Resolver un ticket. |
 | **Admin** | `POST` | `/api/v1/admin/tickets/:id/proponer-trueque` | `ADMIN`, `ROOT` | Proponer un producto de trueque al cliente. |
+| **Admin** | `GET` | `/api/v1/admin/trueques/productos-bodega`<br>`/api/v1/admin/tickets/productos-bodega`<br>`/api/v1/admin/soporte/productos-bodega` | `ADMIN`, `ROOT` | Listar productos de bodega para trueque (filtro query `talla`, retorna `talla`). |
 | **Admin** | `POST` | `/api/v1/admin/tickets/:id/resolver-transporte` | `ADMIN`, `ROOT` | Aprobar o rechazar solicitud de transporte. |
 | **Admin** | `POST` | `/api/v1/admin/tickets/:id/cancelar-trueque` | `ADMIN`, `ROOT` | Cancelar la propuesta de trueque activa. |
 
@@ -148,6 +149,44 @@ sequenceDiagram
 - **Roles Permitidos:** `ADMIN`, `ROOT`
 - **Cuerpo de la Petición:** Ninguno.
 - **Respuesta Exitosa (200 OK):** Propuesta cancelada; el ajuste regresa a `PENDING_CLIENT`.
+
+### 2.5 Listar Productos de Bodega para Trueque (Admin)
+
+Permite consultar el catálogo de ítems operativos de bodega para seleccionar productos al proponer un trueque, con soporte para filtrado por talla.
+
+- **Método:** `GET`
+- **Ruta:** `/api/v1/admin/trueques/productos-bodega` (Aliases: `/api/v1/admin/tickets/productos-bodega`, `/api/v1/admin/soporte/productos-bodega`)
+- **Roles Permitidos:** `ADMIN`, `ROOT`
+- **Query Parameters:** `GetBodegaProductosQueryDto`
+  - `name` (string, opcional): Filtrar por nombre del producto (búsqueda parcial).
+  - `sku` (string, opcional): Filtrar por SKU (búsqueda parcial).
+  - `talla` (string, opcional): Filtrar por talla del producto en bodega (ej. `"M"`, `"L"`, `"42"`).
+  - `status` (enum `WarehouseInventoryStatus`, opcional): Filtrar por estado (`ACTIVE`/`INACTIVE`, por defecto `ACTIVE`).
+  - `page` (número, opcional): Número de página (por defecto 1).
+  - `limit` (número, opcional): Ítems por página (por defecto 20).
+- **Respuesta Exitosa (200 OK):** Retorna el listado paginado de productos de bodega (`WarehouseInventoryItem`), donde cada objeto incluye el campo `talla`:
+  ```json
+  {
+    "data": [
+      {
+        "id": 15,
+        "name": "Buzo Deportivo Nike",
+        "sku": "BUZ-NK-01",
+        "marca": "Nike",
+        "talla": "L",
+        "stock": 8,
+        "location": "Pasillo 2, Estante C",
+        "photo_urls": ["https://s3.amazonaws.com/bucket/buzo.jpg"],
+        "status": "ACTIVE",
+        "registered_by_id": 3
+      }
+    ],
+    "total": 1,
+    "page": 1,
+    "limit": 20,
+    "pages": 1
+  }
+  ```
 
 ---
 

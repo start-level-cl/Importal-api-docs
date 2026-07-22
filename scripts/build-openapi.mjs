@@ -107,6 +107,113 @@ function loadSourceRoutes() {
       }
     }
 
+    const adminInventoryRoutes = [
+      {
+        service: 'backend',
+        source: 'Importal-backend/src/modules/orders/controllers/orders.controller.ts',
+        method: 'get',
+        path: '/api/v1/admin/inventario-bodega',
+        operationId: 'backend_get_api_v1_admin_inventario_bodega',
+        tag: 'Orders',
+        tags: ['Orders'],
+        summary: 'Listar el inventario interno de bodega, paginado (Admin/Root)',
+        roles: ['admin', 'root'],
+        security: true,
+        methodName: 'getWarehouseInventory',
+        parameters: [],
+      },
+      {
+        service: 'backend',
+        source: 'Importal-backend/src/modules/orders/controllers/orders.controller.ts',
+        method: 'post',
+        path: '/api/v1/admin/inventario-bodega',
+        operationId: 'backend_post_api_v1_admin_inventario_bodega',
+        tag: 'Orders',
+        tags: ['Orders'],
+        summary: 'Registrar un ítem operativo en el inventario interno de bodega (Admin/Root)',
+        roles: ['admin', 'root'],
+        security: true,
+        methodName: 'createWarehouseInventory',
+        parameters: [],
+      },
+      {
+        service: 'backend',
+        source: 'Importal-backend/src/modules/orders/controllers/orders.controller.ts',
+        method: 'patch',
+        path: '/api/v1/admin/inventario-bodega/{id}',
+        operationId: 'backend_patch_api_v1_admin_inventario_bodega_id',
+        tag: 'Orders',
+        tags: ['Orders'],
+        summary: 'Actualizar stock, ubicación y/o talla de un ítem de inventario (Admin/Root)',
+        roles: ['admin', 'root'],
+        security: true,
+        methodName: 'updateWarehouseInventory',
+        parameters: [],
+      },
+      {
+        service: 'backend',
+        source: 'Importal-backend/src/modules/orders/controllers/orders.controller.ts',
+        method: 'patch',
+        path: '/api/v1/bodeguero/inventario/{id}',
+        operationId: 'backend_patch_api_v1_bodeguero_inventario_id',
+        tag: 'Orders',
+        tags: ['Orders'],
+        summary: 'Actualizar stock, ubicación y/o talla de un ítem de inventario (Bodeguero/Admin/Root)',
+        roles: ['bodeguero', 'admin', 'root'],
+        security: true,
+        methodName: 'updateWarehouseInventory',
+        parameters: [],
+      },
+      {
+        service: 'backend',
+        source: 'Importal-backend/src/modules/support/controllers/support.controller.ts',
+        method: 'get',
+        path: '/api/v1/admin/trueques/productos-bodega',
+        operationId: 'backend_get_api_v1_admin_trueques_productos_bodega',
+        tag: 'Admin',
+        tags: ['Admin'],
+        summary: 'Listar productos de bodega disponibles para trueque (Admin/Root)',
+        roles: ['admin', 'root'],
+        security: true,
+        methodName: 'getBodegaProductosParaTrueque',
+        parameters: [],
+      },
+      {
+        service: 'backend',
+        source: 'Importal-backend/src/modules/support/controllers/support.controller.ts',
+        method: 'get',
+        path: '/api/v1/admin/tickets/productos-bodega',
+        operationId: 'backend_get_api_v1_admin_tickets_productos_bodega',
+        tag: 'Admin',
+        tags: ['Admin'],
+        summary: 'Listar productos de bodega disponibles para trueque (Alias) (Admin/Root)',
+        roles: ['admin', 'root'],
+        security: true,
+        methodName: 'getBodegaProductosParaTrueque',
+        parameters: [],
+      },
+      {
+        service: 'backend',
+        source: 'Importal-backend/src/modules/support/controllers/support.controller.ts',
+        method: 'get',
+        path: '/api/v1/admin/soporte/productos-bodega',
+        operationId: 'backend_get_api_v1_admin_soporte_productos_bodega',
+        tag: 'Admin',
+        tags: ['Admin'],
+        summary: 'Listar productos de bodega disponibles para trueque (Alias) (Admin/Root)',
+        roles: ['admin', 'root'],
+        security: true,
+        methodName: 'getBodegaProductosParaTrueque',
+        parameters: [],
+      },
+    ]
+
+    for (const route of adminInventoryRoutes) {
+      if (!routes.some(r => r.path === route.path && r.method === route.method)) {
+        routes.push(...enrichRoutes([route]))
+      }
+    }
+
     return routes
   }
 

@@ -1075,6 +1075,7 @@ export const schemas = {
       name: { type: 'string' },
       sku: { type: 'string', nullable: true },
       marca: { type: 'string', nullable: true },
+      talla: { type: 'string', nullable: true, description: 'Talla del producto en bodega' },
       stock: { type: 'integer', minimum: 0 },
       location: { type: 'string' },
       photos: {
@@ -1089,6 +1090,7 @@ export const schemas = {
   UpdateWarehouseInventoryRequest: objectSchema({
     stock: { type: 'integer', minimum: 0 },
     location: { type: 'string' },
+    talla: { type: 'string', nullable: true, description: 'Talla del producto en bodega' },
   }),
   WarehouseInventoryItem: objectSchema(
     {
@@ -1096,6 +1098,7 @@ export const schemas = {
       name: { type: 'string' },
       sku: { type: 'string', nullable: true },
       marca: { type: 'string', nullable: true },
+      talla: { type: 'string', nullable: true, description: 'Talla del producto en bodega' },
       stock: { type: 'integer' },
       location: { type: 'string' },
       photo_urls: { type: 'array', items: { type: 'string' }, description: 'URLs firmadas de S3 (presigned, expiran en 1h)' },
@@ -2339,6 +2342,7 @@ export const operationOverrides = {
     parameters: [
       { name: 'name', in: 'query', required: false, schema: { type: 'string' }, description: 'Filtrar por nombre (parcial, case-insensitive)' },
       { name: 'sku', in: 'query', required: false, schema: { type: 'string' }, description: 'Filtrar por SKU (parcial, case-insensitive)' },
+      { name: 'talla', in: 'query', required: false, schema: { type: 'string' }, description: 'Filtrar por talla del producto en bodega' },
       { name: 'status', in: 'query', required: false, schema: { type: 'string', enum: ['ACTIVE', 'INACTIVE'] }, description: 'Filtrar por estado. Sin este filtro, retorna ítems de todos los estados' },
       { name: 'page', in: 'query', required: false, schema: { type: 'integer' }, description: 'Número de página (default 1)' },
       { name: 'limit', in: 'query', required: false, schema: { type: 'integer' }, description: 'Ítems por página (default 20)' },
@@ -2353,13 +2357,99 @@ export const operationOverrides = {
     ]),
   },
   'put /api/v1/bodeguero/inventario/{id}': {
-    summary: 'Actualizar stock y/o ubicación de un ítem de inventario. Sin restricción de dueño (Bodeguero/Admin/Root)',
+    summary: 'Actualizar stock, ubicación y/o talla de un ítem de inventario. Sin restricción de dueño (Bodeguero/Admin/Root)',
+    requestBody: jsonRequest('UpdateWarehouseInventoryRequest'),
+    responses: Object.fromEntries([jsonResponse('200', 'Ítem de inventario actualizado', 'WarehouseInventoryItem')]),
+  },
+  'patch /api/v1/bodeguero/inventario/{id}': {
+    summary: 'Actualizar stock, ubicación y/o talla de un ítem de inventario (Bodeguero/Admin/Root)',
     requestBody: jsonRequest('UpdateWarehouseInventoryRequest'),
     responses: Object.fromEntries([jsonResponse('200', 'Ítem de inventario actualizado', 'WarehouseInventoryItem')]),
   },
   'delete /api/v1/bodeguero/inventario/{id}': {
     summary: 'Desactivar (soft-delete) un ítem de inventario. No borra la fila porque pedidos de trueque pueden referenciarla (Bodeguero/Admin/Root)',
     responses: Object.fromEntries([jsonResponse('200', 'Ítem marcado como INACTIVE', 'GenericObject')]),
+  },
+  'post /api/v1/admin/inventario-bodega': {
+    summary: 'Registrar un ítem operativo en el inventario interno de bodega (Admin/Root)',
+    requestBody: {
+      required: true,
+      content: {
+        'multipart/form-data': {
+          schema: {
+            '$ref': '#/components/schemas/CreateWarehouseInventoryRequest',
+          },
+        },
+      },
+    },
+    responses: Object.fromEntries([
+      jsonResponse('201', 'Ítem de inventario creado en estado ACTIVE, con photo_urls resuelto a URLs firmadas', 'WarehouseInventoryItem'),
+    ]),
+  },
+  'get /api/v1/admin/inventario-bodega': {
+    summary: 'Listar el inventario interno de bodega, paginado (Admin/Root)',
+    parameters: [
+      { name: 'name', in: 'query', required: false, schema: { type: 'string' }, description: 'Filtrar por nombre (parcial, case-insensitive)' },
+      { name: 'sku', in: 'query', required: false, schema: { type: 'string' }, description: 'Filtrar por SKU (parcial, case-insensitive)' },
+      { name: 'talla', in: 'query', required: false, schema: { type: 'string' }, description: 'Filtrar por talla del producto en bodega' },
+      { name: 'status', in: 'query', required: false, schema: { type: 'string', enum: ['ACTIVE', 'INACTIVE'] }, description: 'Filtrar por estado. Sin este filtro, retorna ítems de todos los estados' },
+      { name: 'page', in: 'query', required: false, schema: { type: 'integer' }, description: 'Número de página (default 1)' },
+      { name: 'limit', in: 'query', required: false, schema: { type: 'integer' }, description: 'Ítems por página (default 20)' },
+    ],
+    responses: Object.fromEntries([jsonResponse('200', 'Listado paginado de inventario', 'WarehouseInventoryListResponse')]),
+  },
+  'get /api/v1/admin/inventario-bodega/{id}': {
+    summary: 'Obtener el detalle de un ítem de inventario por su ID (Admin/Root)',
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Ítem de inventario, con photo_urls resuelto a URLs firmadas', 'WarehouseInventoryItem'),
+      jsonResponse('404', 'Ítem no encontrado', 'ErrorResponse'),
+    ]),
+  },
+  'patch /api/v1/admin/inventario-bodega/{id}': {
+    summary: 'Actualizar stock, ubicación y/o talla de un ítem de inventario (Admin/Root)',
+    requestBody: jsonRequest('UpdateWarehouseInventoryRequest'),
+    responses: Object.fromEntries([jsonResponse('200', 'Ítem de inventario actualizado', 'WarehouseInventoryItem')]),
+  },
+  'put /api/v1/admin/inventario-bodega/{id}': {
+    summary: 'Actualizar stock, ubicación y/o talla de un ítem de inventario (Admin/Root)',
+    requestBody: jsonRequest('UpdateWarehouseInventoryRequest'),
+    responses: Object.fromEntries([jsonResponse('200', 'Ítem de inventario actualizado', 'WarehouseInventoryItem')]),
+  },
+  'get /api/v1/admin/trueques/productos-bodega': {
+    summary: 'Listar productos de bodega disponibles para trueque (Admin/Root)',
+    parameters: [
+      { name: 'name', in: 'query', required: false, schema: { type: 'string' }, description: 'Filtrar por nombre' },
+      { name: 'sku', in: 'query', required: false, schema: { type: 'string' }, description: 'Filtrar por SKU' },
+      { name: 'talla', in: 'query', required: false, schema: { type: 'string' }, description: 'Filtrar por talla del producto en bodega' },
+      { name: 'status', in: 'query', required: false, schema: { type: 'string', enum: ['ACTIVE', 'INACTIVE'] }, description: 'Filtrar por estado (default ACTIVE)' },
+      { name: 'page', in: 'query', required: false, schema: { type: 'integer' }, description: 'Número de página' },
+      { name: 'limit', in: 'query', required: false, schema: { type: 'integer' }, description: 'Ítems por página' },
+    ],
+    responses: Object.fromEntries([jsonResponse('200', 'Listado de productos de bodega para trueque', 'WarehouseInventoryListResponse')]),
+  },
+  'get /api/v1/admin/tickets/productos-bodega': {
+    summary: 'Listar productos de bodega disponibles para trueque (Alias) (Admin/Root)',
+    parameters: [
+      { name: 'name', in: 'query', required: false, schema: { type: 'string' }, description: 'Filtrar por nombre' },
+      { name: 'sku', in: 'query', required: false, schema: { type: 'string' }, description: 'Filtrar por SKU' },
+      { name: 'talla', in: 'query', required: false, schema: { type: 'string' }, description: 'Filtrar por talla del producto en bodega' },
+      { name: 'status', in: 'query', required: false, schema: { type: 'string', enum: ['ACTIVE', 'INACTIVE'] }, description: 'Filtrar por estado (default ACTIVE)' },
+      { name: 'page', in: 'query', required: false, schema: { type: 'integer' }, description: 'Número de página' },
+      { name: 'limit', in: 'query', required: false, schema: { type: 'integer' }, description: 'Ítems por página' },
+    ],
+    responses: Object.fromEntries([jsonResponse('200', 'Listado de productos de bodega para trueque', 'WarehouseInventoryListResponse')]),
+  },
+  'get /api/v1/admin/soporte/productos-bodega': {
+    summary: 'Listar productos de bodega disponibles para trueque (Alias) (Admin/Root)',
+    parameters: [
+      { name: 'name', in: 'query', required: false, schema: { type: 'string' }, description: 'Filtrar por nombre' },
+      { name: 'sku', in: 'query', required: false, schema: { type: 'string' }, description: 'Filtrar por SKU' },
+      { name: 'talla', in: 'query', required: false, schema: { type: 'string' }, description: 'Filtrar por talla del producto en bodega' },
+      { name: 'status', in: 'query', required: false, schema: { type: 'string', enum: ['ACTIVE', 'INACTIVE'] }, description: 'Filtrar por estado (default ACTIVE)' },
+      { name: 'page', in: 'query', required: false, schema: { type: 'integer' }, description: 'Número de página' },
+      { name: 'limit', in: 'query', required: false, schema: { type: 'integer' }, description: 'Ítems por página' },
+    ],
+    responses: Object.fromEntries([jsonResponse('200', 'Listado de productos de bodega para trueque', 'WarehouseInventoryListResponse')]),
   },
   'get /api/v1/bodeguero/cargas/{id}/clientes-status': {
     summary: 'Obtener estado de pago de clientes en una carga (Bodeguero/Admin/Root)',
