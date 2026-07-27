@@ -448,12 +448,27 @@
                 "carga": {
                   "nullable": true,
                   "properties": {
+                    "arrived_at": {
+                      "format": "date-time",
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "closes_at": {
+                      "format": "date-time",
+                      "nullable": true,
+                      "type": "string"
+                    },
                     "created_at": {
                       "format": "date-time",
                       "type": "string"
                     },
                     "id": {
                       "type": "integer"
+                    },
+                    "opens_at": {
+                      "format": "date-time",
+                      "nullable": true,
+                      "type": "string"
                     },
                     "status": {
                       "type": "string"
@@ -6585,6 +6600,40 @@
         "x-source": "Importal-backend/src/modules/app/controllers/admin.controller.ts"
       }
     },
+    "/api/v1/admin/users/invite": {
+      "post": {
+        "operationId": "backend_post_api_v1_admin_users_invite",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Operacion exitosa",
+                  "ok": true
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Invitación creada"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Crear invitación de usuario administrador (Admin/Root)",
+        "tags": [
+          "Registration"
+        ],
+        "x-role-group": "admin",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/registration/controllers/registration.controller.ts"
+      }
+    },
     "/api/v1/admin/users/login-attempts": {
       "get": {
         "operationId": "backend_get_api_v1_admin_users_login_attempts",
@@ -7077,6 +7126,185 @@
         "x-role-group": "admin",
         "x-service": "backend",
         "x-source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts"
+      }
+    },
+    "/api/v1/admin/vendors/{id}/approve": {
+      "post": {
+        "operationId": "backend_post_api_v1_admin_vendors_id_approve",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Operacion exitosa",
+                  "ok": true
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Vendedor aprobado"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Aprobar registro de vendedor (Admin/Root)",
+        "tags": [
+          "Registration"
+        ],
+        "x-role-group": "admin",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/registration/controllers/registration.controller.ts"
+      }
+    },
+    "/api/v1/auth/accept-invite": {
+      "post": {
+        "operationId": "backend_post_api_v1_auth_accept_invite",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Operacion exitosa",
+                  "ok": true
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Cuenta de administrador activada"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Aceptar invitación de usuario administrador (Público)",
+        "tags": [
+          "Registration"
+        ],
+        "x-role-group": "comun",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/registration/controllers/registration.controller.ts"
+      }
+    },
+    "/api/v1/auth/register/client": {
+      "post": {
+        "operationId": "backend_post_api_v1_auth_register_client",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Operacion exitosa",
+                  "ok": true
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Cliente registrado"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Registro directo de cliente / inversor (Público)",
+        "tags": [
+          "Registration"
+        ],
+        "x-role-group": "comun",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/registration/controllers/registration.controller.ts"
+      }
+    },
+    "/api/v1/auth/register/vendor": {
+      "post": {
+        "operationId": "backend_post_api_v1_auth_register_vendor",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Operacion exitosa",
+                  "ok": true
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Vendedor registrado pendiente de aprobación"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Registro de vendedor / proveedor (Público)",
+        "tags": [
+          "Registration"
+        ],
+        "x-role-group": "comun",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/registration/controllers/registration.controller.ts"
+      }
+    },
+    "/api/v1/auth/register/warehouse-operator": {
+      "post": {
+        "operationId": "backend_post_api_v1_auth_register_warehouse_operator",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Operacion exitosa",
+                  "ok": true
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Bodeguero registrado"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Registro de operador de bodega (Público)",
+        "tags": [
+          "Registration"
+        ],
+        "x-role-group": "comun",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/registration/controllers/registration.controller.ts"
       }
     },
     "/api/v1/billing/exchange-rate": {
@@ -8778,17 +9006,40 @@
     "/api/v1/cliente/ajustes/pendientes": {
       "get": {
         "operationId": "backend_get_api_v1_cliente_ajustes_pendientes",
-        "parameters": [],
+        "parameters": [
+          {
+            "description": "Página",
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Límite",
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "content": {
               "application/json": {
+                "example": {
+                  "message": "Operacion exitosa",
+                  "ok": true
+                },
                 "schema": {
                   "$ref": "#/components/schemas/GenericObject"
                 }
               }
             },
-            "description": "Operacion exitosa"
+            "description": "Ajustes pendientes con created_at"
           }
         },
         "security": [
@@ -8796,7 +9047,7 @@
             "bearerAuth": []
           }
         ],
-        "summary": "getClientPendingAdjustments",
+        "summary": "Listar ajustes de pedidos pendientes de aprobación por parte del cliente (Cliente)",
         "tags": [
           "Orders"
         ],
@@ -11439,17 +11690,45 @@
     "/api/v1/users/unsubscribe": {
       "get": {
         "operationId": "backend_get_api_v1_users_unsubscribe",
-        "parameters": [],
+        "parameters": [
+          {
+            "description": "ID de usuario",
+            "in": "query",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Token de desuscripción HMAC",
+            "in": "query",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "URL de redirección opcional",
+            "in": "query",
+            "name": "redirect",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GenericObject"
+                  "$ref": "#/components/schemas/GenericMessage"
                 }
               }
             },
-            "description": "Operacion exitosa"
+            "description": "Desuscripción exitosa"
           }
         },
         "security": [
@@ -11457,7 +11736,7 @@
             "bearerAuth": []
           }
         ],
-        "summary": "unsubscribeGet",
+        "summary": "Desuscribirse de correos electrónicos vía enlace público (Público)",
         "tags": [
           "Users"
         ],
@@ -11845,17 +12124,67 @@
     "/api/v1/vendedor/ordenes/pendientes-cobro": {
       "get": {
         "operationId": "backend_get_api_v1_vendedor_ordenes_pendientes_cobro",
-        "parameters": [],
+        "parameters": [
+          {
+            "description": "Fecha inicio de confirmación",
+            "in": "query",
+            "name": "startDate",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Fecha fin de confirmación",
+            "in": "query",
+            "name": "endDate",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "ID de carga",
+            "in": "query",
+            "name": "cargaId",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Página",
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Límite",
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "content": {
               "application/json": {
+                "example": {
+                  "message": "Operacion exitosa",
+                  "ok": true
+                },
                 "schema": {
                   "$ref": "#/components/schemas/GenericObject"
                 }
               }
             },
-            "description": "Operacion exitosa"
+            "description": "Listado de órdenes pendientes de cobro"
           }
         },
         "security": [
@@ -11863,7 +12192,7 @@
             "bearerAuth": []
           }
         ],
-        "summary": "getPendingPayoutOrders",
+        "summary": "Obtener órdenes del vendedor listas para cobrar con photo_urls resueltas a URLs firmadas S3 (Vendedor)",
         "tags": [
           "Billing"
         ],

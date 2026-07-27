@@ -1286,6 +1286,9 @@ export const schemas = {
             tipo_carga: { type: 'string' },
             status: { type: 'string' },
             created_at: { type: 'string', format: 'date-time' },
+            opens_at: { type: 'string', format: 'date-time', nullable: true },
+            closes_at: { type: 'string', format: 'date-time', nullable: true },
+            arrived_at: { type: 'string', format: 'date-time', nullable: true },
           }
         },
         cobros: {
@@ -2305,6 +2308,17 @@ export const operationOverrides = {
     },
     responses: Object.fromEntries([jsonResponse('201', 'Solicitud de pago creada', 'GenericObject')]),
   },
+  'get /api/v1/vendedor/ordenes/pendientes-cobro': {
+    summary: 'Obtener órdenes del vendedor listas para cobrar con photo_urls resueltas a URLs firmadas S3 (Vendedor)',
+    parameters: [
+      { name: 'startDate', in: 'query', required: false, schema: { type: 'string' }, description: 'Fecha inicio de confirmación' },
+      { name: 'endDate', in: 'query', required: false, schema: { type: 'string' }, description: 'Fecha fin de confirmación' },
+      { name: 'cargaId', in: 'query', required: false, schema: { type: 'integer' }, description: 'ID de carga' },
+      { name: 'page', in: 'query', required: false, schema: { type: 'integer' }, description: 'Página' },
+      { name: 'limit', in: 'query', required: false, schema: { type: 'integer' }, description: 'Límite' },
+    ],
+    responses: Object.fromEntries([jsonResponse('200', 'Listado de órdenes pendientes de cobro', 'GenericObject')]),
+  },
   'get /api/v1/admin/solicitudes-carga': {
     summary: 'Listar solicitudes de tránsito de carga pendientes de aprobación (Admin/Root)',
     responses: Object.fromEntries([jsonResponse('200', 'Solicitudes de tránsito', 'GenericObjectArray')]),
@@ -2778,6 +2792,47 @@ export const operationOverrides = {
     responses: Object.fromEntries([
       jsonResponse('200', 'Consentimiento revocado con éxito', 'GenericMessage'),
     ]),
+  },
+  'get /api/v1/users/unsubscribe': {
+    summary: 'Desuscribirse de correos electrónicos vía enlace público (Público)',
+    parameters: [
+      { name: 'id', in: 'query', required: true, schema: { type: 'string' }, description: 'ID de usuario' },
+      { name: 'token', in: 'query', required: true, schema: { type: 'string' }, description: 'Token de desuscripción HMAC' },
+      { name: 'redirect', in: 'query', required: false, schema: { type: 'string' }, description: 'URL de redirección opcional' },
+    ],
+    responses: Object.fromEntries([jsonResponse('200', 'Desuscripción exitosa', 'GenericMessage')]),
+  },
+  'get /api/v1/cliente/ajustes/pendientes': {
+    summary: 'Listar ajustes de pedidos pendientes de aprobación por parte del cliente (Cliente)',
+    parameters: [
+      { name: 'page', in: 'query', required: false, schema: { type: 'integer' }, description: 'Página' },
+      { name: 'limit', in: 'query', required: false, schema: { type: 'integer' }, description: 'Límite' },
+    ],
+    responses: Object.fromEntries([jsonResponse('200', 'Ajustes pendientes con created_at', 'GenericObject')]),
+  },
+  'post /api/v1/auth/register/client': {
+    summary: 'Registro directo de cliente / inversor (Público)',
+    responses: Object.fromEntries([jsonResponse('201', 'Cliente registrado', 'GenericObject')]),
+  },
+  'post /api/v1/auth/register/vendor': {
+    summary: 'Registro de vendedor / proveedor (Público)',
+    responses: Object.fromEntries([jsonResponse('201', 'Vendedor registrado pendiente de aprobación', 'GenericObject')]),
+  },
+  'post /api/v1/admin/vendors/{id}/approve': {
+    summary: 'Aprobar registro de vendedor (Admin/Root)',
+    responses: Object.fromEntries([jsonResponse('200', 'Vendedor aprobado', 'GenericObject')]),
+  },
+  'post /api/v1/auth/register/warehouse-operator': {
+    summary: 'Registro de operador de bodega (Público)',
+    responses: Object.fromEntries([jsonResponse('201', 'Bodeguero registrado', 'GenericObject')]),
+  },
+  'post /api/v1/admin/users/invite': {
+    summary: 'Crear invitación de usuario administrador (Admin/Root)',
+    responses: Object.fromEntries([jsonResponse('201', 'Invitación creada', 'GenericObject')]),
+  },
+  'post /api/v1/auth/accept-invite': {
+    summary: 'Aceptar invitación de usuario administrador (Público)',
+    responses: Object.fromEntries([jsonResponse('201', 'Cuenta de administrador activada', 'GenericObject')]),
   },
   'get /api/v1/cliente/direcciones': {
     summary: 'Listar direcciones del cliente autenticado (Cliente)',

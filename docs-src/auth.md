@@ -84,3 +84,28 @@ Además del logout explícito, `Importal-auth` soporta desactivar una cuenta de 
 
 > [!NOTE]
 > Este mecanismo `active` es genérico (no exclusivo del bloqueo manual): cualquier servicio interno con acceso a `PUT /auth/api/v1/users/:userId` puede usarlo para desactivar una cuenta sin necesidad de eliminarla.
+
+---
+
+## Registro Multirrol e Invitaciones Administrativas
+
+La plataforma soporta flujos especializados de registro autónomo e invitación según el rol de usuario:
+
+### 1. Registro de Cliente / Inversor (`POST /api/v1/auth/register/client`)
+- **Público**: Permite la creación autónoma de clientes finales (`RegisterClientDto`).
+
+### 2. Registro de Vendedor / Proveedor (`POST /api/v1/auth/register/vendor`)
+- **Público con aprobación**: Crea la cuenta temporalmente bloqueada (`bloqueo = true`, `"Pendiente de aprobación administrativa"`). Requiere datos bancarios (`bank_details`) y enlace a documento legal/e-RUT.
+
+### 3. Aprobación de Vendedor (`POST /api/v1/admin/vendors/:id/approve`)
+- **Protegido (`ADMIN`, `ROOT`)**: Remueve el bloqueo de la cuenta del vendedor para habilitar sus operaciones.
+
+### 4. Registro de Operador de Bodega (`POST /api/v1/auth/register/warehouse-operator`)
+- **Público con código**: Exige un `invitation_code` administrativo válido para asignar al operador a una bodega específica.
+
+### 5. Invitación de Administrador (`POST /api/v1/admin/users/invite`)
+- **Protegido (`ADMIN`, `ROOT`)**: Emite un token HMAC firmado de 24 horas y retorna el enlace de invitación para el frontend (`invite_url`).
+
+### 6. Aceptar Invitación de Administrador (`POST /api/v1/auth/accept-invite`)
+- **Público**: El invitado consume el token para definir su contraseña inicial y activar su perfil administrativo.
+

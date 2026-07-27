@@ -112,8 +112,11 @@ export type ChatMessageArray = (ChatMessage)[]
 export type ClienteCobrosGroupedResponse = {
   data: ({
     carga?: {
+      arrived_at?: string
+      closes_at?: string
       created_at?: string
       id?: number
+      opens_at?: string
       status?: string
       tipo_carga?: string
     }
@@ -1381,6 +1384,14 @@ export interface Operations {
       "200": GenericObject
     }
   }
+  "backend_post_api_v1_admin_users_invite": {
+    method: "POST"
+    path: "/api/v1/admin/users/invite"
+    requestBody: undefined
+    responses: {
+      "201": GenericObject
+    }
+  }
   "backend_get_api_v1_admin_users_login_attempts": {
     method: "GET"
     path: "/api/v1/admin/users/login-attempts"
@@ -1458,6 +1469,46 @@ export interface Operations {
     requestBody: undefined
     responses: {
       "200": GenericObject
+    }
+  }
+  "backend_post_api_v1_admin_vendors_id_approve": {
+    method: "POST"
+    path: "/api/v1/admin/vendors/{id}/approve"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_post_api_v1_auth_accept_invite": {
+    method: "POST"
+    path: "/api/v1/auth/accept-invite"
+    requestBody: undefined
+    responses: {
+      "201": GenericObject
+    }
+  }
+  "backend_post_api_v1_auth_register_client": {
+    method: "POST"
+    path: "/api/v1/auth/register/client"
+    requestBody: undefined
+    responses: {
+      "201": GenericObject
+    }
+  }
+  "backend_post_api_v1_auth_register_vendor": {
+    method: "POST"
+    path: "/api/v1/auth/register/vendor"
+    requestBody: undefined
+    responses: {
+      "201": GenericObject
+    }
+  }
+  "backend_post_api_v1_auth_register_warehouse_operator": {
+    method: "POST"
+    path: "/api/v1/auth/register/warehouse-operator"
+    requestBody: undefined
+    responses: {
+      "201": GenericObject
     }
   }
   "backend_get_api_v1_billing_exchange_rate": {
@@ -2178,7 +2229,7 @@ export interface Operations {
     path: "/api/v1/users/unsubscribe"
     requestBody: undefined
     responses: {
-      "200": GenericObject
+      "200": GenericMessage
     }
   }
   "backend_post_api_v1_users_unsubscribe": {

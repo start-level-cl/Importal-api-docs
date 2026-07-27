@@ -3553,6 +3553,114 @@
   },
   {
     "service": "backend",
+    "source": "Importal-backend/src/modules/registration/controllers/registration.controller.ts",
+    "method": "post",
+    "path": "/api/v1/auth/register/client",
+    "operationId": "backend_post_api_v1_auth_register_client",
+    "tag": "Registration",
+    "tags": [
+      "Registration"
+    ],
+    "summary": "Registro de cliente / inversor",
+    "roles": [],
+    "security": "bearerAuth",
+    "methodName": "registerClient",
+    "parameters": [],
+    "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/registration/controllers/registration.controller.ts",
+    "method": "post",
+    "path": "/api/v1/auth/register/vendor",
+    "operationId": "backend_post_api_v1_auth_register_vendor",
+    "tag": "Registration",
+    "tags": [
+      "Registration"
+    ],
+    "summary": "Registro de vendedor / proveedor",
+    "roles": [],
+    "security": "bearerAuth",
+    "methodName": "registerVendor",
+    "parameters": [],
+    "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/registration/controllers/registration.controller.ts",
+    "method": "post",
+    "path": "/api/v1/admin/vendors/{id}/approve",
+    "operationId": "backend_post_api_v1_admin_vendors_id_approve",
+    "tag": "Registration",
+    "tags": [
+      "Registration"
+    ],
+    "summary": "Aprobar registro de vendedor (ADMIN/ROOT)",
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "approveVendor",
+    "parameters": [],
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/registration/controllers/registration.controller.ts",
+    "method": "post",
+    "path": "/api/v1/auth/register/warehouse-operator",
+    "operationId": "backend_post_api_v1_auth_register_warehouse_operator",
+    "tag": "Registration",
+    "tags": [
+      "Registration"
+    ],
+    "summary": "Registro de operador de bodega",
+    "roles": [],
+    "security": "bearerAuth",
+    "methodName": "registerWarehouseOperator",
+    "parameters": [],
+    "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/registration/controllers/registration.controller.ts",
+    "method": "post",
+    "path": "/api/v1/admin/users/invite",
+    "operationId": "backend_post_api_v1_admin_users_invite",
+    "tag": "Registration",
+    "tags": [
+      "Registration"
+    ],
+    "summary": "Invitar usuario administrador (ADMIN/ROOT)",
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "inviteAdmin",
+    "parameters": [],
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/registration/controllers/registration.controller.ts",
+    "method": "post",
+    "path": "/api/v1/auth/accept-invite",
+    "operationId": "backend_post_api_v1_auth_accept_invite",
+    "tag": "Registration",
+    "tags": [
+      "Registration"
+    ],
+    "summary": "Aceptar invitación de usuario administrador",
+    "roles": [],
+    "security": "bearerAuth",
+    "methodName": "acceptInvite",
+    "parameters": [],
+    "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
     "source": "Importal-backend/src/modules/support/controllers/support.controller.ts",
     "method": "post",
     "path": "/api/v1/soporte/tickets",
