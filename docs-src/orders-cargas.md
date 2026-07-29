@@ -142,6 +142,9 @@ sequenceDiagram
 - **Roles Permitidos:** `VENDOR`
 - **Cuerpo (JSON):** `{ "tipo_carga": "MARITIMA" }`
 
+> [!NOTE]
+> Se eliminó la restricción que exigía que todos los pedidos activos en la carga actual estuvieran confirmados (`can_ship = true`). El vendedor puede crear la solicitud de transición independientemente de que existan pedidos sin confirmar.
+
 ### 2.3 Listar Solicitudes Propias (Vendedor)
 
 - **Método:** `GET`
@@ -157,7 +160,7 @@ sequenceDiagram
 
 ### 2.5 Aprobar / Rechazar Solicitud (Admin)
 
-- `POST /api/v1/admin/solicitudes-carga/:id/aprobar` — Aprueba la solicitud y asigna al vendedor a la nueva carga.
+- `POST /api/v1/admin/solicitudes-carga/:id/aprobar` — Aprueba la solicitud y asigna al vendedor a la nueva carga (sin bloqueo por pedidos sin confirmar).
 - `POST /api/v1/admin/solicitudes-carga/:id/rechazar` — Rechaza la solicitud.
 
 ### 2.6 Transición a Carga Cerrada (Vendedor)
