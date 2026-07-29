@@ -146,6 +146,65 @@ components:
       items:
         $ref: "#/components/schemas/CargaClientesStatusItem"
       type: array
+    CargaTransitionRequest:
+      additionalProperties: false
+      properties:
+        current_carga_id:
+          type: integer
+        id:
+          type: integer
+        requested_at:
+          format: "date-time"
+          type: string
+        resolved_at:
+          format: "date-time"
+          nullable: true
+          type: string
+        resolved_by:
+          nullable: true
+          type: integer
+        seller_id:
+          type: integer
+        status:
+          enum:
+            - PENDING
+            - APPROVED
+            - REJECTED
+          type: string
+        tipo_carga:
+          enum:
+            - AEREA
+            - MARITIMA
+          type: string
+      type: object
+    CargaTransitionRequestPaginated:
+      additionalProperties: false
+      properties:
+        data:
+          items:
+            $ref: "#/components/schemas/CargaTransitionRequest"
+          type: array
+        meta:
+          additionalProperties: false
+          properties:
+            last_page:
+              type: integer
+            limit:
+              type: integer
+            page:
+              type: integer
+            total:
+              type: integer
+          required:
+            - total
+            - page
+            - limit
+            - last_page
+          type: object
+      required:
+        - data
+        - meta
+      type: object
     CargasPaginatedResponse:
       additionalProperties: false
       properties:
@@ -3794,16 +3853,49 @@ paths:
     get:
       operationId: backend_get_api_v1_admin_solicitudes_carga
       parameters:
-[]
+        -           description: Filtrar por estado de la solicitud
+          in: query
+          name: status
+          required: false
+          schema:
+            enum:
+              - PENDING
+              - APPROVED
+              - REJECTED
+            type: string
+        -           description: Número de página
+          in: query
+          name: page
+          required: false
+          schema:
+            type: integer
+        -           description: Límite de elementos por página
+          in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
       responses:
         200:
           content:
             application/json:
               example:
-                -                   id: 1
-                  message: Ejemplo de elemento retornado
+                data:
+                  -                     current_carga_id: 3
+                    id: 5
+                    requested_at: "2026-07-29T10:00:00.000Z"
+                    resolved_at: null
+                    resolved_by: null
+                    seller_id: 12
+                    status: PENDING
+                    tipo_carga: MARITIMA
+                meta:
+                  last_page: 1
+                  limit: 10
+                  page: 1
+                  total: 1
               schema:
-                $ref: "#/components/schemas/GenericObjectArray"
+                $ref: "#/components/schemas/CargaTransitionRequestPaginated"
           description: Solicitudes de tránsito
       security:
         -           bearerAuth:
@@ -9036,16 +9128,49 @@ paths:
     get:
       operationId: backend_get_api_v1_vendedor_solicitudes_carga
       parameters:
-[]
+        -           description: Filtrar por estado de la solicitud
+          in: query
+          name: status
+          required: false
+          schema:
+            enum:
+              - PENDING
+              - APPROVED
+              - REJECTED
+            type: string
+        -           description: Número de página
+          in: query
+          name: page
+          required: false
+          schema:
+            type: integer
+        -           description: Límite de elementos por página
+          in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
       responses:
         200:
           content:
             application/json:
               example:
-                -                   id: 1
-                  message: Ejemplo de elemento retornado
+                data:
+                  -                     current_carga_id: 3
+                    id: 5
+                    requested_at: "2026-07-29T10:00:00.000Z"
+                    resolved_at: null
+                    resolved_by: null
+                    seller_id: 12
+                    status: PENDING
+                    tipo_carga: MARITIMA
+                meta:
+                  last_page: 1
+                  limit: 10
+                  page: 1
+                  total: 1
               schema:
-                $ref: "#/components/schemas/GenericObjectArray"
+                $ref: "#/components/schemas/CargaTransitionRequestPaginated"
           description: Solicitudes de tránsito del vendedor
       security:
         -           bearerAuth:

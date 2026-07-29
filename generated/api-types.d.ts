@@ -49,6 +49,27 @@ export type CargaClientesStatusItem = {
 
 export type CargaClientesStatusResponse = (CargaClientesStatusItem)[]
 
+export type CargaTransitionRequest = {
+  current_carga_id?: number
+  id?: number
+  requested_at?: string
+  resolved_at?: string
+  resolved_by?: number
+  seller_id?: number
+  status?: "PENDING" | "APPROVED" | "REJECTED"
+  tipo_carga?: "AEREA" | "MARITIMA"
+}
+
+export type CargaTransitionRequestPaginated = {
+  data: (CargaTransitionRequest)[]
+  meta: {
+    last_page: number
+    limit: number
+    page: number
+    total: number
+  }
+}
+
 export type CargasPaginatedResponse = {
   data: (Carga)[]
   meta: {
@@ -1195,7 +1216,7 @@ export interface Operations {
     path: "/api/v1/admin/solicitudes-carga"
     requestBody: undefined
     responses: {
-      "200": GenericObjectArray
+      "200": CargaTransitionRequestPaginated
     }
   }
   "backend_get_api_v1_admin_solicitudes_carga_id": {
@@ -2479,7 +2500,7 @@ export interface Operations {
     path: "/api/v1/vendedor/solicitudes-carga"
     requestBody: undefined
     responses: {
-      "200": GenericObjectArray
+      "200": CargaTransitionRequestPaginated
     }
   }
   "backend_post_api_v1_vendedor_solicitudes_carga": {

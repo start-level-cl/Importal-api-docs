@@ -150,20 +150,90 @@ sequenceDiagram
 - **Método:** `GET`
 - **Ruta:** `/api/v1/vendedor/solicitudes-carga`
 - **Roles Permitidos:** `VENDOR`
+- **Query Parameters:**
+  - `status` (opcional, string): Estado de la solicitud (`PENDING`, `APPROVED`, `REJECTED`).
+  - `page` (opcional, número, por defecto `1`): Número de página.
+  - `limit` (opcional, número, por defecto `10`): Cantidad de registros por página.
+- **Respuesta (`200 OK`):**
+  ```json
+  {
+    "data": [
+      {
+        "id": 5,
+        "seller_id": 12,
+        "current_carga_id": 3,
+        "tipo_carga": "MARITIMA",
+        "status": "PENDING",
+        "requested_at": "2026-07-29T10:00:00.000Z",
+        "resolved_at": null,
+        "resolved_by": null
+      }
+    ],
+    "meta": {
+      "total": 1,
+      "page": 1,
+      "limit": 10,
+      "last_page": 1
+    }
+  }
+  ```
 
-### 2.4 Detalle de Solicitud (Vendedor / Admin)
+### 2.4 Listar Solicitudes de Transición (Admin)
+
+- **Método:** `GET`
+- **Ruta:** `/api/v1/admin/solicitudes-carga`
+- **Roles Permitidos:** `ADMIN`, `ROOT`
+- **Query Parameters:**
+  - `status` (opcional, string): Estado de la solicitud (`PENDING`, `APPROVED`, `REJECTED`).
+  - `page` (opcional, número, por defecto `1`): Número de página.
+  - `limit` (opcional, número, por defecto `10`): Cantidad de registros por página.
+- **Respuesta (`200 OK`):**
+  ```json
+  {
+    "data": [
+      {
+        "id": 5,
+        "seller_id": 12,
+        "current_carga_id": 3,
+        "tipo_carga": "MARITIMA",
+        "status": "PENDING",
+        "requested_at": "2026-07-29T10:00:00.000Z",
+        "resolved_at": null,
+        "resolved_by": null,
+        "seller": {
+          "id": 12,
+          "name": "Vendedor Ejemplo",
+          "email_address": "vendedor@example.com"
+        },
+        "current_carga": {
+          "id": 3,
+          "tipo_carga": "MARITIMA",
+          "status": "CLOSED"
+        }
+      }
+    ],
+    "meta": {
+      "total": 1,
+      "page": 1,
+      "limit": 10,
+      "last_page": 1
+    }
+  }
+  ```
+
+### 2.5 Detalle de Solicitud (Vendedor / Admin)
 
 - **Método:** `GET`
 - **Rutas:**
   - `/api/v1/vendedor/solicitudes-carga/:id` (VENDOR — solo sus solicitudes)
   - `/api/v1/admin/solicitudes-carga/:id` (ADMIN, ROOT — cualquier solicitud)
 
-### 2.5 Aprobar / Rechazar Solicitud (Admin)
+### 2.6 Aprobar / Rechazar Solicitud (Admin)
 
 - `POST /api/v1/admin/solicitudes-carga/:id/aprobar` — Aprueba la solicitud y asigna al vendedor a la nueva carga (sin bloqueo por pedidos sin confirmar).
 - `POST /api/v1/admin/solicitudes-carga/:id/rechazar` — Rechaza la solicitud.
 
-### 2.6 Transición a Carga Cerrada (Vendedor)
+### 2.7 Transición a Carga Cerrada (Vendedor)
 
 Permite al vendedor indicar que acepta continuar operando dentro de una carga que ya fue cerrada por el admin.
 

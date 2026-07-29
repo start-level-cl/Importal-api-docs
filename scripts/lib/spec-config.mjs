@@ -447,6 +447,36 @@ const schemaExamples = {
   ],
   UpdateOrderShippingRequest: { can_ship: true, seller_order_number: 'SO-12345' },
   CreateCargaRequest: { tipo_carga: 'AEREA' },
+  CargaTransitionRequest: {
+    id: 5,
+    seller_id: 12,
+    current_carga_id: 3,
+    tipo_carga: 'MARITIMA',
+    status: 'PENDING',
+    requested_at: '2026-07-29T10:00:00.000Z',
+    resolved_at: null,
+    resolved_by: null,
+  },
+  CargaTransitionRequestPaginated: {
+    data: [
+      {
+        id: 5,
+        seller_id: 12,
+        current_carga_id: 3,
+        tipo_carga: 'MARITIMA',
+        status: 'PENDING',
+        requested_at: '2026-07-29T10:00:00.000Z',
+        resolved_at: null,
+        resolved_by: null,
+      },
+    ],
+    meta: {
+      total: 1,
+      page: 1,
+      limit: 10,
+      last_page: 1,
+    },
+  },
   UpdateCargaStatusRequest: { status: 'ARRIVED', notes: 'Carga recibida en bodega' },
   InitiateTransbankRequest: { cobro_id: 501, amount_clp: 250000 },
   ConfirmTransbankRequest: { transaction_id: 'trx-123', token: 'token-abc' },
@@ -1482,6 +1512,28 @@ export const schemas = {
     ['can_ship'],
   ),
   CreateCargaRequest: objectSchema({ tipo_carga: stringEnum(['AEREA', 'MARITIMA']) }, ['tipo_carga']),
+  CargaTransitionRequest: objectSchema({
+    id: { type: 'integer' },
+    seller_id: { type: 'integer' },
+    current_carga_id: { type: 'integer' },
+    tipo_carga: stringEnum(['AEREA', 'MARITIMA']),
+    status: stringEnum(['PENDING', 'APPROVED', 'REJECTED']),
+    requested_at: { type: 'string', format: 'date-time' },
+    resolved_at: { type: 'string', format: 'date-time', nullable: true },
+    resolved_by: { type: 'integer', nullable: true },
+  }),
+  CargaTransitionRequestPaginated: objectSchema({
+    data: {
+      type: 'array',
+      items: { $ref: '#/components/schemas/CargaTransitionRequest' },
+    },
+    meta: objectSchema({
+      total: { type: 'integer' },
+      page: { type: 'integer' },
+      limit: { type: 'integer' },
+      last_page: { type: 'integer' },
+    }, ['total', 'page', 'limit', 'last_page']),
+  }, ['data', 'meta']),
   UpdateCargaStatusRequest: objectSchema(
     {
       status: { type: 'string' },
@@ -2428,7 +2480,12 @@ export const operationOverrides = {
   },
   'get /api/v1/admin/solicitudes-carga': {
     summary: 'Listar solicitudes de tránsito de carga pendientes de aprobación (Admin/Root)',
-    responses: Object.fromEntries([jsonResponse('200', 'Solicitudes de tránsito', 'GenericObjectArray')]),
+    parameters: [
+      { name: 'status', in: 'query', required: false, schema: stringEnum(['PENDING', 'APPROVED', 'REJECTED']), description: 'Filtrar por estado de la solicitud' },
+      { name: 'page', in: 'query', required: false, schema: { type: 'integer' }, description: 'Número de página' },
+      { name: 'limit', in: 'query', required: false, schema: { type: 'integer' }, description: 'Límite de elementos por página' },
+    ],
+    responses: Object.fromEntries([jsonResponse('200', 'Solicitudes de tránsito', 'CargaTransitionRequestPaginated')]),
   },
   'post /api/v1/admin/solicitudes-carga/{id}/aprobar': {
     summary: 'Aprobar una solicitud de tránsito y asignarle carga (Admin/Root)',
@@ -2449,7 +2506,12 @@ export const operationOverrides = {
   },
   'get /api/v1/vendedor/solicitudes-carga': {
     summary: 'Listar solicitudes de tránsito de carga del vendedor autenticado',
-    responses: Object.fromEntries([jsonResponse('200', 'Solicitudes de tránsito del vendedor', 'GenericObjectArray')]),
+    parameters: [
+      { name: 'status', in: 'query', required: false, schema: stringEnum(['PENDING', 'APPROVED', 'REJECTED']), description: 'Filtrar por estado de la solicitud' },
+      { name: 'page', in: 'query', required: false, schema: { type: 'integer' }, description: 'Número de página' },
+      { name: 'limit', in: 'query', required: false, schema: { type: 'integer' }, description: 'Límite de elementos por página' },
+    ],
+    responses: Object.fromEntries([jsonResponse('200', 'Solicitudes de tránsito del vendedor', 'CargaTransitionRequestPaginated')]),
   },
   'post /api/v1/vendedor/cargas/transicion-cierre': {
     summary: 'Solicitar transición/cierre de carga por ventanas temporales o salida anticipada (Vendedor)',
