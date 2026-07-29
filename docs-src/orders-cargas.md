@@ -218,7 +218,20 @@ Permite al vendedor indicar que acepta continuar operando dentro de una carga qu
   ```json
   {
     "data": [
-      // ... list of items
+      {
+        "carga_id": 4,
+        "tipo_carga": "AEREA",
+        "status_carga": "IN_TRANSIT",
+        "opens_at": "2026-05-25T12:00:00.000Z",
+        "closes_at": null,
+        "completa": false,
+        "total_pedidos": 5,
+        "pedidos_pendientes": 2,
+        "pedidos_confirmados": 3,
+        "pedidos_denegados": 0,
+        "pedidos_cancelados": 0,
+        "pedidos_pendientes_can_ship": 1
+      }
     ],
     "meta": {
       "total": 42,

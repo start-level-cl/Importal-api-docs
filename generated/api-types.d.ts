@@ -735,6 +735,31 @@ export type ValidateResponse = {
   valid: boolean
 }
 
+export type VendorCargaStatusItem = {
+  carga_id: number
+  closes_at?: string
+  completa: boolean
+  opens_at?: string
+  pedidos_cancelados: number
+  pedidos_confirmados: number
+  pedidos_denegados: number
+  pedidos_pendientes: number
+  pedidos_pendientes_can_ship: number
+  status_carga?: string
+  tipo_carga: "AEREA" | "MARITIMA"
+  total_pedidos: number
+}
+
+export type VendorCargaStatusResponse = {
+  data: (VendorCargaStatusItem)[]
+  meta: {
+    last_page: number
+    limit: number
+    page: number
+    total: number
+  }
+}
+
 export type VendorOrder = {
   can_ship?: boolean
   cantidad: number
@@ -2344,7 +2369,7 @@ export interface Operations {
     path: "/api/v1/vendedor/pedidos-carga/status"
     requestBody: undefined
     responses: {
-      "200": GenericObject
+      "200": VendorCargaStatusResponse
     }
   }
   "backend_get_api_v1_vendedor_pedidos_id": {

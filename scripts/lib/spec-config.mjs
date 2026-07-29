@@ -726,6 +726,30 @@ const schemaExamples = {
       { id: 2, talla: 'L', stock: 5 },
     ],
   },
+  VendorCargaStatusResponse: {
+    data: [
+      {
+        carga_id: 4,
+        tipo_carga: 'AEREA',
+        status_carga: 'IN_TRANSIT',
+        opens_at: '2026-05-25T12:00:00.000Z',
+        closes_at: null,
+        completa: false,
+        total_pedidos: 5,
+        pedidos_pendientes: 2,
+        pedidos_confirmados: 3,
+        pedidos_denegados: 0,
+        pedidos_cancelados: 0,
+        pedidos_pendientes_can_ship: 1,
+      },
+    ],
+    meta: {
+      total: 1,
+      page: 1,
+      limit: 10,
+      last_page: 1,
+    },
+  },
 }
 
 function getSchemaExample(schemaRef) {
@@ -1349,6 +1373,48 @@ export const schemas = {
   VendorOrdersPaginatedResponse: objectSchema(
     {
       data: { type: 'array', items: { $ref: '#/components/schemas/VendorOrder' } },
+      meta: objectSchema(
+        {
+          total: { type: 'integer' },
+          page: { type: 'integer' },
+          limit: { type: 'integer' },
+          last_page: { type: 'integer' },
+        },
+        ['total', 'page', 'limit', 'last_page'],
+      ),
+    },
+    ['data', 'meta'],
+  ),
+  VendorCargaStatusItem: objectSchema(
+    {
+      carga_id: { type: 'integer' },
+      tipo_carga: { type: 'string', enum: ['AEREA', 'MARITIMA'] },
+      status_carga: { type: 'string', nullable: true },
+      opens_at: { type: 'string', format: 'date-time', nullable: true },
+      closes_at: { type: 'string', format: 'date-time', nullable: true },
+      completa: { type: 'boolean' },
+      total_pedidos: { type: 'integer' },
+      pedidos_pendientes: { type: 'integer' },
+      pedidos_confirmados: { type: 'integer' },
+      pedidos_denegados: { type: 'integer' },
+      pedidos_cancelados: { type: 'integer' },
+      pedidos_pendientes_can_ship: { type: 'integer' },
+    },
+    [
+      'carga_id',
+      'tipo_carga',
+      'completa',
+      'total_pedidos',
+      'pedidos_pendientes',
+      'pedidos_confirmados',
+      'pedidos_denegados',
+      'pedidos_cancelados',
+      'pedidos_pendientes_can_ship',
+    ],
+  ),
+  VendorCargaStatusResponse: objectSchema(
+    {
+      data: { type: 'array', items: { $ref: '#/components/schemas/VendorCargaStatusItem' } },
       meta: objectSchema(
         {
           total: { type: 'integer' },
@@ -2369,9 +2435,12 @@ export const operationOverrides = {
   'get /api/v1/vendedor/pedidos-carga/status': {
     summary: 'Obtener el estado consolidado de la asignación y cargas del vendedor (Vendedor)',
     parameters: [
-      { name: 'tipo_carga', in: 'query', required: false, schema: { type: 'string', enum: ['AEREA', 'MARITIMA'] }, description: 'Filtrar por tipo de transporte' }
+      { name: 'tipo_carga', in: 'query', required: false, schema: { type: 'string', enum: ['AEREA', 'MARITIMA'] }, description: 'Filtrar por tipo de transporte' },
+      { name: 'status', in: 'query', required: false, schema: { type: 'string' }, description: 'Filtrar por estado de asignación (ACTIVE, INACTIVE)' },
+      { name: 'page', in: 'query', required: false, schema: { type: 'integer' }, description: 'Número de página' },
+      { name: 'limit', in: 'query', required: false, schema: { type: 'integer' }, description: 'Límite de elementos por página' },
     ],
-    responses: Object.fromEntries([jsonResponse('200', 'Estado de carga consolidado del vendedor', 'GenericObject')]),
+    responses: Object.fromEntries([jsonResponse('200', 'Estado de carga consolidado del vendedor', 'VendorCargaStatusResponse')]),
   },
   'post /api/v1/vendedor/pedidos/{id}/solicitar-transicion': {
     summary: 'Solicitar transición de un pedido individual a la siguiente carga abierta (Vendedor)',
