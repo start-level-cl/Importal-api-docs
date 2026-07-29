@@ -559,19 +559,52 @@ components:
     CreateProductRequest:
       additionalProperties: false
       properties:
+        cargaId:
+          description: ID de la carga específica a asignar (opcional)
+          type: integer
         marca:
+          description: Marca o nombre del producto (opcional)
           type: string
-        photo_urls:
+        photos:
+          description: "Imágenes binarias del producto (requerido, al menos 1 foto, máximo 4 fotos)"
           items:
+            format: binary
             type: string
+          maxItems: 4
           type: array
         price_usd:
+          description: Precio unitario en USD (opcional)
           type: number
-        status:
+        sizes:
+          description: "Listado de tallas y stock (JSON string o array de {talla, stock}). Requerido."
+          oneOf:
+            -               description: "JSON string serializado con array de objetos {talla, stock}"
+              type: string
+            -               description: "Array de objetos {talla, stock}"
+              items:
+                additionalProperties: false
+                properties:
+                  stock:
+                    description: "Stock disponible (entero >= 0)"
+                    minimum: 0
+                    type: integer
+                  talla:
+                    description: Talla (string no vacío)
+                    type: string
+                required:
+                  - talla
+                  - stock
+                type: object
+              type: array
+        transport_type:
+          enum:
+            - AEREA
+            - MARITIMA
           type: string
       required:
-        - marca
-        - price_usd
+        - photos
+        - transport_type
+        - sizes
       type: object
     CreateReturnRequestRequest:
       additionalProperties: false
@@ -8874,13 +8907,7 @@ paths:
 []
       requestBody:
         content:
-          application/json:
-            example:
-              marca: Apple
-              photo_urls:
-                - "https://cdn.importal.cl/products/iphone.jpg"
-              price_usd: 999.99
-              status: AVAILABLE
+          multipart/form-data:
             schema:
               $ref: "#/components/schemas/CreateProductRequest"
         required: true
@@ -8897,11 +8924,17 @@ paths:
                 status: AVAILABLE
               schema:
                 $ref: "#/components/schemas/Product"
-          description: Producto creado
+          description: Producto creado exitosamente con fotos subidas a S3
+        400:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: "Formato o campos inválidos (faltan fotos, transport_type o sizes inválido)"
       security:
         -           bearerAuth:
 []
-      summary: createProduct
+      summary: Crear un nuevo producto en el catálogo (Vendedor)
       tags:
         - Products
       x-role-group: vendedor

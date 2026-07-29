@@ -86,34 +86,61 @@ Devuelve todos los productos publicados por el vendedor autenticado.
 
 ### 2.2 Crear Producto
 
-Publica un nuevo producto con fotos en la plataforma. La petición debe enviarse como `multipart/form-data`.
+Publica un nuevo producto con fotos en el catálogo de la plataforma. La petición debe enviarse obligatoriamente como `multipart/form-data`.
 
 - **Método:** `POST`
 - **Ruta:** `/api/v1/vendedor/productos`
 - **Roles Permitidos:** `VENDOR`
 - **Content-Type:** `multipart/form-data`
-- **Campos del Formulario:**
-  - `photos` (archivo, requerido, máximo 4): Imágenes del producto (campo de subida múltiple).
-  - `marca` (string, requerido): Nombre de la marca o producto.
-  - `price_usd` (número, requerido): Precio en dólares estadounidenses.
-  - `transport_type` (string, requerido): Tipo de transporte (`AEREA` o `MARITIMA`).
-  - `sizes` (JSON string, requerido): Array serializado de tallas y stock.
-- **Ejemplo de `sizes` (JSON):**
+
+- **Campos Obligatorios:**
+  - `photos` (archivos binarios, mínimo 1 y máximo 4): Imágenes del producto en formato de archivo binario.
+  - `transport_type` (string, `AEREA` | `MARITIMA`): Tipo de transporte asignado al producto.
+  - `sizes` (JSON string o array de `{talla, stock}`): Listado de tallas y stock. Debe contener al menos una talla válida. Cada elemento debe ser un objeto con `talla` (string no vacío) y `stock` (número entero ≥ 0).
+
+- **Campos Opcionales:**
+  - `marca` (string, opcional): Nombre de la marca o descripción del producto.
+  - `price_usd` (número, opcional): Precio unitario en dólares estadounidenses (USD).
+  - `cargaId` (número, opcional): ID de la carga específica a la que se ancla el producto.
+
+- **Ejemplo de `sizes` (JSON String / Array):**
   ```json
   [
     { "talla": "S", "stock": 20 },
     { "talla": "M", "stock": 15 },
-    { "talla": "L", "stock": 10 },
-    { "talla": "XL", "stock": 5 }
+    { "talla": "L", "stock": 10 }
   ]
   ```
-- **Respuesta Exitosa (201 Created):** Devuelve el producto creado con los URLs de S3.
+
+- **Respuesta Exitosa (201 Created):**
+  Retorna el objeto `Product` creado con las URLs firmadas/públicas de S3 (`photo_urls`), `id`, `status` (`AVAILABLE`), `transport_type`, `sizes`, `cargaId`, etc.
+
+  ```json
+  {
+    "id": 42,
+    "marca": "Nike",
+    "price_usd": 35.00,
+    "status": "AVAILABLE",
+    "transport_type": "AEREA",
+    "cargaId": 4,
+    "photo_urls": [
+      "https://s3.amazonaws.com/bucket/producto-42-front.jpg"
+    ],
+    "sizes": [
+      { "id": 1, "talla": "S", "stock": 20 },
+      { "id": 2, "talla": "M", "stock": 15 }
+    ],
+    "vendorId": 7,
+    "createdAt": "2026-07-29T12:00:00.000Z",
+    "updatedAt": "2026-07-29T12:00:00.000Z"
+  }
+  ```
 
 > [!IMPORTANT]
 > **Validaciones Obligatorias:**
-> - Se debe subir **al menos una foto** (campo `photos`). Si no se adjunta ninguna imagen, se devuelve `400 BadRequestException`.
-> - El campo `transport_type` es **obligatorio**.
-> - El campo `sizes` debe ser un **JSON válido** con al menos una talla, y cada elemento debe contener `talla` (string no vacío) y `stock` (número ≥ 0).
+> - **Fotos (`photos`)**: Debe adjuntarse **al menos 1 archivo** (campo `photos`). Si no se sube ninguna imagen, se devuelve `400 BadRequestException` (*"Debe subir al menos una foto del producto (campo: photos)"*). Máximo 4 archivos.
+> - **Tipo de Transporte (`transport_type`)**: Campo **obligatorio** (`AEREA` o `MARITIMA`). Si se omite, devuelve `400 BadRequestException` (*"El tipo de transporte es obligatorio"*).
+> - **Listado de Tallas (`sizes`)**: Campo **obligatorio**. Acepta un JSON string o un array directo de objetos. Si el JSON es inválido o no contiene al menos un elemento válido con `talla` (string no vacío) y `stock` (número ≥ 0), el servidor responderá con `400 BadRequestException`.
 
 ### 2.3 Actualizar Producto
 

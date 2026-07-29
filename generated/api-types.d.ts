@@ -206,10 +206,15 @@ export type CreateOrderRequest = {
 }
 
 export type CreateProductRequest = {
-  marca: string
-  photo_urls?: (string)[]
-  price_usd: number
-  status?: string
+  cargaId?: number
+  marca?: string
+  photos: (string)[]
+  price_usd?: number
+  sizes: string | ({
+    stock: number
+    talla: string
+  })[]
+  transport_type: "AEREA" | "MARITIMA"
 }
 
 export type CreateReturnRequestRequest = {
@@ -2442,6 +2447,7 @@ export interface Operations {
     requestBody: CreateProductRequest
     responses: {
       "201": Product
+      "400": ErrorResponse
     }
   }
   "backend_delete_api_v1_vendedor_productos_id": {

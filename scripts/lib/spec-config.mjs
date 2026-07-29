@@ -160,10 +160,12 @@ const schemaExamples = {
     bloqueado_en: '2026-07-18T18:00:00.000Z',
   },
   CreateProductRequest: {
-    marca: 'Apple',
-    price_usd: 999.99,
-    photo_urls: ['https://cdn.importal.cl/products/iphone.jpg'],
-    status: 'AVAILABLE',
+    photos: ['(binary file 1)', '(binary file 2)'],
+    transport_type: 'AEREA',
+    sizes: '[{"talla":"S","stock":20},{"talla":"M","stock":15}]',
+    marca: 'Nike',
+    price_usd: 35.0,
+    cargaId: 4,
   },
   UpdateProductRequest: {
     marca: 'Apple',
@@ -1105,12 +1107,38 @@ export const schemas = {
   ),
   CreateProductRequest: objectSchema(
     {
-      marca: { type: 'string' },
-      price_usd: { type: 'number' },
-      photo_urls: { type: 'array', items: { type: 'string' } },
-      status: { type: 'string' },
+      photos: {
+        type: 'array',
+        items: { type: 'string', format: 'binary' },
+        maxItems: 4,
+        description: 'Imágenes binarias del producto (requerido, al menos 1 foto, máximo 4 fotos)',
+      },
+      transport_type: stringEnum(['AEREA', 'MARITIMA']),
+      sizes: {
+        oneOf: [
+          {
+            type: 'string',
+            description: 'JSON string serializado con array de objetos {talla, stock}',
+          },
+          {
+            type: 'array',
+            items: objectSchema(
+              {
+                talla: { type: 'string', description: 'Talla (string no vacío)' },
+                stock: { type: 'integer', minimum: 0, description: 'Stock disponible (entero >= 0)' },
+              },
+              ['talla', 'stock'],
+            ),
+            description: 'Array de objetos {talla, stock}',
+          },
+        ],
+        description: 'Listado de tallas y stock (JSON string o array de {talla, stock}). Requerido.',
+      },
+      marca: { type: 'string', description: 'Marca o nombre del producto (opcional)' },
+      price_usd: { type: 'number', description: 'Precio unitario en USD (opcional)' },
+      cargaId: { type: 'integer', description: 'ID de la carga específica a asignar (opcional)' },
     },
-    ['marca', 'price_usd'],
+    ['photos', 'transport_type', 'sizes'],
   ),
   UpdateProductRequest: objectSchema(
     {
@@ -2170,8 +2198,21 @@ export const operationOverrides = {
     responses: Object.fromEntries([jsonResponse('200', 'Productos del vendedor', 'ProductArray')]),
   },
   'post /api/v1/vendedor/productos': {
-    requestBody: jsonRequest('CreateProductRequest'),
-    responses: Object.fromEntries([jsonResponse('201', 'Producto creado', 'Product')]),
+    summary: 'Crear un nuevo producto en el catálogo (Vendedor)',
+    requestBody: {
+      required: true,
+      content: {
+        'multipart/form-data': {
+          schema: {
+            $ref: '#/components/schemas/CreateProductRequest',
+          },
+        },
+      },
+    },
+    responses: Object.fromEntries([
+      jsonResponse('201', 'Producto creado exitosamente con fotos subidas a S3', 'Product'),
+      jsonResponse('400', 'Formato o campos inválidos (faltan fotos, transport_type o sizes inválido)', 'ErrorResponse'),
+    ]),
   },
   'put /api/v1/vendedor/productos/{id}': {
     requestBody: jsonRequest('UpdateProductRequest'),
