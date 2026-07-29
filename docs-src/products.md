@@ -141,6 +141,7 @@ Publica un nuevo producto con fotos en el catálogo de la plataforma. La petici�
 > - **Fotos (`photos`)**: Debe adjuntarse **al menos 1 archivo** (campo `photos`). Si no se sube ninguna imagen, se devuelve `400 BadRequestException` (*"Debe subir al menos una foto del producto (campo: photos)"*). Máximo 4 archivos.
 > - **Tipo de Transporte (`transport_type`)**: Campo **obligatorio** (`AEREA` o `MARITIMA`). Si se omite, devuelve `400 BadRequestException` (*"El tipo de transporte es obligatorio"*).
 > - **Listado de Tallas (`sizes`)**: Campo **obligatorio**. Acepta un JSON string o un array directo de objetos. Si el JSON es inválido o no contiene al menos un elemento válido con `talla` (string no vacío) y `stock` (número ≥ 0), el servidor responderá con `400 BadRequestException`.
+> - **Coincidencia de Tipo de Transporte con Carga (`cargaId`)**: Si se envía un `cargaId` opcional, el `tipo_carga` de la carga asignada debe coincidir con el `transport_type` del producto. Si difieren, la API retorna `400 BadRequestException` (*"El tipo de transporte del producto (X) no coincide con el tipo de transporte de la carga #ID (Y)"*).
 
 ### 2.3 Actualizar Producto
 
