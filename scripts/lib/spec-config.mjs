@@ -1962,6 +1962,133 @@ export const schemas = {
     addresses: { type: 'array', items: { $ref: '#/components/schemas/UserAddress' } },
     billing: { $ref: '#/components/schemas/UserBilling', nullable: true }
   }, ['id', 'name', 'external_id', 'email', 'phone', 'concentimiento', 'bloqueo', 'role', 'status_mora']),
+  VendorSmsQuotaResponse: objectSchema(
+    {
+      vendor_id: { type: 'integer', example: 7, description: 'ID del vendedor propietario de la cuota' },
+      year_month: { type: 'string', example: '2026-07', description: 'Periodo de la cuota en formato YYYY-MM' },
+      monthly_limit: { type: 'integer', example: 100, description: 'Límite máximo mensual de SMS por vendedor' },
+      sent_count: { type: 'integer', example: 15, description: 'Cantidad de SMS enviados en el periodo actual' },
+      remaining_quota: { type: 'integer', example: 85, description: 'Cuota de SMS disponible (monthly_limit - sent_count)' },
+    },
+    ['vendor_id', 'year_month', 'monthly_limit', 'sent_count', 'remaining_quota'],
+  ),
+  SendSmsAnnouncementRequest: objectSchema(
+    {
+      message: { type: 'string', description: 'Mensaje de anuncio masivo SMS para compradores previos (máx 160 caracteres)' },
+    },
+    ['message'],
+  ),
+  SendSmsAnnouncementResponse: objectSchema(
+    {
+      message: { type: 'string', example: 'Anuncio SMS enviado con éxito.', description: 'Resultado de la operación' },
+      sent_count: { type: 'integer', example: 30, description: 'Cantidad de SMS efectivamente encolados en SQS' },
+      remaining_quota: { type: 'integer', example: 35, description: 'Cuota restante tras descontar sent_count' },
+      year_month: { type: 'string', example: '2026-07', description: 'Periodo de la cuota en formato YYYY-MM' },
+    },
+    ['message', 'sent_count', 'remaining_quota', 'year_month'],
+  ),
+  VendorPagoItem: objectSchema(
+    {
+      id: { type: 'integer' },
+      vendor_id: { type: 'integer' },
+      amount: { type: 'string', example: '350000.00', description: 'Monto decimal serializado como string' },
+      status: stringEnum(['PENDING', 'APPROVED', 'REJECTED']),
+      note: { type: 'string', nullable: true },
+      evidence_urls: {
+        type: 'array',
+        items: { type: 'string' },
+        description: 'Comprobantes resueltos a URLs firmadas de S3',
+      },
+      created_at: { type: 'string', format: 'date-time' },
+      updated_at: { type: 'string', format: 'date-time' },
+      vendor: { $ref: '#/components/schemas/GenericObject' },
+      orders: {
+        type: 'array',
+        items: { $ref: '#/components/schemas/GenericObject' },
+        description: 'Órdenes liquidadas; solo se incluye en el detalle por ID',
+      },
+    },
+    ['id', 'vendor_id', 'amount', 'status'],
+  ),
+  VendorPagosPaginatedResponse: objectSchema(
+    {
+      data: { type: 'array', items: { $ref: '#/components/schemas/VendorPagoItem' } },
+      meta: objectSchema(
+        {
+          total: { type: 'integer' },
+          page: { type: 'integer' },
+          limit: { type: 'integer' },
+          last_page: { type: 'integer' },
+        },
+        ['total', 'page', 'limit', 'last_page'],
+      ),
+    },
+    ['data', 'meta'],
+  ),
+  BodegueroDashboardResponse: objectSchema(
+    {
+      arrivedCargas: {
+        type: 'array',
+        items: { $ref: '#/components/schemas/GenericObject' },
+        description: 'Cargas en estado ARRIVED ordenadas por id descendente',
+      },
+      pendingReviewsCount: {
+        type: 'integer',
+        description: 'Pedidos de cargas arribadas con revisado = false (excluye CANCELLED y REJECTED)',
+      },
+      readyToShipCount: {
+        type: 'integer',
+        description: 'Pedidos con can_ship = true aún no despachados ni entregados',
+      },
+      readyToShipOrders: {
+        type: 'array',
+        items: objectSchema({
+          id: { type: 'integer' },
+          client_name: { type: 'string' },
+          carga_id: { type: 'integer', nullable: true },
+          status: { type: 'string' },
+        }),
+        description: 'Detalle resumido de los pedidos listos para envío',
+      },
+      metrics: objectSchema(
+        {
+          pendingBultosCount: { type: 'integer', description: 'Pedidos con can_ship = true pendientes de empacar y auditar' },
+          pendingDeliveriesCount: { type: 'integer', description: 'Entregas en estado PENDING o IN_REVISION' },
+          inventoryAlertsCount: { type: 'integer', description: 'Ítems de bodega ACTIVE con stock <= 0' },
+          pendingAdjustmentsCount: { type: 'integer', description: 'Ajustes en estado PENDING_CLIENT o RESOLVED' },
+        },
+        ['pendingBultosCount', 'pendingDeliveriesCount', 'inventoryAlertsCount', 'pendingAdjustmentsCount'],
+      ),
+      inventoryAlertItems: {
+        type: 'array',
+        items: objectSchema({
+          id: { type: 'integer' },
+          name: { type: 'string' },
+          sku: { type: 'string', nullable: true },
+          location: { type: 'string', nullable: true },
+          stock: { type: 'integer' },
+          status: { type: 'string' },
+        }),
+        description: 'Hasta 20 ítems de bodega ACTIVE con stock <= 0',
+      },
+      pendingAdjustmentsList: {
+        type: 'array',
+        items: objectSchema({
+          id: { type: 'integer' },
+          order_id: { type: 'integer' },
+          status: { type: 'string' },
+          origin: { type: 'string', nullable: true },
+          original_quantity: { type: 'integer' },
+          adjusted_quantity: { type: 'integer' },
+          total_refund_clp: { type: 'number' },
+          created_at: { type: 'string', format: 'date-time' },
+          order: { $ref: '#/components/schemas/GenericObject' },
+        }),
+        description: 'Hasta 20 ajustes en estado PENDING_CLIENT o RESOLVED',
+      },
+    },
+    ['arrivedCargas', 'pendingReviewsCount', 'readyToShipCount', 'readyToShipOrders', 'metrics'],
+  ),
 }
 
 function jsonRequest(schemaRef, required = true) {
@@ -2244,10 +2371,25 @@ export const operationOverrides = {
     responses: Object.fromEntries([jsonResponse('200', 'Mensajes del chat', 'ChatMessageArray')]),
   },
   'get /api/v1/cliente/productos': {
-    responses: Object.fromEntries([jsonResponse('200', 'Catalogo disponible', 'ProductArray')]),
+    summary: 'Listar productos del catálogo disponibles para compra (productos con stock = 0 se ordenan al final de los resultados)',
+    responses: Object.fromEntries([jsonResponse('200', 'Catálogo disponible con ordenamiento por stock', 'ProductArray')]),
   },
   'get /api/v1/vendedor/productos': {
-    responses: Object.fromEntries([jsonResponse('200', 'Productos del vendedor', 'ProductArray')]),
+    summary: 'Listar productos publicados por el vendedor autenticado (productos con stock = 0 se ordenan al final de los resultados)',
+    responses: Object.fromEntries([jsonResponse('200', 'Productos del vendedor con ordenamiento por stock', 'ProductArray')]),
+  },
+  'get /api/v1/vendedor/notificar-sms/cuota': {
+    summary: 'Consultar la cuota mensual de SMS marketing y consumo del vendedor (Vendedor)',
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Cuota de SMS del vendedor', 'VendorSmsQuotaResponse'),
+    ]),
+  },
+  'post /api/v1/vendedor/notificar-sms': {
+    summary: 'Enviar anuncio promocional SMS masivo a compradores previos hasta agotar cuota mensual (Vendedor)',
+    requestBody: jsonRequest('SendSmsAnnouncementRequest'),
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Anuncio SMS encolado correctamente en SQS', 'SendSmsAnnouncementResponse'),
+    ]),
   },
   'post /api/v1/vendedor/productos': {
     summary: 'Crear un nuevo producto en el catálogo (Vendedor)',
@@ -2467,6 +2609,32 @@ export const operationOverrides = {
     },
     responses: Object.fromEntries([jsonResponse('201', 'Solicitud de pago creada', 'GenericObject')]),
   },
+  'get /api/v1/vendedor/pagos': {
+    summary: 'Listar solicitudes de pago del vendedor autenticado con paginación { data, meta } (Vendedor)',
+    parameters: [
+      { name: 'status', in: 'query', required: false, schema: stringEnum(['PENDING', 'APPROVED', 'REJECTED']), description: 'Filtrar por estado' },
+      { name: 'page', in: 'query', required: false, schema: { type: 'integer' }, description: 'Número de página' },
+      { name: 'limit', in: 'query', required: false, schema: { type: 'integer' }, description: 'Límite de elementos por página' },
+    ],
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Listado paginado de solicitudes de pago', 'VendorPagosPaginatedResponse'),
+    ]),
+  },
+  'get /api/v1/vendedor/pagos/{id}': {
+    summary: 'Obtener el detalle de una solicitud de pago propia por ID, con órdenes y URLs firmadas S3 (Vendedor)',
+    parameters: [
+      { name: 'id', in: 'path', required: true, schema: { type: 'integer' }, description: 'ID de la solicitud de pago' },
+    ],
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Detalle de la solicitud de pago', 'VendorPagoItem'),
+    ]),
+  },
+  'get /api/v1/bodeguero/dashboard': {
+    summary: 'Obtener métricas consolidadas del dashboard de bodega (Bodeguero/Admin/Root)',
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Métricas consolidadas del dashboard de bodega', 'BodegueroDashboardResponse'),
+    ]),
+  },
   'get /api/v1/vendedor/ordenes/pendientes-cobro': {
     summary: 'Obtener órdenes del vendedor listas para cobrar con photo_urls resueltas a URLs firmadas S3 (Vendedor)',
     parameters: [
@@ -2614,59 +2782,9 @@ export const operationOverrides = {
     requestBody: jsonRequest('UpdateWarehouseInventoryRequest'),
     responses: Object.fromEntries([jsonResponse('200', 'Ítem de inventario actualizado', 'WarehouseInventoryItem')]),
   },
-  'patch /api/v1/bodeguero/inventario/{id}': {
-    summary: 'Actualizar stock, ubicación y/o talla de un ítem de inventario (Bodeguero/Admin/Root)',
-    requestBody: jsonRequest('UpdateWarehouseInventoryRequest'),
-    responses: Object.fromEntries([jsonResponse('200', 'Ítem de inventario actualizado', 'WarehouseInventoryItem')]),
-  },
   'delete /api/v1/bodeguero/inventario/{id}': {
     summary: 'Desactivar (soft-delete) un ítem de inventario. No borra la fila porque pedidos de trueque pueden referenciarla (Bodeguero/Admin/Root)',
     responses: Object.fromEntries([jsonResponse('200', 'Ítem marcado como INACTIVE', 'GenericObject')]),
-  },
-  'post /api/v1/admin/inventario-bodega': {
-    summary: 'Registrar un ítem operativo en el inventario interno de bodega (Admin/Root)',
-    requestBody: {
-      required: true,
-      content: {
-        'multipart/form-data': {
-          schema: {
-            '$ref': '#/components/schemas/CreateWarehouseInventoryRequest',
-          },
-        },
-      },
-    },
-    responses: Object.fromEntries([
-      jsonResponse('201', 'Ítem de inventario creado en estado ACTIVE, con photo_urls resuelto a URLs firmadas', 'WarehouseInventoryItem'),
-    ]),
-  },
-  'get /api/v1/admin/inventario-bodega': {
-    summary: 'Listar el inventario interno de bodega, paginado (Admin/Root)',
-    parameters: [
-      { name: 'name', in: 'query', required: false, schema: { type: 'string' }, description: 'Filtrar por nombre (parcial, case-insensitive)' },
-      { name: 'sku', in: 'query', required: false, schema: { type: 'string' }, description: 'Filtrar por SKU (parcial, case-insensitive)' },
-      { name: 'talla', in: 'query', required: false, schema: { type: 'string' }, description: 'Filtrar por talla del producto en bodega' },
-      { name: 'status', in: 'query', required: false, schema: { type: 'string', enum: ['ACTIVE', 'INACTIVE'] }, description: 'Filtrar por estado. Sin este filtro, retorna ítems de todos los estados' },
-      { name: 'page', in: 'query', required: false, schema: { type: 'integer' }, description: 'Número de página (default 1)' },
-      { name: 'limit', in: 'query', required: false, schema: { type: 'integer' }, description: 'Ítems por página (default 20)' },
-    ],
-    responses: Object.fromEntries([jsonResponse('200', 'Listado paginado de inventario', 'WarehouseInventoryListResponse')]),
-  },
-  'get /api/v1/admin/inventario-bodega/{id}': {
-    summary: 'Obtener el detalle de un ítem de inventario por su ID (Admin/Root)',
-    responses: Object.fromEntries([
-      jsonResponse('200', 'Ítem de inventario, con photo_urls resuelto a URLs firmadas', 'WarehouseInventoryItem'),
-      jsonResponse('404', 'Ítem no encontrado', 'ErrorResponse'),
-    ]),
-  },
-  'patch /api/v1/admin/inventario-bodega/{id}': {
-    summary: 'Actualizar stock, ubicación y/o talla de un ítem de inventario (Admin/Root)',
-    requestBody: jsonRequest('UpdateWarehouseInventoryRequest'),
-    responses: Object.fromEntries([jsonResponse('200', 'Ítem de inventario actualizado', 'WarehouseInventoryItem')]),
-  },
-  'put /api/v1/admin/inventario-bodega/{id}': {
-    summary: 'Actualizar stock, ubicación y/o talla de un ítem de inventario (Admin/Root)',
-    requestBody: jsonRequest('UpdateWarehouseInventoryRequest'),
-    responses: Object.fromEntries([jsonResponse('200', 'Ítem de inventario actualizado', 'WarehouseInventoryItem')]),
   },
   'get /api/v1/admin/trueques/productos-bodega': {
     summary: 'Listar productos de bodega disponibles para trueque (Admin/Root)',

@@ -145,9 +145,42 @@ Marca en bloque todas las notificaciones no leídas del usuario autenticado.
 
 ---
 
-## 6. Anuncio SMS Masivo (Vendedor)
+## 6. Anuncio SMS Masivo y Cuota (Vendedor)
 
-Los vendedores pueden enviar un SMS de anuncio promocional a sus clientes registrados en la plataforma.
+Los vendedores pueden enviar anuncios promocionales por SMS dirigidos exclusivamente a sus **compradores previos** (clientes que les han realizado compras en la plataforma), sujetos a reglas de cuota mensual y envío parcial.
+
+> [!IMPORTANT]
+> **Reglas de Negocio de SMS Marketing:**
+> - **Límite Mensual (Cuota):** Cada vendedor tiene un límite de **100 SMS por mes** (`monthly_limit`). La cuota se lleva por periodo `year_month` (formato `YYYY-MM`) y se crea automáticamente en el primer uso del mes.
+> - **Público Objetivo (Past Buyers):** Solo se consideran usuarios con rol `CLIENT`, con `phone_number` no vacío, que tengan consentimiento (`phone = true` o `concentimiento = true`) y que hayan comprado previamente a ese vendedor (órdenes que no estén en `CANCELLED` ni `REJECTED`).
+> - **Envío Parcial por Cuota:** Si la cantidad de compradores previos supera la cuota restante, el sistema despacha solo hasta agotar la cuota disponible y descarta el resto.
+> - **Cuota Agotada:** Si la cuota restante es `0`, el endpoint de envío responde `400 Bad Request` con el mensaje `Has alcanzado tu límite mensual de 100 SMS para marketing.`
+
+### 6.1 Consultar Cuota Mensual de SMS
+
+Permite al vendedor autenticado verificar su límite mensual de SMS, el consumo del periodo actual y los mensajes disponibles.
+
+- **Método:** `GET`
+- **Ruta:** `/api/v1/vendedor/notificar-sms/cuota`
+- **Roles Permitidos:** `VENDOR`
+- **Respuesta Exitosa (200 OK):**
+  ```json
+  {
+    "vendor_id": 7,
+    "year_month": "2026-07",
+    "monthly_limit": 100,
+    "sent_count": 35,
+    "remaining_quota": 65
+  }
+  ```
+  - `year_month` (string): Periodo de la cuota en formato `YYYY-MM`.
+  - `monthly_limit` (número): Límite mensual asignado al vendedor (por defecto `100`).
+  - `sent_count` (número): SMS ya despachados en el periodo.
+  - `remaining_quota` (número): `monthly_limit - sent_count`.
+
+### 6.2 Enviar Anuncio SMS Masivo
+
+Encola el envío de un anuncio masivo por SMS a los compradores previos del vendedor, respetando la cuota restante.
 
 - **Método:** `POST`
 - **Ruta:** `/api/v1/vendedor/notificar-sms`
@@ -159,7 +192,27 @@ Los vendedores pueden enviar un SMS de anuncio promocional a sus clientes regist
   }
   ```
   - `message` (string, requerido): Contenido del SMS a enviar. Se recomienda un máximo de 160 caracteres.
-- **Respuesta Exitosa (200 OK):** Confirmación de envío a la cola SQS.
+- **Respuesta Exitosa (200 OK):** Confirmación de procesamiento y encolado en AWS SQS.
+  ```json
+  {
+    "message": "Anuncio SMS enviado con éxito.",
+    "sent_count": 30,
+    "remaining_quota": 35,
+    "year_month": "2026-07"
+  }
+  ```
+  - `sent_count` (número): Cantidad de SMS efectivamente encolados en esta operación.
+  - `remaining_quota` (número): Cuota restante después de descontar `sent_count`.
+- **Sin destinatarios:** Si el vendedor no tiene compradores previos que cumplan los criterios, responde `200 OK` sin consumir cuota:
+  ```json
+  {
+    "message": "No se encontraron clientes que cumplan con los criterios de envío.",
+    "sent_count": 0,
+    "remaining_quota": 65,
+    "year_month": "2026-07"
+  }
+  ```
+- **Error (400 Bad Request):** Cuota mensual agotada (`remaining_quota <= 0`).
 
 > [!NOTE]
-> El SMS se encola en AWS SQS y se procesa de forma asíncrona por la Lambda de notificaciones. El endpoint confirma la recepción del mensaje en la cola, no la entrega final al destinatario.
+> El SMS se encola en AWS SQS y se procesa de forma asíncrona por la Lambda de notificaciones. El endpoint confirma el encolado y la cuota consumida, no la entrega final al destinatario. Si `NOTIFICATION_QUEUE_URL` no está configurada, el envío físico se omite pero la cuota igualmente se descuenta.

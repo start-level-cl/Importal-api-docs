@@ -34,8 +34,9 @@ Devuelve el catálogo de productos disponibles para compra, filtrado automática
   - `limit` (opcional, default `20`): Cantidad de resultados por página.
 
 > [!NOTE]
-> **Filtrado por Transporte Autorizado:**
-> Cuando el solicitante es un `CLIENT`, el backend aplica automáticamente un filtro basado en los tipos de sala/transporte a los que tiene acceso (extraídos del token JWT). Esto garantiza que cada cliente solo vea los productos compatibles con sus salas habilitadas.
+> **Filtrado por Transporte Autorizado y Ordenamiento por Stock:**
+> - **Filtrado por Transporte:** Cuando el solicitante es un `CLIENT`, el backend aplica automáticamente un filtro basado en los tipos de sala/transporte a los que tiene acceso (extraídos del token JWT). Esto garantiza que cada cliente solo vea los productos compatibles con sus salas habilitadas.
+> - **Orden de Productos:** Los productos con stock disponible (`stock > 0`) se priorizan al inicio. Los productos con stock igual a cero (`stock = 0` / sin stock) se ordenan automáticamente al final de los resultados.
 
 ### 1.2 Obtener Producto por ID
 
@@ -83,6 +84,9 @@ Devuelve todos los productos publicados por el vendedor autenticado.
 - **Query Parameters:**
   - `transport_type` (opcional, string): Filtrar por tipo de transporte (`AEREA`, `MARITIMA`).
   - `status` (opcional, string): Filtrar por estado (`AVAILABLE`, `UNAVAILABLE`, `DRAFT`).
+
+> [!NOTE]
+> **Ordenamiento por Stock:** Los productos publicados con stock total igual a cero (`stock = 0`) se desplazan automáticamente al final del listado de resultados.
 
 ### 2.2 Crear Producto
 

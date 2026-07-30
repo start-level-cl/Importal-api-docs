@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url'
 import { extractLambdaRoutes, extractNestRoutes } from './lib/route-extractor.mjs'
 
 const currentDir = path.dirname(fileURLToPath(import.meta.url))
-const repoRoot = path.resolve(currentDir, '..', '..', '..')
+const repoRoot = path.resolve(currentDir, '..', '..')
 const docsRoot = path.resolve(currentDir, '..')
 const generatedDir = path.join(docsRoot, 'generated')
 const specPath = path.join(docsRoot, 'generated', 'openapi.json')

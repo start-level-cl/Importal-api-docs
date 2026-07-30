@@ -207,13 +207,70 @@ Cuando el transportista o courier retira físicamente la mercancía de la bodega
 Para agilizar la operación y el control diario del bodeguero, se incorporaron vistas clave en la interfaz del bodeguero sustentadas por endpoints específicos:
 
 ### 6.1 Dashboard General (`/bodeguero/dashboard`)
-Permite visualizar un resumen de métricas clave y desempeño operativo de la bodega:
+Permite visualizar un resumen consolidado de métricas clave y desempeño operativo de la bodega:
 *   **Endpoint:** `GET /api/v1/bodeguero/dashboard`
-*   **Información provista:**
-    *   **Lotes por verificar:** Cargas activas que han arribado pero no han completado su revisión física.
-    *   **Pedidos listos para enviar:** Entregas consolidadas en estado de preparación o despachadas.
-    *   **Incidencias sin resolver:** Pedidos con reportes de daños o faltantes aún no resueltos por los clientes.
-    *   **Indicadores de Desempeño:** Tasa de precisión de inventario y volumen histórico de lotes verificados.
+*   **Roles Permitidos:** `BODEGUERO`, `ADMIN`, `ROOT`
+*   **Información Provista (nivel raíz):**
+    *   `arrivedCargas` (array): Cargas en estado `ARRIVED`, ordenadas por `id` descendente.
+    *   `pendingReviewsCount` (número): Pedidos de esas cargas arribadas con `revisado = false` (excluye `CANCELLED` y `REJECTED`).
+    *   `readyToShipCount` (número): Cantidad de pedidos con `can_ship = true` aún no despachados ni entregados.
+    *   `readyToShipOrders` (array): Detalle resumido de esos pedidos (`id`, `client_name`, `carga_id`, `status`).
+    *   `inventoryAlertItems` (array, máx. 20): Ítems de bodega `ACTIVE` con `stock <= 0` (`id`, `name`, `sku`, `location`, `stock`, `status`).
+    *   `pendingAdjustmentsList` (array, máx. 20): Ajustes en estado `PENDING_CLIENT` o `RESOLVED` con su orden asociada.
+*   **Métricas Agregadas (objeto `metrics`):**
+    *   `pendingBultosCount` (número): Pedidos con `can_ship = true` pendientes de empacar y auditar.
+    *   `pendingDeliveriesCount` (número): Entregas en estado `PENDING` o `IN_REVISION`.
+    *   `inventoryAlertsCount` (número): Total de ítems de bodega `ACTIVE` con `stock <= 0`.
+    *   `pendingAdjustmentsCount` (número): Total de ajustes en `PENDING_CLIENT` o `RESOLVED`.
+*   **Ejemplo de Respuesta:**
+    ```json
+    {
+      "arrivedCargas": [
+        { "id": 12, "status": "ARRIVED", "transport_type": "MARITIMA" }
+      ],
+      "pendingReviewsCount": 4,
+      "readyToShipCount": 2,
+      "readyToShipOrders": [
+        { "id": 45, "client_name": "Juan Pérez", "carga_id": 12, "status": "PAID" }
+      ],
+      "metrics": {
+        "pendingBultosCount": 5,
+        "pendingDeliveriesCount": 8,
+        "inventoryAlertsCount": 1,
+        "pendingAdjustmentsCount": 2
+      },
+      "inventoryAlertItems": [
+        {
+          "id": 3,
+          "name": "Caja de embalaje L",
+          "sku": "EMB-L",
+          "location": "Estante A1",
+          "stock": 0,
+          "status": "ACTIVE"
+        }
+      ],
+      "pendingAdjustmentsList": [
+        {
+          "id": 9,
+          "order_id": 45,
+          "status": "PENDING_CLIENT",
+          "origin": "BODEGA",
+          "original_quantity": 3,
+          "adjusted_quantity": 2,
+          "total_refund_clp": 15000,
+          "created_at": "2026-07-28T10:00:00.000Z",
+          "order": {
+            "id": 45,
+            "client_name": "Juan Pérez",
+            "product_name": "Nike"
+          }
+        }
+      ]
+    }
+    ```
+
+> [!IMPORTANT]
+> Las cuatro métricas numéricas viven dentro del objeto `metrics`, no en la raíz de la respuesta.
 
 ### 6.2 Control de Estado de Clientes por Carga (`/bodeguero/cargas/:id/clientes-status`)
 Permite al bodeguero auditar individualmente a los clientes asociados a una carga y verificar si están listos (liberados de deuda y con revisión física concluida) para el despacho físico.

@@ -41,6 +41,112 @@ components:
         - bloqueo
         - bloqueo_origen
       type: object
+    BodegueroDashboardResponse:
+      additionalProperties: false
+      properties:
+        arrivedCargas:
+          description: Cargas en estado ARRIVED ordenadas por id descendente
+          items:
+            $ref: "#/components/schemas/GenericObject"
+          type: array
+        inventoryAlertItems:
+          description: "Hasta 20 ítems de bodega ACTIVE con stock <= 0"
+          items:
+            additionalProperties: false
+            properties:
+              id:
+                type: integer
+              location:
+                nullable: true
+                type: string
+              name:
+                type: string
+              sku:
+                nullable: true
+                type: string
+              status:
+                type: string
+              stock:
+                type: integer
+            type: object
+          type: array
+        metrics:
+          additionalProperties: false
+          properties:
+            inventoryAlertsCount:
+              description: "Ítems de bodega ACTIVE con stock <= 0"
+              type: integer
+            pendingAdjustmentsCount:
+              description: Ajustes en estado PENDING_CLIENT o RESOLVED
+              type: integer
+            pendingBultosCount:
+              description: "Pedidos con can_ship = true pendientes de empacar y auditar"
+              type: integer
+            pendingDeliveriesCount:
+              description: Entregas en estado PENDING o IN_REVISION
+              type: integer
+          required:
+            - pendingBultosCount
+            - pendingDeliveriesCount
+            - inventoryAlertsCount
+            - pendingAdjustmentsCount
+          type: object
+        pendingAdjustmentsList:
+          description: Hasta 20 ajustes en estado PENDING_CLIENT o RESOLVED
+          items:
+            additionalProperties: false
+            properties:
+              adjusted_quantity:
+                type: integer
+              created_at:
+                format: "date-time"
+                type: string
+              id:
+                type: integer
+              order:
+                $ref: "#/components/schemas/GenericObject"
+              order_id:
+                type: integer
+              origin:
+                nullable: true
+                type: string
+              original_quantity:
+                type: integer
+              status:
+                type: string
+              total_refund_clp:
+                type: number
+            type: object
+          type: array
+        pendingReviewsCount:
+          description: "Pedidos de cargas arribadas con revisado = false (excluye CANCELLED y REJECTED)"
+          type: integer
+        readyToShipCount:
+          description: "Pedidos con can_ship = true aún no despachados ni entregados"
+          type: integer
+        readyToShipOrders:
+          description: Detalle resumido de los pedidos listos para envío
+          items:
+            additionalProperties: false
+            properties:
+              carga_id:
+                nullable: true
+                type: integer
+              client_name:
+                type: string
+              id:
+                type: integer
+              status:
+                type: string
+            type: object
+          type: array
+      required:
+        - arrivedCargas
+        - pendingReviewsCount
+        - readyToShipCount
+        - readyToShipOrders
+        - metrics
+      type: object
     Carga:
       additionalProperties: false
       properties:
@@ -1621,6 +1727,40 @@ components:
       required:
         - message
       type: object
+    SendSmsAnnouncementRequest:
+      additionalProperties: false
+      properties:
+        message:
+          description: Mensaje de anuncio masivo SMS para compradores previos (máx 160 caracteres)
+          type: string
+      required:
+        - message
+      type: object
+    SendSmsAnnouncementResponse:
+      additionalProperties: false
+      properties:
+        message:
+          description: Resultado de la operación
+          example: Anuncio SMS enviado con éxito.
+          type: string
+        remaining_quota:
+          description: Cuota restante tras descontar sent_count
+          example: 35
+          type: integer
+        sent_count:
+          description: Cantidad de SMS efectivamente encolados en SQS
+          example: 30
+          type: integer
+        year_month:
+          description: "Periodo de la cuota en formato YYYY-MM"
+          example: "2026-07"
+          type: string
+      required:
+        - message
+        - sent_count
+        - remaining_quota
+        - year_month
+      type: object
     SupportTicket:
       additionalProperties: false
       properties:
@@ -2251,6 +2391,108 @@ components:
       required:
         - data
         - meta
+      type: object
+    VendorPagoItem:
+      additionalProperties: false
+      properties:
+        amount:
+          description: Monto decimal serializado como string
+          example: 350000.00
+          type: string
+        created_at:
+          format: "date-time"
+          type: string
+        evidence_urls:
+          description: Comprobantes resueltos a URLs firmadas de S3
+          items:
+            type: string
+          type: array
+        id:
+          type: integer
+        note:
+          nullable: true
+          type: string
+        orders:
+          description: Órdenes liquidadas; solo se incluye en el detalle por ID
+          items:
+            $ref: "#/components/schemas/GenericObject"
+          type: array
+        status:
+          enum:
+            - PENDING
+            - APPROVED
+            - REJECTED
+          type: string
+        updated_at:
+          format: "date-time"
+          type: string
+        vendor:
+          $ref: "#/components/schemas/GenericObject"
+        vendor_id:
+          type: integer
+      required:
+        - id
+        - vendor_id
+        - amount
+        - status
+      type: object
+    VendorPagosPaginatedResponse:
+      additionalProperties: false
+      properties:
+        data:
+          items:
+            $ref: "#/components/schemas/VendorPagoItem"
+          type: array
+        meta:
+          additionalProperties: false
+          properties:
+            last_page:
+              type: integer
+            limit:
+              type: integer
+            page:
+              type: integer
+            total:
+              type: integer
+          required:
+            - total
+            - page
+            - limit
+            - last_page
+          type: object
+      required:
+        - data
+        - meta
+      type: object
+    VendorSmsQuotaResponse:
+      additionalProperties: false
+      properties:
+        monthly_limit:
+          description: Límite máximo mensual de SMS por vendedor
+          example: 100
+          type: integer
+        remaining_quota:
+          description: "Cuota de SMS disponible (monthly_limit - sent_count)"
+          example: 85
+          type: integer
+        sent_count:
+          description: Cantidad de SMS enviados en el periodo actual
+          example: 15
+          type: integer
+        vendor_id:
+          description: ID del vendedor propietario de la cuota
+          example: 7
+          type: integer
+        year_month:
+          description: "Periodo de la cuota en formato YYYY-MM"
+          example: "2026-07"
+          type: string
+      required:
+        - vendor_id
+        - year_month
+        - monthly_limit
+        - sent_count
+        - remaining_quota
       type: object
     VerifyCodeRequest:
       additionalProperties: false
@@ -3369,168 +3611,6 @@ paths:
       x-role-group: admin
       x-service: backend
       x-source: "Importal-backend/src/modules/billing/controllers/billing.controller.ts"
-  /api/v1/admin/inventario-bodega:
-    get:
-      operationId: backend_get_api_v1_admin_inventario_bodega
-      parameters:
-        -           description: "Filtrar por nombre (parcial, case-insensitive)"
-          in: query
-          name: name
-          required: false
-          schema:
-            type: string
-        -           description: "Filtrar por SKU (parcial, case-insensitive)"
-          in: query
-          name: sku
-          required: false
-          schema:
-            type: string
-        -           description: Filtrar por talla del producto en bodega
-          in: query
-          name: talla
-          required: false
-          schema:
-            type: string
-        -           description: "Filtrar por estado. Sin este filtro, retorna ítems de todos los estados"
-          in: query
-          name: status
-          required: false
-          schema:
-            enum:
-              - ACTIVE
-              - INACTIVE
-            type: string
-        -           description: Número de página (default 1)
-          in: query
-          name: page
-          required: false
-          schema:
-            type: integer
-        -           description: Ítems por página (default 20)
-          in: query
-          name: limit
-          required: false
-          schema:
-            type: integer
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/WarehouseInventoryListResponse"
-          description: Listado paginado de inventario
-      security:
-        -           bearerAuth:
-[]
-      summary: "Listar el inventario interno de bodega, paginado (Admin/Root)"
-      tags:
-        - Orders
-      x-role-group: admin
-      x-service: backend
-      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
-    post:
-      operationId: backend_post_api_v1_admin_inventario_bodega
-      parameters:
-[]
-      requestBody:
-        content:
-          multipart/form-data:
-            schema:
-              $ref: "#/components/schemas/CreateWarehouseInventoryRequest"
-        required: true
-      responses:
-        201:
-          content:
-            application/json:
-              example:
-                id: 15
-                location: "Pasillo 2, Estante C"
-                marca: Nike
-                name: Buzo Deportivo Nike
-                photo_urls:
-                  - "https://cdn.importal.cl/inventario/buzo.jpg"
-                registered_by_id: 3
-                sizes:
-                  -                     id: 1
-                    stock: 3
-                    talla: M
-                  -                     id: 2
-                    stock: 5
-                    talla: L
-                sku: "BUZ-NK-01"
-                status: ACTIVE
-                stock: 8
-                talla: null
-              schema:
-                $ref: "#/components/schemas/WarehouseInventoryItem"
-          description: "Ítem de inventario creado en estado ACTIVE, con photo_urls resuelto a URLs firmadas"
-      security:
-        -           bearerAuth:
-[]
-      summary: Registrar un ítem operativo en el inventario interno de bodega (Admin/Root)
-      tags:
-        - Orders
-      x-role-group: admin
-      x-service: backend
-      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
-  /api/v1/admin/inventario-bodega/{id}:
-    patch:
-      operationId: backend_patch_api_v1_admin_inventario_bodega_id
-      parameters:
-        -           in: path
-          name: id
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            example:
-              location: "Pasillo 2, Estante C"
-              sizes:
-                -                   stock: 4
-                  talla: M
-                -                   stock: 6
-                  talla: L
-              stock: 10
-            schema:
-              $ref: "#/components/schemas/UpdateWarehouseInventoryRequest"
-        required: true
-      responses:
-        200:
-          content:
-            application/json:
-              example:
-                id: 15
-                location: "Pasillo 2, Estante C"
-                marca: Nike
-                name: Buzo Deportivo Nike
-                photo_urls:
-                  - "https://cdn.importal.cl/inventario/buzo.jpg"
-                registered_by_id: 3
-                sizes:
-                  -                     id: 1
-                    stock: 3
-                    talla: M
-                  -                     id: 2
-                    stock: 5
-                    talla: L
-                sku: "BUZ-NK-01"
-                status: ACTIVE
-                stock: 8
-                talla: null
-              schema:
-                $ref: "#/components/schemas/WarehouseInventoryItem"
-          description: Ítem de inventario actualizado
-      security:
-        -           bearerAuth:
-[]
-      summary: "Actualizar stock, ubicación y/o talla de un ítem de inventario (Admin/Root)"
-      tags:
-        - Orders
-      x-role-group: admin
-      x-service: backend
-      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
   /api/v1/admin/logs:
     get:
       operationId: backend_get_api_v1_admin_logs
@@ -5581,12 +5661,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericObject"
-          description: Operacion exitosa
+                $ref: "#/components/schemas/BodegueroDashboardResponse"
+          description: Métricas consolidadas del dashboard de bodega
       security:
         -           bearerAuth:
 []
-      summary: getBodegueroDashboard
+      summary: Obtener métricas consolidadas del dashboard de bodega (Bodeguero/Admin/Root)
       tags:
         - Orders
       x-role-group: bodeguero
@@ -5919,63 +5999,6 @@ paths:
         -           bearerAuth:
 []
       summary: Obtener el detalle de un ítem de inventario por su ID (Bodeguero/Admin/Root)
-      tags:
-        - Orders
-      x-role-group: bodeguero
-      x-service: backend
-      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
-    patch:
-      operationId: backend_patch_api_v1_bodeguero_inventario_id
-      parameters:
-        -           in: path
-          name: id
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            example:
-              location: "Pasillo 2, Estante C"
-              sizes:
-                -                   stock: 4
-                  talla: M
-                -                   stock: 6
-                  talla: L
-              stock: 10
-            schema:
-              $ref: "#/components/schemas/UpdateWarehouseInventoryRequest"
-        required: true
-      responses:
-        200:
-          content:
-            application/json:
-              example:
-                id: 15
-                location: "Pasillo 2, Estante C"
-                marca: Nike
-                name: Buzo Deportivo Nike
-                photo_urls:
-                  - "https://cdn.importal.cl/inventario/buzo.jpg"
-                registered_by_id: 3
-                sizes:
-                  -                     id: 1
-                    stock: 3
-                    talla: M
-                  -                     id: 2
-                    stock: 5
-                    talla: L
-                sku: "BUZ-NK-01"
-                status: ACTIVE
-                stock: 8
-                talla: null
-              schema:
-                $ref: "#/components/schemas/WarehouseInventoryItem"
-          description: Ítem de inventario actualizado
-      security:
-        -           bearerAuth:
-[]
-      summary: "Actualizar stock, ubicación y/o talla de un ítem de inventario (Bodeguero/Admin/Root)"
       tags:
         - Orders
       x-role-group: bodeguero
@@ -7311,11 +7334,11 @@ paths:
                   status: AVAILABLE
               schema:
                 $ref: "#/components/schemas/ProductArray"
-          description: Catalogo disponible
+          description: Catálogo disponible con ordenamiento por stock
       security:
         -           bearerAuth:
 []
-      summary: getClientProducts
+      summary: "Listar productos del catálogo disponibles para compra (productos con stock = 0 se ordenan al final de los resultados)"
       tags:
         - Products
       x-role-group: cliente
@@ -8534,17 +8557,44 @@ paths:
       operationId: backend_post_api_v1_vendedor_notificar_sms
       parameters:
 []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SendSmsAnnouncementRequest"
+        required: true
       responses:
         200:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericObject"
-          description: Operacion exitosa
+                $ref: "#/components/schemas/SendSmsAnnouncementResponse"
+          description: Anuncio SMS encolado correctamente en SQS
       security:
         -           bearerAuth:
 []
-      summary: sendSmsAnnouncement
+      summary: Enviar anuncio promocional SMS masivo a compradores previos hasta agotar cuota mensual (Vendedor)
+      tags:
+        - Notifications
+      x-role-group: vendedor
+      x-service: backend
+      x-source: "Importal-backend/src/modules/notifications/controllers/notifications.controller.ts"
+  /api/v1/vendedor/notificar-sms/cuota:
+    get:
+      operationId: backend_get_api_v1_vendedor_notificar_sms_cuota
+      parameters:
+[]
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VendorSmsQuotaResponse"
+          description: Cuota de SMS del vendedor
+      security:
+        -           bearerAuth:
+[]
+      summary: Consultar la cuota mensual de SMS marketing y consumo del vendedor (Vendedor)
       tags:
         - Notifications
       x-role-group: vendedor
@@ -8603,6 +8653,48 @@ paths:
       x-role-group: vendedor
       x-service: backend
       x-source: "Importal-backend/src/modules/billing/controllers/billing.controller.ts"
+  /api/v1/vendedor/pagos:
+    get:
+      operationId: backend_get_api_v1_vendedor_pagos
+      parameters:
+        -           description: Filtrar por estado
+          in: query
+          name: status
+          required: false
+          schema:
+            enum:
+              - PENDING
+              - APPROVED
+              - REJECTED
+            type: string
+        -           description: Número de página
+          in: query
+          name: page
+          required: false
+          schema:
+            type: integer
+        -           description: Límite de elementos por página
+          in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VendorPagosPaginatedResponse"
+          description: Listado paginado de solicitudes de pago
+      security:
+        -           bearerAuth:
+[]
+      summary: "Listar solicitudes de pago del vendedor autenticado con paginación { data, meta } (Vendedor)"
+      tags:
+        - Billing
+      x-role-group: vendedor
+      x-service: backend
+      x-source: "Importal-backend/src/modules/billing/controllers/billing.controller.ts"
   /api/v1/vendedor/pagos/solicitar:
     post:
       operationId: backend_post_api_v1_vendedor_pagos_solicitar
@@ -8641,6 +8733,32 @@ paths:
         -           bearerAuth:
 []
       summary: Solicitar retiro de saldo o pago (Vendedor)
+      tags:
+        - Billing
+      x-role-group: vendedor
+      x-service: backend
+      x-source: "Importal-backend/src/modules/billing/controllers/billing.controller.ts"
+  /api/v1/vendedor/pagos/{id}:
+    get:
+      operationId: backend_get_api_v1_vendedor_pagos_id
+      parameters:
+        -           description: ID de la solicitud de pago
+          in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VendorPagoItem"
+          description: Detalle de la solicitud de pago
+      security:
+        -           bearerAuth:
+[]
+      summary: "Obtener el detalle de una solicitud de pago propia por ID, con órdenes y URLs firmadas S3 (Vendedor)"
       tags:
         - Billing
       x-role-group: vendedor
@@ -8983,11 +9101,11 @@ paths:
                   status: AVAILABLE
               schema:
                 $ref: "#/components/schemas/ProductArray"
-          description: Productos del vendedor
+          description: Productos del vendedor con ordenamiento por stock
       security:
         -           bearerAuth:
 []
-      summary: getVendorProducts
+      summary: "Listar productos publicados por el vendedor autenticado (productos con stock = 0 se ordenan al final de los resultados)"
       tags:
         - Products
       x-role-group: vendedor

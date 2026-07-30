@@ -15,6 +15,43 @@ export type BlockUserResponse = {
   role: string
 }
 
+export type BodegueroDashboardResponse = {
+  arrivedCargas: (GenericObject)[]
+  inventoryAlertItems?: ({
+    id?: number
+    location?: string
+    name?: string
+    sku?: string
+    status?: string
+    stock?: number
+  })[]
+  metrics: {
+    inventoryAlertsCount: number
+    pendingAdjustmentsCount: number
+    pendingBultosCount: number
+    pendingDeliveriesCount: number
+  }
+  pendingAdjustmentsList?: ({
+    adjusted_quantity?: number
+    created_at?: string
+    id?: number
+    order?: GenericObject
+    order_id?: number
+    origin?: string
+    original_quantity?: number
+    status?: string
+    total_refund_clp?: number
+  })[]
+  pendingReviewsCount: number
+  readyToShipCount: number
+  readyToShipOrders: ({
+    carga_id?: number
+    client_name?: string
+    id?: number
+    status?: string
+  })[]
+}
+
 export type Carga = {
   closes_at?: string
   created_at: string
@@ -572,6 +609,17 @@ export type SendCodeResponse = {
   message: string
 }
 
+export type SendSmsAnnouncementRequest = {
+  message: string
+}
+
+export type SendSmsAnnouncementResponse = {
+  message: string
+  remaining_quota: number
+  sent_count: number
+  year_month: string
+}
+
 export type SupportTicket = {
   created_at: string
   description: string
@@ -810,6 +858,37 @@ export type VendorOrdersPaginatedResponse = {
     page: number
     total: number
   }
+}
+
+export type VendorPagoItem = {
+  amount: string
+  created_at?: string
+  evidence_urls?: (string)[]
+  id: number
+  note?: string
+  orders?: (GenericObject)[]
+  status: "PENDING" | "APPROVED" | "REJECTED"
+  updated_at?: string
+  vendor?: GenericObject
+  vendor_id: number
+}
+
+export type VendorPagosPaginatedResponse = {
+  data: (VendorPagoItem)[]
+  meta: {
+    last_page: number
+    limit: number
+    page: number
+    total: number
+  }
+}
+
+export type VendorSmsQuotaResponse = {
+  monthly_limit: number
+  remaining_quota: number
+  sent_count: number
+  vendor_id: number
+  year_month: string
 }
 
 export type VerifyCodeRequest = {
@@ -1097,30 +1176,6 @@ export interface Operations {
     requestBody: undefined
     responses: {
       "200": GenericObjectArray
-    }
-  }
-  "backend_get_api_v1_admin_inventario_bodega": {
-    method: "GET"
-    path: "/api/v1/admin/inventario-bodega"
-    requestBody: undefined
-    responses: {
-      "200": WarehouseInventoryListResponse
-    }
-  }
-  "backend_post_api_v1_admin_inventario_bodega": {
-    method: "POST"
-    path: "/api/v1/admin/inventario-bodega"
-    requestBody: CreateWarehouseInventoryRequest
-    responses: {
-      "201": WarehouseInventoryItem
-    }
-  }
-  "backend_patch_api_v1_admin_inventario_bodega_id": {
-    method: "PATCH"
-    path: "/api/v1/admin/inventario-bodega/{id}"
-    requestBody: UpdateWarehouseInventoryRequest
-    responses: {
-      "200": WarehouseInventoryItem
     }
   }
   "backend_get_api_v1_admin_logs": {
@@ -1663,7 +1718,7 @@ export interface Operations {
     path: "/api/v1/bodeguero/dashboard"
     requestBody: undefined
     responses: {
-      "200": GenericObject
+      "200": BodegueroDashboardResponse
     }
   }
   "backend_get_api_v1_bodeguero_deliveries": {
@@ -1738,14 +1793,6 @@ export interface Operations {
     responses: {
       "200": WarehouseInventoryItem
       "404": ErrorResponse
-    }
-  }
-  "backend_patch_api_v1_bodeguero_inventario_id": {
-    method: "PATCH"
-    path: "/api/v1/bodeguero/inventario/{id}"
-    requestBody: UpdateWarehouseInventoryRequest
-    responses: {
-      "200": WarehouseInventoryItem
     }
   }
   "backend_put_api_v1_bodeguero_inventario_id": {
@@ -2358,9 +2405,17 @@ export interface Operations {
   "backend_post_api_v1_vendedor_notificar_sms": {
     method: "POST"
     path: "/api/v1/vendedor/notificar-sms"
+    requestBody: SendSmsAnnouncementRequest
+    responses: {
+      "200": SendSmsAnnouncementResponse
+    }
+  }
+  "backend_get_api_v1_vendedor_notificar_sms_cuota": {
+    method: "GET"
+    path: "/api/v1/vendedor/notificar-sms/cuota"
     requestBody: undefined
     responses: {
-      "200": GenericObject
+      "200": VendorSmsQuotaResponse
     }
   }
   "backend_get_api_v1_vendedor_ordenes_pendientes_cobro": {
@@ -2369,6 +2424,14 @@ export interface Operations {
     requestBody: undefined
     responses: {
       "200": GenericObject
+    }
+  }
+  "backend_get_api_v1_vendedor_pagos": {
+    method: "GET"
+    path: "/api/v1/vendedor/pagos"
+    requestBody: undefined
+    responses: {
+      "200": VendorPagosPaginatedResponse
     }
   }
   "backend_post_api_v1_vendedor_pagos_solicitar": {
@@ -2380,6 +2443,14 @@ export interface Operations {
     }
     responses: {
       "201": GenericObject
+    }
+  }
+  "backend_get_api_v1_vendedor_pagos_id": {
+    method: "GET"
+    path: "/api/v1/vendedor/pagos/{id}"
+    requestBody: undefined
+    responses: {
+      "200": VendorPagoItem
     }
   }
   "backend_get_api_v1_vendedor_pedidos": {

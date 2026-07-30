@@ -227,6 +227,8 @@ El administrador revisa la solicitud de devolución y la aprueba o la rechaza.
 | Método | Ruta | Roles | Descripción |
 | :--- | :--- | :--- | :--- |
 | `POST` | `/api/v1/vendedor/pagos/solicitar` | `VENDOR` | Solicitar retiro/cobro de ventas. |
+| `GET` | `/api/v1/vendedor/pagos` | `VENDOR` | Listar solicitudes de pago del vendedor (paginado). |
+| `GET` | `/api/v1/vendedor/pagos/:id` | `VENDOR` | Detalle de una solicitud de pago propia. |
 | `GET` | `/api/v1/vendedor/ordenes/pendientes-cobro` | `VENDOR` | Órdenes pendientes de liquidación. |
 
 #### Solicitar Pago (Vendedor)
@@ -240,6 +242,86 @@ El administrador revisa la solicitud de devolución y la aprueba o la rechaza.
   - `amount` (número, opcional): Monto solicitado en CLP.
   - `order_ids` (array, opcional): IDs de órdenes específicas a liquidar.
 - **Respuesta:** `201 Created` con la solicitud de pago creada.
+
+#### Listar Mis Solicitudes de Pago (Vendedor)
+
+Devuelve únicamente las solicitudes del vendedor autenticado, ordenadas por `created_at` descendente.
+
+- **Método:** `GET`
+- **Ruta:** `/api/v1/vendedor/pagos`
+- **Roles Permitidos:** `VENDOR`
+- **Query Parameters:**
+  - `status` (opcional, string): Filtrar por estado (`PENDING`, `APPROVED`, `REJECTED`).
+  - `page` (opcional, default `1`): Número de página.
+  - `limit` (opcional, default `20`, máximo `50`): Cantidad de elementos por página.
+- **Respuesta Exitosa (200 OK):**
+  ```json
+  {
+    "data": [
+      {
+        "id": 10,
+        "vendor_id": 7,
+        "amount": "350000.00",
+        "status": "PENDING",
+        "note": "Solicitud de retiro semanal",
+        "evidence_urls": [
+          "https://bucket.s3.amazonaws.com/comprobante1.jpg?X-Amz-Signature=..."
+        ],
+        "created_at": "2026-07-28T10:00:00.000Z",
+        "updated_at": "2026-07-28T10:00:00.000Z",
+        "vendor": {
+          "id": 7,
+          "name": "Vendedor Demo"
+        }
+      }
+    ],
+    "meta": {
+      "total": 1,
+      "page": 1,
+      "limit": 20,
+      "last_page": 1
+    }
+  }
+  ```
+  - `amount` (string): Monto decimal serializado como string.
+  - `evidence_urls` (array): Comprobantes resueltos a URLs firmadas de S3.
+
+> [!NOTE]
+> Los administradores no consultan estas rutas: disponen de `GET /api/v1/admin/vendedor/pagos` y `GET /api/v1/admin/vendedor/pagos/:id` para revisar las solicitudes de todos los vendedores.
+
+#### Obtener Detalle de Solicitud de Pago
+
+- **Método:** `GET`
+- **Ruta:** `/api/v1/vendedor/pagos/:id`
+- **Roles Permitidos:** `VENDOR`
+- **Path Parameters:**
+  - `id` (número, requerido): ID de la solicitud de pago.
+- **Respuesta Exitosa (200 OK):** Incluye además las órdenes liquidadas (`orders`) con su producto y fotos resueltas a URLs firmadas.
+  ```json
+  {
+    "id": 10,
+    "vendor_id": 7,
+    "amount": "350000.00",
+    "status": "PENDING",
+    "note": "Solicitud de retiro semanal",
+    "evidence_urls": [
+      "https://bucket.s3.amazonaws.com/comprobante1.jpg?X-Amz-Signature=..."
+    ],
+    "created_at": "2026-07-28T10:00:00.000Z",
+    "updated_at": "2026-07-28T10:00:00.000Z",
+    "vendor": { "id": 7, "name": "Vendedor Demo" },
+    "orders": [
+      {
+        "id": 45,
+        "product": {
+          "id": 88,
+          "photo_urls": ["https://bucket.s3.amazonaws.com/prod.jpg?X-Amz-Signature=..."]
+        }
+      }
+    ]
+  }
+  ```
+- **Error (404 Not Found):** `Solicitud de pago #{id} no encontrada` si el ID no existe o no pertenece al vendedor autenticado.
 
 ---
 
