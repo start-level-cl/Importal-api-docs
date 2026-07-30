@@ -1010,8 +1010,16 @@
       "CreateProductRequest": {
         "additionalProperties": false,
         "properties": {
+          "cargaAereaId": {
+            "description": "ID de la carga aérea específica a asignar (opcional, para BOTH o AEREA)",
+            "type": "integer"
+          },
           "cargaId": {
-            "description": "ID de la carga específica a asignar (opcional)",
+            "description": "ID de la carga específica a asignar (opcional, para AEREA o MARITIMA)",
+            "type": "integer"
+          },
+          "cargaMaritimaId": {
+            "description": "ID de la carga marítima específica a asignar (opcional, para BOTH o MARITIMA)",
             "type": "integer"
           },
           "marca": {
@@ -1066,7 +1074,8 @@
           "transport_type": {
             "enum": [
               "AEREA",
-              "MARITIMA"
+              "MARITIMA",
+              "BOTH"
             ],
             "type": "string"
           }
@@ -1457,6 +1466,18 @@
       "Product": {
         "additionalProperties": false,
         "properties": {
+          "carga_aerea_id": {
+            "nullable": true,
+            "type": "integer"
+          },
+          "carga_id": {
+            "nullable": true,
+            "type": "integer"
+          },
+          "carga_maritima_id": {
+            "nullable": true,
+            "type": "integer"
+          },
           "id": {
             "type": "integer"
           },
@@ -1473,6 +1494,14 @@
             "type": "number"
           },
           "status": {
+            "type": "string"
+          },
+          "transport_type": {
+            "enum": [
+              "AEREA",
+              "MARITIMA",
+              "BOTH"
+            ],
             "type": "string"
           }
         },

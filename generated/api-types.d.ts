@@ -264,7 +264,9 @@ export type CreateOrderRequest = {
 }
 
 export type CreateProductRequest = {
+  cargaAereaId?: number
   cargaId?: number
+  cargaMaritimaId?: number
   marca?: string
   photos: (string)[]
   price_usd?: number
@@ -272,7 +274,7 @@ export type CreateProductRequest = {
     stock: number
     talla: string
   })[]
-  transport_type: "AEREA" | "MARITIMA"
+  transport_type: "AEREA" | "MARITIMA" | "BOTH"
 }
 
 export type CreateReturnRequestRequest = {
@@ -379,11 +381,15 @@ export type Notification = {
 export type NotificationArray = (Notification)[]
 
 export type Product = {
+  carga_aerea_id?: number
+  carga_id?: number
+  carga_maritima_id?: number
   id: number
   marca: string
   photo_urls?: (string)[]
   price_usd: number
   status?: string
+  transport_type?: "AEREA" | "MARITIMA" | "BOTH"
 }
 
 export type ProductArray = (Product)[]

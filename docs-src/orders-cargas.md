@@ -332,20 +332,30 @@ Permite al vendedor indicar que acepta continuar operando dentro de una carga qu
 ### 4.2 Crear Pedido
 
 - **Método:** `POST`
-- **Ruta:** `/api/v1/cliente/pedidos`
+- **Ruta:** `/api/v1/cliente/pedidos` (o `/api/v1/orders`)
+- **Roles Permitidos:** `CLIENT`
 - **Cuerpo (JSON):** `CreateOrderDto`
   ```json
   {
-    "product_id": 42,
+    "productId": 42,
     "quantity": 3,
-    "size": "M",
-    "carga_id": 15
+    "talla": "M",
+    "cargaId": 15
   }
   ```
-- **Respuesta:** `201 Created` con `{ "ok": true, "orderId": 201 }`.
+- **Campos del DTO:**
+  - `productId` (número, requerido): ID del producto.
+  - `quantity` (número, requerido): Cantidad a adquirir.
+  - `talla` (string, requerido): Talla seleccionada.
+  - `cargaId` (número, opcional salvo para productos `BOTH`): ID de la carga destino del pedido.
 
-> [!NOTE]
-> El tipo de transporte permitido para el pedido se valida automáticamente contra los tipos de sala autorizados en el token JWT del cliente.
+> [!IMPORTANT]
+> **Validación de `cargaId` en Productos `BOTH` (Política A):**
+> - **Obligatoriedad:** Para productos con `transport_type = BOTH`, el campo `cargaId` es **obligatorio**. Si se omite, la API responde con `400 Bad Request` (*"El producto soporta múltiples tipos de transporte. Debe especificar una carga (cargaId) en la solicitud."*).
+> - **Coincidencia:** El `cargaId` enviado debe coincidir explícitamente con la `carga_aerea_id` o `carga_maritima_id` asociadas al producto `BOTH`. De lo contrario, se rechaza con `400 Bad Request` (*"La carga #ID no corresponde a las cargas asociadas a este producto."*).
+> - **Estado Abierto:** La carga indicada debe encontrarse en estado `OPEN`.
+> - **Productos de Transporte Simple:** En productos `AEREA` o `MARITIMA`, la orden hereda automáticamente la `carga_id` anclada al producto.
+> - **Permisos del Cliente:** El tipo de transporte asignado al pedido se valida contra los tipos de sala autorizados en el token JWT del cliente.
 
 ### 4.3 Detalle de Pedido
 

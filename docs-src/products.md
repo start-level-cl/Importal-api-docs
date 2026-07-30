@@ -99,13 +99,15 @@ Publica un nuevo producto con fotos en el catálogo de la plataforma. La petici�
 
 - **Campos Obligatorios:**
   - `photos` (archivos binarios, mínimo 1 y máximo 4): Imágenes del producto en formato de archivo binario.
-  - `transport_type` (string, `AEREA` | `MARITIMA`): Tipo de transporte asignado al producto.
+  - `transport_type` (string, `AEREA` | `MARITIMA` | `BOTH`): Tipo de transporte asignado al producto.
   - `sizes` (JSON string o array de `{talla, stock}`): Listado de tallas y stock. Debe contener al menos una talla válida. Cada elemento debe ser un objeto con `talla` (string no vacío) y `stock` (número entero ≥ 0).
 
 - **Campos Opcionales:**
   - `marca` (string, opcional): Nombre de la marca o descripción del producto.
   - `price_usd` (número, opcional): Precio unitario en dólares estadounidenses (USD).
-  - `cargaId` (número, opcional): ID de la carga específica a la que se ancla el producto.
+  - `cargaId` (número, opcional): ID de la carga específica a la que se ancla el producto (para `AEREA` o `MARITIMA`).
+  - `cargaAereaId` (número, opcional): ID de la carga aérea específica donde se publica el producto (para `BOTH` o `AEREA`).
+  - `cargaMaritimaId` (número, opcional): ID de la carga marítima específica donde se publica el producto (para `BOTH` o `MARITIMA`).
 
 - **Ejemplo de `sizes` (JSON String / Array):**
   ```json
@@ -117,7 +119,7 @@ Publica un nuevo producto con fotos en el catálogo de la plataforma. La petici�
   ```
 
 - **Respuesta Exitosa (201 Created):**
-  Retorna el objeto `Product` creado con las URLs firmadas/públicas de S3 (`photo_urls`), `id`, `status` (`AVAILABLE`), `transport_type`, `sizes`, `cargaId`, etc.
+  Retorna el objeto `Product` creado con las URLs firmadas/públicas de S3 (`photo_urls`), `id`, `status` (`AVAILABLE`), `transport_type`, `sizes`, `carga_id`, `carga_aerea_id`, `carga_maritima_id`, etc.
 
   ```json
   {
@@ -125,8 +127,10 @@ Publica un nuevo producto con fotos en el catálogo de la plataforma. La petici�
     "marca": "Nike",
     "price_usd": 35.00,
     "status": "AVAILABLE",
-    "transport_type": "AEREA",
-    "cargaId": 4,
+    "transport_type": "BOTH",
+    "carga_id": null,
+    "carga_aerea_id": 4,
+    "carga_maritima_id": 8,
     "photo_urls": [
       "https://s3.amazonaws.com/bucket/producto-42-front.jpg"
     ],
@@ -141,11 +145,12 @@ Publica un nuevo producto con fotos en el catálogo de la plataforma. La petici�
   ```
 
 > [!IMPORTANT]
-> **Validaciones Obligatorias:**
-> - **Fotos (`photos`)**: Debe adjuntarse **al menos 1 archivo** (campo `photos`). Si no se sube ninguna imagen, se devuelve `400 BadRequestException` (*"Debe subir al menos una foto del producto (campo: photos)"*). Máximo 4 archivos.
-> - **Tipo de Transporte (`transport_type`)**: Campo **obligatorio** (`AEREA` o `MARITIMA`). Si se omite, devuelve `400 BadRequestException` (*"El tipo de transporte es obligatorio"*).
-> - **Listado de Tallas (`sizes`)**: Campo **obligatorio**. Acepta un JSON string o un array directo de objetos. Si el JSON es inválido o no contiene al menos un elemento válido con `talla` (string no vacío) y `stock` (número ≥ 0), el servidor responderá con `400 BadRequestException`.
-> - **Coincidencia de Tipo de Transporte con Carga (`cargaId`)**: Si se envía un `cargaId` opcional, el `tipo_carga` de la carga asignada debe coincidir con el `transport_type` del producto. Si difieren, la API retorna `400 BadRequestException` (*"El tipo de transporte del producto (X) no coincide con el tipo de transporte de la carga #ID (Y)"*).
+> **Validaciones y Asociación Dual de Cargas en Productos BOTH (Opción 1):**
+> - **Fotos (`photos`)**: Debe adjuntarse **al menos 1 archivo** (campo `photos`). Máximo 4 archivos.
+> - **Tipo de Transporte (`transport_type`)**: Campo **obligatorio** (`AEREA`, `MARITIMA` o `BOTH`).
+> - **Listado de Tallas (`sizes`)**: Campo **obligatorio**.
+> - **Asociación Dual de Cargas en Productos `BOTH`**: Cuando un producto se publica con `transport_type = BOTH`, el sistema le asigna simultáneamente una carga aérea activa (`carga_aerea_id`) y una carga marítima activa (`carga_maritima_id`). El campo `carga_id` queda en `null`. Se pueden especificar `cargaAereaId` y `cargaMaritimaId` en la solicitud; de lo contrario, se asignan por defecto las cargas activas vigentes del vendedor para cada tipo de transporte.
+> - **Coincidencia de Tipo de Transporte con Carga (`cargaId`)**: Si se envía un `cargaId` opcional en productos de transporte simple (`AEREA` o `MARITIMA`), el `tipo_carga` de la carga asignada debe coincidir con el `transport_type` del producto. De lo contrario, retorna `400 BadRequestException`.
 
 ### 2.3 Actualizar Producto
 

@@ -724,8 +724,14 @@ components:
     CreateProductRequest:
       additionalProperties: false
       properties:
+        cargaAereaId:
+          description: "ID de la carga aérea específica a asignar (opcional, para BOTH o AEREA)"
+          type: integer
         cargaId:
-          description: ID de la carga específica a asignar (opcional)
+          description: "ID de la carga específica a asignar (opcional, para AEREA o MARITIMA)"
+          type: integer
+        cargaMaritimaId:
+          description: "ID de la carga marítima específica a asignar (opcional, para BOTH o MARITIMA)"
           type: integer
         marca:
           description: Marca o nombre del producto (opcional)
@@ -765,6 +771,7 @@ components:
           enum:
             - AEREA
             - MARITIMA
+            - BOTH
           type: string
       required:
         - photos
@@ -1045,6 +1052,15 @@ components:
     Product:
       additionalProperties: false
       properties:
+        carga_aerea_id:
+          nullable: true
+          type: integer
+        carga_id:
+          nullable: true
+          type: integer
+        carga_maritima_id:
+          nullable: true
+          type: integer
         id:
           type: integer
         marca:
@@ -1056,6 +1072,12 @@ components:
         price_usd:
           type: number
         status:
+          type: string
+        transport_type:
+          enum:
+            - AEREA
+            - MARITIMA
+            - BOTH
           type: string
       required:
         - id

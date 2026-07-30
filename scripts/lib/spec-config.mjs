@@ -1143,7 +1143,7 @@ export const schemas = {
         maxItems: 4,
         description: 'Imágenes binarias del producto (requerido, al menos 1 foto, máximo 4 fotos)',
       },
-      transport_type: stringEnum(['AEREA', 'MARITIMA']),
+      transport_type: stringEnum(['AEREA', 'MARITIMA', 'BOTH']),
       sizes: {
         oneOf: [
           {
@@ -1166,7 +1166,9 @@ export const schemas = {
       },
       marca: { type: 'string', description: 'Marca o nombre del producto (opcional)' },
       price_usd: { type: 'number', description: 'Precio unitario en USD (opcional)' },
-      cargaId: { type: 'integer', description: 'ID de la carga específica a asignar (opcional)' },
+      cargaId: { type: 'integer', description: 'ID de la carga específica a asignar (opcional, para AEREA o MARITIMA)' },
+      cargaAereaId: { type: 'integer', description: 'ID de la carga aérea específica a asignar (opcional, para BOTH o AEREA)' },
+      cargaMaritimaId: { type: 'integer', description: 'ID de la carga marítima específica a asignar (opcional, para BOTH o MARITIMA)' },
     },
     ['photos', 'transport_type', 'sizes'],
   ),
@@ -1184,6 +1186,10 @@ export const schemas = {
       marca: { type: 'string' },
       price_usd: { type: 'number' },
       photo_urls: { type: 'array', items: { type: 'string' } },
+      transport_type: stringEnum(['AEREA', 'MARITIMA', 'BOTH']),
+      carga_id: { type: 'integer', nullable: true },
+      carga_aerea_id: { type: 'integer', nullable: true },
+      carga_maritima_id: { type: 'integer', nullable: true },
       status: { type: 'string' },
     },
     ['id', 'marca', 'price_usd'],
