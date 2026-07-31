@@ -7582,6 +7582,28 @@ paths:
       x-role-group: comun
       x-service: backend
       x-source: "Importal-backend/src/modules/products/controllers/products.controller.ts"
+  /api/v1/publico/productos/{id}:
+    get:
+      operationId: backend_get_api_v1_publico_productos_id
+      parameters:
+        -           in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Operacion exitosa
+      summary: getPublicProductById
+      tags:
+        - Public Products
+      x-role-group: comun
+      x-service: backend
+      x-source: "Importal-backend/src/modules/products/controllers/public-products.controller.ts"
   /api/v1/registration-requests:
     get:
       operationId: backend_get_api_v1_registration_requests

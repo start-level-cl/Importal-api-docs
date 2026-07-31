@@ -14,6 +14,7 @@ Esta sección documenta los endpoints para la gestión del catálogo de producto
 | **Vendedor** | `POST` | `/api/v1/vendedor/productos` | `VENDOR` | Crear un nuevo producto con fotos. |
 | **Vendedor** | `PUT` | `/api/v1/vendedor/productos/:id` | `VENDOR`, `ADMIN`, `ROOT` | Actualizar los datos de un producto existente. |
 | **Vendedor** | `DELETE` | `/api/v1/vendedor/productos/:id` | `VENDOR`, `ADMIN`, `ROOT` | Eliminar (dar de baja) un producto. |
+| **Público** | `GET` | `/api/v1/publico/productos/:id` | Ninguno (sin sesión) | Proyección pública de un producto para previews de "compartir por redes sociales". |
 
 ---
 
@@ -180,3 +181,49 @@ Da de baja un producto del catálogo.
 
 > [!WARNING]
 > Los vendedores solo pueden eliminar sus propios productos. `ADMIN` y `ROOT` pueden eliminar productos de cualquier vendedor.
+
+---
+
+## 3. Vista Pública para Compartir en Redes Sociales
+
+Cuando alguien comparte el link de un producto por WhatsApp, Facebook, Twitter, Telegram, LinkedIn, Slack o Discord, quien lo recibe ve un preview con foto, nombre y precio (Open Graph), **sin necesidad de sesión**.
+
+### 3.1 Obtener Producto Público por ID
+
+- **Método:** `GET`
+- **Ruta:** `/api/v1/publico/productos/:id`
+- **Roles Permitidos:** Ninguno — endpoint público, sin JWT.
+- **Path Parameters:**
+  - `id` (número, requerido): ID del producto.
+- **Headers de Respuesta:** `Cache-Control: public, max-age=300`.
+- **Respuesta Exitosa (200 OK)** — `PublicProductDto`:
+  ```json
+  {
+    "id": 42,
+    "nombre": "Nike",
+    "fotos": [
+      "https://d111111abcdef8.cloudfront.net/portal/productos/foto1.webp"
+    ],
+    "precioUsd": 35.00,
+    "proveedorNombre": "Comercializadora Vendedor SpA",
+    "tipo": "aereo",
+    "tallas": ["S", "M"],
+    "disponible": true
+  }
+  ```
+- **Errores:**
+  - `404 Not Found`: el producto no existe o su `status` no es `AVAILABLE`.
+
+> [!IMPORTANT]
+> **Lista blanca de datos deliberada.** `PublicProductDto` expone únicamente `id`, `nombre` (= `product.marca`, no existe un campo "nombre" separado en la entidad `Product`), `fotos` (URLs de CloudFront ya resueltas, sin firma), `precioUsd`, `proveedorNombre`, `tipo` (`"aereo" | "maritimo"`; `BOTH` se expone como `"aereo"`), `tallas` (solo etiquetas con stock > 0, sin cantidades) y `disponible` (`true` si `tallas.length > 0`). **No** expone `proveedorCodigo`/`external_id` del vendor, `vendor_id`, costos internos, comisiones, IDs de carga ni el `status` del producto — a propósito, por seguridad y privacidad de datos de negocio.
+
+### 3.2 Renderer de Open Graph (Lambda@Edge)
+
+La ruta pública `/p/:productId` (creada por el frontend) se sirve a través de un behavior dedicado de la distribución CloudFront (`Importal-iac`). Un Lambda@Edge (`ProductShareRenderer`, `us-east-1`, Node 20) intercepta la petición en `origin-request`:
+
+- Si el `User-Agent` es un crawler conocido (`facebookexternalhit`, `WhatsApp`, `Twitterbot`, `TelegramBot`, `LinkedInBot`, `Slackbot`, `Discordbot`), consulta `GET /api/v1/publico/productos/:id` y devuelve un HTML con meta tags Open Graph (`og:title`, `og:description`, `og:image`, `og:url`, `og:type=product`) y Twitter Card (`summary_large_image`), más `<meta name="robots" content="noindex">` — el producto se comparte, pero no se indexa en buscadores.
+- Para cualquier otro `User-Agent`, deja pasar el request normal y se carga la SPA.
+- Si el producto no existe (`404`) o el API no responde `200`, sirve una preview genérica de "Importal" en vez de propagar el error.
+
+> [!WARNING]
+> **Requisito de despliegue:** este Lambda no admite variables de entorno (limitación de Lambda@Edge), así que la URL base del API público se resuelve al momento del `cdk synth`/`deploy` desde `DEV_PUBLIC_API_BASE_URL` / `PROD_PUBLIC_API_BASE_URL`. Si la variable no está definida, el synth de `Importal-iac` emite un warning y **no crea el renderer** (el behavior `/p/*` igual se crea, pero sin Lambda asociada, y sirve la SPA para cualquier visitante). Ver `Importal-iac/README.md` para el detalle del paso de deploy.

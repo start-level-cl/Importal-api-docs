@@ -2179,6 +2179,14 @@ export interface Operations {
       "200": GenericObject
     }
   }
+  "backend_get_api_v1_publico_productos_id": {
+    method: "GET"
+    path: "/api/v1/publico/productos/{id}"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
   "backend_get_api_v1_registration_requests": {
     method: "GET"
     path: "/api/v1/registration-requests"

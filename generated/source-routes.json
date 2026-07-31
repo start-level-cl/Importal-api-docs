@@ -3534,6 +3534,22 @@
   },
   {
     "service": "backend",
+    "source": "Importal-backend/src/modules/products/controllers/public-products.controller.ts",
+    "method": "get",
+    "path": "/api/v1/publico/productos/{id}",
+    "operationId": "backend_get_api_v1_publico_productos_id",
+    "tag": "Public Products",
+    "tags": [
+      "Public Products"
+    ],
+    "roles": [],
+    "security": false,
+    "methodName": "getPublicProductById",
+    "parameters": [],
+    "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
     "source": "Importal-backend/src/modules/registration/controllers/registration.controller.ts",
     "method": "get",
     "path": "/api/v1/registration-requests/check-exists",
