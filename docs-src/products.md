@@ -204,7 +204,7 @@ Cuando alguien comparte el link de un producto por WhatsApp, Facebook, Twitter, 
     "fotos": [
       "https://d111111abcdef8.cloudfront.net/portal/productos/foto1.webp"
     ],
-    "precioUsd": 35.00,
+    "precioClp": 31500,
     "proveedorNombre": "Comercializadora Vendedor SpA",
     "tipo": "aereo",
     "tallas": ["S", "M"],
@@ -215,7 +215,9 @@ Cuando alguien comparte el link de un producto por WhatsApp, Facebook, Twitter, 
   - `404 Not Found`: el producto no existe o su `status` no es `AVAILABLE`.
 
 > [!IMPORTANT]
-> **Lista blanca de datos deliberada.** `PublicProductDto` expone únicamente `id`, `nombre` (= `product.marca`, no existe un campo "nombre" separado en la entidad `Product`), `fotos` (URLs de CloudFront ya resueltas, sin firma), `precioUsd`, `proveedorNombre`, `tipo` (`"aereo" | "maritimo"`; `BOTH` se expone como `"aereo"`), `tallas` (solo etiquetas con stock > 0, sin cantidades) y `disponible` (`true` si `tallas.length > 0`). **No** expone `proveedorCodigo`/`external_id` del vendor, `vendor_id`, costos internos, comisiones, IDs de carga ni el `status` del producto — a propósito, por seguridad y privacidad de datos de negocio.
+> **Lista blanca de datos deliberada.** `PublicProductDto` expone únicamente `id`, `nombre` (= `product.marca`, no existe un campo "nombre" separado en la entidad `Product`), `fotos` (URLs de CloudFront ya resueltas, sin firma), `precioClp`, `proveedorNombre`, `tipo` (`"aereo" | "maritimo"`; `BOTH` se expone como `"aereo"`), `tallas` (solo etiquetas con stock > 0, sin cantidades) y `disponible` (`true` si `tallas.length > 0`). **No** expone `proveedorCodigo`/`external_id` del vendor, `vendor_id`, costos internos, comisiones, IDs de carga ni el `status` del producto — a propósito, por seguridad y privacidad de datos de negocio.
+>
+> `precioClp` = `price_usd * tipo de cambio vigente`, redondeado al peso. Usa la misma fuente que `BillingService.getLatestExchangeRate()` (tabla `exchange_rates`, más reciente por fecha; fallback 950 CLP/USD sin registros). `ProductsService` consulta el repo de `ExchangeRate` directo en vez de inyectar `BillingService`, para evitar una dependencia circular entre módulos (`BillingModule` ya importa `ProductsModule`).
 
 ### 3.2 Renderer de Open Graph (Lambda@Edge)
 
