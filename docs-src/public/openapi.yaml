@@ -2844,6 +2844,31 @@ paths:
       x-role-group: admin
       x-service: backend
       x-source: "Importal-backend/src/modules/app/controllers/admin.controller.ts"
+  /api/v1/admin/ajustes/cliente/{clientId}:
+    get:
+      operationId: backend_get_api_v1_admin_ajustes_cliente_clientId
+      parameters:
+        -           in: path
+          name: clientId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Operacion exitosa
+      security:
+        -           bearerAuth:
+[]
+      summary: getAdminAdjustmentsByClient
+      tags:
+        - Orders
+      x-role-group: admin
+      x-service: backend
+      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
   /api/v1/admin/ajustes/pendientes:
     get:
       operationId: backend_get_api_v1_admin_ajustes_pendientes
@@ -2860,6 +2885,31 @@ paths:
         -           bearerAuth:
 []
       summary: getPendingAdjustmentsForAdmin
+      tags:
+        - Orders
+      x-role-group: admin
+      x-service: backend
+      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+  /api/v1/admin/ajustes/{cargaId}:
+    get:
+      operationId: backend_get_api_v1_admin_ajustes_cargaId
+      parameters:
+        -           in: path
+          name: cargaId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Operacion exitosa
+      security:
+        -           bearerAuth:
+[]
+      summary: getAdminAdjustmentsByCarga
       tags:
         - Orders
       x-role-group: admin
@@ -3030,6 +3080,31 @@ paths:
         -           bearerAuth:
 []
       summary: createCarga
+      tags:
+        - Orders
+      x-role-group: admin
+      x-service: backend
+      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+  /api/v1/admin/cargas/{id}:
+    get:
+      operationId: backend_get_api_v1_admin_cargas_id
+      parameters:
+        -           in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Operacion exitosa
+      security:
+        -           bearerAuth:
+[]
+      summary: getAdminCargaById
       tags:
         - Orders
       x-role-group: admin

@@ -992,9 +992,25 @@ export interface Operations {
       "500": ErrorResponse
     }
   }
+  "backend_get_api_v1_admin_ajustes_cliente_clientId": {
+    method: "GET"
+    path: "/api/v1/admin/ajustes/cliente/{clientId}"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
   "backend_get_api_v1_admin_ajustes_pendientes": {
     method: "GET"
     path: "/api/v1/admin/ajustes/pendientes"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_get_api_v1_admin_ajustes_cargaId": {
+    method: "GET"
+    path: "/api/v1/admin/ajustes/{cargaId}"
     requestBody: undefined
     responses: {
       "200": GenericObject
@@ -1038,6 +1054,14 @@ export interface Operations {
     requestBody: CreateCargaRequest
     responses: {
       "201": GenericObject
+    }
+  }
+  "backend_get_api_v1_admin_cargas_id": {
+    method: "GET"
+    path: "/api/v1/admin/cargas/{id}"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
     }
   }
   "backend_post_api_v1_admin_cargas_id_close": {

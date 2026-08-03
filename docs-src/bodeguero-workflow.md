@@ -146,9 +146,9 @@ Antes de autorizar el empaque y preparación de cualquier pedido de bodega, el b
 
 > [!WARNING]
 > **Política de Cero Deuda en Despacho:**
-> Al intentar auditar y empacar una entrega (`Delivery`), el sistema consulta todos los cobros vigentes del cliente asociados a la carga actual.
-> *   **Tipos de Cobro Auditados:** `INVERSION`, `LOGISTICA_COMISION` y `FLETE_SEGURO_ADUANA`.
-> *   **Criterio de Bloqueo:** Si **al menos uno** de estos cobros posee un estado distinto de `CobroStatus.CONFIRMED` (por ejemplo, `PENDING`, `OVERDUE` o `RETRY`), la transacción es cancelada arrojando un error `HTTP 400 Bad Request`:
+> Al intentar despachar una entrega (`Delivery`) o evaluar el flag `todo_pagado` en las entregas de bodega, el sistema consulta todos los cobros vigentes del cliente asociados a la carga actual.
+> *   **Tipos de Cobro Auditados:** `INVERSION`, `LOGISTICA_COMISION`, `FLETE_SEGURO_ADUANA` y `DESPACHO`.
+> *   **Criterio de Bloqueo:** Si **al menos uno** de estos cobros posee un estado distinto de `CobroStatus.CONFIRMED` (por ejemplo, `PENDING`, `OVERDUE` o `RETRY`), la transacción de despacho (`POST /bodeguero/deliveries/:id/ship`) es cancelada arrojando un error `HTTP 400 Bad Request`:
 >     > *"El cliente tiene cobros pendientes en esta carga: [Tipos]. Debe estar pagado para poder despachar."*
 
 ---
@@ -214,14 +214,16 @@ Permite visualizar un resumen consolidado de métricas clave y desempeño operat
     *   `arrivedCargas` (array): Cargas en estado `ARRIVED`, ordenadas por `id` descendente.
     *   `pendingReviewsCount` (número): Pedidos de esas cargas arribadas con `revisado = false` (excluye `CANCELLED` y `REJECTED`).
     *   `readyToShipCount` (número): Cantidad de pedidos con `can_ship = true` aún no despachados ni entregados.
-    *   `readyToShipOrders` (array): Detalle resumido de esos pedidos (`id`, `client_name`, `carga_id`, `status`).
+    *   `readyToShipOrders` (array): Detalle resumido de esos pedidos (`id`, `client_name`, `carga_id`, `status`, `is_barter`).
     *   `inventoryAlertItems` (array, máx. 20): Ítems de bodega `ACTIVE` con `stock <= 0` (`id`, `name`, `sku`, `location`, `stock`, `status`).
-    *   `pendingAdjustmentsList` (array, máx. 20): Ajustes en estado `PENDING_CLIENT` o `RESOLVED` con su orden asociada.
+    *   `pendingAdjustmentsList` (array, máx. 20): Ajustes en estado `PENDING_CLIENT` o `RESOLVED` filtrados a canjes/barter (`BARTER` o `is_barter = true`) y revisiones de bodega (`WAREHOUSE_REVIEW`).
 *   **Métricas Agregadas (objeto `metrics`):**
     *   `pendingBultosCount` (número): Pedidos con `can_ship = true` pendientes de empacar y auditar.
     *   `pendingDeliveriesCount` (número): Entregas en estado `PENDING` o `IN_REVISION`.
     *   `inventoryAlertsCount` (número): Total de ítems de bodega `ACTIVE` con `stock <= 0`.
-    *   `pendingAdjustmentsCount` (número): Total de ajustes en `PENDING_CLIENT` o `RESOLVED`.
+    *   `pendingAdjustmentsCount` (número): Total de ajustes pendientes filtrados a canje/barter (`BARTER` o `is_barter = true`) y revisiones de bodega (`WAREHOUSE_REVIEW`).
+    *   `barterAdjustmentsCount` (número): Conteo de ajustes de canje/barter pendientes (alias de `pendingAdjustmentsCount`).
+    *   `barterOrdersCount` (número): Total de órdenes activas de canje/barter en bodega (`is_barter = true`).
 *   **Ejemplo de Respuesta:**
     ```json
     {
@@ -231,13 +233,15 @@ Permite visualizar un resumen consolidado de métricas clave y desempeño operat
       "pendingReviewsCount": 4,
       "readyToShipCount": 2,
       "readyToShipOrders": [
-        { "id": 45, "client_name": "Juan Pérez", "carga_id": 12, "status": "PAID" }
+        { "id": 45, "client_name": "Juan Pérez", "carga_id": 12, "status": "PAID", "is_barter": true }
       ],
       "metrics": {
         "pendingBultosCount": 5,
         "pendingDeliveriesCount": 8,
         "inventoryAlertsCount": 1,
-        "pendingAdjustmentsCount": 2
+        "pendingAdjustmentsCount": 2,
+        "barterAdjustmentsCount": 2,
+        "barterOrdersCount": 4
       },
       "inventoryAlertItems": [
         {
@@ -254,7 +258,7 @@ Permite visualizar un resumen consolidado de métricas clave y desempeño operat
           "id": 9,
           "order_id": 45,
           "status": "PENDING_CLIENT",
-          "origin": "BODEGA",
+          "origin": "WAREHOUSE_REVIEW",
           "original_quantity": 3,
           "adjusted_quantity": 2,
           "total_refund_clp": 15000,
@@ -270,7 +274,7 @@ Permite visualizar un resumen consolidado de métricas clave y desempeño operat
     ```
 
 > [!IMPORTANT]
-> Las cuatro métricas numéricas viven dentro del objeto `metrics`, no en la raíz de la respuesta.
+> Las métricas numéricas viven dentro del objeto `metrics`, no en la raíz de la respuesta.
 
 ### 6.2 Control de Estado de Clientes por Carga (`/bodeguero/cargas/:id/clientes-status`)
 Permite al bodeguero auditar individualmente a los clientes asociados a una carga y verificar si están listos (liberados de deuda y con revisión física concluida) para el despacho físico.
@@ -319,6 +323,7 @@ Permite obtener la lista paginada de entregas de bodega con opciones de paginaci
 *   **Campos de Retorno Adicionales por Entrega:**
     *   `total_weight`: Peso total en kg, calculado como la sumatoria del peso de todos sus bultos (`number`).
     *   `cajas`: Array de cajas físicas asociadas a las órdenes del cliente en la entrega.
+    *   `todo_pagado`: Booleano (`true` si todos los cobros requeridos para la carga del cliente están confirmados (`CONFIRMED`); `false` si existe algún cobro impago o pendiente).
 *   **Filtro Automático de Dirección y Método de Envío:** Al solicitar entregas en estado `READY_TO_SHIP` (que es el valor predeterminado si el parámetro `status` no es enviado en la query), el backend filtra de forma automática las entregas omitiendo aquellas que no cuenten con datos de dirección (`shipping_address`) y método de envío (`shipping_method`) confirmados por el cliente. Esto previene que el bodeguero intente preparar o despachar bultos que carecen de destino final definido.
 
 ### 6.3.1 Detalle de Entrega por ID (`GET /api/v1/bodeguero/deliveries/:id`)
@@ -328,6 +333,7 @@ Permite obtener el detalle completo de una entrega específica por su ID.
 *   **Campos Retornados:** Incluye toda la estructura de la entrega (`client`, `carga`, `bultos`) complementada con:
     *   `total_weight`: Peso total en kg de los bultos asociados.
     *   `cajas`: Colección desduplicada de las cajas físicas asociadas a las órdenes de este cliente.
+    *   `todo_pagado`: Booleano (`true` si todos los cobros requeridos para la carga del cliente están confirmados (`CONFIRMED`); `false` si existe algún cobro impago o pendiente).
 
 ### 6.4 Listado de Órdenes Físicas en Bodega (`/bodeguero/pedidos?excludeDelivered=true`)
 Permite consultar en tiempo real qué pedidos se encuentran almacenados físicamente en la bodega de destino (Chile) y que aún no han sido despachados ni cancelados. Este caso de uso se sirve ahora desde el endpoint unificado `GET /bodeguero/pedidos` (el antiguo `GET /bodeguero/ordenes-fisicas` fue removido por tener lógica duplicada).

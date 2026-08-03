@@ -3985,6 +3985,45 @@
         "x-source": "Importal-backend/src/modules/app/controllers/admin.controller.ts"
       }
     },
+    "/api/v1/admin/ajustes/cliente/{clientId}": {
+      "get": {
+        "operationId": "backend_get_api_v1_admin_ajustes_cliente_clientId",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "clientId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "getAdminAdjustmentsByClient",
+        "tags": [
+          "Orders"
+        ],
+        "x-role-group": "admin",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+      }
+    },
     "/api/v1/admin/ajustes/pendientes": {
       "get": {
         "operationId": "backend_get_api_v1_admin_ajustes_pendientes",
@@ -4007,6 +4046,45 @@
           }
         ],
         "summary": "getPendingAdjustmentsForAdmin",
+        "tags": [
+          "Orders"
+        ],
+        "x-role-group": "admin",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+      }
+    },
+    "/api/v1/admin/ajustes/{cargaId}": {
+      "get": {
+        "operationId": "backend_get_api_v1_admin_ajustes_cargaId",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cargaId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "getAdminAdjustmentsByCarga",
         "tags": [
           "Orders"
         ],
@@ -4258,6 +4336,45 @@
           }
         ],
         "summary": "createCarga",
+        "tags": [
+          "Orders"
+        ],
+        "x-role-group": "admin",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+      }
+    },
+    "/api/v1/admin/cargas/{id}": {
+      "get": {
+        "operationId": "backend_get_api_v1_admin_cargas_id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "getAdminCargaById",
         "tags": [
           "Orders"
         ],
@@ -10983,6 +11100,40 @@
         "x-role-group": "comun",
         "x-service": "backend",
         "x-source": "Importal-backend/src/modules/products/controllers/products.controller.ts"
+      }
+    },
+    "/api/v1/publico/productos/{id}": {
+      "get": {
+        "operationId": "backend_get_api_v1_publico_productos_id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "summary": "getPublicProductById",
+        "tags": [
+          "Public Products"
+        ],
+        "x-role-group": "comun",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/products/controllers/public-products.controller.ts"
       }
     },
     "/api/v1/registration-requests": {
