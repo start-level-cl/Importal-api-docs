@@ -30,6 +30,7 @@ Esta tabla consolida los endpoints disponibles para roles de administración y g
 | **Usuarios** | `GET` | `/api/v1/registration-requests` | `ADMIN`, `ROOT` | Obtiene el listado de solicitudes de registro pendientes con paginación offset. |
 | **Usuarios** | `POST` | `/api/v1/registration-requests/:email/approve` | `ADMIN`, `ROOT` | Aprueba la solicitud de onboarding de un cliente e inyecta reviewedBy. |
 | **Usuarios** | `POST` | `/api/v1/registration-requests/:email/reject` | `ADMIN`, `ROOT` | Rechaza la solicitud de onboarding de un cliente e inyecta reviewedBy. |
+| **Usuarios** | `POST` | `/api/v1/registration-requests/notify-admin` | Sin autenticación (uso interno) | Notifica a los administradores (persistido + WebSocket) de una nueva solicitud de registro creada en `Importal-registration-lambda` (DynamoDB). |
 | **Cobros** | `GET` | `/api/v1/admin/cobros/pendientes-validacion` | `ADMIN`, `ROOT` | Obtiene cobros pendientes con soporte para paginación (`page`, `limit`). |
 | **Cobros** | `POST` | `/api/v1/admin/cobros/:id/confirmar` | `ADMIN`, `ROOT` | Confirma, rechaza o reintenta el pago de un cobro con parámetro `action`. |
 | **Cobros** | `GET` | `/api/v1/admin/vendedor/pagos` | `ADMIN`, `ROOT` | Listar solicitudes de pago de los vendedores con filtros de estado. |
@@ -148,6 +149,9 @@ sequenceDiagram
 > Al aprobar (`APPROVE`), el ticket cambia de estado a `RESOLVED` y el backend actualiza de manera transaccional el listado de salas de transporte del usuario en el Auth Service (añadiendo el transporte solicitado: `AEREA` o `MARITIMA`). Al rechazar (`REJECT`), el ticket cambia de estado a `REJECTED` y el motivo se guarda en `metadata.rejection_reason` y en `resolution`.
 >
 > Este endpoint es el camino "directo" para resolver solicitudes de transporte, pero **no es el único**: como se documenta en [1.2](#12-resolver-ticket), los endpoints genéricos `POST /admin/tickets/:id/resolver` y `PUT /admin/soporte/tickets/:id/resolucion` delegan en esta misma lógica cuando el ticket es de tipo `ADD_TRANSPORT_REQUEST`, por lo que producen exactamente el mismo resultado (incluida la sincronización con el Auth Service).
+
+> [!NOTE]
+> **Notificación a Administradores al crear la solicitud (`NEW_TRANSPORT_REQUEST`):** la creación del ticket `ADD_TRANSPORT_REQUEST` (endpoints `POST /vendedor/solicitud-transporte` y `POST /cliente/solicitud-transporte`, ver [Guía de Support Tickets](./support-tickets#3-solicitudes-de-acceso-a-sala-de-transporte)) ahora dispara `NotificationsService.createAdminNotification('NEW_TRANSPORT_REQUEST', ...)` justo después de persistir el ticket (`support.service.ts`, `createTransportRequest()`). Esto guarda una `AdminNotification` en Postgres (`related_type: 'ticket'`, `related_id` = id del ticket creado) y la transmite en vivo por WebSocket (`AppGateway.notifyAdmins`) a todos los administradores conectados. Antes de este cambio, la creación de este tipo de ticket no notificaba a los administradores; solo era visible si un admin revisaba manualmente la bandeja de tickets.
 
 ---
 
@@ -297,6 +301,32 @@ El onboarding de nuevos clientes e integrantes se gestiona a través de solicitu
   }
   ```
 * **Lógica Interna:** El backend utiliza el middleware de autenticación para obtener el revisor real de la sesión. Si es aprobada, se crea de forma transaccional el registro del usuario en PostgreSQL y en el Auth Service.
+
+#### 2.3.3 Notificar a Administradores de Nueva Solicitud (Interno, sin autenticación)
+
+* **Método:** `POST`
+* **Ruta:** `/api/v1/registration-requests/notify-admin`
+* **Roles Autorizados:** Ninguno — **sin `@Roles`/`RolesGuard` de rol específico y sin validación de token JWT**. Mismo modelo de confianza que `GET /api/v1/registration-requests/check-exists`: se asume que el endpoint solo es alcanzable desde la red interna/VPC (llamado exclusivamente por `Importal-registration-lambda`, nunca expuesto a clientes finales).
+* **Cuerpo de la Petición (JSON):**
+  ```json
+  {
+    "email": "nuevo-proveedor@example.com",
+    "name": "Distribuidora Staging SpA",
+    "profileType": "proveedor"
+  }
+  ```
+  * `email` (string): Correo de quien solicitó el registro.
+  * `name` (string): Nombre o razón social del solicitante.
+  * `profileType` (string): Tipo de perfil solicitado (`inversor`, `cliente_antiguo`, `proveedor`, `bodeguero`).
+* **Validación:** el DTO del controlador es un tipo TypeScript inline (`{ email, name, profileType }`), **sin decoradores de `class-validator`** ni chequeo explícito de campos faltantes en el servicio — los valores se insertan directamente en el texto de la notificación (`'${name} (${email}) solicitó registro como ${profileType}.'`). Se asume que el único llamador (`Importal-registration-lambda`) siempre envía los tres campos completos.
+* **Respuesta Exitosa (200/201):** Retorna la `AdminNotification` recién creada (entidad Postgres persistida), tal como la devuelve `NotificationsService.createAdminNotification()`.
+* **Lógica Interna (`RegistrationService.notifyAdminNewRegistrationRequest()`):** invoca directamente `NotificationsService.createAdminNotification('NEW_REGISTRATION_REQUEST', 'Nueva solicitud de registro', '<name> (<email>) solicitó registro como <profileType>.', undefined, 'registration_request')`. Esto persiste la notificación en Postgres **y** la transmite en vivo por WebSocket a todos los administradores conectados (`AppGateway.notifyAdmins`).
+
+> [!IMPORTANT]
+> **Origen cross-repo:** `Importal-registration-lambda` (backed por DynamoDB, no Postgres) llama a este endpoint de forma **no bloqueante** justo después de guardar la solicitud de registro en DynamoDB (`src/index.ts`, dentro del handler `POST /registration-requests`). Si la llamada falla (por ejemplo, el backend no está disponible), el error solo se registra en el log de la Lambda (`console.error`) y **no** afecta la respuesta `201 Created` al usuario que se está registrando — la solicitud de registro se guarda igualmente.
+
+> [!WARNING]
+> **Limitación conocida: sin navegación directa (`relatedId`).** A diferencia de `NEW_TRANSPORT_REQUEST` (que sí lleva `related_id` = id numérico del ticket en Postgres), las notificaciones `NEW_REGISTRATION_REQUEST` se crean con `relatedId: undefined` porque la solicitud de registro vive en DynamoDB y se identifica por `email`, no por un ID numérico de Postgres. Según la configuración `NAVIGABLE_RELATED_TYPES_BY_ROLE` de `Importal-frontend` (`notificationRoutes.ts`), esto significa que la notificación **sí aparece** en la campanita/toast de notificaciones del administrador, pero **no es clickeable** (no navega automáticamente a la bandeja de registro/onboarding). Es una limitación conocida y aceptada por ahora, no un bug.
 
 ### 2.4 Bloqueo Manual de Usuarios (Admin → Cliente/Vendedor/Bodeguero, Root → Admin)
 

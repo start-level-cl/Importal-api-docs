@@ -228,6 +228,9 @@ Los clientes deben adjuntar un comprobante que justifique su solicitud.
 > [!IMPORTANT]
 > El campo `file` es **obligatorio** para los clientes. Si no se adjunta un archivo, la petición retornará `400 BadRequestException: "Es obligatorio subir un archivo de comprobante."`.
 
+> [!NOTE]
+> **Notificación a Administradores (`NEW_TRANSPORT_REQUEST`):** desde la creación de este ticket (`createTransportRequest()`, tanto vía [3.1](#31-solicitar-acceso-vendedor) como [3.2](#32-solicitar-acceso-cliente)), el backend dispara `NotificationsService.createAdminNotification('NEW_TRANSPORT_REQUEST', ...)` inmediatamente después de guardar el ticket. Esto persiste una `AdminNotification` en Postgres (`related_type: 'ticket'`, `related_id: <ticket.id>`) **y** la transmite en vivo a todos los administradores conectados vía WebSocket (`AppGateway.notifyAdmins`), por lo que aparece en la campanita/toast de notificaciones sin necesidad de refrescar. Anteriormente, la creación de este tipo de ticket no generaba ninguna notificación para los administradores. Ver también la nota correspondiente en la [Guía de Admin API](./admin-api#13-resolver-solicitud-de-transporte).
+
 ### 3.3 Resolver Solicitud de Transporte (Admin)
 
 El administrador aprueba o rechaza la solicitud. Al aprobar, el backend actualiza automáticamente los permisos de transporte del usuario en el Auth Service.
