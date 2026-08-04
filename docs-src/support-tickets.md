@@ -16,11 +16,11 @@ Este módulo documenta el sistema de tickets de soporte de Pascalle Store, dispo
 | **Cliente** | `POST` | `/api/v1/cliente/solicitud-transporte` | `CLIENT` | Solicitar acceso a una sala de transporte (con comprobante). |
 | **Vendedor** | `POST` | `/api/v1/vendedor/solicitud-transporte` | `VENDOR` | Solicitar acceso a una sala de transporte. |
 | **Admin** | `GET` | `/api/v1/admin/tickets` | `ADMIN`, `ROOT` | Bandeja de entrada unificada de tickets. |
-| **Admin** | `PUT` | `/api/v1/admin/soporte/tickets/:id/resolucion` | `ADMIN`, `ROOT` | Resolver un ticket. |
-| **Admin** | `POST` | `/api/v1/admin/tickets/:id/resolver` | `ADMIN`, `ROOT` | Alias: Resolver un ticket. |
+| **Admin** | `PUT` | `/api/v1/admin/soporte/tickets/:id/resolucion` | `ADMIN`, `ROOT` | Resolver un ticket (si es `ADD_TRANSPORT_REQUEST`, delega en la resolución de transporte). |
+| **Admin** | `POST` | `/api/v1/admin/tickets/:id/resolver` | `ADMIN`, `ROOT` | Alias: Resolver un ticket (si es `ADD_TRANSPORT_REQUEST`, delega en la resolución de transporte). |
 | **Admin** | `POST` | `/api/v1/admin/tickets/:id/proponer-trueque` | `ADMIN`, `ROOT` | Proponer un producto de trueque al cliente. |
 | **Admin** | `GET` | `/api/v1/admin/trueques/productos-bodega`<br>`/api/v1/admin/tickets/productos-bodega`<br>`/api/v1/admin/soporte/productos-bodega` | `ADMIN`, `ROOT` | Listar productos de bodega para trueque (filtro query `talla`, retorna `sizes: Array<{ id, talla, stock }>`). |
-| **Admin** | `POST` | `/api/v1/admin/tickets/:id/resolver-transporte` | `ADMIN`, `ROOT` | Aprobar o rechazar solicitud de transporte. |
+| **Admin** | `POST` | `/api/v1/admin/tickets/:id/resolver-transporte` | `ADMIN`, `ROOT` | Aprobar o rechazar solicitud de transporte (también alcanzable vía `resolver`/`resolucion`, ver [sección 3.3](#33-resolver-solicitud-de-transporte-admin)). |
 | **Admin** | `POST` | `/api/v1/admin/tickets/:id/cancelar-trueque` | `ADMIN`, `ROOT` | Cancelar la propuesta de trueque activa. |
 
 ---
@@ -248,9 +248,20 @@ El administrador aprueba o rechaza la solicitud. Al aprobar, el backend actualiz
 > [!NOTE]
 > Este endpoint está también documentado en la [Guía de Admin API](./admin-api#13-resolver-solicitud-de-transporte).
 
+> [!IMPORTANT]
+> **`resolver-transporte` es el endpoint específico para este tipo de ticket, pero no el único que otorga acceso a la sala.** Desde la corrección del bug de producción en que se aprobaban solicitudes de transporte por la bandeja genérica sin conceder la sala, `resolveTicket()` (el servicio que respalda los endpoints genéricos `PUT /admin/soporte/tickets/:id/resolucion` y `POST /admin/tickets/:id/resolver`, ver [sección 4](#4-resolución-general-de-tickets-admin)) detecta internamente cuando `ticket.type === ADD_TRANSPORT_REQUEST` y delega en `resolverTransporte()`. En la práctica, esto significa que **los tres endpoints (`resolver-transporte`, `resolver`, `resolucion`) son intercambiables para resolver tickets `ADD_TRANSPORT_REQUEST`**: cualquiera de ellos sincroniza correctamente el claim `transporte` del usuario en el Auth Service al aprobar. El frontend ya no necesita enrutar el ticket según su tipo antes de decidir qué endpoint llamar.
+>
+> **Mapeo de payload al delegar:** cuando se llama a un endpoint genérico sobre un ticket `ADD_TRANSPORT_REQUEST`, el DTO genérico (`ResolveSupportTicketDto`) se traduce a `ResolverTransporteDto` así:
+> - `status: 'RESOLVED'` (o ausente, el valor por defecto) → `action: 'APPROVE'`
+> - `status: 'REJECTED'` → `action: 'REJECT'`
+> - `resolution` → `notes`
+
 ---
 
 ## 4. Resolución General de Tickets (Admin)
 
 > [!NOTE]
 > Los endpoints de gestión administrativa de tickets (`GET /admin/tickets`, `PUT /admin/soporte/tickets/:id/resolucion`) están documentados en detalle en la [Guía de Admin API](./admin-api#1-módulo-de-soporte-y-tickets-support).
+
+> [!IMPORTANT]
+> Para tickets de tipo `ADD_TRANSPORT_REQUEST`, `PUT /admin/soporte/tickets/:id/resolucion` y `POST /admin/tickets/:id/resolver` delegan automáticamente en la misma lógica que [`resolver-transporte`](#33-resolver-solicitud-de-transporte-admin), incluyendo la sincronización de la sala de transporte con el Auth Service. Ver la nota de la sección 3.3 para el detalle del mapeo de payload.

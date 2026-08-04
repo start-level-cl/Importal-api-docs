@@ -11,9 +11,9 @@ Esta tabla consolida los endpoints disponibles para roles de administración y g
 | Módulo | Método | Ruta | Roles Permitidos | Descripción |
 | :--- | :--- | :--- | :--- | :--- |
 | **Soporte** | `GET` | `/api/v1/admin/tickets`<br> `/api/v1/admin/soporte/tickets` | `ADMIN`, `ROOT` | Listado y bandeja de entrada unificada de tickets de soporte. |
-| **Soporte** | `POST` | `/api/v1/admin/tickets/:id/resolver`<br> `/api/v1/admin/soporte/tickets/:id/resolver` | `ADMIN`, `ROOT` | Resuelve un ticket asignándole un estado, resolución y comprobante opcional. |
+| **Soporte** | `POST`<br>`PUT` | `/api/v1/admin/tickets/:id/resolver`<br> `/api/v1/admin/soporte/tickets/:id/resolucion` | `ADMIN`, `ROOT` | Resuelve un ticket asignándole un estado, resolución y comprobante opcional (delega a la resolución de transporte si el ticket es `ADD_TRANSPORT_REQUEST`). |
 | **Soporte** | `POST` | `/api/v1/admin/tickets/:id/proponer-trueque` | `ADMIN`, `ROOT` | Envía una propuesta de trueque para tickets de negociación. |
-| **Soporte** | `POST` | `/api/v1/admin/tickets/:id/resolver-transporte` | `ADMIN`, `ROOT` | Aprueba o rechaza una solicitud de acceso a sala de transporte (`ADD_TRANSPORT_REQUEST`). |
+| **Soporte** | `POST` | `/api/v1/admin/tickets/:id/resolver-transporte` | `ADMIN`, `ROOT` | Aprueba o rechaza una solicitud de acceso a sala de transporte (`ADD_TRANSPORT_REQUEST`); también alcanzable vía los endpoints genéricos de resolución. |
 | **Usuarios** | `GET` | `/api/v1/admin/users` | `ADMIN`, `ROOT` | Listado avanzado de usuarios con filtros de mora, deuda, salas y búsqueda. |
 | **Usuarios** | `GET` | `/api/v1/users` | `ADMIN`, `ROOT` | Obtención básica de usuarios con paginación general. |
 | **Usuarios** | `GET` | `/api/v1/users/:id` | `ADMIN`, `ROOT` | Resumen detallado del perfil y transacciones de un usuario. |
@@ -87,17 +87,23 @@ Este módulo se encarga del procesamiento de reportes y tickets generados por lo
 > En versiones anteriores, no enviar el parámetro `type` forzaba por defecto el filtrado exclusivo de tickets de soporte técnico (`SUPPORT`). En la implementación actual, omitir `type` desactiva el filtro restrictivo de tipo, lo que permite que el backend devuelva **todos los tipos de tickets** mezclados. Esto es ideal para una bandeja de entrada consolidada que muestre soporte técnico, trueques y reembolsos de forma unificada.
 
 ### 1.2 Resolver Ticket
-* **Método:** `POST`
-* **Ruta:** `/api/v1/admin/tickets/:id/resolver` (Alias: `/api/v1/admin/soporte/tickets/:id/resolver`)
+* **Método:** `POST` (también expuesto como `PUT /api/v1/admin/soporte/tickets/:id/resolucion`, mismo servicio `resolveTicket()`)
+* **Ruta:** `/api/v1/admin/tickets/:id/resolver`
 * **Roles Autorizados:** `ADMIN`, `ROOT`
 * **Cuerpo de la Petición (Payload):**
-  * `status` (requerido, enum `TicketStatus`): Estado de resolución del ticket (ej. `RESOLVED` o `CLOSED`).
+  * `status` (opcional, enum `TicketStatus`, por defecto `RESOLVED`): Estado de resolución del ticket (`RESOLVED` o `REJECTED`).
   * `resolution` (requerido, string, mínimo 5 caracteres): Justificación técnica o descripción de la resolución.
   * `payment_proof_url` (opcional, string): URL del comprobante de transferencia o pago asociado.
 
 > [!IMPORTANT]
 > **Gestión de Comprobantes de Pago (`payment_proof_url`):**
 > Cuando se proporciona la propiedad `payment_proof_url` en el DTO de resolución, el backend almacena automáticamente este link dentro del objeto `metadata` persistido en el registro del ticket (`ticket.metadata.payment_proof_url`). Este comportamiento es crucial para la verificación y auditoría de tickets de tipo `REFUND_TRANSFER` (Reembolsos por transferencia), permitiendo que el administrador pruebe de manera indudable la ejecución de la devolución de dinero.
+
+> [!IMPORTANT]
+> **Delegación a `resolverTransporte()` para tickets `ADD_TRANSPORT_REQUEST` (fix de bug de producción):**
+> Antes de esta corrección, resolver un ticket `ADD_TRANSPORT_REQUEST` a través de este endpoint genérico (o de `PUT /admin/soporte/tickets/:id/resolucion`) solo cambiaba el `status` del ticket, **sin sincronizar el acceso a la sala de transporte con el Auth Service**. Los administradores aprobaban la solicitud desde la bandeja genérica y el usuario nunca recibía el acceso.
+>
+> Ahora, `resolveTicket()` detecta `ticket.type === ADD_TRANSPORT_REQUEST` y delega internamente en `resolverTransporte()` (ver [1.3](#13-resolver-solicitud-de-transporte)), traduciendo el DTO genérico así: `status: 'RESOLVED'` (o ausente) → `action: 'APPROVE'`, `status: 'REJECTED'` → `action: 'REJECT'`, `resolution` → `notes`. Esto hace que los tres endpoints de resolución (`resolver-transporte`, `resolver`, `resolucion`) sean intercambiables para este tipo de ticket, sin que el frontend deba enrutar según el tipo.
 
 ```mermaid
 sequenceDiagram
@@ -106,18 +112,26 @@ sequenceDiagram
     participant API as Support Controller
     participant Service as Support Service
     participant DB as Base de Datos
+    participant Auth as Auth Service
 
     Admin->>API: POST /api/v1/admin/tickets/:id/resolver (status, resolution, payment_proof_url)
     API->>Service: resolveTicket(adminId, ticketId, dto)
-    Note over Service: Busca ticket por ID
-    alt payment_proof_url está presente en el DTO
-        Note over Service: Extrae metadata actual o inicializa {}
-        Note over Service: Asigna metadata.payment_proof_url = payment_proof_url
+    Note over Service: Busca ticket por ID y valida status (RESOLVED/REJECTED)
+    alt ticket.type === ADD_TRANSPORT_REQUEST
+        Service->>Service: resolverTransporte(adminId, ticketId, { action, notes: resolution })
+        Service->>Auth: PUT /auth/api/v1/users/:external_id (sync transporte)
+        Auth-->>Service: OK
+        Service-->>API: Retorna Ticket (RESOLVED/REJECTED) con sala sincronizada
+    else Otro tipo de ticket
+        alt payment_proof_url está presente en el DTO
+            Note over Service: Extrae metadata actual o inicializa {}
+            Note over Service: Asigna metadata.payment_proof_url = payment_proof_url
+        end
+        Note over Service: Setea resolved_by = adminId, resolved_at = Date.now() y status
+        Service->>DB: Save ticket
+        DB-->>Service: Registro guardado
+        Service-->>API: Retorna Ticket modificado
     end
-    Note over Service: Setea resolved_by = adminId, resolved_at = Date.now() y status
-    Service->>DB: Save ticket
-    DB-->>Service: Registro guardado
-    Service-->>API: Retorna Ticket modificado
     API-->>Admin: HTTP 200 OK (JSON del Ticket)
 ```
 
@@ -132,6 +146,8 @@ sequenceDiagram
 > [!NOTE]
 > **Procesamiento de Solicitudes de Transporte (`ADD_TRANSPORT_REQUEST`):**
 > Al aprobar (`APPROVE`), el ticket cambia de estado a `RESOLVED` y el backend actualiza de manera transaccional el listado de salas de transporte del usuario en el Auth Service (añadiendo el transporte solicitado: `AEREA` o `MARITIMA`). Al rechazar (`REJECT`), el ticket cambia de estado a `REJECTED` y el motivo se guarda en `metadata.rejection_reason` y en `resolution`.
+>
+> Este endpoint es el camino "directo" para resolver solicitudes de transporte, pero **no es el único**: como se documenta en [1.2](#12-resolver-ticket), los endpoints genéricos `POST /admin/tickets/:id/resolver` y `PUT /admin/soporte/tickets/:id/resolucion` delegan en esta misma lógica cuando el ticket es de tipo `ADD_TRANSPORT_REQUEST`, por lo que producen exactamente el mismo resultado (incluida la sincronización con el Auth Service).
 
 ---
 
