@@ -669,6 +669,101 @@
         },
         "type": "array"
       },
+      "ClientOrder": {
+        "additionalProperties": true,
+        "description": "Pedido del cliente tal como lo retorna GET /api/v1/cliente/pedidos y GET /api/v1/cliente/pedidos/{id}. El objeto incluye numerosos campos calculados (montos, impuestos, alias en español) que no se listan exhaustivamente aquí; ver orders.service.ts. additionalProperties queda en true a propósito porque este esquema documenta puntualmente delivery_status, no el contrato completo del recurso.",
+        "properties": {
+          "carga_id": {
+            "nullable": true,
+            "type": "integer"
+          },
+          "delivery_status": {
+            "$ref": "#/components/schemas/ClientOrderDeliveryStatus"
+          },
+          "id": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "string"
+          },
+          "talla": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "delivery_status"
+        ],
+        "type": "object"
+      },
+      "ClientOrderDeliveryStatus": {
+        "description": "Estado del Delivery asociado al pedido. Un Delivery agrupa todos los pedidos de un cliente dentro de una misma carga; se calcula cruzando Order por client_id + carga_id contra la tabla Delivery (no hay FK directa). Es null cuando todavía no existe un registro Delivery para ese pedido, típicamente porque el pedido aún no llegó a la etapa de despacho en bodega (Order.status en PENDING/CONFIRMED). Alimenta el stepper de seguimiento de envío del frontend cliente: En Revisión (IN_REVISION) → Listo para Despacho (READY_TO_SHIP) → Despachado (SHIPPED) → Entregado (DELIVERED).",
+        "enum": [
+          "PENDING",
+          "IN_REVISION",
+          "READY_TO_SHIP",
+          "SHIPPED",
+          "DELIVERED"
+        ],
+        "nullable": true,
+        "type": "string"
+      },
+      "ClientOrdersPaginatedResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/ClientOrder"
+            },
+            "type": "array"
+          },
+          "meta": {
+            "additionalProperties": false,
+            "properties": {
+              "aggregates": {
+                "properties": {
+                  "por_status": {
+                    "additionalProperties": {
+                      "type": "integer"
+                    },
+                    "type": "object"
+                  },
+                  "total_unidades": {
+                    "type": "integer"
+                  }
+                },
+                "type": "object"
+              },
+              "last_page": {
+                "type": "integer"
+              },
+              "limit": {
+                "type": "integer"
+              },
+              "page": {
+                "type": "integer"
+              },
+              "total": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "total",
+              "page",
+              "limit",
+              "last_page"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
       "ClienteCobrosGroupedResponse": {
         "additionalProperties": false,
         "properties": {
@@ -10639,17 +10734,96 @@
     "/api/v1/cliente/pedidos": {
       "get": {
         "operationId": "backend_get_api_v1_cliente_pedidos",
-        "parameters": [],
+        "parameters": [
+          {
+            "description": "Número de página",
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "default": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Límite de resultados por página",
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 10,
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Filtrar por vendedor",
+            "in": "query",
+            "name": "vendor",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filtrar por ID de carga",
+            "in": "query",
+            "name": "carga",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Filtrar por estado del pedido (admite lista separada por comas)",
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "content": {
               "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "carga_id": 4,
+                      "delivery_status": "READY_TO_SHIP",
+                      "id": 88,
+                      "status": "CONFIRMED",
+                      "talla": "M"
+                    },
+                    {
+                      "carga_id": 5,
+                      "delivery_status": null,
+                      "id": 91,
+                      "status": "PENDING",
+                      "talla": "L"
+                    }
+                  ],
+                  "meta": {
+                    "aggregates": {
+                      "por_status": {
+                        "CONFIRMED": 1,
+                        "PENDING": 1
+                      },
+                      "total_unidades": 2
+                    },
+                    "last_page": 1,
+                    "limit": 10,
+                    "page": 1,
+                    "total": 2
+                  }
+                },
                 "schema": {
-                  "$ref": "#/components/schemas/GenericObject"
+                  "$ref": "#/components/schemas/ClientOrdersPaginatedResponse"
                 }
               }
             },
-            "description": "Operacion exitosa"
+            "description": "Pedidos del cliente, paginados. Cada ítem incluye delivery_status: el estado del Delivery asociado (PENDING, IN_REVISION, READY_TO_SHIP, SHIPPED, DELIVERED) o null si aún no existe un Delivery para ese pedido."
           }
         },
         "security": [
@@ -10657,7 +10831,7 @@
             "bearerAuth": []
           }
         ],
-        "summary": "getClientOrders",
+        "summary": "Listar pedidos del cliente autenticado, paginados (Cliente)",
         "tags": [
           "Orders"
         ],
@@ -10731,12 +10905,19 @@
           "200": {
             "content": {
               "application/json": {
+                "example": {
+                  "carga_id": 4,
+                  "delivery_status": "READY_TO_SHIP",
+                  "id": 88,
+                  "status": "CONFIRMED",
+                  "talla": "M"
+                },
                 "schema": {
-                  "$ref": "#/components/schemas/GenericObject"
+                  "$ref": "#/components/schemas/ClientOrder"
                 }
               }
             },
-            "description": "Operacion exitosa"
+            "description": "Detalle del pedido. Incluye delivery_status: el estado del Delivery asociado (PENDING, IN_REVISION, READY_TO_SHIP, SHIPPED, DELIVERED) o null si aún no existe un Delivery para ese pedido."
           }
         },
         "security": [
@@ -10744,7 +10925,7 @@
             "bearerAuth": []
           }
         ],
-        "summary": "getClientOrderById",
+        "summary": "Obtener el detalle de un pedido del cliente autenticado (Cliente)",
         "tags": [
           "Orders"
         ],

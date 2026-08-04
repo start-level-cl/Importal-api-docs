@@ -167,6 +167,33 @@ export type ChatMessage = {
 
 export type ChatMessageArray = (ChatMessage)[]
 
+export type ClientOrder = {
+  carga_id?: number
+  delivery_status: ClientOrderDeliveryStatus
+  id: number
+  status: string
+  talla?: string
+  [key: string]: unknown
+}
+
+export type ClientOrderDeliveryStatus = "PENDING" | "IN_REVISION" | "READY_TO_SHIP" | "SHIPPED" | "DELIVERED"
+
+export type ClientOrdersPaginatedResponse = {
+  data: (ClientOrder)[]
+  meta: {
+    aggregates?: {
+      por_status?: {
+        [key: string]: number
+      }
+      total_unidades?: number
+    }
+    last_page: number
+    limit: number
+    page: number
+    total: number
+  }
+}
+
 export type ClienteCobrosGroupedResponse = {
   data: ({
     carga?: {
@@ -2120,7 +2147,7 @@ export interface Operations {
     path: "/api/v1/cliente/pedidos"
     requestBody: undefined
     responses: {
-      "200": GenericObject
+      "200": ClientOrdersPaginatedResponse
     }
   }
   "backend_post_api_v1_cliente_pedidos": {
@@ -2136,7 +2163,7 @@ export interface Operations {
     path: "/api/v1/cliente/pedidos/{id}"
     requestBody: undefined
     responses: {
-      "200": GenericObject
+      "200": ClientOrder
     }
   }
   "backend_get_api_v1_cliente_productos": {

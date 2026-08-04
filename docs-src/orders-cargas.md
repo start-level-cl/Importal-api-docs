@@ -44,8 +44,8 @@ Esta sección documenta el ciclo de vida completo de los pedidos y cargas de imp
 ### Cliente — Pedidos y Deliveries
 | Método | Ruta | Roles Permitidos | Descripción |
 | :--- | :--- | :--- | :--- |
-| `GET` | `/api/v1/cliente/pedidos` | `CLIENT` | Listar pedidos del cliente. |
-| `GET` | `/api/v1/cliente/pedidos/:id` | `CLIENT` | Detalle de un pedido. |
+| `GET` | `/api/v1/cliente/pedidos` | `CLIENT` | Listar pedidos del cliente (cada ítem incluye `delivery_status`). |
+| `GET` | `/api/v1/cliente/pedidos/:id` | `CLIENT` | Detalle de un pedido (incluye `delivery_status`). |
 | `POST` | `/api/v1/cliente/pedidos` | `CLIENT` | Crear nuevo pedido. |
 | `GET` | `/api/v1/cliente/deliveries` | `CLIENT` | Listar deliveries del cliente. |
 | `GET` | `/api/v1/cliente/deliveries/:id` | `CLIENT` | Detalle de un delivery. |
@@ -328,6 +328,7 @@ Permite al vendedor indicar que acepta continuar operando dentro de una carga qu
   - `vendor` (string): Filtrar por vendedor.
   - `carga` (número): Filtrar por ID de carga.
   - `status` (string): Estado del pedido.
+- **Campo `delivery_status` (por ítem):** cada pedido del listado incluye `delivery_status`. Ver detalle y semántica completa en la sección **4.3 Detalle de Pedido** más abajo (aplica igual en el listado y en el detalle).
 
 ### 4.2 Crear Pedido
 
@@ -361,6 +362,37 @@ Permite al vendedor indicar que acepta continuar operando dentro de una carga qu
 
 - **Método:** `GET`
 - **Ruta:** `/api/v1/cliente/pedidos/:id`
+
+#### Campo `delivery_status`
+
+Tanto el listado (`GET /api/v1/cliente/pedidos`, por cada ítem) como el detalle (`GET /api/v1/cliente/pedidos/:id`) incluyen el campo `delivery_status` en la respuesta:
+
+- **Tipo:** `string | null`
+- **Valores posibles (enum `DeliveryStatus` del backend):** `"PENDING"`, `"IN_REVISION"`, `"READY_TO_SHIP"`, `"SHIPPED"`, `"DELIVERED"`
+- **`null`:** significa que todavía no existe un registro de `Delivery` para ese pedido — el pedido aún no ha llegado a la etapa de despacho en bodega. Esto ocurre típicamente mientras el `Order.status` está en `PENDING`/`CONFIRMED`.
+- **Origen del dato:** se obtiene desde la entidad `Delivery`. Un `Delivery` agrupa todos los pedidos de un mismo cliente dentro de una misma `carga`, y se cruza con `Order` por `client_id + carga_id` (no existe una FK directa entre `Order` y `Delivery`).
+- **Propósito:** alimenta el stepper visual de seguimiento de envío en el frontend cliente, con 4 etapas:
+
+  ```mermaid
+  flowchart LR
+      A["En Revisión (IN_REVISION)"] --> B["Listo para Despacho (READY_TO_SHIP)"]
+      B --> C["Despachado (SHIPPED)"]
+      C --> D["Entregado (DELIVERED)"]
+  ```
+
+> [!NOTE]
+> `PENDING` es el valor por defecto de un `Delivery` recién creado (ver `Delivery.status` default en la entidad), pero mientras no exista el registro de `Delivery`, el pedido reporta `delivery_status: null` en vez de `"PENDING"`.
+
+**Ejemplo de respuesta (`200 OK`, detalle):**
+```json
+{
+  "id": 88,
+  "status": "CONFIRMED",
+  "talla": "M",
+  "carga_id": 4,
+  "delivery_status": "READY_TO_SHIP"
+}
+```
 
 ### 4.4 Deliveries del Cliente
 

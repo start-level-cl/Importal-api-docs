@@ -408,6 +408,41 @@ const schemaExamples = {
     cargaId: 4,
   },
   UpdateOrderStatusRequest: { status: 'CONFIRMED' },
+  ClientOrder: {
+    id: 88,
+    status: 'CONFIRMED',
+    talla: 'M',
+    carga_id: 4,
+    delivery_status: 'READY_TO_SHIP',
+  },
+  ClientOrdersPaginatedResponse: {
+    data: [
+      {
+        id: 88,
+        status: 'CONFIRMED',
+        talla: 'M',
+        carga_id: 4,
+        delivery_status: 'READY_TO_SHIP',
+      },
+      {
+        id: 91,
+        status: 'PENDING',
+        talla: 'L',
+        carga_id: 5,
+        delivery_status: null,
+      },
+    ],
+    meta: {
+      total: 2,
+      page: 1,
+      limit: 10,
+      last_page: 1,
+      aggregates: {
+        total_unidades: 2,
+        por_status: { CONFIRMED: 1, PENDING: 1 },
+      },
+    },
+  },
   ReviewOrderRequest: {
     revisado: true,
     status: 'CONFIRMED',
@@ -1434,6 +1469,49 @@ export const schemas = {
     ['id', 'status', 'cantidad', 'nombre_producto', 'carga'],
   ),
   VendorOrderArray: { type: 'array', items: { $ref: '#/components/schemas/VendorOrder' } },
+  ClientOrderDeliveryStatus: {
+    type: 'string',
+    nullable: true,
+    enum: ['PENDING', 'IN_REVISION', 'READY_TO_SHIP', 'SHIPPED', 'DELIVERED'],
+    description:
+      'Estado del Delivery asociado al pedido. Un Delivery agrupa todos los pedidos de un cliente dentro de una misma carga; se calcula cruzando Order por client_id + carga_id contra la tabla Delivery (no hay FK directa). Es null cuando todavía no existe un registro Delivery para ese pedido, típicamente porque el pedido aún no llegó a la etapa de despacho en bodega (Order.status en PENDING/CONFIRMED). Alimenta el stepper de seguimiento de envío del frontend cliente: En Revisión (IN_REVISION) → Listo para Despacho (READY_TO_SHIP) → Despachado (SHIPPED) → Entregado (DELIVERED).',
+  },
+  ClientOrder: {
+    type: 'object',
+    additionalProperties: true,
+    description:
+      'Pedido del cliente tal como lo retorna GET /api/v1/cliente/pedidos y GET /api/v1/cliente/pedidos/{id}. El objeto incluye numerosos campos calculados (montos, impuestos, alias en español) que no se listan exhaustivamente aquí; ver orders.service.ts. additionalProperties queda en true a propósito porque este esquema documenta puntualmente delivery_status, no el contrato completo del recurso.',
+    properties: {
+      id: { type: 'integer' },
+      status: { type: 'string' },
+      talla: { type: 'string', nullable: true },
+      carga_id: { type: 'integer', nullable: true },
+      delivery_status: { $ref: '#/components/schemas/ClientOrderDeliveryStatus' },
+    },
+    required: ['id', 'status', 'delivery_status'],
+  },
+  ClientOrdersPaginatedResponse: objectSchema(
+    {
+      data: { type: 'array', items: { $ref: '#/components/schemas/ClientOrder' } },
+      meta: objectSchema(
+        {
+          total: { type: 'integer' },
+          page: { type: 'integer' },
+          limit: { type: 'integer' },
+          last_page: { type: 'integer' },
+          aggregates: {
+            type: 'object',
+            properties: {
+              total_unidades: { type: 'integer' },
+              por_status: { type: 'object', additionalProperties: { type: 'integer' } },
+            },
+          },
+        },
+        ['total', 'page', 'limit', 'last_page'],
+      ),
+    },
+    ['data', 'meta'],
+  ),
   VendorOrdersPaginatedResponse: objectSchema(
     {
       data: { type: 'array', items: { $ref: '#/components/schemas/VendorOrder' } },
@@ -2425,6 +2503,25 @@ export const operationOverrides = {
   'post /api/v1/cliente/pedidos': {
     requestBody: jsonRequest('CreateOrderRequest'),
     responses: Object.fromEntries([jsonResponse('201', 'Pedido creado con reserva de stock inmediata', 'GenericObject')]),
+  },
+  'get /api/v1/cliente/pedidos': {
+    summary: 'Listar pedidos del cliente autenticado, paginados (Cliente)',
+    parameters: [
+      { name: 'page', in: 'query', required: false, schema: { type: 'integer', default: 1 }, description: 'Número de página' },
+      { name: 'limit', in: 'query', required: false, schema: { type: 'integer', default: 10 }, description: 'Límite de resultados por página' },
+      { name: 'vendor', in: 'query', required: false, schema: { type: 'string' }, description: 'Filtrar por vendedor' },
+      { name: 'carga', in: 'query', required: false, schema: { type: 'integer' }, description: 'Filtrar por ID de carga' },
+      { name: 'status', in: 'query', required: false, schema: { type: 'string' }, description: 'Filtrar por estado del pedido (admite lista separada por comas)' },
+    ],
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Pedidos del cliente, paginados. Cada ítem incluye delivery_status: el estado del Delivery asociado (PENDING, IN_REVISION, READY_TO_SHIP, SHIPPED, DELIVERED) o null si aún no existe un Delivery para ese pedido.', 'ClientOrdersPaginatedResponse'),
+    ]),
+  },
+  'get /api/v1/cliente/pedidos/{id}': {
+    summary: 'Obtener el detalle de un pedido del cliente autenticado (Cliente)',
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Detalle del pedido. Incluye delivery_status: el estado del Delivery asociado (PENDING, IN_REVISION, READY_TO_SHIP, SHIPPED, DELIVERED) o null si aún no existe un Delivery para ese pedido.', 'ClientOrder'),
+    ]),
   },
   'get /api/v1/vendedor/pedidos': {
     summary: 'Listar pedidos del vendedor autenticado (Vendedor)',
