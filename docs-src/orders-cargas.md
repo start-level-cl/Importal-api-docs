@@ -104,6 +104,8 @@ Esta sección documenta el ciclo de vida completo de los pedidos y cargas de imp
 - **Ruta:** `/api/v1/admin/cargas/:id/close`
 - **Roles Permitidos:** `ADMIN`, `ROOT`
 - **Respuesta:** `200 OK`
+- **Errores:**
+  - `400 Bad Request`: Si se intenta cerrar una carga abierta más reciente mientras una carga abierta más antigua del mismo tipo de transporte (`AEREA` o `MARITIMA`) permanece abierta.
 
 ::: tip NOTA SOBRE PRODUCTOS BOTH
 Al cerrar una carga, todos los productos vinculados de tipo `BOTH` asociados a esta carga comenzarán a desactivarse de forma gradual (si aplicara) para mantener la consistencia entre modalidades.
