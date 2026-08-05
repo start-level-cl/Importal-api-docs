@@ -539,6 +539,8 @@ const schemaExamples = {
     created_at: '2026-05-25T12:00:00.000Z',
     opens_at: '2026-05-25T12:00:00.000Z',
     closes_at: null,
+    arrived_at: null,
+    processed_at: null,
   },
   CargasPaginatedResponse: {
     data: [
@@ -549,6 +551,8 @@ const schemaExamples = {
         created_at: '2026-05-25T12:00:00.000Z',
         opens_at: '2026-05-25T12:00:00.000Z',
         closes_at: null,
+        arrived_at: null,
+        processed_at: null,
       }
     ],
     meta: {
@@ -801,6 +805,8 @@ const schemaExamples = {
         status_carga: 'IN_TRANSIT',
         opens_at: '2026-05-25T12:00:00.000Z',
         closes_at: null,
+        arrived_at: null,
+        processed_at: null,
         completa: false,
         total_pedidos: 5,
         pedidos_pendientes: 2,
@@ -1412,6 +1418,7 @@ export const schemas = {
             opens_at: { type: 'string', format: 'date-time', nullable: true },
             closes_at: { type: 'string', format: 'date-time', nullable: true },
             arrived_at: { type: 'string', format: 'date-time', nullable: true },
+            processed_at: { type: 'string', format: 'date-time', nullable: true },
           }
         },
         cobros: {
@@ -1536,6 +1543,8 @@ export const schemas = {
       status_carga: { type: 'string', nullable: true },
       opens_at: { type: 'string', format: 'date-time', nullable: true },
       closes_at: { type: 'string', format: 'date-time', nullable: true },
+      arrived_at: { type: 'string', format: 'date-time', nullable: true },
+      processed_at: { type: 'string', format: 'date-time', nullable: true },
       completa: { type: 'boolean' },
       total_pedidos: { type: 'integer' },
       pedidos_pendientes: { type: 'integer' },
@@ -1877,6 +1886,8 @@ export const schemas = {
       created_at: { type: 'string', format: 'date-time' },
       opens_at: { type: 'string', format: 'date-time', nullable: true },
       closes_at: { type: 'string', format: 'date-time', nullable: true },
+      arrived_at: { type: 'string', format: 'date-time', nullable: true },
+      processed_at: { type: 'string', format: 'date-time', nullable: true },
     },
     ['id', 'tipo_carga', 'status', 'created_at'],
   ),

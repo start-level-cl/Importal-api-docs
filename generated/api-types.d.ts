@@ -53,10 +53,12 @@ export type BodegueroDashboardResponse = {
 }
 
 export type Carga = {
+  arrived_at?: string
   closes_at?: string
   created_at: string
   id: number
   opens_at?: string
+  processed_at?: string
   status: "OPEN" | "IN_TRANSIT" | "ARRIVED" | "CLOSED"
   tipo_carga: "AEREA" | "MARITIMA"
 }
@@ -203,6 +205,7 @@ export type ClienteCobrosGroupedResponse = {
       created_at?: string
       id?: number
       opens_at?: string
+      processed_at?: string
       status?: string
       tipo_carga?: string
     }
@@ -844,6 +847,7 @@ export type ValidateResponse = {
 }
 
 export type VendorCargaStatusItem = {
+  arrived_at?: string
   carga_id: number
   closes_at?: string
   completa: boolean
@@ -853,6 +857,7 @@ export type VendorCargaStatusItem = {
   pedidos_denegados: number
   pedidos_pendientes: number
   pedidos_pendientes_can_ship: number
+  processed_at?: string
   status_carga?: string
   tipo_carga: "AEREA" | "MARITIMA"
   total_pedidos: number

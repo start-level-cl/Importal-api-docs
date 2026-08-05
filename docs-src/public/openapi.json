@@ -208,6 +208,11 @@
       "Carga": {
         "additionalProperties": false,
         "properties": {
+          "arrived_at": {
+            "format": "date-time",
+            "nullable": true,
+            "type": "string"
+          },
           "closes_at": {
             "format": "date-time",
             "nullable": true,
@@ -221,6 +226,11 @@
             "type": "integer"
           },
           "opens_at": {
+            "format": "date-time",
+            "nullable": true,
+            "type": "string"
+          },
+          "processed_at": {
             "format": "date-time",
             "nullable": true,
             "type": "string"
@@ -796,6 +806,11 @@
                       "type": "integer"
                     },
                     "opens_at": {
+                      "format": "date-time",
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "processed_at": {
                       "format": "date-time",
                       "nullable": true,
                       "type": "string"
@@ -3275,6 +3290,11 @@
       "VendorCargaStatusItem": {
         "additionalProperties": false,
         "properties": {
+          "arrived_at": {
+            "format": "date-time",
+            "nullable": true,
+            "type": "string"
+          },
           "carga_id": {
             "type": "integer"
           },
@@ -3305,6 +3325,11 @@
           },
           "pedidos_pendientes_can_ship": {
             "type": "integer"
+          },
+          "processed_at": {
+            "format": "date-time",
+            "nullable": true,
+            "type": "string"
           },
           "status_carga": {
             "nullable": true,
@@ -9238,10 +9263,12 @@
                 "example": {
                   "data": [
                     {
+                      "arrived_at": null,
                       "closes_at": null,
                       "created_at": "2026-05-25T12:00:00.000Z",
                       "id": 4,
                       "opens_at": "2026-05-25T12:00:00.000Z",
+                      "processed_at": null,
                       "status": "IN_TRANSIT",
                       "tipo_carga": "AEREA"
                     }
@@ -9293,10 +9320,12 @@
             "content": {
               "application/json": {
                 "example": {
+                  "arrived_at": null,
                   "closes_at": null,
                   "created_at": "2026-05-25T12:00:00.000Z",
                   "id": 4,
                   "opens_at": "2026-05-25T12:00:00.000Z",
+                  "processed_at": null,
                   "status": "IN_TRANSIT",
                   "tipo_carga": "AEREA"
                 },
@@ -13408,6 +13437,7 @@
                 "example": {
                   "data": [
                     {
+                      "arrived_at": null,
                       "carga_id": 4,
                       "closes_at": null,
                       "completa": false,
@@ -13417,6 +13447,7 @@
                       "pedidos_denegados": 0,
                       "pedidos_pendientes": 2,
                       "pedidos_pendientes_can_ship": 1,
+                      "processed_at": null,
                       "status_carga": "IN_TRANSIT",
                       "tipo_carga": "AEREA",
                       "total_pedidos": 5
