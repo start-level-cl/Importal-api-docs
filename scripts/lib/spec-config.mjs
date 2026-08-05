@@ -1455,6 +1455,7 @@ export const schemas = {
       nombre_producto: { type: 'string', nullable: true },
       can_ship: { type: 'boolean', nullable: true },
       seller_order_number: { type: 'string', nullable: true },
+      is_transition_request: { type: 'boolean', nullable: true },
       carga: {
         type: 'object',
         nullable: true,
@@ -1486,6 +1487,7 @@ export const schemas = {
       status: { type: 'string' },
       talla: { type: 'string', nullable: true },
       carga_id: { type: 'integer', nullable: true },
+      is_transition_request: { type: 'boolean', nullable: true },
       delivery_status: { $ref: '#/components/schemas/ClientOrderDeliveryStatus' },
     },
     required: ['id', 'status', 'delivery_status'],

@@ -683,6 +683,10 @@
           "id": {
             "type": "integer"
           },
+          "is_transition_request": {
+            "nullable": true,
+            "type": "boolean"
+          },
           "status": {
             "type": "string"
           },
@@ -3402,6 +3406,10 @@
           },
           "id": {
             "type": "integer"
+          },
+          "is_transition_request": {
+            "nullable": true,
+            "type": "boolean"
           },
           "nombre_producto": {
             "nullable": true,

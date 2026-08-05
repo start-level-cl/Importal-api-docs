@@ -171,6 +171,7 @@ export type ClientOrder = {
   carga_id?: number
   delivery_status: ClientOrderDeliveryStatus
   id: number
+  is_transition_request?: boolean
   status: string
   talla?: string
   [key: string]: unknown
@@ -876,6 +877,7 @@ export type VendorOrder = {
     tipo_carga: string
   }
   id: number
+  is_transition_request?: boolean
   nombre_producto: string
   seller_order_number?: string
   status: string

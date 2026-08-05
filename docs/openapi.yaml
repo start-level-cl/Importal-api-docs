@@ -492,6 +492,9 @@ components:
           $ref: "#/components/schemas/ClientOrderDeliveryStatus"
         id:
           type: integer
+        is_transition_request:
+          nullable: true
+          type: boolean
         status:
           type: string
         talla:
@@ -2435,6 +2438,9 @@ components:
           type: object
         id:
           type: integer
+        is_transition_request:
+          nullable: true
+          type: boolean
         nombre_producto:
           nullable: true
           type: string
