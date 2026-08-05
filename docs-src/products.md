@@ -151,6 +151,7 @@ Publica un nuevo producto con fotos en el catálogo de la plataforma. La petici�
 > - **Tipo de Transporte (`transport_type`)**: Campo **obligatorio** (`AEREA`, `MARITIMA` o `BOTH`).
 > - **Listado de Tallas (`sizes`)**: Campo **obligatorio**.
 > - **Asociación Dual de Cargas en Productos `BOTH`**: Cuando un producto se publica con `transport_type = BOTH`, el sistema le asigna simultáneamente una carga aérea activa (`carga_aerea_id`) y una carga marítima activa (`carga_maritima_id`). El campo `carga_id` queda en `null`. Se pueden especificar `cargaAereaId` y `cargaMaritimaId` en la solicitud; de lo contrario, se asignan por defecto las cargas activas vigentes del vendedor para cada tipo de transporte.
+> - **Desactivación de Productos `BOTH`**: Cuando se cierra una carga (aérea o marítima), los productos vinculados de tipo `BOTH` se irán desactivando de forma gradual. Esto asegura un seguimiento correcto sin generar inconsistencias entre las distintas modalidades.
 > - **Coincidencia de Tipo de Transporte con Carga (`cargaId`)**: Si se envía un `cargaId` opcional en productos de transporte simple (`AEREA` o `MARITIMA`), el `tipo_carga` de la carga asignada debe coincidir con el `transport_type` del producto. De lo contrario, retorna `400 BadRequestException`.
 
 ### 2.3 Actualizar Producto

@@ -105,12 +105,20 @@ Esta sección documenta el ciclo de vida completo de los pedidos y cargas de imp
 - **Roles Permitidos:** `ADMIN`, `ROOT`
 - **Respuesta:** `200 OK`
 
+::: tip NOTA SOBRE PRODUCTOS BOTH
+Al cerrar una carga, todos los productos vinculados de tipo `BOTH` asociados a esta carga comenzarán a desactivarse de forma gradual (si aplicara) para mantener la consistencia entre modalidades.
+:::
+
 ### 1.5 Registrar Llegada de Carga (Admin)
 
 - **Método:** `PUT`
 - **Ruta:** `/api/v1/admin/cargas/:id/llegada`
 - **Roles Permitidos:** `ADMIN`, `ROOT`
 - **Cuerpo (JSON):** `UpdateCargaLlegadaDto` (fecha real de llegada y detalles logísticos).
+
+::: warning AUTO-PROCESAMIENTO DE CARGAS VACÍAS
+Si la carga no posee productos, pedidos o guías asignadas (está vacía), al marcarse como llegada transicionará automáticamente de forma directa al estado `PROCESSED` sin requerir validación posterior del bodeguero.
+:::
 
 ---
 
