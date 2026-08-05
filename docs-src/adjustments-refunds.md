@@ -136,7 +136,7 @@ El administrador revisa la solicitud de devolución y la aprueba o la rechaza.
 * **Listar Reembolsos Pendientes:** `GET /api/v1/admin/reembolsos/pendientes`
 * **Completar Reembolso Manual:** `POST /api/v1/admin/ajustes/{id}/completar-reembolso`
   * Body: `CompleteRefundDto` (`comment`, `payment_proof_url`)
-* **Listar Ajustes de Bodega Pendientes:** `GET /api/v1/admin/ajustes/pendientes`
+* **Listar Ajustes de Bodega Pendientes:** `GET /api/v1/admin/ajustes/pendientes` (Soporta paginación con `page` y `limit`)
   * Devuelve los ajustes `PENDING_CLIENT` derivados de diferencias físicas en bodega (`is_transition_request: false`), incluyendo su estado actual de `client_cancel_unlocked`.
 * **Habilitar Cancelación Total de un Ajuste:** `POST /api/v1/admin/ajustes/{id}/habilitar-cancelacion`
   * Body: `UnlockAdjustmentCancellationDto` (`admin_comment`, opcional)

@@ -4080,6 +4080,45 @@
         "x-source": "Importal-backend/src/modules/app/controllers/admin.controller.ts"
       }
     },
+    "/api/v1/admin/ajustes/carga/{cargaId}": {
+      "get": {
+        "operationId": "backend_get_api_v1_admin_ajustes_carga_cargaId",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cargaId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "getAdminAdjustmentsByCarga",
+        "tags": [
+          "Orders"
+        ],
+        "x-role-group": "admin",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+      }
+    },
     "/api/v1/admin/ajustes/cliente/{clientId}": {
       "get": {
         "operationId": "backend_get_api_v1_admin_ajustes_cliente_clientId",
@@ -4141,45 +4180,6 @@
           }
         ],
         "summary": "getPendingAdjustmentsForAdmin",
-        "tags": [
-          "Orders"
-        ],
-        "x-role-group": "admin",
-        "x-service": "backend",
-        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
-      }
-    },
-    "/api/v1/admin/ajustes/{cargaId}": {
-      "get": {
-        "operationId": "backend_get_api_v1_admin_ajustes_cargaId",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "cargaId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericObject"
-                }
-              }
-            },
-            "description": "Operacion exitosa"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "summary": "getAdminAdjustmentsByCarga",
         "tags": [
           "Orders"
         ],
@@ -11414,6 +11414,45 @@
         "x-source": "Importal-backend/src/modules/registration/controllers/registration.controller.ts"
       }
     },
+    "/api/v1/registration-requests/notify-admin": {
+      "post": {
+        "operationId": "backend_post_api_v1_registration_requests_notify_admin",
+        "parameters": [
+          {
+            "in": "path",
+            "name": " email: string; name: string; profileType: string ",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Notify admins of a new registration request (internal, called by the registration Lambda)",
+        "tags": [
+          "Registration"
+        ],
+        "x-role-group": "comun",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/registration/controllers/registration.controller.ts"
+      }
+    },
     "/api/v1/registration-requests/{email}/approve": {
       "post": {
         "operationId": "backend_post_api_v1_registration_requests_email_approve",
@@ -11619,6 +11658,186 @@
           }
         ],
         "summary": "Rechazar solicitud de registro",
+        "tags": [
+          "Registration"
+        ],
+        "x-role-group": "comun",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/registration/controllers/registration.controller.ts"
+      }
+    },
+    "/api/v1/registration-requests/{email}/send-code": {
+      "post": {
+        "operationId": "backend_post_api_v1_registration_requests_email_send_code",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "email",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": " channel?: 'email' | 'phone' | 'both' ",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Send verification code (OTP)",
+        "tags": [
+          "Registration"
+        ],
+        "x-role-group": "comun",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/registration/controllers/registration.controller.ts"
+      }
+    },
+    "/api/v1/registration-requests/{email}/status": {
+      "get": {
+        "operationId": "backend_get_api_v1_registration_requests_email_status",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "email",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Get registration request status and verification flags for email",
+        "tags": [
+          "Registration"
+        ],
+        "x-role-group": "comun",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/registration/controllers/registration.controller.ts"
+      }
+    },
+    "/api/v1/registration-requests/{email}/update-contact": {
+      "put": {
+        "operationId": "backend_put_api_v1_registration_requests_email_update_contact",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "email",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": " email?: string; phone?: string ",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Update email or phone for pending request",
+        "tags": [
+          "Registration"
+        ],
+        "x-role-group": "comun",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/registration/controllers/registration.controller.ts"
+      }
+    },
+    "/api/v1/registration-requests/{email}/verify": {
+      "post": {
+        "operationId": "backend_post_api_v1_registration_requests_email_verify",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "email",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": " code: string; channel?: 'email' | 'phone' ",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Verify registration code (OTP)",
         "tags": [
           "Registration"
         ],

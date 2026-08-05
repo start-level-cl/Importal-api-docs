@@ -324,7 +324,7 @@ Permite obtener la lista paginada de entregas de bodega con opciones de paginaci
     *   `total_weight`: Peso total en kg, calculado como la sumatoria del peso de todos sus bultos (`number`).
     *   `cajas`: Array de cajas físicas asociadas a las órdenes del cliente en la entrega.
     *   `todo_pagado`: Booleano (`true` si todos los cobros requeridos para la carga del cliente están confirmados (`CONFIRMED`); `false` si existe algún cobro impago o pendiente).
-*   **Filtro Automático de Dirección y Método de Envío:** Al solicitar entregas en estado `READY_TO_SHIP` (que es el valor predeterminado si el parámetro `status` no es enviado en la query), el backend filtra de forma automática las entregas omitiendo aquellas que no cuenten con datos de dirección (`shipping_address`) y método de envío (`shipping_method`) confirmados por el cliente. Esto previene que el bodeguero intente preparar o despachar bultos que carecen de destino final definido.
+*   **Filtro de Dirección y Método de Envío:** Al solicitar entregas filtrando por estado `READY_TO_SHIP`, el backend filtra de forma automática las entregas omitiendo aquellas que no cuenten con datos de dirección (`shipping_address`) y método de envío (`shipping_method`) confirmados por el cliente. Si se omite el parámetro `status`, se retornan entregas de todos los estados sin aplicar este filtro. El parámetro `status` soporta múltiples valores separados por comas (ej. `PENDING,IN_REVISION,READY_TO_SHIP`).
 
 ### 6.3.1 Detalle de Entrega por ID (`GET /api/v1/bodeguero/deliveries/:id`)
 Permite obtener el detalle completo de una entrega específica por su ID.

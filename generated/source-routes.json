@@ -2150,8 +2150,8 @@
     "service": "backend",
     "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
     "method": "get",
-    "path": "/api/v1/admin/ajustes/{cargaId}",
-    "operationId": "backend_get_api_v1_admin_ajustes_cargaId",
+    "path": "/api/v1/admin/ajustes/carga/{cargaId}",
+    "operationId": "backend_get_api_v1_admin_ajustes_carga_cargaId",
     "tag": "Orders",
     "tags": [
       "Orders"
@@ -3636,6 +3636,49 @@
   {
     "service": "backend",
     "source": "Importal-backend/src/modules/registration/controllers/registration.controller.ts",
+    "method": "post",
+    "path": "/api/v1/registration-requests/notify-admin",
+    "operationId": "backend_post_api_v1_registration_requests_notify_admin",
+    "tag": "Registration",
+    "tags": [
+      "Registration"
+    ],
+    "summary": "Notify admins of a new registration request (internal, called by the registration Lambda)",
+    "roles": [],
+    "security": "bearerAuth",
+    "methodName": "notifyAdminNewRegistrationRequest",
+    "parameters": [
+      {
+        "name": " email: string; name: string; profileType: string ",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/registration/controllers/registration.controller.ts",
+    "method": "get",
+    "path": "/api/v1/registration-requests/{email}/status",
+    "operationId": "backend_get_api_v1_registration_requests_email_status",
+    "tag": "Registration",
+    "tags": [
+      "Registration"
+    ],
+    "summary": "Get registration request status and verification flags for email",
+    "roles": [],
+    "security": "bearerAuth",
+    "methodName": "getRegistrationStatus",
+    "parameters": [],
+    "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/registration/controllers/registration.controller.ts",
     "method": "get",
     "path": "/api/v1/registration-requests",
     "operationId": "backend_get_api_v1_registration_requests",
@@ -3706,6 +3749,84 @@
     "responseDescription": "Registration request rejected",
     "methodName": "rejectRequest",
     "parameters": [],
+    "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/registration/controllers/registration.controller.ts",
+    "method": "post",
+    "path": "/api/v1/registration-requests/{email}/send-code",
+    "operationId": "backend_post_api_v1_registration_requests_email_send_code",
+    "tag": "Registration",
+    "tags": [
+      "Registration"
+    ],
+    "summary": "Send verification code (OTP)",
+    "roles": [],
+    "security": "bearerAuth",
+    "methodName": "sendVerificationCode",
+    "parameters": [
+      {
+        "name": " channel?: 'email' | 'phone' | 'both' ",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/registration/controllers/registration.controller.ts",
+    "method": "post",
+    "path": "/api/v1/registration-requests/{email}/verify",
+    "operationId": "backend_post_api_v1_registration_requests_email_verify",
+    "tag": "Registration",
+    "tags": [
+      "Registration"
+    ],
+    "summary": "Verify registration code (OTP)",
+    "roles": [],
+    "security": "bearerAuth",
+    "methodName": "verifyRegistrationCode",
+    "parameters": [
+      {
+        "name": " code: string; channel?: 'email' | 'phone' ",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/registration/controllers/registration.controller.ts",
+    "method": "put",
+    "path": "/api/v1/registration-requests/{email}/update-contact",
+    "operationId": "backend_put_api_v1_registration_requests_email_update_contact",
+    "tag": "Registration",
+    "tags": [
+      "Registration"
+    ],
+    "summary": "Update email or phone for pending request",
+    "roles": [],
+    "security": "bearerAuth",
+    "methodName": "updateContact",
+    "parameters": [
+      {
+        "name": " email?: string; phone?: string ",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
     "roleGroup": "comun"
   },
   {

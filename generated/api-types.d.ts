@@ -1019,6 +1019,14 @@ export interface Operations {
       "500": ErrorResponse
     }
   }
+  "backend_get_api_v1_admin_ajustes_carga_cargaId": {
+    method: "GET"
+    path: "/api/v1/admin/ajustes/carga/{cargaId}"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
   "backend_get_api_v1_admin_ajustes_cliente_clientId": {
     method: "GET"
     path: "/api/v1/admin/ajustes/cliente/{clientId}"
@@ -1030,14 +1038,6 @@ export interface Operations {
   "backend_get_api_v1_admin_ajustes_pendientes": {
     method: "GET"
     path: "/api/v1/admin/ajustes/pendientes"
-    requestBody: undefined
-    responses: {
-      "200": GenericObject
-    }
-  }
-  "backend_get_api_v1_admin_ajustes_cargaId": {
-    method: "GET"
-    path: "/api/v1/admin/ajustes/{cargaId}"
     requestBody: undefined
     responses: {
       "200": GenericObject
@@ -2254,6 +2254,14 @@ export interface Operations {
       "200": RegistrationCheckExistsResponse
     }
   }
+  "backend_post_api_v1_registration_requests_notify_admin": {
+    method: "POST"
+    path: "/api/v1/registration-requests/notify-admin"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
   "backend_post_api_v1_registration_requests_email_approve": {
     method: "POST"
     path: "/api/v1/registration-requests/{email}/approve"
@@ -2273,6 +2281,38 @@ export interface Operations {
       "200": RegistrationRequest
       "404": ErrorResponse
       "409": ErrorResponse
+    }
+  }
+  "backend_post_api_v1_registration_requests_email_send_code": {
+    method: "POST"
+    path: "/api/v1/registration-requests/{email}/send-code"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_get_api_v1_registration_requests_email_status": {
+    method: "GET"
+    path: "/api/v1/registration-requests/{email}/status"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_put_api_v1_registration_requests_email_update_contact": {
+    method: "PUT"
+    path: "/api/v1/registration-requests/{email}/update-contact"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_post_api_v1_registration_requests_email_verify": {
+    method: "POST"
+    path: "/api/v1/registration-requests/{email}/verify"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
     }
   }
   "backend_get_api_v1_soporte_tickets": {
