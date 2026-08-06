@@ -62,11 +62,13 @@ Esta tabla consolida los endpoints disponibles para roles de administración y g
 | **Monitoreo**| `GET` | `/api/v1/admin/system/status/database` | `ADMIN`, `ROOT` | Estado, latencia y conexiones activas de la base de datos relacional. |
 | **Monitoreo**| `GET` | `/api/v1/admin/system/status/cache` | `ADMIN`, `ROOT` | Uso de memoria, conexiones y hits de la caché Redis. |
 | **Monitoreo**| `GET` | `/api/v1/admin/system/status/queue` | `ADMIN`, `ROOT` | Estado y métricas de procesamiento de colas BullMQ. |
-| **Monitoreo**| `GET` | `/api/v1/admin/system/status/storage` | `ADMIN`, `ROOT` | Conectividad y salud del almacenamiento de objetos (Amazon S3). |
-| **Monitoreo**| `GET` | `/api/v1/admin/system/uptime` | `ADMIN`, `ROOT` | Tiempo encendido del servicio y métricas de consumo de CPU/Memoria. |
-| **Monitoreo**| `GET` | `/api/v1/admin/system/alerts` | `ADMIN`, `ROOT` | Consola de alertas operacionales de la infraestructura del backend. |
+| **Tiendas** | `GET` | `/api/v1/tiendas` | `VENDOR`, `ADMIN`, `ROOT` | Obtiene el listado completo de tiendas registradas. |
+| **Tiendas** | `POST` | `/api/v1/tiendas` | `VENDOR`, `ADMIN`, `ROOT` | Registra una nueva tienda con nombre único. |
+| **Tiendas** | `PUT` | `/api/v1/admin/tiendas/:id` | `ADMIN`, `ROOT` | Actualiza la información de una tienda por su ID. |
+| **Tiendas** | `DELETE` | `/api/v1/admin/tiendas/:id` | `ADMIN`, `ROOT` | Elimina una tienda existente del sistema. |
 
 ---
+
 
 ## 1. Módulo de Soporte y Tickets (`support`)
 
@@ -575,3 +577,57 @@ Debido a esto, los siguientes endpoints en `OrdersController` han sido marcados 
 * `GET /api/v1/orders/admin/pedidos-transicion`
 * `POST /api/v1/orders/admin/pedidos-transicion/:id/aprobar`
 * `POST /api/v1/orders/admin/pedidos-transicion/:id/rechazar`
+
+---
+
+## 7. Módulo de Tiendas (`tiendas`)
+
+El módulo de Tiendas permite gestionar las tiendas asociadas en la plataforma. Los vendedores y administradores pueden listar y crear tiendas, mientras que las operaciones de actualización y eliminación están restringidas a roles de administración (`ADMIN` y `ROOT`).
+
+### 7.1 Listar Tiendas
+* **Método:** `GET`
+* **Ruta:** `/api/v1/tiendas`
+* **Roles Autorizados:** `VENDOR`, `ADMIN`, `ROOT`
+* **Respuesta Exitosa (200 OK):**
+  ```json
+  [
+    {
+      "id": 1,
+      "nombre": "Falabella",
+      "created_at": "2026-08-06T10:00:00.000Z",
+      "updated_at": "2026-08-06T10:00:00.000Z"
+    }
+  ]
+  ```
+
+### 7.2 Crear Tienda
+* **Método:** `POST`
+* **Ruta:** `/api/v1/tiendas`
+* **Roles Autorizados:** `VENDOR`, `ADMIN`, `ROOT`
+* **Payload:**
+  ```json
+  {
+    "nombre": "Tienda Ejemplo"
+  }
+  ```
+* **Respuesta Exitosa (201 Created):** Objeto `Tienda` creado.
+* **Errores:** `400 Bad Request` (nombre vacío) o `409 Conflict` (tienda duplicada).
+
+### 7.3 Actualizar Tienda
+* **Método:** `PUT`
+* **Ruta:** `/api/v1/admin/tiendas/:id`
+* **Roles Autorizados:** `ADMIN`, `ROOT`
+* **Payload:**
+  ```json
+  {
+    "nombre": "Tienda Actualizada"
+  }
+  ```
+* **Respuesta Exitosa (200 OK):** Objeto `Tienda` actualizado.
+
+### 7.4 Eliminar Tienda
+* **Método:** `DELETE`
+* **Ruta:** `/api/v1/admin/tiendas/:id`
+* **Roles Autorizados:** `ADMIN`, `ROOT`
+* **Respuesta Exitosa:** `204 No Content`.
+

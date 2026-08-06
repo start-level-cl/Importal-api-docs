@@ -2554,6 +2554,26 @@
     "service": "backend",
     "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
     "method": "get",
+    "path": "/api/v1/bodeguero/metricas",
+    "operationId": "backend_get_api_v1_bodeguero_metricas",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "bodeguero",
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "getBodegueroMetrics",
+    "parameters": [],
+    "roleGroup": "bodeguero"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "get",
     "path": "/api/v1/bodeguero/dashboard",
     "operationId": "backend_get_api_v1_bodeguero_dashboard",
     "tag": "Orders",
@@ -4042,6 +4062,42 @@
   {
     "service": "backend",
     "source": "Importal-backend/src/modules/support/controllers/support.controller.ts",
+    "method": "get",
+    "path": "/api/v1/cliente/tickets/productos-bodega",
+    "operationId": "backend_get_api_v1_cliente_tickets_productos_bodega",
+    "tag": "Support",
+    "tags": [
+      "Support"
+    ],
+    "roles": [
+      "client"
+    ],
+    "security": "bearerAuth",
+    "methodName": "getBodegaProductosParaTruequeCliente",
+    "parameters": [],
+    "roleGroup": "cliente"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/support/controllers/support.controller.ts",
+    "method": "post",
+    "path": "/api/v1/cliente/tickets/{id}/proponer-trueque",
+    "operationId": "backend_post_api_v1_cliente_tickets_id_proponer_trueque",
+    "tag": "Support",
+    "tags": [
+      "Support"
+    ],
+    "roles": [
+      "client"
+    ],
+    "security": "bearerAuth",
+    "methodName": "clientProponerTrueque",
+    "parameters": [],
+    "roleGroup": "cliente"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/support/controllers/support.controller.ts",
     "method": "post",
     "path": "/api/v1/vendedor/solicitud-transporte",
     "operationId": "backend_post_api_v1_vendedor_solicitud_transporte",
@@ -4167,6 +4223,84 @@
     ],
     "security": "bearerAuth",
     "methodName": "cancelarTrueque",
+    "parameters": [],
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/tiendas/tiendas.controller.ts",
+    "method": "get",
+    "path": "/api/v1/tiendas",
+    "operationId": "backend_get_api_v1_tiendas",
+    "tag": "Tiendas",
+    "tags": [
+      "Tiendas"
+    ],
+    "roles": [
+      "admin",
+      "root",
+      "vendor"
+    ],
+    "security": "bearerAuth",
+    "methodName": "findAll",
+    "parameters": [],
+    "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/tiendas/tiendas.controller.ts",
+    "method": "post",
+    "path": "/api/v1/tiendas",
+    "operationId": "backend_post_api_v1_tiendas",
+    "tag": "Tiendas",
+    "tags": [
+      "Tiendas"
+    ],
+    "roles": [
+      "admin",
+      "root",
+      "vendor"
+    ],
+    "security": "bearerAuth",
+    "methodName": "create",
+    "parameters": [],
+    "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/tiendas/tiendas.controller.ts",
+    "method": "put",
+    "path": "/api/v1/admin/tiendas/{id}",
+    "operationId": "backend_put_api_v1_admin_tiendas_id",
+    "tag": "Tiendas",
+    "tags": [
+      "Tiendas"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "update",
+    "parameters": [],
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/tiendas/tiendas.controller.ts",
+    "method": "delete",
+    "path": "/api/v1/admin/tiendas/{id}",
+    "operationId": "backend_delete_api_v1_admin_tiendas_id",
+    "tag": "Tiendas",
+    "tags": [
+      "Tiendas"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "remove",
     "parameters": [],
     "roleGroup": "admin"
   },

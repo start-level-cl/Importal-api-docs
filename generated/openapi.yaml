@@ -891,6 +891,15 @@ components:
         - title
         - description
       type: object
+    CreateTiendaRequest:
+      additionalProperties: false
+      properties:
+        nombre:
+          maxLength: 150
+          type: string
+      required:
+        - nombre
+      type: object
     CreateWarehouseInventoryRequest:
       additionalProperties: false
       properties:
@@ -2013,6 +2022,29 @@ components:
         - page
         - limit
       type: object
+    Tienda:
+      additionalProperties: false
+      properties:
+        created_at:
+          format: "date-time"
+          type: string
+        id:
+          type: integer
+        nombre:
+          type: string
+        updated_at:
+          format: "date-time"
+          type: string
+      required:
+        - id
+        - nombre
+        - created_at
+        - updated_at
+      type: object
+    TiendaArray:
+      items:
+        $ref: "#/components/schemas/Tienda"
+      type: array
     UnblockUserRequest:
       additionalProperties: false
       properties:
@@ -2172,6 +2204,13 @@ components:
           type: string
       required:
         - name
+      type: object
+    UpdateTiendaRequest:
+      additionalProperties: false
+      properties:
+        nombre:
+          maxLength: 150
+          type: string
       type: object
     UpdateUserRequest:
       additionalProperties: false
@@ -4828,6 +4867,102 @@ paths:
       x-role-group: admin
       x-service: backend
       x-source: "Importal-backend/src/modules/support/controllers/support.controller.ts"
+  /api/v1/admin/tiendas/{id}:
+    delete:
+      operationId: backend_delete_api_v1_admin_tiendas_id
+      parameters:
+        -           in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: Tienda eliminada exitosamente
+        401:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: No autorizado
+        404:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: Tienda no encontrada
+      security:
+        -           bearerAuth:
+[]
+      summary: Eliminar una tienda por su ID
+      tags:
+        - Tiendas
+        - Admin
+      x-role-group: admin
+      x-service: backend
+      x-source: "Importal-backend/src/modules/tiendas/tiendas.controller.ts"
+    put:
+      operationId: backend_put_api_v1_admin_tiendas_id
+      parameters:
+        -           in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            example:
+              nombre: Tienda Actualizada
+            schema:
+              $ref: "#/components/schemas/UpdateTiendaRequest"
+        required: true
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                created_at: "2026-08-06T10:00:00.000Z"
+                id: 1
+                nombre: Tienda Ejemplo
+                updated_at: "2026-08-06T10:00:00.000Z"
+              schema:
+                $ref: "#/components/schemas/Tienda"
+          description: Tienda actualizada exitosamente
+        400:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: Nombre de tienda vacio u invalido
+        401:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: No autorizado
+        404:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: Tienda no encontrada
+        409:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: Ya existe otra tienda con este nombre
+      security:
+        -           bearerAuth:
+[]
+      summary: Actualizar una tienda por su ID
+      tags:
+        - Tiendas
+        - Admin
+      x-role-group: admin
+      x-service: backend
+      x-source: "Importal-backend/src/modules/tiendas/tiendas.controller.ts"
   /api/v1/admin/traces:
     get:
       operationId: backend_get_api_v1_admin_traces
@@ -6252,6 +6387,27 @@ paths:
       x-role-group: bodeguero
       x-service: backend
       x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+  /api/v1/bodeguero/metricas:
+    get:
+      operationId: backend_get_api_v1_bodeguero_metricas
+      parameters:
+[]
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Operacion exitosa
+      security:
+        -           bearerAuth:
+[]
+      summary: getBodegueroMetrics
+      tags:
+        - Orders
+      x-role-group: bodeguero
+      x-service: backend
+      x-source: "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
   /api/v1/bodeguero/pedidos:
     get:
       operationId: backend_get_api_v1_bodeguero_pedidos
@@ -7619,6 +7775,27 @@ paths:
       x-role-group: cliente
       x-service: backend
       x-source: "Importal-backend/src/modules/support/controllers/support.controller.ts"
+  /api/v1/cliente/tickets/productos-bodega:
+    get:
+      operationId: backend_get_api_v1_cliente_tickets_productos_bodega
+      parameters:
+[]
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Operacion exitosa
+      security:
+        -           bearerAuth:
+[]
+      summary: getBodegaProductosParaTruequeCliente
+      tags:
+        - Support
+      x-role-group: cliente
+      x-service: backend
+      x-source: "Importal-backend/src/modules/support/controllers/support.controller.ts"
   /api/v1/cliente/tickets/{id}/aceptar-trueque:
     post:
       operationId: backend_post_api_v1_cliente_tickets_id_aceptar_trueque
@@ -7659,6 +7836,31 @@ paths:
         -           bearerAuth:
 []
       summary: Aceptar una propuesta de trueque enviada por el administrador (Cliente)
+      tags:
+        - Support
+      x-role-group: cliente
+      x-service: backend
+      x-source: "Importal-backend/src/modules/support/controllers/support.controller.ts"
+  /api/v1/cliente/tickets/{id}/proponer-trueque:
+    post:
+      operationId: backend_post_api_v1_cliente_tickets_id_proponer_trueque
+      parameters:
+        -           in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericObject"
+          description: Operacion exitosa
+      security:
+        -           bearerAuth:
+[]
+      summary: clientProponerTrueque
       tags:
         - Support
       x-role-group: cliente
@@ -8351,6 +8553,89 @@ paths:
       x-role-group: comun
       x-service: backend
       x-source: "Importal-backend/src/modules/billing/controllers/billing.controller.ts"
+  /api/v1/tiendas:
+    get:
+      operationId: backend_get_api_v1_tiendas
+      parameters:
+[]
+      responses:
+        200:
+          content:
+            application/json:
+              example:
+                -                   created_at: "2026-08-06T10:00:00.000Z"
+                  id: 1
+                  nombre: Tienda Ejemplo
+                  updated_at: "2026-08-06T10:00:00.000Z"
+              schema:
+                $ref: "#/components/schemas/TiendaArray"
+          description: Listado de tiendas
+        401:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: No autorizado
+      security:
+        -           bearerAuth:
+[]
+      summary: Listar todas las tiendas registradas
+      tags:
+        - Tiendas
+      x-role-group: comun
+      x-service: backend
+      x-source: "Importal-backend/src/modules/tiendas/tiendas.controller.ts"
+    post:
+      operationId: backend_post_api_v1_tiendas
+      parameters:
+[]
+      requestBody:
+        content:
+          application/json:
+            example:
+              nombre: Tienda Ejemplo
+            schema:
+              $ref: "#/components/schemas/CreateTiendaRequest"
+        required: true
+      responses:
+        201:
+          content:
+            application/json:
+              example:
+                created_at: "2026-08-06T10:00:00.000Z"
+                id: 1
+                nombre: Tienda Ejemplo
+                updated_at: "2026-08-06T10:00:00.000Z"
+              schema:
+                $ref: "#/components/schemas/Tienda"
+          description: Tienda creada exitosamente
+        400:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: Nombre de tienda vacio u invalido
+        401:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: No autorizado
+        409:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: Ya existe una tienda con este nombre
+      security:
+        -           bearerAuth:
+[]
+      summary: Crear una nueva tienda
+      tags:
+        - Tiendas
+      x-role-group: comun
+      x-service: backend
+      x-source: "Importal-backend/src/modules/tiendas/tiendas.controller.ts"
   /api/v1/users:
     get:
       operationId: backend_get_api_v1_users
@@ -10484,3 +10769,5 @@ tags:
     name: Messaging
   -     description: Monitoreo y auditoria
     name: System
+  -     description: Gestión y mantenedor de tiendas
+    name: Tiendas

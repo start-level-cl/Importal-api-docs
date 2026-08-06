@@ -319,6 +319,10 @@ export type CreateSupportTicketRequest = {
   title: string
 }
 
+export type CreateTiendaRequest = {
+  nombre: string
+}
+
 export type CreateWarehouseInventoryRequest = {
   location: string
   marca?: string
@@ -704,6 +708,15 @@ export type TicketPaginated = {
   total: number
 }
 
+export type Tienda = {
+  created_at: string
+  id: number
+  nombre: string
+  updated_at: string
+}
+
+export type TiendaArray = (Tienda)[]
+
 export type UnblockUserRequest = {
   motivo?: string
 }
@@ -777,6 +790,10 @@ export type UpdateProductRequest = {
 
 export type UpdateProfileRequest = {
   name: string
+}
+
+export type UpdateTiendaRequest = {
+  nombre?: string
 }
 
 export type UpdateUserRequest = {
@@ -1498,6 +1515,28 @@ export interface Operations {
       "200": GenericObject
     }
   }
+  "backend_delete_api_v1_admin_tiendas_id": {
+    method: "DELETE"
+    path: "/api/v1/admin/tiendas/{id}"
+    requestBody: undefined
+    responses: {
+      "204": undefined
+      "401": ErrorResponse
+      "404": ErrorResponse
+    }
+  }
+  "backend_put_api_v1_admin_tiendas_id": {
+    method: "PUT"
+    path: "/api/v1/admin/tiendas/{id}"
+    requestBody: UpdateTiendaRequest
+    responses: {
+      "200": Tienda
+      "400": ErrorResponse
+      "401": ErrorResponse
+      "404": ErrorResponse
+      "409": ErrorResponse
+    }
+  }
   "backend_get_api_v1_admin_traces": {
     method: "GET"
     path: "/api/v1/admin/traces"
@@ -1867,6 +1906,14 @@ export interface Operations {
       "200": WarehouseInventoryItem
     }
   }
+  "backend_get_api_v1_bodeguero_metricas": {
+    method: "GET"
+    path: "/api/v1/bodeguero/metricas"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
   "backend_get_api_v1_bodeguero_pedidos": {
     method: "GET"
     path: "/api/v1/bodeguero/pedidos"
@@ -2189,12 +2236,28 @@ export interface Operations {
       "200": GenericObject
     }
   }
+  "backend_get_api_v1_cliente_tickets_productos_bodega": {
+    method: "GET"
+    path: "/api/v1/cliente/tickets/productos-bodega"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
   "backend_post_api_v1_cliente_tickets_id_aceptar_trueque": {
     method: "POST"
     path: "/api/v1/cliente/tickets/{id}/aceptar-trueque"
     requestBody: undefined
     responses: {
       "200": Ticket
+    }
+  }
+  "backend_post_api_v1_cliente_tickets_id_proponer_trueque": {
+    method: "POST"
+    path: "/api/v1/cliente/tickets/{id}/proponer-trueque"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
     }
   }
   "backend_post_api_v1_cliente_tickets_id_rechazar_trueque": {
@@ -2360,6 +2423,26 @@ export interface Operations {
     requestBody: undefined
     responses: {
       "200": GenericObjectArray
+    }
+  }
+  "backend_get_api_v1_tiendas": {
+    method: "GET"
+    path: "/api/v1/tiendas"
+    requestBody: undefined
+    responses: {
+      "200": TiendaArray
+      "401": ErrorResponse
+    }
+  }
+  "backend_post_api_v1_tiendas": {
+    method: "POST"
+    path: "/api/v1/tiendas"
+    requestBody: CreateTiendaRequest
+    responses: {
+      "201": Tienda
+      "400": ErrorResponse
+      "401": ErrorResponse
+      "409": ErrorResponse
     }
   }
   "backend_get_api_v1_users": {

@@ -271,6 +271,22 @@ const schemaExamples = {
   },
   GenericObject: { ok: true, message: 'Operacion exitosa' },
   GenericObjectArray: [{ id: 1, message: 'Ejemplo de elemento retornado' }],
+  CreateTiendaRequest: { nombre: 'Tienda Ejemplo' },
+  UpdateTiendaRequest: { nombre: 'Tienda Actualizada' },
+  Tienda: {
+    id: 1,
+    nombre: 'Tienda Ejemplo',
+    created_at: '2026-08-06T10:00:00.000Z',
+    updated_at: '2026-08-06T10:00:00.000Z',
+  },
+  TiendaArray: [
+    {
+      id: 1,
+      nombre: 'Tienda Ejemplo',
+      created_at: '2026-08-06T10:00:00.000Z',
+      updated_at: '2026-08-06T10:00:00.000Z',
+    },
+  ],
   CreateSupportTicketRequest: {
     title: 'Error al subir foto del producto',
     description: 'La plataforma arroja error 500 al intentar subir imágenes de 2MB.',
@@ -862,6 +878,7 @@ export const tags = [
   { name: 'Notifications', description: 'Notificaciones del usuario' },
   { name: 'Messaging', description: 'Chats y mensajes' },
   { name: 'System', description: 'Monitoreo y auditoria' },
+  { name: 'Tiendas', description: 'Gestión y mantenedor de tiendas' },
 ]
 
 export const securitySchemes = {
@@ -901,6 +918,28 @@ export const schemas = {
     },
     ['ok'],
   ),
+  CreateTiendaRequest: objectSchema(
+    {
+      nombre: { type: 'string', maxLength: 150 },
+    },
+    ['nombre'],
+  ),
+  UpdateTiendaRequest: objectSchema({
+    nombre: { type: 'string', maxLength: 150 },
+  }),
+  Tienda: objectSchema(
+    {
+      id: { type: 'integer' },
+      nombre: { type: 'string' },
+      created_at: { type: 'string', format: 'date-time' },
+      updated_at: { type: 'string', format: 'date-time' },
+    },
+    ['id', 'nombre', 'created_at', 'updated_at'],
+  ),
+  TiendaArray: {
+    type: 'array',
+    items: { $ref: '#/components/schemas/Tienda' },
+  },
   LoginRequest: objectSchema(
     {
       email: { type: 'string', format: 'email' },
@@ -2224,6 +2263,46 @@ function noContentResponse(status, description) {
 }
 
 export const operationOverrides = {
+  'get /api/v1/tiendas': {
+    summary: 'Listar todas las tiendas registradas',
+    tags: ['Tiendas'],
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Listado de tiendas', 'TiendaArray'),
+      jsonResponse('401', 'No autorizado', 'ErrorResponse'),
+    ]),
+  },
+  'post /api/v1/tiendas': {
+    summary: 'Crear una nueva tienda',
+    tags: ['Tiendas'],
+    requestBody: jsonRequest('CreateTiendaRequest'),
+    responses: Object.fromEntries([
+      jsonResponse('201', 'Tienda creada exitosamente', 'Tienda'),
+      jsonResponse('400', 'Nombre de tienda vacio u invalido', 'ErrorResponse'),
+      jsonResponse('409', 'Ya existe una tienda con este nombre', 'ErrorResponse'),
+      jsonResponse('401', 'No autorizado', 'ErrorResponse'),
+    ]),
+  },
+  'put /api/v1/admin/tiendas/{id}': {
+    summary: 'Actualizar una tienda por su ID',
+    tags: ['Tiendas', 'Admin'],
+    requestBody: jsonRequest('UpdateTiendaRequest'),
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Tienda actualizada exitosamente', 'Tienda'),
+      jsonResponse('400', 'Nombre de tienda vacio u invalido', 'ErrorResponse'),
+      jsonResponse('404', 'Tienda no encontrada', 'ErrorResponse'),
+      jsonResponse('409', 'Ya existe otra tienda con este nombre', 'ErrorResponse'),
+      jsonResponse('401', 'No autorizado', 'ErrorResponse'),
+    ]),
+  },
+  'delete /api/v1/admin/tiendas/{id}': {
+    summary: 'Eliminar una tienda por su ID',
+    tags: ['Tiendas', 'Admin'],
+    responses: Object.fromEntries([
+      noContentResponse('204', 'Tienda eliminada exitosamente'),
+      jsonResponse('404', 'Tienda no encontrada', 'ErrorResponse'),
+      jsonResponse('401', 'No autorizado', 'ErrorResponse'),
+    ]),
+  },
   'post /auth/api/v1/login': {
     summary: 'Autenticar usuario y emitir JWT',
     requestBody: jsonRequest('LoginRequest'),
