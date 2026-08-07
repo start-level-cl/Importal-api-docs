@@ -353,6 +353,21 @@ Devuelve el tipo de cambio USD → CLP oficial vigente.
     "rate": 955.00
   }
   ```
+- **Respuesta Exitosa (200 OK):** Retorna la entidad `ExchangeRate` recién creada y persistida.
+  ```json
+  {
+    "id": 1,
+    "rate": 955,
+    "changed_by_id": 2,
+    "created_at": "2026-08-07T12:00:00.000Z"
+  }
+  ```
+
+> [!NOTE]
+> **Emisión WebSockets en Tiempo Real (`AppGateway.broadcastExchangeRateUpdate`):**
+> Al actualizar con éxito el tipo de cambio, el servidor transmite inmediatamente dos eventos por WebSocket a todos los clientes conectados:
+> 1. `exchange_rate_updated`: Payload con el objeto entidad `ExchangeRate` (`{ id, rate, changed_by_id, created_at }`).
+> 2. `product_updated`: Payload `{ action: "update", product: null }` para notificar a las aplicaciones clientes que deben refrescar/recalcular los precios convertidos a CLP (`price_usd * rate`).
 
 ### 5.3 Historial de Tipo de Cambio
 

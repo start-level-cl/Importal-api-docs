@@ -535,6 +535,7 @@ const schemaExamples = {
   UpdateCommissionTierRequest: { id: 1, commission_pct: 20 },
   UpdateLogisticsRateRequest: { id: 1, rate_value: 30 },
   UpdateExchangeRateRequest: { rate: 980 },
+  ExchangeRate: { id: 1, rate: 955, changed_by_id: 2, created_at: '2026-08-07T12:00:00.000Z' },
   CreateMessageRequest: { message: 'Hola, ¿cómo estás?', referenced_message_id: null },
   RequestContactChangeRequest: { type: 'email', newValue: 'nuevo@correo.com', password: 'Password123!' },
   VerifyContactChangeRequest: { token: 'token-transaction-123', code: '123456' },
@@ -1575,6 +1576,34 @@ export const schemas = {
     },
     ['data', 'meta'],
   ),
+  UserOrder: objectSchema(
+    {
+      id: { type: 'integer' },
+      status: { type: 'string' },
+      quantity: { type: 'integer', nullable: true },
+      talla: { type: 'string', nullable: true },
+      transport_type: { type: 'string', enum: ['AEREA', 'MARITIMA'], nullable: true, description: 'Tipo de transporte asignado al pedido (vía carga o producto)' },
+      carga_id: { type: 'integer', nullable: true },
+      product: { $ref: '#/components/schemas/Product', nullable: true },
+      carga: { $ref: '#/components/schemas/Carga', nullable: true },
+    },
+    ['id', 'status'],
+  ),
+  UserOrdersPaginatedResponse: objectSchema(
+    {
+      data: { type: 'array', items: { $ref: '#/components/schemas/UserOrder' } },
+      meta: objectSchema(
+        {
+          total: { type: 'integer' },
+          page: { type: 'integer' },
+          limit: { type: 'integer' },
+          last_page: { type: 'integer' },
+        },
+        ['total', 'page', 'limit', 'last_page'],
+      ),
+    },
+    ['data', 'meta'],
+  ),
   VendorCargaStatusItem: objectSchema(
     {
       carga_id: { type: 'integer' },
@@ -1712,6 +1741,15 @@ export const schemas = {
       rate: { type: 'number' },
     },
     ['rate'],
+  ),
+  ExchangeRate: objectSchema(
+    {
+      id: { type: 'integer' },
+      rate: { type: 'number' },
+      changed_by_id: { type: 'integer' },
+      created_at: { type: 'string', format: 'date-time' },
+    },
+    ['id', 'rate', 'changed_by_id', 'created_at'],
   ),
   RequestDeliveryShippingRequest: objectSchema(
     {
@@ -2720,8 +2758,9 @@ export const operationOverrides = {
   },
   'post /api/v1/admin/exchange-rate': {
     summary: 'Actualizar el tipo de cambio del dólar (Admin/Root)',
+    description: 'Actualiza el valor oficial del tipo de cambio USD -> CLP y dispara la transmisión en tiempo real vía WebSockets a los clientes conectados (eventos exchange_rate_updated y product_updated).',
     requestBody: jsonRequest('UpdateExchangeRateRequest'),
-    responses: Object.fromEntries([jsonResponse('200', 'Tipo de cambio actualizado exitosamente', 'GenericObject')]),
+    responses: Object.fromEntries([jsonResponse('200', 'Tipo de cambio actualizado y transmitido por WebSockets', 'ExchangeRate')]),
   },
   'get /api/v1/admin/exchange-rate/history': {
     summary: 'Obtener historial de cambios del dólar (Admin/Root)',
@@ -3286,6 +3325,32 @@ export const operationOverrides = {
       { name: 'redirect', in: 'query', required: false, schema: { type: 'string' }, description: 'URL de redirección opcional' },
     ],
     responses: Object.fromEntries([jsonResponse('200', 'Desuscripción exitosa', 'GenericMessage')]),
+  },
+  'get /api/v1/users/{id}/orders': {
+    summary: 'Consultar las órdenes/pedidos de un usuario cliente por su ID (Admin/Root)',
+    parameters: [
+      { name: 'id', in: 'path', required: true, schema: { type: 'integer' }, description: 'ID del usuario' },
+      { name: 'page', in: 'query', required: false, schema: { type: 'integer', default: 1 }, description: 'Número de página' },
+      { name: 'limit', in: 'query', required: false, schema: { type: 'integer', default: 10 }, description: 'Cantidad por página (máx 50)' },
+    ],
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Listado paginado de pedidos del usuario. Cada elemento incluye transport_type (AEREA, MARITIMA).', 'UserOrdersPaginatedResponse'),
+      jsonResponse('400', 'El usuario especificado no tiene rol CLIENT', 'ErrorResponse'),
+      jsonResponse('404', 'Usuario no encontrado', 'ErrorResponse'),
+    ]),
+  },
+  'get /api/v1/users/{id}/pedidos': {
+    summary: 'Consultar los pedidos de un usuario cliente por su ID (Alias de /users/{id}/orders) (Admin/Root)',
+    parameters: [
+      { name: 'id', in: 'path', required: true, schema: { type: 'integer' }, description: 'ID del usuario' },
+      { name: 'page', in: 'query', required: false, schema: { type: 'integer', default: 1 }, description: 'Número de página' },
+      { name: 'limit', in: 'query', required: false, schema: { type: 'integer', default: 10 }, description: 'Cantidad por página (máx 50)' },
+    ],
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Listado paginado de pedidos del usuario. Cada elemento incluye transport_type (AEREA, MARITIMA).', 'UserOrdersPaginatedResponse'),
+      jsonResponse('400', 'El usuario especificado no tiene rol CLIENT', 'ErrorResponse'),
+      jsonResponse('404', 'Usuario no encontrado', 'ErrorResponse'),
+    ]),
   },
   'get /api/v1/cliente/ajustes/pendientes': {
     summary: 'Listar ajustes de pedidos pendientes de aprobación por parte del cliente (Cliente)',

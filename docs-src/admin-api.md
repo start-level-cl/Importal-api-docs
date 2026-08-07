@@ -17,8 +17,8 @@ Esta tabla consolida los endpoints disponibles para roles de administración y g
 | **Usuarios** | `GET` | `/api/v1/admin/users` | `ADMIN`, `ROOT` | Listado avanzado de usuarios con filtros de mora, deuda, salas y búsqueda. |
 | **Usuarios** | `GET` | `/api/v1/users` | `ADMIN`, `ROOT` | Obtención básica de usuarios con paginación general. |
 | **Usuarios** | `GET` | `/api/v1/users/:id` | `ADMIN`, `ROOT` | Resumen detallado del perfil y transacciones de un usuario. |
-| **Usuarios** | `GET` | `/api/v1/users/:id/orders` | `ADMIN`, `ROOT` | Consulta las órdenes de un usuario. |
-| **Usuarios** | `GET` | `/api/v1/users/:id/pedidos` | `ADMIN`, `ROOT` | Alias para la consulta de órdenes de un usuario. |
+| **Usuarios** | `GET` | `/api/v1/users/:id/orders` | `ADMIN`, `ROOT` | Consulta las órdenes de un usuario (cada ítem incluye `transport_type`). |
+| **Usuarios** | `GET` | `/api/v1/users/:id/pedidos` | `ADMIN`, `ROOT` | Alias para la consulta de órdenes de un usuario (cada ítem incluye `transport_type`). |
 | **Usuarios** | `GET` | `/api/v1/users/:id/cobros` | `ADMIN`, `ROOT` | Consulta el historial de cobros de un usuario. |
 | **Usuarios** | `DELETE`| `/api/v1/users/:id` | `ROOT` | Eliminación de un usuario del sistema. |
 | **Usuarios** | `POST` | `/api/v1/admin/users/:id/bloquear` | `ADMIN`, `ROOT` | Bloquea manualmente a un usuario `CLIENT`, `VENDOR` o `BODEGUERO` (impide login y revoca sesión). |
@@ -39,6 +39,7 @@ Esta tabla consolida los endpoints disponibles para roles de administración y g
 | **Métricas** | `GET` | `/api/v1/admin/metrics/carga/:id` | `ADMIN`, `ROOT` | Obtener métricas consolidadas de una carga de importación. |
 | **Métricas** | `GET` | `/api/v1/vendedor/metrics/carga/:id` | `VENDOR` | Obtener métricas de la carga correspondientes al vendedor. |
 | **Reembolsos** | `POST` | `/api/v1/admin/orders/adjustments/:id/authorize-full-refund` | `ADMIN`, `ROOT` | Forzar y autorizar de forma excepcional un reembolso del 100% de la orden. |
+| **Exchange Rates**| `POST`| `/api/v1/admin/exchange-rate` | `ADMIN`, `ROOT` | Actualizar tipo de cambio del dólar (USD→CLP) y transmitir cambios en vivo por WebSocket (`exchange_rate_updated`, `product_updated`). |
 | **Exchange Rates**| `GET`| `/api/v1/admin/exchange-rate/history` | `ADMIN`, `ROOT` | Historial de tipo de cambio oficial con soporte para paginación (`page`, `limit`). |
 | **Entregas** | `GET` | `/api/v1/admin/deliveries` | `ADMIN`, `ROOT` | Listado y filtros de entregas asociadas a clientes con paginación (`page`, `limit`). |
 | **Devoluciones**| `GET`| `/api/v1/admin/devoluciones` | `ADMIN`, `ROOT` | Listado de solicitudes de devolución con paginación (`page`, `limit`). |
@@ -386,6 +387,52 @@ sequenceDiagram
 * **Auditoría del actor (`bloqueado_por_id`):** `ROOT` no se persiste en la tabla `users` de Postgres (solo existe en DynamoDB vía `BootstrapAuthUsersService`). Cuando el actor es `ROOT`, `bloqueado_por_id` queda `NULL` de forma segura — comportamiento esperado, no un bug.
 * **Notificaciones:** se notifica al usuario objetivo in-app (`ACCOUNT_BLOCKED`/`ACCOUNT_UNBLOCKED`) y por correo vía SQS (obligatorio, ya que un usuario bloqueado no puede iniciar sesión para ver la notificación in-app). Cuando `ROOT` bloquea/desbloquea a un `ADMIN`, también se notifica a todo el equipo administrativo (`ADMIN_BLOCKED_BY_ROOT` / `ADMIN_UNBLOCKED_BY_ROOT`).
 * **Visibilidad administrativa:** `GET /api/v1/admin/users` y `GET /api/v1/users/:id` exponen `bloqueo`, `bloqueo_origen`, `bloqueo_motivo` y `bloqueado_en` en su respuesta.
+
+### 2.5 Historial de Pedidos del Usuario (`GET /api/v1/users/:id/pedidos`)
+
+* **Método:** `GET`
+* **Ruta:** `/api/v1/users/:id/pedidos` (Alias: `/api/v1/users/:id/orders`)
+* **Roles Autorizados:** `ADMIN`, `ROOT`
+* **Path Parameters:**
+  * `id` (requerido, entero): ID del usuario.
+* **Query Parameters:**
+  * `page` (opcional, default `1`): Número de página.
+  * `limit` (opcional, default `10`, máx `50`): Cantidad por página.
+* **Restricción de Rol:** Este endpoint solo admite usuarios con rol `CLIENT`. Si el usuario tiene otro rol (ej. `VENDOR`, `ADMIN`), retorna `400 Bad Request`.
+* **Propiedad `transport_type`:** Cada elemento dentro del arreglo `data` incluye la propiedad `transport_type` (`string`, ej. `'AEREA'`, `'MARITIMA'`), que especifica el tipo de transporte heredado de la carga asignada o del producto.
+* **Formato JSON de Respuesta:**
+  ```json
+  {
+    "data": [
+      {
+        "id": 10,
+        "quantity": 2,
+        "talla": "L",
+        "total_clp": 50000,
+        "status": "CONFIRMED",
+        "transport_type": "AEREA",
+        "requested_at": "2026-08-01T12:00:00.000Z",
+        "product": {
+          "id": 4,
+          "marca": "Nike",
+          "price_usd": 35.0,
+          "photo_urls": ["https://cdn.importal.cl/..."]
+        },
+        "carga": {
+          "id": 2,
+          "tipo_carga": "AEREA",
+          "status": "ARRIVED"
+        }
+      }
+    ],
+    "meta": {
+      "total": 1,
+      "page": 1,
+      "limit": 10,
+      "last_page": 1
+    }
+  }
+  ```
 
 ---
 

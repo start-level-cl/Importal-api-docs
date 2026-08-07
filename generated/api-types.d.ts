@@ -372,6 +372,13 @@ export type ErrorResponse = {
   statusCode?: number
 }
 
+export type ExchangeRate = {
+  changed_by_id: number
+  created_at: string
+  id: number
+  rate: number
+}
+
 export type GenericMessage = {
   message: string
 }
@@ -840,6 +847,27 @@ export type UserBilling = {
   user_id: number
 }
 
+export type UserOrder = {
+  carga?: Carga
+  carga_id?: number
+  id: number
+  product?: Product
+  quantity?: number
+  status: string
+  talla?: string
+  transport_type?: "AEREA" | "MARITIMA"
+}
+
+export type UserOrdersPaginatedResponse = {
+  data: (UserOrder)[]
+  meta: {
+    last_page: number
+    limit: number
+    page: number
+    total: number
+  }
+}
+
 export type UserProfile = {
   addresses?: (UserAddress)[]
   billing?: UserBilling
@@ -1248,7 +1276,7 @@ export interface Operations {
     path: "/api/v1/admin/exchange-rate"
     requestBody: UpdateExchangeRateRequest
     responses: {
-      "200": GenericObject
+      "200": ExchangeRate
     }
   }
   "backend_get_api_v1_admin_exchange_rate_history": {
@@ -2562,7 +2590,9 @@ export interface Operations {
     path: "/api/v1/users/{id}/orders"
     requestBody: undefined
     responses: {
-      "200": GenericObject
+      "200": UserOrdersPaginatedResponse
+      "400": ErrorResponse
+      "404": ErrorResponse
     }
   }
   "backend_get_api_v1_users_id_pedidos": {
@@ -2570,7 +2600,9 @@ export interface Operations {
     path: "/api/v1/users/{id}/pedidos"
     requestBody: undefined
     responses: {
-      "200": GenericObject
+      "200": UserOrdersPaginatedResponse
+      "400": ErrorResponse
+      "404": ErrorResponse
     }
   }
   "backend_post_api_v1_vendedor_cargas_transicion_cierre": {

@@ -1465,6 +1465,31 @@
         ],
         "type": "object"
       },
+      "ExchangeRate": {
+        "additionalProperties": false,
+        "properties": {
+          "changed_by_id": {
+            "type": "integer"
+          },
+          "created_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "id": {
+            "type": "integer"
+          },
+          "rate": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "id",
+          "rate",
+          "changed_by_id",
+          "created_at"
+        ],
+        "type": "object"
+      },
       "GenericMessage": {
         "additionalProperties": false,
         "properties": {
@@ -3252,6 +3277,91 @@
           "direccion_facturacion",
           "correo",
           "user_id"
+        ],
+        "type": "object"
+      },
+      "UserOrder": {
+        "additionalProperties": false,
+        "properties": {
+          "carga": {
+            "$ref": "#/components/schemas/Carga",
+            "nullable": true
+          },
+          "carga_id": {
+            "nullable": true,
+            "type": "integer"
+          },
+          "id": {
+            "type": "integer"
+          },
+          "product": {
+            "$ref": "#/components/schemas/Product",
+            "nullable": true
+          },
+          "quantity": {
+            "nullable": true,
+            "type": "integer"
+          },
+          "status": {
+            "type": "string"
+          },
+          "talla": {
+            "nullable": true,
+            "type": "string"
+          },
+          "transport_type": {
+            "description": "Tipo de transporte asignado al pedido (vía carga o producto)",
+            "enum": [
+              "AEREA",
+              "MARITIMA"
+            ],
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "status"
+        ],
+        "type": "object"
+      },
+      "UserOrdersPaginatedResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/UserOrder"
+            },
+            "type": "array"
+          },
+          "meta": {
+            "additionalProperties": false,
+            "properties": {
+              "last_page": {
+                "type": "integer"
+              },
+              "limit": {
+                "type": "integer"
+              },
+              "page": {
+                "type": "integer"
+              },
+              "total": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "total",
+              "page",
+              "limit",
+              "last_page"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
         ],
         "type": "object"
       },
@@ -5368,6 +5478,7 @@
     },
     "/api/v1/admin/exchange-rate": {
       "post": {
+        "description": "Actualiza el valor oficial del tipo de cambio USD -> CLP y dispara la transmisión en tiempo real vía WebSockets a los clientes conectados (eventos exchange_rate_updated y product_updated).",
         "operationId": "backend_post_api_v1_admin_exchange_rate",
         "parameters": [],
         "requestBody": {
@@ -5388,15 +5499,17 @@
             "content": {
               "application/json": {
                 "example": {
-                  "message": "Operacion exitosa",
-                  "ok": true
+                  "changed_by_id": 2,
+                  "created_at": "2026-08-07T12:00:00.000Z",
+                  "id": 1,
+                  "rate": 955
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/GenericObject"
+                  "$ref": "#/components/schemas/ExchangeRate"
                 }
               }
             },
-            "description": "Tipo de cambio actualizado exitosamente"
+            "description": "Tipo de cambio actualizado y transmitido por WebSockets"
           }
         },
         "security": [
@@ -13228,11 +13341,32 @@
         "operationId": "backend_get_api_v1_users_id_orders",
         "parameters": [
           {
+            "description": "ID del usuario",
             "in": "path",
             "name": "id",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Número de página",
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "default": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Cantidad por página (máx 50)",
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 10,
+              "type": "integer"
             }
           }
         ],
@@ -13241,11 +13375,31 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GenericObject"
+                  "$ref": "#/components/schemas/UserOrdersPaginatedResponse"
                 }
               }
             },
-            "description": "Operacion exitosa"
+            "description": "Listado paginado de pedidos del usuario. Cada elemento incluye transport_type (AEREA, MARITIMA)."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "El usuario especificado no tiene rol CLIENT"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Usuario no encontrado"
           }
         },
         "security": [
@@ -13253,7 +13407,7 @@
             "bearerAuth": []
           }
         ],
-        "summary": "getUserOrders",
+        "summary": "Consultar las órdenes/pedidos de un usuario cliente por su ID (Admin/Root)",
         "tags": [
           "Users"
         ],
@@ -13267,11 +13421,32 @@
         "operationId": "backend_get_api_v1_users_id_pedidos",
         "parameters": [
           {
+            "description": "ID del usuario",
             "in": "path",
             "name": "id",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Número de página",
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "default": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Cantidad por página (máx 50)",
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 10,
+              "type": "integer"
             }
           }
         ],
@@ -13280,11 +13455,31 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GenericObject"
+                  "$ref": "#/components/schemas/UserOrdersPaginatedResponse"
                 }
               }
             },
-            "description": "Operacion exitosa"
+            "description": "Listado paginado de pedidos del usuario. Cada elemento incluye transport_type (AEREA, MARITIMA)."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "El usuario especificado no tiene rol CLIENT"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Usuario no encontrado"
           }
         },
         "security": [
@@ -13292,7 +13487,7 @@
             "bearerAuth": []
           }
         ],
-        "summary": "getUserPedidos",
+        "summary": "Consultar los pedidos de un usuario cliente por su ID (Alias de /users/{id}/orders) (Admin/Root)",
         "tags": [
           "Users"
         ],
