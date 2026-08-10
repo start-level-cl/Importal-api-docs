@@ -10,6 +10,7 @@ Esta sección documenta los endpoints para la gestión del catálogo de producto
 | :--- | :--- | :--- | :--- | :--- |
 | **Catálogo** | `GET` | `/api/v1/cliente/productos` | `CLIENT`, `ADMIN`, `ROOT` | Listar productos disponibles para compra con filtros. |
 | **Catálogo** | `GET` | `/api/v1/productos/:id` | Todos los roles | Obtener el detalle de un producto por su ID. |
+| **Catálogo** | `GET` | `/api/v1/productos/:id/imagenes/descarga` | Todos los roles autenticados | Obtener URLs firmadas para descargar las imágenes del producto. |
 | **Vendedor** | `GET` | `/api/v1/vendedor/productos` | `VENDOR`, `ADMIN`, `ROOT` | Listar productos publicados por el vendedor autenticado. |
 | **Vendedor** | `POST` | `/api/v1/vendedor/productos` | `VENDOR` | Crear un nuevo producto con fotos. |
 | **Vendedor** | `PUT` | `/api/v1/vendedor/productos/:id` | `VENDOR`, `ADMIN`, `ROOT` | Actualizar los datos de un producto existente. |
@@ -72,6 +73,29 @@ Devuelve el detalle completo de un producto específico, incluyendo sus tallas y
   ```
 
 ---
+
+### 1.3 Descargar imágenes de un producto
+
+Genera URLs temporales de S3 para descargar todas las imágenes asociadas al producto. La ruta está protegida: no es un endpoint público y acepta cualquier rol con un JWT válido.
+
+- **Método:** `GET`
+- **Ruta:** `/api/v1/productos/:id/imagenes/descarga`
+- **Autenticación:** Bearer JWT (`CLIENT`, `VENDOR`, `BODEGUERO`, `ADMIN` o `ROOT`)
+- **Path Parameters:**
+  - `id` (número, requerido): ID del producto.
+- **Respuesta Exitosa (200 OK):**
+  ```json
+  {
+    "product_id": 42,
+    "photo_urls": [
+      "https://bucket.s3.us-east-2.amazonaws.com/portal/productos/foto.webp?..."
+    ]
+  }
+  ```
+
+Las URLs tienen una vigencia de 10 minutos y fuerzan `Content-Disposition: attachment`. Si el producto no tiene fotos, `photo_urls` se devuelve como arreglo vacío.
+
+- **Errores:** `404 Not Found` si el producto no existe.
 
 ## 2. Gestión de Productos (Vendedor)
 

@@ -189,6 +189,10 @@ const schemaExamples = {
       status: 'AVAILABLE',
     },
   ],
+  ProductImageDownloadResponse: {
+    product_id: 42,
+    photo_urls: ['https://bucket.s3.us-east-2.amazonaws.com/portal/productos/foto.webp?...'],
+  },
   Notification: {
     id: 42,
     type: 'ORDER_STATUS',
@@ -2583,6 +2587,17 @@ export const operationOverrides = {
   },
   'get /api/v1/chats/{id}/mensajes': {
     responses: Object.fromEntries([jsonResponse('200', 'Mensajes del chat', 'ChatMessageArray')]),
+  },
+  'get /api/v1/productos/{id}/imagenes/descarga': {
+    summary: 'Generar URLs firmadas para descargar todas las imagenes de un producto (cualquier rol autenticado)',
+    parameters: [
+      { name: 'id', in: 'path', required: true, schema: { type: 'integer' }, description: 'ID del producto' },
+    ],
+    responses: Object.fromEntries([
+      jsonResponse('200', 'URLs firmadas de descarga de las imagenes del producto (vigencia de 10 minutos)', 'ProductImageDownloadResponse'),
+      jsonResponse('401', 'JWT invalido o ausente', 'ErrorResponse'),
+      jsonResponse('404', 'Producto no encontrado', 'ErrorResponse'),
+    ]),
   },
   'get /api/v1/cliente/productos': {
     summary: 'Listar productos del catálogo disponibles para compra (productos con stock = 0 se ordenan al final de los resultados)',
