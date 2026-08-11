@@ -790,10 +790,12 @@ export function extractLambdaRoutes({ repoRoot, serviceRoot }) {
 
   const routes = [
     { method: 'post', path: '/registration-requests', summary: 'Crear solicitud de registro publica' },
-    { method: 'get', path: '/registration-requests', summary: 'Listar solicitudes pendientes para revision' },
+    { method: 'get', path: '/registration-requests/{email}/status', summary: 'Consultar estado de solicitud por email' },
     { method: 'post', path: '/registration-requests/{email}/send-code', summary: 'Generar y enviar OTP al email o telefono' },
     { method: 'post', path: '/registration-requests/{email}/verify', summary: 'Verificar OTP y marcar canal como verificado' },
     { method: 'put', path: '/registration-requests/{email}/update-contact', summary: 'Actualizar email o telefono de una solicitud pendiente' },
+    { method: 'post', path: '/registration-requests/{email}/reupload-comprobante', summary: 'Re-subir comprobante de pago de la solicitud' },
+    { method: 'post', path: '/admin/registration-requests/{email}/approve', summary: 'Aprobar solicitud de registro de usuario (Admin)' },
   ]
 
   for (const route of routes) {

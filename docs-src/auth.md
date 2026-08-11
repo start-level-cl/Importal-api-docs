@@ -31,9 +31,17 @@ sequenceDiagram
 ```
 
 ### 1. Access Token (Token de Acceso)
-* **Ubicación:** Se devuelve directamente en el cuerpo JSON tras el login.
+* **Ubicación:** Se devuelve directamente en el cuerpo JSON tras el login (`accessToken`) y al renovar sesión mediante `/auth/api/v1/refresh`.
 * **Formato:** JWT firmado con algoritmo RS256 / HS256.
 * **Duración:** Corta duración (generalmente 1 hora).
+* **Payload (Claims & Minimización de PII - Ley 21.719 / Corrección #4 Verificada):**
+  En estricto cumplimiento de las normas de minimización de datos personales, el payload del JWT de acceso emitido por `/auth/api/v1/login` y `/auth/api/v1/refresh` contiene **únicamente identificadores técnicos no sensibles de control de acceso**:
+  - `sub` / `app_user_id`: Identificador único del usuario.
+  - `app_role`: Rol asignado al usuario en la plataforma (`client`, `vendor`, `bodeguero`, `admin`, `root`).
+  - `app_transporte`: Lista de transportes asignados (ej. `["aereo", "maritimo"]`).
+  
+  > [!IMPORTANT]
+  > **Sin PII directa:** El payload del token **ya no incluye** los campos de datos personales `app_full_name`, `app_email`, `app_phone` o `app_username`. Cualquier servicio o cliente de interfaz que requiera información de contacto o perfil completo del usuario debe obtenerla consultando el endpoint protegido `GET /api/v1/users/me` presentando el token de autorización.
 * **Uso:** Debe adjuntarse en las cabeceras HTTP de cada petición al backend:
   ```http
   Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...

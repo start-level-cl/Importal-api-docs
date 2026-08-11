@@ -14,11 +14,9 @@ Esta tabla consolida los endpoints disponibles para roles de administración y g
 | **Soporte** | `POST`<br>`PUT` | `/api/v1/admin/tickets/:id/resolver`<br> `/api/v1/admin/soporte/tickets/:id/resolucion` | `ADMIN`, `ROOT` | Resuelve un ticket asignándole un estado, resolución y comprobante opcional (delega a la resolución de transporte si el ticket es `ADD_TRANSPORT_REQUEST`). |
 | **Soporte** | `POST` | `/api/v1/admin/tickets/:id/proponer-trueque` | `ADMIN`, `ROOT` | Envía una propuesta de trueque para tickets de negociación. |
 | **Soporte** | `POST` | `/api/v1/admin/tickets/:id/resolver-transporte` | `ADMIN`, `ROOT` | Aprueba o rechaza una solicitud de acceso a sala de transporte (`ADD_TRANSPORT_REQUEST`); también alcanzable vía los endpoints genéricos de resolución. |
-| **Usuarios** | `GET` | `/api/v1/admin/users` | `ADMIN`, `ROOT` | Listado avanzado de usuarios con filtros de mora, deuda, salas y búsqueda. |
-| **Usuarios** | `GET` | `/api/v1/users` | `ADMIN`, `ROOT` | Obtención básica de usuarios con paginación general. |
+| **Usuarios** | `GET` | `/api/v1/admin/users` | `ADMIN`, `ROOT` | Listado avanzado de usuarios (PII minimizado: retorna id, primer nombre y rol). |
 | **Usuarios** | `GET` | `/api/v1/users/:id` | `ADMIN`, `ROOT` | Resumen detallado del perfil y transacciones de un usuario. |
-| **Usuarios** | `GET` | `/api/v1/users/:id/orders` | `ADMIN`, `ROOT` | Consulta las órdenes de un usuario (cada ítem incluye `transport_type`). |
-| **Usuarios** | `GET` | `/api/v1/users/:id/pedidos` | `ADMIN`, `ROOT` | Alias para la consulta de órdenes de un usuario (cada ítem incluye `transport_type`). |
+| **Usuarios** | `GET` | `/api/v1/users/:id/pedidos` | `ADMIN`, `ROOT` | Consulta de pedidos de un usuario (cada ítem incluye `transport_type`). |
 | **Usuarios** | `GET` | `/api/v1/users/:id/cobros` | `ADMIN`, `ROOT` | Consulta el historial de cobros de un usuario. |
 | **Usuarios** | `DELETE`| `/api/v1/users/:id` | `ROOT` | Eliminación de un usuario del sistema. |
 | **Usuarios** | `POST` | `/api/v1/admin/users/:id/bloquear` | `ADMIN`, `ROOT` | Bloquea manualmente a un usuario `CLIENT`, `VENDOR` o `BODEGUERO` (impide login y revoca sesión). |
@@ -64,7 +62,7 @@ Esta tabla consolida los endpoints disponibles para roles de administración y g
 | **Monitoreo**| `GET` | `/api/v1/admin/system/status/cache` | `ADMIN`, `ROOT` | Uso de memoria, conexiones y hits de la caché Redis. |
 | **Monitoreo**| `GET` | `/api/v1/admin/system/status/queue` | `ADMIN`, `ROOT` | Estado y métricas de procesamiento de colas BullMQ. |
 | **Tiendas** | `GET` | `/api/v1/tiendas` | `VENDOR`, `ADMIN`, `ROOT` | Obtiene el listado completo de tiendas registradas. |
-| **Tiendas** | `POST` | `/api/v1/tiendas` | `VENDOR`, `ADMIN`, `ROOT` | Registra una nueva tienda con nombre único. |
+| **Tiendas** | `POST` | `/api/v1/tiendas` | `ADMIN`, `ROOT` | Registra directamente una nueva tienda con nombre único. |
 | **Tiendas** | `PUT` | `/api/v1/admin/tiendas/:id` | `ADMIN`, `ROOT` | Actualiza la información de una tienda por su ID. |
 | **Tiendas** | `DELETE` | `/api/v1/admin/tiendas/:id` | `ADMIN`, `ROOT` | Elimina una tienda existente del sistema. |
 
@@ -72,6 +70,43 @@ Esta tabla consolida los endpoints disponibles para roles de administración y g
 
 
 ## 1. Módulo de Soporte y Tickets (`support`)
+```
+
+and section 7:
+```markdown
+## 7. Módulo de Tiendas (`tiendas`)
+
+El módulo de Tiendas permite gestionar las tiendas asociadas en la plataforma. Los vendedores y administradores pueden listar tiendas, mientras que la creación directa, actualización y eliminación están restringidas exclusivamente a roles de administración (`ADMIN` y `ROOT`). Si un vendedor requiere dar de alta una nueva tienda, debe enviar una solicitud a través de un ticket de soporte (`TicketType.CREATE_STORE_REQUEST`).
+
+### 7.1 Listar Tiendas
+* **Método:** `GET`
+* **Ruta:** `/api/v1/tiendas`
+* **Roles Autorizados:** `VENDOR`, `ADMIN`, `ROOT`
+* **Respuesta Exitosa (200 OK):**
+  ```json
+  [
+    {
+      "id": 1,
+      "nombre": "Falabella",
+      "created_at": "2026-08-06T10:00:00.000Z",
+      "updated_at": "2026-08-06T10:00:00.000Z"
+    }
+  ]
+  ```
+
+### 7.2 Crear Tienda
+* **Método:** `POST`
+* **Ruta:** `/api/v1/tiendas`
+* **Roles Autorizados:** `ADMIN`, `ROOT`
+* **Payload:**
+  ```json
+  {
+    "nombre": "Tienda Ejemplo"
+  }
+  ```
+* **Respuesta Exitosa (201 Created):** Objeto `Tienda` creado.
+* **Errores:** `400 Bad Request` (nombre vacío) o `409 Conflict` (tienda duplicada).
+
 
 Este módulo se encarga del procesamiento de reportes y tickets generados por los usuarios. Las rutas se unificaron para admitir filtros flexibles que permiten construir una bandeja de entrada integradora.
 
@@ -231,21 +266,18 @@ flowchart TD
 
 5. **Payload de Respuesta Enriquecido:**
    * Con el fin de evitar el problema de consultas N+1 en despliegues con muchos registros, el backend extrae en lote los pedidos y cobros correspondientes a los usuarios paginados en la consulta principal.
-   * **Campos Calculados:**
-     * `salas`: Lista única y consolidada de los tipos de transporte vinculados al usuario, derivada tanto de sus `chats` de soporte como de los productos contenidos en sus `orders`. En caso de que el usuario pertenezca al rol `CLIENT` y no posea ningún tipo de transporte registrado, se le asigna de manera predeterminada el array `['aereo', 'maritimo']`.
-     * `deuda`: Sumatoria acumulada del campo `total_clp` de todos los cobros no confirmados del usuario.
+   * **Reglas de Minimización de Datos (Ley N° 21.719):**
+     * `name`: Se recorta a solo el **primer nombre** (`name.trim().split(' ')[0]`).
+     * `role`: Retorna el rol del usuario (ej. `CLIENT`, `VENDOR`, `BODEGUERO`).
+     * Se omiten de la lista general los campos de contacto directo e identificación personal (`email_address`, `rut`, `phone_number`).
    * **Formato JSON:**
      ```json
      {
        "data": [
          {
            "id": 8,
-           "nombre": "Esteban Dido",
-           "email": "esteban.dido@example.com",
-           "rut": "18492043-K",
-           "salas": ["aereo"],
-           "deuda": 45000,
-           "status_mora": "SIN_MORA"
+           "name": "Esteban",
+           "role": "CLIENT"
          }
        ],
        "meta": {
@@ -629,7 +661,7 @@ Debido a esto, los siguientes endpoints en `OrdersController` han sido marcados 
 
 ## 7. Módulo de Tiendas (`tiendas`)
 
-El módulo de Tiendas permite gestionar las tiendas asociadas en la plataforma. Los vendedores y administradores pueden listar y crear tiendas, mientras que las operaciones de actualización y eliminación están restringidas a roles de administración (`ADMIN` y `ROOT`).
+El módulo de Tiendas permite gestionar las tiendas asociadas en la plataforma. Los vendedores y administradores pueden consultar el catálogo de tiendas (`GET`), mientras que la creación directa (`POST`), actualización (`PUT`) y eliminación (`DELETE`) están restringidas exclusivamente a roles de administración (`ADMIN` y `ROOT`). Si un vendedor requiere dar de alta una nueva tienda, debe solicitarlo mediante un ticket de soporte de tipo `CREATE_STORE_REQUEST`.
 
 ### 7.1 Listar Tiendas
 * **Método:** `GET`
@@ -650,7 +682,7 @@ El módulo de Tiendas permite gestionar las tiendas asociadas en la plataforma. 
 ### 7.2 Crear Tienda
 * **Método:** `POST`
 * **Ruta:** `/api/v1/tiendas`
-* **Roles Autorizados:** `VENDOR`, `ADMIN`, `ROOT`
+* **Roles Autorizados:** `ADMIN`, `ROOT`
 * **Payload:**
   ```json
   {

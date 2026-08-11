@@ -38,6 +38,10 @@ Devuelve un resumen financiero y operativo de la plataforma para el período esp
   - `endDate` (opcional, string ISO): Fecha de fin del período a consultar.
 - **Respuesta:** Incluye totales de cobros, pagos, usuarios activos, cargas en tránsito y métricas financieras del período.
 
+> [!NOTE]
+> **Minimización de PII en `ultimos_morosos`:**
+> El listado `ultimos_morosos` retornado por el dashboard administrativo recorta `client_name` a solo el primer nombre (`name.trim().split(' ')[0]`) y reemplaza el RUT personal (`client_rut`) por el RUT de facturación empresarial (`rut_empresa`), el cual retorna `null` si no existe.
+
 ### 1.2 Dashboard Cliente
 
 Devuelve el resumen del estado financiero y operativo del cliente autenticado.

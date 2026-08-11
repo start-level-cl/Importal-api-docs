@@ -4019,6 +4019,40 @@
   },
   "openapi": "3.1.0",
   "paths": {
+    "/admin/registration-requests/{email}/approve": {
+      "post": {
+        "operationId": "registration_lambda_post_admin_registration_requests_email_approve",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "email",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "summary": "Aprobar solicitud de registro de usuario (Admin)",
+        "tags": [
+          "Registration"
+        ],
+        "x-role-group": "publico",
+        "x-service": "registration-lambda",
+        "x-source": "Importal-registration-lambda/src/index.ts"
+      }
+    },
     "/api/health": {
       "get": {
         "operationId": "backend_get_api_health",
@@ -4929,51 +4963,6 @@
           }
         ],
         "summary": "getCobroById",
-        "tags": [
-          "Billing"
-        ],
-        "x-role-group": "admin",
-        "x-service": "backend",
-        "x-source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts"
-      }
-    },
-    "/api/v1/admin/cobros/{id}/comprobantes": {
-      "get": {
-        "operationId": "backend_get_api_v1_admin_cobros_id_comprobantes",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "example": [
-                  {
-                    "id": 1,
-                    "message": "Ejemplo de elemento retornado"
-                  }
-                ],
-                "schema": {
-                  "$ref": "#/components/schemas/GenericObjectArray"
-                }
-              }
-            },
-            "description": "Lista de comprobantes del cobro"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "summary": "Obtener los comprobantes de pago subidos para un cobro específico (Admin/Root)",
         "tags": [
           "Billing"
         ],
@@ -8470,135 +8459,6 @@
         "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
       }
     },
-    "/api/v1/bodeguero/cargas/{cargaId}/armar-pedidos": {
-      "get": {
-        "operationId": "backend_get_api_v1_bodeguero_cargas_cargaId_armar_pedidos",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "cargaId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "example": [
-                  {
-                    "id": 1,
-                    "message": "Ejemplo de elemento retornado"
-                  }
-                ],
-                "schema": {
-                  "$ref": "#/components/schemas/GenericObjectArray"
-                }
-              }
-            },
-            "description": "Información de armado de pedidos"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "summary": "Obtener información consolidada de pedidos para armar una carga específica",
-        "tags": [
-          "Orders"
-        ],
-        "x-role-group": "bodeguero",
-        "x-service": "backend",
-        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
-      }
-    },
-    "/api/v1/bodeguero/cargas/{cargaId}/pedidos": {
-      "get": {
-        "operationId": "backend_get_api_v1_bodeguero_cargas_cargaId_pedidos",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "cargaId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "example": [
-                  {
-                    "id": 1,
-                    "message": "Ejemplo de elemento retornado"
-                  }
-                ],
-                "schema": {
-                  "$ref": "#/components/schemas/GenericObjectArray"
-                }
-              }
-            },
-            "description": "Pedidos de la carga"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "summary": "Listar todos los pedidos asociados a una carga específica",
-        "tags": [
-          "Orders"
-        ],
-        "x-role-group": "bodeguero",
-        "x-service": "backend",
-        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
-      }
-    },
-    "/api/v1/bodeguero/cargas/{id}/clientes": {
-      "get": {
-        "operationId": "backend_get_api_v1_bodeguero_cargas_id_clientes",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericObject"
-                }
-              }
-            },
-            "description": "Operacion exitosa"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "summary": "getClientsOfCarga",
-        "tags": [
-          "Orders"
-        ],
-        "x-role-group": "bodeguero",
-        "x-service": "backend",
-        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
-      }
-    },
     "/api/v1/bodeguero/cargas/{id}/clientes-status": {
       "get": {
         "operationId": "backend_get_api_v1_bodeguero_cargas_id_clientes_status",
@@ -9729,66 +9589,6 @@
           }
         ],
         "summary": "getChats",
-        "tags": [
-          "Messaging"
-        ],
-        "x-role-group": "comun",
-        "x-service": "backend",
-        "x-source": "Importal-backend/src/modules/messaging/controllers/messaging.controller.ts"
-      }
-    },
-    "/api/v1/chats/{id}": {
-      "get": {
-        "operationId": "backend_get_api_v1_chats_id",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "id": 7,
-                  "messages": [
-                    {
-                      "chat_id": 7,
-                      "created_at": "2026-05-25T12:00:00.000Z",
-                      "id": 1,
-                      "message": "[Usuario-12]: Hola"
-                    }
-                  ],
-                  "provider_code": "AIR-01",
-                  "transport_type": "AEREA",
-                  "user_id": 12,
-                  "websocket": {
-                    "event": "join_chat",
-                    "namespace": "/v1",
-                    "path": "/socket.io",
-                    "room": "chat_7",
-                    "url": "ws://localhost:3000/v1"
-                  }
-                },
-                "schema": {
-                  "$ref": "#/components/schemas/ChatDetails"
-                }
-              }
-            },
-            "description": "Detalles del chat y configuración websocket"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "summary": "getChatDetails",
         "tags": [
           "Messaging"
         ],
@@ -11737,6 +11537,72 @@
         "x-source": "Importal-backend/src/modules/products/controllers/products.controller.ts"
       }
     },
+    "/api/v1/productos/{id}/imagenes/descarga": {
+      "get": {
+        "operationId": "backend_get_api_v1_productos_id_imagenes_descarga",
+        "parameters": [
+          {
+            "description": "ID del producto",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "photo_urls": [
+                    "https://bucket.s3.us-east-2.amazonaws.com/portal/productos/foto.webp?..."
+                  ],
+                  "product_id": 42
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ProductImageDownloadResponse"
+                }
+              }
+            },
+            "description": "URLs firmadas de descarga de las imagenes del producto (vigencia de 10 minutos)"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "JWT invalido o ausente"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Producto no encontrado"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Generar URLs firmadas para descargar todas las imagenes de un producto (cualquier rol autenticado)",
+        "tags": [
+          "Products"
+        ],
+        "x-role-group": "comun",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/products/controllers/products.controller.ts"
+      }
+    },
     "/api/v1/publico/productos/{id}": {
       "get": {
         "operationId": "backend_get_api_v1_publico_productos_id",
@@ -12167,45 +12033,6 @@
         "x-source": "Importal-backend/src/modules/registration/controllers/registration.controller.ts"
       }
     },
-    "/api/v1/registration-requests/{email}/status": {
-      "get": {
-        "operationId": "backend_get_api_v1_registration_requests_email_status",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "email",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericObject"
-                }
-              }
-            },
-            "description": "Operacion exitosa"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "summary": "Get registration request status and verification flags for email",
-        "tags": [
-          "Registration"
-        ],
-        "x-role-group": "comun",
-        "x-service": "backend",
-        "x-source": "Importal-backend/src/modules/registration/controllers/registration.controller.ts"
-      }
-    },
     "/api/v1/registration-requests/{email}/update-contact": {
       "put": {
         "operationId": "backend_put_api_v1_registration_requests_email_update_contact",
@@ -12245,53 +12072,6 @@
           }
         ],
         "summary": "Update email or phone for pending request",
-        "tags": [
-          "Registration"
-        ],
-        "x-role-group": "comun",
-        "x-service": "backend",
-        "x-source": "Importal-backend/src/modules/registration/controllers/registration.controller.ts"
-      }
-    },
-    "/api/v1/registration-requests/{email}/verify": {
-      "post": {
-        "operationId": "backend_post_api_v1_registration_requests_email_verify",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "email",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "path",
-            "name": " code: string; channel?: 'email' | 'phone' ",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericObject"
-                }
-              }
-            },
-            "description": "Operacion exitosa"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "summary": "Verify registration code (OTP)",
         "tags": [
           "Registration"
         ],
@@ -12654,36 +12434,6 @@
         "x-role-group": "comun",
         "x-service": "backend",
         "x-source": "Importal-backend/src/modules/tiendas/tiendas.controller.ts"
-      }
-    },
-    "/api/v1/users": {
-      "get": {
-        "operationId": "backend_get_api_v1_users",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericObject"
-                }
-              }
-            },
-            "description": "Operacion exitosa"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "summary": "getUsers",
-        "tags": [
-          "Users"
-        ],
-        "x-role-group": "comun",
-        "x-service": "backend",
-        "x-source": "Importal-backend/src/modules/users/controllers/users.controller.ts"
       }
     },
     "/api/v1/users/change-contact/request": {
@@ -13336,86 +13086,6 @@
         "x-source": "Importal-backend/src/modules/users/controllers/users.controller.ts"
       }
     },
-    "/api/v1/users/{id}/orders": {
-      "get": {
-        "operationId": "backend_get_api_v1_users_id_orders",
-        "parameters": [
-          {
-            "description": "ID del usuario",
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "description": "Número de página",
-            "in": "query",
-            "name": "page",
-            "required": false,
-            "schema": {
-              "default": 1,
-              "type": "integer"
-            }
-          },
-          {
-            "description": "Cantidad por página (máx 50)",
-            "in": "query",
-            "name": "limit",
-            "required": false,
-            "schema": {
-              "default": 10,
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UserOrdersPaginatedResponse"
-                }
-              }
-            },
-            "description": "Listado paginado de pedidos del usuario. Cada elemento incluye transport_type (AEREA, MARITIMA)."
-          },
-          "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "El usuario especificado no tiene rol CLIENT"
-          },
-          "404": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Usuario no encontrado"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "summary": "Consultar las órdenes/pedidos de un usuario cliente por su ID (Admin/Root)",
-        "tags": [
-          "Users"
-        ],
-        "x-role-group": "comun",
-        "x-service": "backend",
-        "x-source": "Importal-backend/src/modules/users/controllers/users.controller.ts"
-      }
-    },
     "/api/v1/users/{id}/pedidos": {
       "get": {
         "operationId": "backend_get_api_v1_users_id_pedidos",
@@ -13487,7 +13157,7 @@
             "bearerAuth": []
           }
         ],
-        "summary": "Consultar los pedidos de un usuario cliente por su ID (Alias de /users/{id}/orders) (Admin/Root)",
+        "summary": "Consultar los pedidos de un usuario cliente por su ID (Admin/Root)",
         "tags": [
           "Users"
         ],
@@ -14959,7 +14629,7 @@
                 }
               }
             },
-            "description": "Login exitoso. Retorna JWT en JSON y configura cookies HTTP-Only, Secure y SameSite=None (access_token y refresh_token)"
+            "description": "Login exitoso. Retorna JWT accessToken minimizado sin PII (omite app_full_name, app_email, app_phone, app_username) en JSON y configura cookies HTTP-Only, Secure y SameSite=None"
           },
           "401": {
             "content": {
@@ -15069,7 +14739,7 @@
                 }
               }
             },
-            "description": "Token refrescado. Retorna nuevo access token en JSON y actualiza la cookie access_token"
+            "description": "Token refrescado. Retorna nuevo access token en JSON minimizado sin PII y actualiza la cookie refresh_token"
           },
           "401": {
             "content": {
@@ -15456,29 +15126,6 @@
       }
     },
     "/registration-requests": {
-      "get": {
-        "operationId": "registration_lambda_get_registration_requests",
-        "parameters": [],
-        "responses": {
-          "201": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericObject"
-                }
-              }
-            },
-            "description": "Operacion exitosa"
-          }
-        },
-        "summary": "Listar solicitudes pendientes para revision",
-        "tags": [
-          "Registration"
-        ],
-        "x-role-group": "publico",
-        "x-service": "registration-lambda",
-        "x-source": "Importal-registration-lambda/src/index.ts"
-      },
       "post": {
         "operationId": "registration_lambda_post_registration_requests",
         "parameters": [],
@@ -15587,6 +15234,40 @@
         "x-source": "Importal-registration-lambda/src/index.ts"
       }
     },
+    "/registration-requests/{email}/reupload-comprobante": {
+      "post": {
+        "operationId": "registration_lambda_post_registration_requests_email_reupload_comprobante",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "email",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "summary": "Re-subir comprobante de pago de la solicitud",
+        "tags": [
+          "Registration"
+        ],
+        "x-role-group": "publico",
+        "x-service": "registration-lambda",
+        "x-source": "Importal-registration-lambda/src/index.ts"
+      }
+    },
     "/registration-requests/{email}/send-code": {
       "post": {
         "operationId": "registration_lambda_post_registration_requests_email_send_code",
@@ -15669,6 +15350,40 @@
           }
         },
         "summary": "Generar OTP para una solicitud (email, phone o ambos)",
+        "tags": [
+          "Registration"
+        ],
+        "x-role-group": "publico",
+        "x-service": "registration-lambda",
+        "x-source": "Importal-registration-lambda/src/index.ts"
+      }
+    },
+    "/registration-requests/{email}/status": {
+      "get": {
+        "operationId": "registration_lambda_get_registration_requests_email_status",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "email",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "summary": "Consultar estado de solicitud por email",
         "tags": [
           "Registration"
         ],

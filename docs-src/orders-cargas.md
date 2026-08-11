@@ -272,6 +272,10 @@ Permite al vendedor indicar que acepta continuar operando dentro de una carga qu
 - **Método:** `GET`
 - **Ruta:** `/api/v1/vendedor/pedidos/:id`
 
+> [!NOTE]
+> **Minimización de PII (Omisión de Cliente):**
+> Al ser consultado por un usuario con rol `VENDOR`, el objeto `client` (datos personales del comprador como correo, teléfono, RUT y mora) se **omite por completo** de la respuesta del pedido.
+
 ### 3.3 Confirmar / Rechazar Pedido
 
 - `POST /api/v1/vendedor/pedidos/:id/confirmar` — Acepta el pedido del cliente.

@@ -1279,25 +1279,6 @@
     "service": "backend",
     "source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts",
     "method": "get",
-    "path": "/api/v1/admin/cobros/{id}/comprobantes",
-    "operationId": "backend_get_api_v1_admin_cobros_id_comprobantes",
-    "tag": "Billing",
-    "tags": [
-      "Billing"
-    ],
-    "roles": [
-      "admin",
-      "root"
-    ],
-    "security": "bearerAuth",
-    "methodName": "getCobroProofImages",
-    "parameters": [],
-    "roleGroup": "admin"
-  },
-  {
-    "service": "backend",
-    "source": "Importal-backend/src/modules/billing/controllers/billing.controller.ts",
-    "method": "get",
     "path": "/api/v1/admin/cobros/pendientes-validacion",
     "operationId": "backend_get_api_v1_admin_cobros_pendientes_validacion",
     "tag": "Billing",
@@ -1893,28 +1874,6 @@
     ],
     "security": "bearerAuth",
     "methodName": "getChats",
-    "parameters": [],
-    "roleGroup": "comun"
-  },
-  {
-    "service": "backend",
-    "source": "Importal-backend/src/modules/messaging/controllers/messaging.controller.ts",
-    "method": "get",
-    "path": "/api/v1/chats/{id}",
-    "operationId": "backend_get_api_v1_chats_id",
-    "tag": "Messaging",
-    "tags": [
-      "Messaging"
-    ],
-    "roles": [
-      "admin",
-      "client",
-      "vendor",
-      "bodeguero",
-      "root"
-    ],
-    "security": "bearerAuth",
-    "methodName": "getChatDetails",
     "parameters": [],
     "roleGroup": "comun"
   },
@@ -2594,26 +2553,6 @@
     "service": "backend",
     "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
     "method": "get",
-    "path": "/api/v1/bodeguero/cargas/{id}/clientes",
-    "operationId": "backend_get_api_v1_bodeguero_cargas_id_clientes",
-    "tag": "Orders",
-    "tags": [
-      "Orders"
-    ],
-    "roles": [
-      "bodeguero",
-      "admin",
-      "root"
-    ],
-    "security": "bearerAuth",
-    "methodName": "getClientsOfCarga",
-    "parameters": [],
-    "roleGroup": "bodeguero"
-  },
-  {
-    "service": "backend",
-    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
-    "method": "get",
     "path": "/api/v1/bodeguero/pedidos/{id}/auditoria",
     "operationId": "backend_get_api_v1_bodeguero_pedidos_id_auditoria",
     "tag": "Orders",
@@ -2654,26 +2593,6 @@
     "service": "backend",
     "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
     "method": "get",
-    "path": "/api/v1/bodeguero/cargas/{cargaId}/pedidos",
-    "operationId": "backend_get_api_v1_bodeguero_cargas_cargaId_pedidos",
-    "tag": "Orders",
-    "tags": [
-      "Orders"
-    ],
-    "roles": [
-      "bodeguero",
-      "admin",
-      "root"
-    ],
-    "security": "bearerAuth",
-    "methodName": "getOrdersByCarga",
-    "parameters": [],
-    "roleGroup": "bodeguero"
-  },
-  {
-    "service": "backend",
-    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
-    "method": "get",
     "path": "/api/v1/bodeguero/cargas/{id}/verificar-revision",
     "operationId": "backend_get_api_v1_bodeguero_cargas_id_verificar_revision",
     "tag": "Orders",
@@ -2687,26 +2606,6 @@
     ],
     "security": "bearerAuth",
     "methodName": "verifyCargaRevision",
-    "parameters": [],
-    "roleGroup": "bodeguero"
-  },
-  {
-    "service": "backend",
-    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
-    "method": "get",
-    "path": "/api/v1/bodeguero/cargas/{cargaId}/armar-pedidos",
-    "operationId": "backend_get_api_v1_bodeguero_cargas_cargaId_armar_pedidos",
-    "tag": "Orders",
-    "tags": [
-      "Orders"
-    ],
-    "roles": [
-      "bodeguero",
-      "admin",
-      "root"
-    ],
-    "security": "bearerAuth",
-    "methodName": "getArmarPedidos",
     "parameters": [],
     "roleGroup": "bodeguero"
   },
@@ -3513,6 +3412,22 @@
     "service": "backend",
     "source": "Importal-backend/src/modules/products/controllers/products.controller.ts",
     "method": "get",
+    "path": "/api/v1/productos/{id}/imagenes/descarga",
+    "operationId": "backend_get_api_v1_productos_id_imagenes_descarga",
+    "tag": "Products",
+    "tags": [
+      "Products"
+    ],
+    "roles": [],
+    "security": "bearerAuth",
+    "methodName": "getProductImageDownloadUrls",
+    "parameters": [],
+    "roleGroup": "comun"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/products/controllers/products.controller.ts",
+    "method": "get",
     "path": "/api/v1/productos/{id}",
     "operationId": "backend_get_api_v1_productos_id",
     "tag": "Products",
@@ -3683,23 +3598,6 @@
     "service": "backend",
     "source": "Importal-backend/src/modules/registration/controllers/registration.controller.ts",
     "method": "get",
-    "path": "/api/v1/registration-requests/{email}/status",
-    "operationId": "backend_get_api_v1_registration_requests_email_status",
-    "tag": "Registration",
-    "tags": [
-      "Registration"
-    ],
-    "summary": "Get registration request status and verification flags for email",
-    "roles": [],
-    "security": "bearerAuth",
-    "methodName": "getRegistrationStatus",
-    "parameters": [],
-    "roleGroup": "comun"
-  },
-  {
-    "service": "backend",
-    "source": "Importal-backend/src/modules/registration/controllers/registration.controller.ts",
-    "method": "get",
     "path": "/api/v1/registration-requests",
     "operationId": "backend_get_api_v1_registration_requests",
     "tag": "Registration",
@@ -3788,32 +3686,6 @@
     "parameters": [
       {
         "name": " channel?: 'email' | 'phone' | 'both' ",
-        "in": "path",
-        "required": true,
-        "schema": {
-          "type": "string"
-        }
-      }
-    ],
-    "roleGroup": "comun"
-  },
-  {
-    "service": "backend",
-    "source": "Importal-backend/src/modules/registration/controllers/registration.controller.ts",
-    "method": "post",
-    "path": "/api/v1/registration-requests/{email}/verify",
-    "operationId": "backend_post_api_v1_registration_requests_email_verify",
-    "tag": "Registration",
-    "tags": [
-      "Registration"
-    ],
-    "summary": "Verify registration code (OTP)",
-    "roles": [],
-    "security": "bearerAuth",
-    "methodName": "verifyRegistrationCode",
-    "parameters": [
-      {
-        "name": " code: string; channel?: 'email' | 'phone' ",
         "in": "path",
         "required": true,
         "schema": {
@@ -4258,8 +4130,7 @@
     ],
     "roles": [
       "admin",
-      "root",
-      "vendor"
+      "root"
     ],
     "security": "bearerAuth",
     "methodName": "create",
@@ -4548,25 +4419,6 @@
     "service": "backend",
     "source": "Importal-backend/src/modules/users/controllers/users.controller.ts",
     "method": "get",
-    "path": "/api/v1/users",
-    "operationId": "backend_get_api_v1_users",
-    "tag": "Users",
-    "tags": [
-      "Users"
-    ],
-    "roles": [
-      "admin",
-      "root"
-    ],
-    "security": "bearerAuth",
-    "methodName": "getUsers",
-    "parameters": [],
-    "roleGroup": "comun"
-  },
-  {
-    "service": "backend",
-    "source": "Importal-backend/src/modules/users/controllers/users.controller.ts",
-    "method": "get",
     "path": "/api/v1/admin/users",
     "operationId": "backend_get_api_v1_admin_users",
     "tag": "Users",
@@ -4636,25 +4488,6 @@
     ],
     "security": "bearerAuth",
     "methodName": "getUserSummary",
-    "parameters": [],
-    "roleGroup": "comun"
-  },
-  {
-    "service": "backend",
-    "source": "Importal-backend/src/modules/users/controllers/users.controller.ts",
-    "method": "get",
-    "path": "/api/v1/users/{id}/orders",
-    "operationId": "backend_get_api_v1_users_id_orders",
-    "tag": "Users",
-    "tags": [
-      "Users"
-    ],
-    "roles": [
-      "admin",
-      "root"
-    ],
-    "security": "bearerAuth",
-    "methodName": "getUserOrders",
     "parameters": [],
     "roleGroup": "comun"
   },
@@ -4818,13 +4651,13 @@
     "service": "registration-lambda",
     "source": "Importal-registration-lambda/src/index.ts",
     "method": "get",
-    "path": "/registration-requests",
-    "operationId": "registration_lambda_get_registration_requests",
+    "path": "/registration-requests/{email}/status",
+    "operationId": "registration_lambda_get_registration_requests_email_status",
     "tag": "Registration",
     "tags": [
       "Registration"
     ],
-    "summary": "Listar solicitudes pendientes para revision",
+    "summary": "Consultar estado de solicitud por email",
     "roles": [],
     "security": false,
     "roleGroup": "publico"
@@ -4870,6 +4703,36 @@
       "Registration"
     ],
     "summary": "Actualizar email o telefono de una solicitud pendiente",
+    "roles": [],
+    "security": false,
+    "roleGroup": "publico"
+  },
+  {
+    "service": "registration-lambda",
+    "source": "Importal-registration-lambda/src/index.ts",
+    "method": "post",
+    "path": "/registration-requests/{email}/reupload-comprobante",
+    "operationId": "registration_lambda_post_registration_requests_email_reupload_comprobante",
+    "tag": "Registration",
+    "tags": [
+      "Registration"
+    ],
+    "summary": "Re-subir comprobante de pago de la solicitud",
+    "roles": [],
+    "security": false,
+    "roleGroup": "publico"
+  },
+  {
+    "service": "registration-lambda",
+    "source": "Importal-registration-lambda/src/index.ts",
+    "method": "post",
+    "path": "/admin/registration-requests/{email}/approve",
+    "operationId": "registration_lambda_post_admin_registration_requests_email_approve",
+    "tag": "Registration",
+    "tags": [
+      "Registration"
+    ],
+    "summary": "Aprobar solicitud de registro de usuario (Admin)",
     "roles": [],
     "security": false,
     "roleGroup": "publico"

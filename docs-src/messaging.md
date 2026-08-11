@@ -9,7 +9,6 @@ El módulo de mensajería de Pascalle Store permite la comunicación en tiempo r
 | Método | Ruta | Roles Permitidos | Descripción |
 | :--- | :--- | :--- | :--- |
 | `GET` | `/api/v1/chats` | Todos los roles | Listar chats disponibles para el usuario. |
-| `GET` | `/api/v1/chats/:id` | Todos los roles | Obtener detalle de un chat con información de WebSocket. |
 | `GET` | `/api/v1/chats/:id/mensajes` | Todos los roles | Listar mensajes paginados de un chat. |
 | `POST` | `/api/v1/chats/:id/mensajes` | Todos los roles | Enviar un mensaje a un chat. |
 
@@ -27,41 +26,12 @@ Devuelve los canales de chat a los que tiene acceso el usuario autenticado, filt
 - **Respuesta Exitosa (200 OK):** Array de chats accesibles.
 
 > [!NOTE]
+> **Anonimización del Cliente ('Cliente #id'):**
+> Cuando el usuario asociado a la conversación posee el rol `CLIENT`, su nombre en pantalla se sustituye por `Cliente #<user_id>` (ej. `Cliente #18`) para proteger la PII del titular ante otros participantes. Los roles operativos (`VENDOR`, `BODEGUERO`, `ADMIN`, `ROOT`) conservan su nombre real.
+
+> [!NOTE]
 > **Filtrado por Transporte:**
 > El backend extrae los tipos de transporte autorizados tanto del payload del JWT como del header `Authorization`. El chat solo se muestra si el tipo de transporte del canal coincide con al menos uno de los transportes habilitados para ese usuario.
-
-### 1.2 Detalle del Chat
-
-Obtiene los metadatos de un chat específico, incluyendo los datos de conexión WebSocket para unirse al canal en tiempo real.
-
-- **Método:** `GET`
-- **Ruta:** `/api/v1/chats/:id`
-- **Roles Permitidos:** `ADMIN`, `CLIENT`, `VENDOR`, `BODEGUERO`, `ROOT`
-- **Path Parameters:**
-  - `id` (número, requerido): ID del chat.
-- **Respuesta Exitosa (200 OK):**
-  ```json
-  {
-    "id": 3,
-    "transport_type": "AEREA",
-    "name": "Sala Aérea - Julio 2026",
-    "created_at": "2026-07-01T10:00:00.000Z",
-    "websocket": {
-      "url": "wss://api.pascallestore.com/v1",
-      "path": "/socket.io",
-      "namespace": "/v1",
-      "event": "join_chat",
-      "room": "chat_3"
-    }
-  }
-  ```
-
-> [!IMPORTANT]
-> **Conexión WebSocket (Socket.IO):**
-> Para enviar y recibir mensajes en tiempo real, el cliente frontend debe conectarse al servidor Socket.IO usando los datos retornados por este endpoint:
-> 1. Conectarse a la URL `websocket.url` con la librería `socket.io-client`.
-> 2. Emitir el evento `join_chat` con el identificador `chat_{id}` para unirse a la sala.
-> 3. Escuchar el evento `message` para recibir nuevos mensajes en tiempo real.
 
 ---
 

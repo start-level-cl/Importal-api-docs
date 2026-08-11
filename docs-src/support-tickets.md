@@ -48,9 +48,12 @@ Permite a cualquier usuario autenticado crear un ticket de soporte para reportar
 > [!NOTE]
 > **Tipos de Ticket (`type`):**
 > - `SUPPORT`: Soporte técnico o incidencia general.
-> - `TRADE`: Solicitud de trueque (cambio de producto).
+> - `RETURN_WARRANTY`: Reclamo de garantía por falla, faltante o error de despacho.
+> - `BARTER_NEGOTIATION`: Solicitud de negociación de trueque.
 > - `REFUND_TRANSFER`: Reembolso por transferencia bancaria.
 > - `ADD_TRANSPORT_REQUEST`: Solicitud de acceso a sala de transporte.
+> - `SECURITY_INCIDENT`: Reporte de incidente de seguridad.
+> - `CREATE_STORE_REQUEST`: Solicitud de alta/creación de nueva tienda por parte de vendedores (requiere `metadata.nombre_tienda`). Al resolverse con `RESOLVED`, la tienda se crea automáticamente.
 
 ### 1.2 Listar Tickets Propios
 

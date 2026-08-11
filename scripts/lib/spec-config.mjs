@@ -2349,7 +2349,7 @@ export const operationOverrides = {
     summary: 'Autenticar usuario y emitir JWT',
     requestBody: jsonRequest('LoginRequest'),
     responses: Object.fromEntries([
-      jsonResponse('200', 'Login exitoso. Retorna JWT en JSON y configura cookies HTTP-Only, Secure y SameSite=None (access_token y refresh_token)', 'LoginResponse'),
+      jsonResponse('200', 'Login exitoso. Retorna JWT accessToken minimizado sin PII (omite app_full_name, app_email, app_phone, app_username) en JSON y configura cookies HTTP-Only, Secure y SameSite=None', 'LoginResponse'),
       jsonResponse('401', 'Credenciales invalidas', 'ErrorResponse'),
     ]),
   },
@@ -2379,7 +2379,7 @@ export const operationOverrides = {
     summary: 'Refrescar token de acceso',
     requestBody: jsonRequest('RefreshRequest'),
     responses: Object.fromEntries([
-      jsonResponse('200', 'Token refrescado. Retorna nuevo access token en JSON y actualiza la cookie access_token', 'RefreshResponse'),
+      jsonResponse('200', 'Token refrescado. Retorna nuevo access token en JSON minimizado sin PII y actualiza la cookie refresh_token', 'RefreshResponse'),
       jsonResponse('401', 'Refresh token invalido o expirado', 'ErrorResponse'),
     ]),
   },
@@ -2582,11 +2582,12 @@ export const operationOverrides = {
   'get /api/v1/chats': {
     responses: Object.fromEntries([jsonResponse('200', 'Listado de chats', 'ChatArray')]),
   },
-  'get /api/v1/chats/{id}': {
-    responses: Object.fromEntries([jsonResponse('200', 'Detalles del chat y configuración websocket', 'ChatDetails')]),
-  },
   'get /api/v1/chats/{id}/mensajes': {
     responses: Object.fromEntries([jsonResponse('200', 'Mensajes del chat', 'ChatMessageArray')]),
+  },
+  'get /api/v1/cliente/productos': {
+    summary: 'Listar productos del catálogo disponibles para compra (productos con stock = 0 se ordenan al final de los resultados)',
+    responses: Object.fromEntries([jsonResponse('200', 'Catálogo disponible con ordenamiento por stock', 'ProductArray')]),
   },
   'get /api/v1/productos/{id}/imagenes/descarga': {
     summary: 'Generar URLs firmadas para descargar todas las imagenes de un producto (cualquier rol autenticado)',
@@ -2598,10 +2599,6 @@ export const operationOverrides = {
       jsonResponse('401', 'JWT invalido o ausente', 'ErrorResponse'),
       jsonResponse('404', 'Producto no encontrado', 'ErrorResponse'),
     ]),
-  },
-  'get /api/v1/cliente/productos': {
-    summary: 'Listar productos del catálogo disponibles para compra (productos con stock = 0 se ordenan al final de los resultados)',
-    responses: Object.fromEntries([jsonResponse('200', 'Catálogo disponible con ordenamiento por stock', 'ProductArray')]),
   },
   'get /api/v1/vendedor/productos': {
     summary: 'Listar productos publicados por el vendedor autenticado (productos con stock = 0 se ordenan al final de los resultados)',
@@ -2730,10 +2727,6 @@ export const operationOverrides = {
   'get /api/v1/admin/cobros/pendientes-validacion': {
     summary: 'Listar cobros que tienen un comprobante subido pendiente de revisión (Admin/Root)',
     responses: Object.fromEntries([jsonResponse('200', 'Listado de cobros pendientes de validación', 'GenericObjectArray')]),
-  },
-  'get /api/v1/admin/cobros/{id}/comprobantes': {
-    summary: 'Obtener los comprobantes de pago subidos para un cobro específico (Admin/Root)',
-    responses: Object.fromEntries([jsonResponse('200', 'Lista de comprobantes del cobro', 'GenericObjectArray')]),
   },
   'get /api/v1/admin/dashboard': {
     summary: 'Obtener métricas consolidadas del dashboard administrativo y últimos morosos (Admin/Root)',
@@ -2975,17 +2968,9 @@ export const operationOverrides = {
     ],
     responses: Object.fromEntries([jsonResponse('200', 'Pedidos de bodega', 'GenericObjectArray')]),
   },
-  'get /api/v1/bodeguero/cargas/{cargaId}/pedidos': {
-    summary: 'Listar todos los pedidos asociados a una carga específica',
-    responses: Object.fromEntries([jsonResponse('200', 'Pedidos de la carga', 'GenericObjectArray')]),
-  },
   'get /api/v1/bodeguero/cargas/{id}/verificar-revision': {
     summary: 'Verificar si todos los pedidos de una carga han sido revisados',
     responses: Object.fromEntries([jsonResponse('200', 'Estado de revisión de la carga', 'GenericObject')]),
-  },
-  'get /api/v1/bodeguero/cargas/{cargaId}/armar-pedidos': {
-    summary: 'Obtener información consolidada de pedidos para armar una carga específica',
-    responses: Object.fromEntries([jsonResponse('200', 'Información de armado de pedidos', 'GenericObjectArray')]),
   },
   'get /api/v1/bodeguero/pedidos/{id}/auditoria': {
     summary: 'Consultar el historial de auditoría y transiciones de un pedido (Bodeguero/Admin/Root)',
@@ -3341,21 +3326,8 @@ export const operationOverrides = {
     ],
     responses: Object.fromEntries([jsonResponse('200', 'Desuscripción exitosa', 'GenericMessage')]),
   },
-  'get /api/v1/users/{id}/orders': {
-    summary: 'Consultar las órdenes/pedidos de un usuario cliente por su ID (Admin/Root)',
-    parameters: [
-      { name: 'id', in: 'path', required: true, schema: { type: 'integer' }, description: 'ID del usuario' },
-      { name: 'page', in: 'query', required: false, schema: { type: 'integer', default: 1 }, description: 'Número de página' },
-      { name: 'limit', in: 'query', required: false, schema: { type: 'integer', default: 10 }, description: 'Cantidad por página (máx 50)' },
-    ],
-    responses: Object.fromEntries([
-      jsonResponse('200', 'Listado paginado de pedidos del usuario. Cada elemento incluye transport_type (AEREA, MARITIMA).', 'UserOrdersPaginatedResponse'),
-      jsonResponse('400', 'El usuario especificado no tiene rol CLIENT', 'ErrorResponse'),
-      jsonResponse('404', 'Usuario no encontrado', 'ErrorResponse'),
-    ]),
-  },
   'get /api/v1/users/{id}/pedidos': {
-    summary: 'Consultar los pedidos de un usuario cliente por su ID (Alias de /users/{id}/orders) (Admin/Root)',
+    summary: 'Consultar los pedidos de un usuario cliente por su ID (Admin/Root)',
     parameters: [
       { name: 'id', in: 'path', required: true, schema: { type: 'integer' }, description: 'ID del usuario' },
       { name: 'page', in: 'query', required: false, schema: { type: 'integer', default: 1 }, description: 'Número de página' },

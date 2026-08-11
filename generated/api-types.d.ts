@@ -1025,6 +1025,14 @@ export type WarehouseInventorySizeDto = {
 }
 
 export interface Operations {
+  "registration_lambda_post_admin_registration_requests_email_approve": {
+    method: "POST"
+    path: "/admin/registration-requests/{email}/approve"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
   "backend_get_api_health": {
     method: "GET"
     path: "/api/health"
@@ -1189,14 +1197,6 @@ export interface Operations {
     requestBody: undefined
     responses: {
       "200": GenericObject
-    }
-  }
-  "backend_get_api_v1_admin_cobros_id_comprobantes": {
-    method: "GET"
-    path: "/api/v1/admin/cobros/{id}/comprobantes"
-    requestBody: undefined
-    responses: {
-      "200": GenericObjectArray
     }
   }
   "backend_post_api_v1_admin_cobros_id_confirmar": {
@@ -1796,30 +1796,6 @@ export interface Operations {
       "200": GenericObjectArray
     }
   }
-  "backend_get_api_v1_bodeguero_cargas_cargaId_armar_pedidos": {
-    method: "GET"
-    path: "/api/v1/bodeguero/cargas/{cargaId}/armar-pedidos"
-    requestBody: undefined
-    responses: {
-      "200": GenericObjectArray
-    }
-  }
-  "backend_get_api_v1_bodeguero_cargas_cargaId_pedidos": {
-    method: "GET"
-    path: "/api/v1/bodeguero/cargas/{cargaId}/pedidos"
-    requestBody: undefined
-    responses: {
-      "200": GenericObjectArray
-    }
-  }
-  "backend_get_api_v1_bodeguero_cargas_id_clientes": {
-    method: "GET"
-    path: "/api/v1/bodeguero/cargas/{id}/clientes"
-    requestBody: undefined
-    responses: {
-      "200": GenericObject
-    }
-  }
   "backend_get_api_v1_bodeguero_cargas_id_clientes_status": {
     method: "GET"
     path: "/api/v1/bodeguero/cargas/{id}/clientes-status"
@@ -1988,14 +1964,6 @@ export interface Operations {
     requestBody: undefined
     responses: {
       "200": ChatArray
-    }
-  }
-  "backend_get_api_v1_chats_id": {
-    method: "GET"
-    path: "/api/v1/chats/{id}"
-    requestBody: undefined
-    responses: {
-      "200": ChatDetails
     }
   }
   "backend_get_api_v1_chats_id_mensajes": {
@@ -2328,6 +2296,16 @@ export interface Operations {
       "200": GenericObject
     }
   }
+  "backend_get_api_v1_productos_id_imagenes_descarga": {
+    method: "GET"
+    path: "/api/v1/productos/{id}/imagenes/descarga"
+    requestBody: undefined
+    responses: {
+      "200": ProductImageDownloadResponse
+      "401": ErrorResponse
+      "404": ErrorResponse
+    }
+  }
   "backend_get_api_v1_publico_productos_id": {
     method: "GET"
     path: "/api/v1/publico/productos/{id}"
@@ -2389,25 +2367,9 @@ export interface Operations {
       "200": GenericObject
     }
   }
-  "backend_get_api_v1_registration_requests_email_status": {
-    method: "GET"
-    path: "/api/v1/registration-requests/{email}/status"
-    requestBody: undefined
-    responses: {
-      "200": GenericObject
-    }
-  }
   "backend_put_api_v1_registration_requests_email_update_contact": {
     method: "PUT"
     path: "/api/v1/registration-requests/{email}/update-contact"
-    requestBody: undefined
-    responses: {
-      "200": GenericObject
-    }
-  }
-  "backend_post_api_v1_registration_requests_email_verify": {
-    method: "POST"
-    path: "/api/v1/registration-requests/{email}/verify"
     requestBody: undefined
     responses: {
       "200": GenericObject
@@ -2471,14 +2433,6 @@ export interface Operations {
       "400": ErrorResponse
       "401": ErrorResponse
       "409": ErrorResponse
-    }
-  }
-  "backend_get_api_v1_users": {
-    method: "GET"
-    path: "/api/v1/users"
-    requestBody: undefined
-    responses: {
-      "200": GenericObject
     }
   }
   "backend_post_api_v1_users_change_contact_request": {
@@ -2583,16 +2537,6 @@ export interface Operations {
     requestBody: undefined
     responses: {
       "200": GenericObject
-    }
-  }
-  "backend_get_api_v1_users_id_orders": {
-    method: "GET"
-    path: "/api/v1/users/{id}/orders"
-    requestBody: undefined
-    responses: {
-      "200": UserOrdersPaginatedResponse
-      "400": ErrorResponse
-      "404": ErrorResponse
     }
   }
   "backend_get_api_v1_users_id_pedidos": {
@@ -2929,14 +2873,6 @@ export interface Operations {
       "400": ErrorResponse
     }
   }
-  "registration_lambda_get_registration_requests": {
-    method: "GET"
-    path: "/registration-requests"
-    requestBody: undefined
-    responses: {
-      "201": GenericObject
-    }
-  }
   "registration_lambda_post_registration_requests": {
     method: "POST"
     path: "/registration-requests"
@@ -2946,6 +2882,14 @@ export interface Operations {
       "400": ErrorResponse
       "403": ErrorResponse
       "409": ErrorResponse
+    }
+  }
+  "registration_lambda_post_registration_requests_email_reupload_comprobante": {
+    method: "POST"
+    path: "/registration-requests/{email}/reupload-comprobante"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
     }
   }
   "registration_lambda_post_registration_requests_email_send_code": {
@@ -2959,6 +2903,14 @@ export interface Operations {
       "404": ErrorResponse
       "409": ErrorResponse
       "429": ErrorResponse
+    }
+  }
+  "registration_lambda_get_registration_requests_email_status": {
+    method: "GET"
+    path: "/registration-requests/{email}/status"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
     }
   }
   "registration_lambda_put_registration_requests_email_update_contact": {

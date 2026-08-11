@@ -156,7 +156,6 @@ El administrador revisa la solicitud de devolución y la aprueba o la rechaza.
 | `GET` | `/api/v1/admin/cobros` | `ADMIN`, `ROOT` | Listado paginado de cobros con filtros. |
 | `GET` | `/api/v1/admin/cobros/pendientes-validacion` | `ADMIN`, `ROOT` | Cobros con comprobante subido pendientes de revisión. |
 | `GET` | `/api/v1/admin/cobros/:id` | `ADMIN`, `ROOT` | Detalle de un cobro específico. |
-| `GET` | `/api/v1/admin/cobros/:id/comprobantes` | `ADMIN`, `ROOT` | Imágenes de comprobantes de un cobro (base64). |
 | `POST` | `/api/v1/admin/cobros/:id/confirmar` | `ADMIN`, `ROOT` | Confirmar, rechazar o reintentar un cobro. |
 | `POST` | `/api/v1/admin/cobros/trigger` | `ADMIN`, `ROOT` | Disparar manualmente el proceso de billing. |
 
