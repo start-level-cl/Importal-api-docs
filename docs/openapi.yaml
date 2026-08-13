@@ -3539,13 +3539,22 @@ paths:
         200:
           content:
             application/json:
+              example:
+                message: Operacion exitosa
+                ok: true
               schema:
                 $ref: "#/components/schemas/GenericObject"
-          description: Operacion exitosa
+          description: Detalle del cobro con lista de eventos para administración
+        404:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: Cobro no encontrado
       security:
         -           bearerAuth:
 []
-      summary: getCobroById
+      summary: Obtener el detalle completo de un cobro desde la administración incluyendo la Tabla de Novedades (events)
       tags:
         - Billing
       x-role-group: admin
@@ -3592,46 +3601,18 @@ paths:
     get:
       operationId: backend_get_api_v1_admin_dashboard
       parameters:
-        -           description: Fecha de inicio del periodo de recaudación
-          in: query
-          name: startDate
-          required: false
-          schema:
-            format: "date-time"
-            type: string
-        -           description: Fecha de fin del periodo de recaudación
-          in: query
-          name: endDate
-          required: false
-          schema:
-            format: "date-time"
-            type: string
+[]
       responses:
         200:
           content:
             application/json:
-              example:
-                clientes_activos: 128
-                clientes_en_mora: 7
-                deuda_pendiente_clp: 1250000
-                periodo:
-                  fin: "2026-05-25T23:59:59.000Z"
-                  inicio: "2026-05-01T00:00:00.000Z"
-                recaudacion_periodo_clp: 8450000
-                ultimos_morosos:
-                  -                     amount_clp: 250000
-                    client_id: 12
-                    client_name: Juan Perez
-                    client_rut: "12.345.678-9"
-                    cobro_id: 501
-                    due_date: "2026-05-30"
               schema:
-                $ref: "#/components/schemas/DashboardSummary"
-          description: Métricas del dashboard
+                $ref: "#/components/schemas/GenericObject"
+          description: Operacion exitosa
       security:
         -           bearerAuth:
 []
-      summary: Obtener métricas consolidadas del dashboard administrativo y últimos morosos (Admin/Root)
+      summary: getDashboard
       tags:
         - Admin
       x-role-group: admin
@@ -6976,13 +6957,22 @@ paths:
         200:
           content:
             application/json:
+              example:
+                message: Operacion exitosa
+                ok: true
               schema:
                 $ref: "#/components/schemas/GenericObject"
-          description: Operacion exitosa
+          description: Detalle del cobro con lista de eventos
+        404:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: Cobro no encontrado
       security:
         -           bearerAuth:
 []
-      summary: getClientCobroById
+      summary: Obtener el detalle de un cobro específico del cliente autenticado incluyendo la Tabla de Novedades (events)
       tags:
         - Billing
       x-role-group: cliente

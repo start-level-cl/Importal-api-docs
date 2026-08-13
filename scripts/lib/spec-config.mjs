@@ -2767,17 +2767,16 @@ export const operationOverrides = {
     summary: 'Listar todos los cobros del sistema (Admin/Root)',
     responses: Object.fromEntries([jsonResponse('200', 'Listado de cobros', 'GenericObjectArray')]),
   },
+  'get /api/v1/admin/cobros/{id}': {
+    summary: 'Obtener el detalle completo de un cobro desde la administración incluyendo la Tabla de Novedades (events)',
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Detalle del cobro con lista de eventos para administración', 'GenericObject'),
+      jsonResponse('404', 'Cobro no encontrado', 'ErrorResponse'),
+    ]),
+  },
   'get /api/v1/admin/cobros/pendientes-validacion': {
     summary: 'Listar cobros que tienen un comprobante subido pendiente de revisión (Admin/Root)',
     responses: Object.fromEntries([jsonResponse('200', 'Listado de cobros pendientes de validación', 'GenericObjectArray')]),
-  },
-  'get /api/v1/admin/dashboard': {
-    summary: 'Obtener métricas consolidadas del dashboard administrativo y últimos morosos (Admin/Root)',
-    parameters: [
-      { name: 'startDate', in: 'query', required: false, schema: { type: 'string', format: 'date-time' }, description: 'Fecha de inicio del periodo de recaudación' },
-      { name: 'endDate', in: 'query', required: false, schema: { type: 'string', format: 'date-time' }, description: 'Fecha de fin del periodo de recaudación' },
-    ],
-    responses: Object.fromEntries([jsonResponse('200', 'Métricas del dashboard', 'DashboardSummary')]),
   },
   'post /api/v1/admin/cobros/{id}/confirmar': {
     summary: 'Confirmar o rechazar un cobro manual tras revisar el comprobante (Admin/Root)',
@@ -2829,6 +2828,13 @@ export const operationOverrides = {
       { name: 'limit', in: 'query', required: false, schema: { type: 'integer', default: 6 }, description: 'Opcional: límite de cargas por página' }
     ],
     responses: Object.fromEntries([jsonResponse('200', 'Cobros del cliente agrupados y paginados por carga', 'ClienteCobrosGroupedResponse')]),
+  },
+  'get /api/v1/cliente/cobros/{id}': {
+    summary: 'Obtener el detalle de un cobro específico del cliente autenticado incluyendo la Tabla de Novedades (events)',
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Detalle del cobro con lista de eventos', 'GenericObject'),
+      jsonResponse('404', 'Cobro no encontrado', 'ErrorResponse'),
+    ]),
   },
   'get /api/v1/cliente/cobros/{id}/pdf': {
     summary: 'Obtener PDF representativo de un cobro facturado',

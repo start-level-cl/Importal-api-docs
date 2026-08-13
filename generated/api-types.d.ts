@@ -1212,6 +1212,7 @@ export interface Operations {
     requestBody: undefined
     responses: {
       "200": GenericObject
+      "404": ErrorResponse
     }
   }
   "backend_post_api_v1_admin_cobros_id_confirmar": {
@@ -1227,7 +1228,7 @@ export interface Operations {
     path: "/api/v1/admin/dashboard"
     requestBody: undefined
     responses: {
-      "200": DashboardSummary
+      "200": GenericObject
     }
   }
   "backend_get_api_v1_admin_deliveries": {
@@ -2055,6 +2056,7 @@ export interface Operations {
     requestBody: undefined
     responses: {
       "200": GenericObject
+      "404": ErrorResponse
     }
   }
   "backend_delete_api_v1_cliente_cobros_id_comprobante": {

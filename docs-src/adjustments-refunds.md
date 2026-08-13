@@ -191,13 +191,26 @@ El administrador revisa la solicitud de devolución y la aprueba o la rechaza.
 | Método | Ruta | Roles | Descripción |
 | :--- | :--- | :--- | :--- |
 | `GET` | `/api/v1/cliente/cobros` | `CLIENT` | Listar cobros del cliente (`carga_id?`, `page`, `limit`). |
-| `GET` | `/api/v1/cliente/cobros/:id` | `CLIENT` | Detalle de un cobro propio. Cada ítem (`items[]`) incluye `photo_urls` (fotos del producto de la orden, firmadas), `cantidad` (`order.total_items`) y `talla` (`order.talla`); `[]`/`null` si el ítem no tiene orden asociada. |
-| `GET` | `/api/v1/cliente/cobros/:id/pdf` | `CLIENT`, `ADMIN`, `ROOT` | Descargar PDF del cobro. |
+| `GET` | `/api/v1/cliente/cobros/:id` | `CLIENT` | Detalle de un cobro propio. Cada ítem (`items[]`) incluye `photo_urls` (fotos del producto de la orden, firmadas), `cantidad` (`order.total_items`) y `talla` (`order.talla`). Incluye `events` (`CobroEventDto[]`) con la Tabla de Novedades, Cancelaciones y Ajustes. |
+| `GET` | `/api/v1/cliente/cobros/:id/pdf` | `CLIENT`, `ADMIN`, `ROOT` | Descargar PDF del cobro. Renderiza la Tabla de Novedades y muestra la etiqueta **'Crédito Aplicado'** en el resumen financiero si aplica descuento/saldo a favor. |
 | `GET` | `/api/v1/cliente/cobros/:id/ordenes` | `CLIENT` | Órdenes asociadas al cobro. |
 | `GET` | `/api/v1/cliente/cobros/pagados` | `CLIENT` | Listado de cobros ya confirmados/pagados. |
 | `GET` | `/api/v1/cliente/estado-mora` | `CLIENT` | Estado de mora actual del cliente. |
 | `POST` | `/api/v1/cliente/cobros/:id/pagar` | `CLIENT` | Subir comprobante(s) de pago (max 4 archivos). |
 | `DELETE` | `/api/v1/cliente/cobros/:id/comprobante` | `CLIENT` | Eliminar un comprobante de pago subido. |
+
+#### Tabla de Novedades, Cancelaciones y Ajustes (`events`)
+
+Tanto `GET /api/v1/cliente/cobros/:id` como `GET /api/v1/admin/cobros/:id` retornan la propiedad `events` conteniendo un arreglo de objetos `CobroEventDto`:
+- `order_id` (number): ID del pedido.
+- `product_name` (string): Nombre o marca del producto.
+- `photo_url` (string | null): URL firmada de la imagen del producto.
+- `event_type` (enum): `CANCELLED` | `DELAYED` | `ADJUSTED`.
+- `event_type_label` (string): Descripción en texto del evento (ej. *"Pedido Cancelado"*, *"Traspaso a otra carga"*, *"Devolución de producto"*).
+- `reason` (string | null): Motivo del evento o ajuste.
+- `refund_clp` (number, opcional): Monto de reembolso asociado en CLP.
+- `financial_impact_label` (string): Etiqueta legible del impacto financiero.
+- `created_at` (string/Date): Fecha de registro del evento.
 
 #### Descargar PDF del Cobro
 
@@ -205,6 +218,7 @@ El administrador revisa la solicitud de devolución y la aprueba o la rechaza.
 - **Ruta:** `/api/v1/cliente/cobros/:id/pdf`
 - **Roles Permitidos:** `CLIENT`, `ADMIN`, `ROOT`
 - **Respuesta:** Archivo PDF con `Content-Type: application/pdf` y `Content-Disposition: inline`.
+- **Estructura del PDF:** Incluye la **Tabla de Novedades, Cancelaciones y Ajustes** antes del resumen financiero, y despliega la etiqueta **'Crédito Aplicado'** cuando el cobro incluye descuento/saldo abonado (`discount_clp > 0`).
 
 #### Subir Comprobante de Pago
 
