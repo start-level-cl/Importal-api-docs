@@ -14325,6 +14325,36 @@
         "x-source": "Importal-backend/src/modules/products/controllers/products.controller.ts"
       }
     },
+    "/api/v1/vendedor/productos/desactivar-todos": {
+      "post": {
+        "operationId": "backend_post_api_v1_vendedor_productos_desactivar_todos",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "deactivateAllVendorProducts",
+        "tags": [
+          "Products"
+        ],
+        "x-role-group": "vendedor",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/products/controllers/products.controller.ts"
+      }
+    },
     "/api/v1/vendedor/productos/{id}": {
       "delete": {
         "operationId": "backend_delete_api_v1_vendedor_productos_id",

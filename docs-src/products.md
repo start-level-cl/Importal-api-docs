@@ -207,6 +207,22 @@ Da de baja un producto del catálogo.
 > [!WARNING]
 > Los vendedores solo pueden eliminar sus propios productos. `ADMIN` y `ROOT` pueden eliminar productos de cualquier vendedor.
 
+### 2.5 Desactivar Todos los Productos del Vendedor
+
+Desactiva masivamente todos los productos activos (`status = 'AVAILABLE'`) pertenecientes al vendedor autenticado, pasándolos a `INACTIVE` y emitiendo notificaciones en tiempo real vía WebSocket.
+
+- **Método:** `POST`
+- **Ruta:** `/api/v1/vendedor/productos/desactivar-todos`
+- **Roles Permitidos:** `VENDOR`, `ADMIN`, `ROOT`
+- **Respuesta Exitosa (200 OK):**
+  ```json
+  {
+    "ok": true,
+    "count": 4,
+    "message": "4 productos desactivados correctamente"
+  }
+  ```
+
 ---
 
 ## 3. Vista Pública para Compartir en Redes Sociales

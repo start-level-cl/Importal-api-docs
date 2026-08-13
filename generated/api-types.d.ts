@@ -2742,6 +2742,14 @@ export interface Operations {
       "400": ErrorResponse
     }
   }
+  "backend_post_api_v1_vendedor_productos_desactivar_todos": {
+    method: "POST"
+    path: "/api/v1/vendedor/productos/desactivar-todos"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
   "backend_delete_api_v1_vendedor_productos_id": {
     method: "DELETE"
     path: "/api/v1/vendedor/productos/{id}"

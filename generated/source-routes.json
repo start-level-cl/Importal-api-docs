@@ -3546,6 +3546,26 @@
   },
   {
     "service": "backend",
+    "source": "Importal-backend/src/modules/products/controllers/products.controller.ts",
+    "method": "post",
+    "path": "/api/v1/vendedor/productos/desactivar-todos",
+    "operationId": "backend_post_api_v1_vendedor_productos_desactivar_todos",
+    "tag": "Products",
+    "tags": [
+      "Products"
+    ],
+    "roles": [
+      "vendor",
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "deactivateAllVendorProducts",
+    "parameters": [],
+    "roleGroup": "vendedor"
+  },
+  {
+    "service": "backend",
     "source": "Importal-backend/src/modules/products/controllers/public-products.controller.ts",
     "method": "get",
     "path": "/api/v1/publico/productos/{id}",
