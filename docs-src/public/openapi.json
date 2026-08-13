@@ -1,6 +1,54 @@
 {
   "components": {
     "schemas": {
+      "AssignGroupTotalWeightRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "order_ids": {
+            "description": "Lista de IDs de pedidos pertenecientes al mismo cliente y carga",
+            "items": {
+              "type": "integer"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "total_weight_kg": {
+            "description": "Peso total asignado a la entrega en kg",
+            "minimum": 0.01,
+            "type": "number"
+          }
+        },
+        "required": [
+          "order_ids",
+          "total_weight_kg"
+        ],
+        "type": "object"
+      },
+      "AssignGroupTotalWeightResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "delivery": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "message": {
+            "type": "string"
+          },
+          "orders": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "message",
+          "delivery",
+          "orders"
+        ],
+        "type": "object"
+      },
       "BlockUserRequest": {
         "additionalProperties": false,
         "properties": {
@@ -9313,6 +9361,116 @@
         ],
         "summary": "Listar pedidos de cargas arribadas para la bodega, con relaciones de cajas y cliente (Bodeguero/Admin/Root)",
         "tags": [
+          "Orders"
+        ],
+        "x-role-group": "bodeguero",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+      }
+    },
+    "/api/v1/bodeguero/pedidos/peso-total-grupo": {
+      "put": {
+        "operationId": "backend_put_api_v1_bodeguero_pedidos_peso_total_grupo",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "order_ids": [
+                  1,
+                  2
+                ],
+                "total_weight_kg": 10.5
+              },
+              "schema": {
+                "$ref": "#/components/schemas/AssignGroupTotalWeightRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "delivery": {
+                    "carga_id": 2,
+                    "client_id": 1,
+                    "id": 5,
+                    "status": "PENDING",
+                    "total_weight": 10.5
+                  },
+                  "message": "Peso total asignado al grupo exitosamente.",
+                  "orders": [
+                    {
+                      "id": 1,
+                      "revisado": true,
+                      "revisado_por_id": 3
+                    },
+                    {
+                      "id": 2,
+                      "revisado": true,
+                      "revisado_por_id": 3
+                    }
+                  ]
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/AssignGroupTotalWeightResponse"
+                }
+              }
+            },
+            "description": "Peso total asignado al grupo exitosamente"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Argumentos inválidos o pedidos pertenecen a clientes/cargas distintas"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No autorizado"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Acceso denegado"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Uno o más pedidos no encontrados"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Asignar peso total consolidado a una entrega por grupo de pedidos y gatillar cobro directo (Bodeguero/Admin/Root)",
+        "tags": [
+          "Bodeguero",
           "Orders"
         ],
         "x-role-group": "bodeguero",

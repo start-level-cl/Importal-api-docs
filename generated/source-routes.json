@@ -3281,6 +3281,26 @@
   {
     "service": "backend",
     "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "put",
+    "path": "/api/v1/bodeguero/pedidos/peso-total-grupo",
+    "operationId": "backend_put_api_v1_bodeguero_pedidos_peso_total_grupo",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "bodeguero",
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "assignGroupTotalWeight",
+    "parameters": [],
+    "roleGroup": "bodeguero"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
     "method": "post",
     "path": "/api/v1/admin/orders/adjustments/{id}/authorize-full-refund",
     "operationId": "backend_post_api_v1_admin_orders_adjustments_id_authorize_full_refund",

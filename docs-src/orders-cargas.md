@@ -61,6 +61,8 @@ Esta sección documenta el ciclo de vida completo de los pedidos y cargas de imp
 | `PUT` | `/api/v1/bodeguero/inventario/:id` | `BODEGUERO`, `ADMIN`, `ROOT` | Actualizar entrada de inventario (soporta `sizes?: Array<{ talla, stock }>` o `talla` opcional). |
 | `DELETE` | `/api/v1/bodeguero/inventario/:id` | `BODEGUERO`, `ADMIN`, `ROOT` | Desactivar (soft-delete) una entrada de inventario. |
 | `GET` | `/api/v1/bodeguero/pedidos` | `BODEGUERO`, `ADMIN`, `ROOT` | Listar pedidos de bodega (filtros por cliente, carga y `excludeDelivered`). |
+| `PUT` | `/api/v1/bodeguero/pedidos/peso-total-grupo` | `BODEGUERO`, `ADMIN`, `ROOT` | Asignar peso total consolidado a nivel de entrega y gatillar cobro directo. |
+
 
 ---
 
@@ -505,5 +507,43 @@ Devuelve los pedidos de cargas ya arribadas (`ARRIVED`), con las relaciones `pro
   - `cargaId` (opcional, número): Filtrar por carga.
   - `excludeDelivered` (opcional, booleano `true`/`1`): Además de excluir siempre `CANCELLED`/`REJECTED`, excluye también `DELIVERED`. Úsalo para obtener solo los pedidos físicamente pendientes de despacho — este es el caso de uso que antes cubría `ordenes-fisicas`, ej. `GET /api/v1/bodeguero/pedidos?excludeDelivered=true`.
 
+### 5.7 Asignación de Peso Total a Grupo de Pedidos
+
+Asigna el peso total consolidado a nivel de la entidad `Delivery` asociada a un conjunto de pedidos que pertenezcan al mismo cliente y a la misma carga. Marca masivamente todos los pedidos del grupo como `revisado = true` y, si todos los pedidos del cliente en la carga se encuentran revisados y sin ajustes pendientes de conciliación, gatilla automáticamente la emisión del cobro directo de flete y aduana (`FLETE_SEGURO_ADUANA`).
+
+- **Método:** `PUT`
+- **Ruta:** `/api/v1/bodeguero/pedidos/peso-total-grupo`
+- **Roles Permitidos:** `BODEGUERO`, `ADMIN`, `ROOT`
+- **Cuerpo (JSON - `AssignGroupTotalWeightDto`):**
+  ```json
+  {
+    "order_ids": [1, 2],
+    "total_weight_kg": 10.5
+  }
+  ```
+- **Campos del DTO:**
+  - `order_ids` (arreglo de enteros, requerido): Lista de identificadores de pedidos a incluir en el grupo. Debe tener al menos 1 elemento.
+  - `total_weight_kg` (número positivo, requerido): Peso consolidado en kilogramos a asignar a la entrega (`Delivery.total_weight`).
+- **Respuesta (200 OK):**
+  ```json
+  {
+    "message": "Peso total asignado al grupo exitosamente.",
+    "delivery": {
+      "id": 10,
+      "client_id": 4,
+      "carga_id": 2,
+      "total_weight": 10.5,
+      "status": "PENDING"
+    },
+    "orders": [...]
+  }
+  ```
+- **Respuestas de Error:**
+  - `400 Bad Request`: Arreglo de IDs vacío, peso total menor o igual a 0, o los pedidos del grupo pertenecen a clientes o cargas distintas.
+  - `401 Unauthorized`: Token de acceso JWT no provisto o expirado.
+  - `403 Forbidden`: El usuario no posee uno de los roles autorizados (`BODEGUERO`, `ADMIN`, `ROOT`).
+  - `404 Not Found`: Uno o más IDs de pedidos especificados no existen en el sistema.
+
 > [!TIP]
 > Para el flujo completo de bodega (recepción, revisión, empaque y despacho), consulta la [Guía de Flujo de Bodega](./bodeguero-workflow).
+

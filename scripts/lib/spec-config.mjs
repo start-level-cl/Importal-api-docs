@@ -12,6 +12,24 @@ const genericObject = {
 }
 
 const schemaExamples = {
+  AssignGroupTotalWeightRequest: {
+    order_ids: [1, 2],
+    total_weight_kg: 10.5,
+  },
+  AssignGroupTotalWeightResponse: {
+    message: 'Peso total asignado al grupo exitosamente.',
+    delivery: {
+      id: 5,
+      client_id: 1,
+      carga_id: 2,
+      total_weight: 10.5,
+      status: 'PENDING',
+    },
+    orders: [
+      { id: 1, revisado: true, revisado_por_id: 3 },
+      { id: 2, revisado: true, revisado_por_id: 3 },
+    ],
+  },
   LoginRequest: { email: 'usuario@ejemplo.com', password: 'Password123!' },
   LoginResponse: {
     accessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
@@ -25,6 +43,7 @@ const schemaExamples = {
   },
   RegisterUserRequest: {
     name: 'Juan Perez',
+
     email: 'juan.perez@ejemplo.com',
     password: 'Password123!',
     phone: '+56912345678',
@@ -922,6 +941,30 @@ export const schemas = {
       message: { type: 'string' },
     },
     ['ok'],
+  ),
+  AssignGroupTotalWeightRequest: objectSchema(
+    {
+      order_ids: {
+        type: 'array',
+        items: { type: 'integer' },
+        minItems: 1,
+        description: 'Lista de IDs de pedidos pertenecientes al mismo cliente y carga',
+      },
+      total_weight_kg: {
+        type: 'number',
+        minimum: 0.01,
+        description: 'Peso total asignado a la entrega en kg',
+      },
+    },
+    ['order_ids', 'total_weight_kg'],
+  ),
+  AssignGroupTotalWeightResponse: objectSchema(
+    {
+      message: { type: 'string' },
+      delivery: { type: 'object', additionalProperties: true },
+      orders: { type: 'array', items: { type: 'object', additionalProperties: true } },
+    },
+    ['message', 'delivery', 'orders'],
   ),
   CreateTiendaRequest: objectSchema(
     {
@@ -2967,6 +3010,18 @@ export const operationOverrides = {
       { name: 'excludeDelivered', in: 'query', required: false, schema: { type: 'boolean' }, description: 'true/1: excluye también pedidos DELIVERED, ademas de CANCELLED/REJECTED. Usar para obtener solo pedidos pendientes de despacho físico en bodega' },
     ],
     responses: Object.fromEntries([jsonResponse('200', 'Pedidos de bodega', 'GenericObjectArray')]),
+  },
+  'put /api/v1/bodeguero/pedidos/peso-total-grupo': {
+    summary: 'Asignar peso total consolidado a una entrega por grupo de pedidos y gatillar cobro directo (Bodeguero/Admin/Root)',
+    tags: ['Bodeguero', 'Orders'],
+    requestBody: jsonRequest('AssignGroupTotalWeightRequest'),
+    responses: Object.fromEntries([
+      jsonResponse('200', 'Peso total asignado al grupo exitosamente', 'AssignGroupTotalWeightResponse'),
+      jsonResponse('400', 'Argumentos inválidos o pedidos pertenecen a clientes/cargas distintas', 'ErrorResponse'),
+      jsonResponse('401', 'No autorizado', 'ErrorResponse'),
+      jsonResponse('403', 'Acceso denegado', 'ErrorResponse'),
+      jsonResponse('404', 'Uno o más pedidos no encontrados', 'ErrorResponse'),
+    ]),
   },
   'get /api/v1/bodeguero/cargas/{id}/verificar-revision': {
     summary: 'Verificar si todos los pedidos de una carga han sido revisados',

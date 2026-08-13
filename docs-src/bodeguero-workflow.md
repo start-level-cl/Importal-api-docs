@@ -138,6 +138,20 @@ Anteriormente, cuando existían diferencias físicas severas se permitía el rec
     *   El backend restablece `order.has_pending_adjustment = false`.
     *   Se reevalúan todos los pedidos de la carga para el cliente. Si ya no existen ajustes pendientes y todos están revisados, se genera y emite de inmediato el cobro de `FLETE_SEGURO_ADUANA`.
 
+### 2.4 Asignación de Peso Total a Nivel de Entrega (`assignGroupTotalWeight`)
+
+Además de la revisión individual por pedido, el sistema soporta la modalidad de **pesaje consolidado de entrega por grupo de pedidos**:
+
+* **Endpoint:** `PUT /api/v1/bodeguero/pedidos/peso-total-grupo`
+* **DTO:** `AssignGroupTotalWeightDto` (`order_ids: number[]`, `total_weight_kg: number`)
+* **Lógica y Asignación:**
+  1. Valida que `order_ids` no esté vacío, que `total_weight_kg > 0` y que todos los pedidos del grupo pertenezcan estrictamente al mismo `client_id` y a la misma `carga_id`.
+  2. Obtiene o crea la entrega (`Delivery`) correspondiente a `(client_id, carga_id)` y le asigna el peso total consolidado: `delivery.total_weight = total_weight_kg`.
+  3. Marca masivamente todos los pedidos del grupo como `revisado = true` y asigna `revisado_por_id`.
+* **Emisión Automatizada de Cobro Directo:**
+  * Inmediatamente después de la asignación, evalúa si todos los pedidos no cancelados del cliente en la carga están revisados (`allReviewed`) y si ninguno presenta diferencias pendientes (`!hasAnyPendingAdjustment`).
+  * Si se cumplen ambas condiciones y no existe un cobro logístico previo con deltas, invoca `billingService.generateFleteYAduanaCobro(clientId, cargaId, clientOrders)` para emitir directamente la cuenta de cobro de flete y aduana.
+
 ---
 
 ## 3. Bloqueo Financiero de Despacho (Anti-Mora)
