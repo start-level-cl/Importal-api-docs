@@ -39,8 +39,8 @@ Devuelve un resumen financiero y operativo de la plataforma para el período esp
 - **Respuesta:** Incluye totales de cobros, pagos, usuarios activos, cargas en tránsito y métricas financieras del período.
 
 > [!NOTE]
-> **Minimización de PII en `ultimos_morosos`:**
-> El listado `ultimos_morosos` retornado por el dashboard administrativo recorta `client_name` a solo el primer nombre (`name.trim().split(' ')[0]`) y reemplaza el RUT personal (`client_rut`) por el RUT de facturación empresarial (`rut_empresa`), el cual retorna `null` si no existe.
+> **Minimización de PII en `ultimos_morosos` (Ley N° 21.719):**
+> El listado `ultimos_morosos` retornado por el dashboard administrativo recorta `client_name` a solo el primer nombre (`name.trim().split(' ')[0]`) u omite datos sensibles (RUT personal y de empresa omitidos por completo del listado agregado para prevenir exposición innecesaria de PII en paneles generales). Cada registro contiene `cobro_id`, `client_id`, `client_name`, `amount_clp` y `due_date`.
 
 ### 1.2 Dashboard Cliente
 
