@@ -5246,6 +5246,45 @@
         "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
       }
     },
+    "/api/v1/admin/deliveries/{id}/reiniciar-despacho": {
+      "post": {
+        "operationId": "backend_post_api_v1_admin_deliveries_id_reiniciar_despacho",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "resetDeliveryShippingAdmin",
+        "tags": [
+          "Orders"
+        ],
+        "x-role-group": "admin",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+      }
+    },
     "/api/v1/admin/devoluciones": {
       "get": {
         "operationId": "backend_get_api_v1_admin_devoluciones",
@@ -6022,6 +6061,84 @@
           }
         ],
         "summary": "authorizeFullRefund",
+        "tags": [
+          "Orders"
+        ],
+        "x-role-group": "admin",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+      }
+    },
+    "/api/v1/admin/pedidos/{id}/devolucion": {
+      "post": {
+        "operationId": "backend_post_api_v1_admin_pedidos_id_devolucion",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "adminProcessOrderReturn",
+        "tags": [
+          "Orders"
+        ],
+        "x-role-group": "admin",
+        "x-service": "backend",
+        "x-source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts"
+      }
+    },
+    "/api/v1/admin/pedidos/{id}/reiniciar-despacho": {
+      "post": {
+        "operationId": "backend_post_api_v1_admin_pedidos_id_reiniciar_despacho",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericObject"
+                }
+              }
+            },
+            "description": "Operacion exitosa"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "resetOrderShippingAdmin",
         "tags": [
           "Orders"
         ],

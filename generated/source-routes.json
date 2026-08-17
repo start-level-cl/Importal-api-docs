@@ -3017,6 +3017,63 @@
     "service": "backend",
     "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
     "method": "post",
+    "path": "/api/v1/admin/deliveries/{id}/reiniciar-despacho",
+    "operationId": "backend_post_api_v1_admin_deliveries_id_reiniciar_despacho",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "resetDeliveryShippingAdmin",
+    "parameters": [],
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "post",
+    "path": "/api/v1/admin/pedidos/{id}/reiniciar-despacho",
+    "operationId": "backend_post_api_v1_admin_pedidos_id_reiniciar_despacho",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "resetOrderShippingAdmin",
+    "parameters": [],
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "post",
+    "path": "/api/v1/admin/pedidos/{id}/devolucion",
+    "operationId": "backend_post_api_v1_admin_pedidos_id_devolucion",
+    "tag": "Orders",
+    "tags": [
+      "Orders"
+    ],
+    "roles": [
+      "admin",
+      "root"
+    ],
+    "security": "bearerAuth",
+    "methodName": "adminProcessOrderReturn",
+    "parameters": [],
+    "roleGroup": "admin"
+  },
+  {
+    "service": "backend",
+    "source": "Importal-backend/src/modules/orders/controllers/orders.controller.ts",
+    "method": "post",
     "path": "/api/v1/admin/devoluciones/{id}/resolver",
     "operationId": "backend_post_api_v1_admin_devoluciones_id_resolver",
     "tag": "Orders",

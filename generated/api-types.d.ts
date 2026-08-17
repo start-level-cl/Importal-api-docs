@@ -1247,6 +1247,14 @@ export interface Operations {
       "200": GenericObject
     }
   }
+  "backend_post_api_v1_admin_deliveries_id_reiniciar_despacho": {
+    method: "POST"
+    path: "/api/v1/admin/deliveries/{id}/reiniciar-despacho"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
   "backend_get_api_v1_admin_devoluciones": {
     method: "GET"
     path: "/api/v1/admin/devoluciones"
@@ -1378,6 +1386,22 @@ export interface Operations {
   "backend_post_api_v1_admin_orders_adjustments_id_authorize_full_refund": {
     method: "POST"
     path: "/api/v1/admin/orders/adjustments/{id}/authorize-full-refund"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_post_api_v1_admin_pedidos_id_devolucion": {
+    method: "POST"
+    path: "/api/v1/admin/pedidos/{id}/devolucion"
+    requestBody: undefined
+    responses: {
+      "200": GenericObject
+    }
+  }
+  "backend_post_api_v1_admin_pedidos_id_reiniciar_despacho": {
+    method: "POST"
+    path: "/api/v1/admin/pedidos/{id}/reiniciar-despacho"
     requestBody: undefined
     responses: {
       "200": GenericObject

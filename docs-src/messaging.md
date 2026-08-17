@@ -26,12 +26,16 @@ Devuelve los canales de chat a los que tiene acceso el usuario autenticado, filt
 - **Respuesta Exitosa (200 OK):** Array de chats accesibles.
 
 > [!NOTE]
-> **Anonimización del Cliente ('Cliente #id'):**
-> Cuando el usuario asociado a la conversación posee el rol `CLIENT`, su nombre en pantalla se sustituye por `Cliente #<user_id>` (ej. `Cliente #18`) para proteger la PII del titular ante otros participantes. Los roles operativos (`VENDOR`, `BODEGUERO`, `ADMIN`, `ROOT`) conservan su nombre real.
+> **Anonimización del Cliente ('Cliente #id') y Minimización de Nombres (Ley N° 21.719):**
+> Cuando el usuario asociado a la conversación posee el rol `CLIENT`, su nombre en pantalla se sustituye por `Cliente #<user_id>` (ej. `Cliente #18`) para proteger la PII del titular ante otros participantes. Para usuarios no clientes (`VENDOR`, `BODEGUERO`, `ADMIN`, `ROOT`), el campo `chat.user.name` se recorta aplicando el principio de minimización de datos para retornar únicamente el **primer nombre** (`name.trim().split(' ')[0]`). Los datos de contacto sensibles (`rut`, `email_address`, `phone_number`) se omiten estrictamente.
+
+> [!NOTE]
+> **Aislamiento Exclusivo de Conversaciones para Vendedores (`role: vendor`):**
+> Cuando un usuario con rol `VENDOR` consulta `GET /api/v1/chats`, el sistema filtra y retorna de manera exclusiva los chats pertenecientes a su propio identificador (`chat.user_id === userId`), garantizando confidencialidad y aislamiento de datos entre proveedores.
 
 > [!NOTE]
 > **Filtrado por Transporte:**
-> El backend extrae los tipos de transporte autorizados tanto del payload del JWT como del header `Authorization`. El chat solo se muestra si el tipo de transporte del canal coincide con al menos uno de los transportes habilitados para ese usuario.
+> El backend extrae los tipos de transporte autorizados tanto del payload del JWT como del header `Authorization`. Para clientes y bodegueros, el chat solo se muestra si el tipo de transporte del canal coincide con al menos uno de los transportes habilitados para ese usuario.
 
 ---
 
