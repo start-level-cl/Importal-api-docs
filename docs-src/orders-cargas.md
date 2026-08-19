@@ -340,11 +340,15 @@ Permite al vendedor indicar que acepta continuar operando dentro de una carga qu
 - **Método:** `GET`
 - **Ruta:** `/api/v1/cliente/pedidos`
 - **Query Parameters:**
-  - `page` / `limit`: Paginación.
-  - `vendor` (string): Filtrar por vendedor.
-  - `carga` (número): Filtrar por ID de carga.
-  - `status` (string): Estado del pedido.
-- **Campo `delivery_status` (por ítem):** cada pedido del listado incluye `delivery_status`. Ver detalle y semántica completa en la sección **4.3 Detalle de Pedido** más abajo (aplica igual en el listado y en el detalle).
+  - `page` / `limit`: Paginación (`page` default 1, `limit` default 10).
+  - `orderId` (número, opcional): Filtrar directamente por el ID numérico de la orden.
+  - `vendor` (string, opcional): Filtrar por vendedor (`id` o `external_id`).
+  - `carga` (número, opcional): Filtrar por ID de carga.
+  - `status` (string, opcional): Estado del pedido (ej. `CONFIRMED`, `PENDING`, `CANCELLED`, `DELIVERED` o lista separada por comas).
+- **Campos destacados en respuesta:**
+  - `id`: Identificador numérico de la orden.
+  - `is_transition_request`: Booleano indicando si la orden tuvo un retraso/transición previa.
+  - `delivery_status`: Estado logístico de la entrega en bodega (`PENDING`, `IN_REVISION`, `READY_TO_SHIP`, `SHIPPED`, `DELIVERED`, o `null`). Ver detalle en sección **4.3**.
 
 ### 4.2 Crear Pedido
 
